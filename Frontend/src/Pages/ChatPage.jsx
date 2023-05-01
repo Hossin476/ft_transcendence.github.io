@@ -33,7 +33,6 @@ function handleTyping(typing, setTyping, sender) {
     setTyping(prev => ({ ...prev, timer: newTimer }))
 }
 
-
 const ChatPage = () => {
     const { chatsocket, user } = useAuth()
     const { currantUser, setMessages,setSeen} = useContext(ChatContext)
@@ -45,7 +44,7 @@ const ChatPage = () => {
                 const data = JSON.parse(e.data)
                 const { type,reciever, sender } = data.event
                 if (type === "chat.message") {
-                    setSeen(()=>false)
+                    setSeen(()=>false) 
                     handleDirectMessaging(data.event, currantUser, user, setMessages)
                 }
                 if(type == "message.seen" && user.user_id === reciever) {

@@ -6,7 +6,6 @@ import Lottie from 'react-lottie';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 // import typing_animation from '../../../public/typing.json';
 
-
 const Typing_render = () => {
     return (
       <div className="self-start bg-gray-400 border-linkColor border-[2px] rounded-xl w-20">
@@ -20,7 +19,6 @@ const Typing_render = () => {
         </div>
     )
 } 
-
 
 const getMessages = async (chatUser,tokens)=> {
 

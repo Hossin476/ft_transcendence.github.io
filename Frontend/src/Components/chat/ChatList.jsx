@@ -3,7 +3,8 @@ import FriendChat from "./FriendChat";
 import {useEffect,useState,useContext, useMemo} from "react"
 import { useAuth } from "../../context/AuthContext";
 import ChatContext from "../../context/ChatContext";
-
+import _ from "lodash";
+import { flattenJSON } from "three/src/animation/AnimationUtils";
 
 const getConversations = async (tokens,user)=> {
   const response = await fetch("http://127.0.0.1:8000/chat/conversation", {
@@ -33,7 +34,6 @@ const getConversations = async (tokens,user)=> {
                 }
           }
       })
-      console.log(data)
       data.sort((a, b) => new Date(b.last_msg.created_at) - new Date(a.last_msg.created_at));
       return data
   }
@@ -46,6 +46,7 @@ export default function ChatList() {
   const {setCurrentUser,conversation,setConversation,currantUser} = useContext(ChatContext)
   const {user,tokens} = useAuth()
   const [selectedChat,setSelectedChat] = useState(-1)
+  const [search,setSearch] = useState("")
 
   const handleClick = (contact)=>{
     setSelectedChat(()=>contact.id)
@@ -60,6 +61,32 @@ export default function ChatList() {
     fetchConversation()
   },[])
 
+  const handelSearch = (e) => {
+    setSearch(e.target.value)
+    console.log(e.target.value)
+  }
+
+  const debounce_searchig = useMemo(
+    () => _.debounce(handelSearch, 500),
+    []
+  );
+
+  useEffect(() => {
+    return () => {
+      debounce_searchig.cancel();
+    };
+  }, [debounce_searchig]);
+
+
+  const filterchats = useMemo(()=> {
+    if(search === "") {
+      return conversation
+    }
+    return conversation.filter((convo) => {
+      return convo.user.username.toLowerCase().includes(search.toLowerCase())
+    })
+  });
+
     return useMemo(()=> {
       return (
         <div className={`xsm:${currantUser ? 'hidden' : 'block'} h-[90%] md:block bg-secondaryColor rounded-3xl xsm:w-full md:w-[18rem] xl:w-[24rem]  `}>
@@ -70,6 +97,7 @@ export default function ChatList() {
                   placeholder="Search..."
                   type="text"
                   name="search"
+                  onChange={debounce_searchig}
                 />
                 <IoSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               </div>
@@ -78,7 +106,9 @@ export default function ChatList() {
             <section className="h-5/6 text-white mt-10 lg:mt-5">
                 <div className="text-xs h-5/6 block items-center overflow-y-scroll">
                 {
-                  conversation && conversation.map((convo) => {
+                  filterchats && filterchats.map((convo) => {
+                    // if (convo.last_msg.content !== ""){
+                      console.log(filterchats)
                       return (
                         <FriendChat 
                           key={convo.id} 
@@ -87,8 +117,22 @@ export default function ChatList() {
                           selected={selectedChat}
                         />
                       );
+                    // }
                   })
-              }
+
+                  // conversation && conversation.map((convo) => {
+                  //   if (convo.last_msg.content !== ""){
+                  //     return (
+                  //       <FriendChat 
+                  //         key={convo.id} 
+                  //         contacts={convo} 
+                  //         handleOnClick={handleClick} 
+                  //         selected={selectedChat}
+                  //       />
+                  //     );
+                  //   }
+                  // })
+                }
                 </div>
             </section>
         </div>
