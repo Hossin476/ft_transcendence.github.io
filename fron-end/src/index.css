@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.friendsBar
+{
+    border-radius: 85px;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 5px;
+    display: none;
+}
+ 
+/* Track */
+::-webkit-scrollbar-track {
+    background: #693535;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+}
+
+.main-wrapper {
+    height: calc(100% - 112px);
+}
+
+@media (max-width: 639px) {
+    .main-wrapper{
+        height: calc(100% - 48px);
+    }
+    
+}
