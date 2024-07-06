@@ -74,3 +74,49 @@
   top:30%;
   right:24rem;
 }
+
+
+.corner_1
+{
+  position: absolute;
+  border-left: 3px solid white;
+  border-top: 3px solid white;
+  width:5rem;
+  height:9rem;
+  right:14rem;
+  top:7rem;
+}
+
+
+.corner_2
+{
+  position: absolute;
+  width:5rem;
+  height:9rem;
+  left:13.5rem;
+  top:7rem;
+  border-right: 3px solid white;
+  border-top: 3px solid white;
+}
+
+.corner_3
+{
+  position: absolute;
+  width:5rem;
+  height:9rem;
+  right:14rem;
+  bottom:39rem;
+  border-left: 3px solid white;
+  border-bottom: 3px solid white;
+}
+
+.corner_4
+{
+  position: absolute;
+  width:5rem;
+  height:9rem;
+  left:13.5rem;
+  bottom:40rem; 
+  border-right: 3px solid white;
+  border-bottom: 3px solid white;
+}

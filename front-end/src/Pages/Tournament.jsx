@@ -9,6 +9,10 @@ function Tournament() {
       <div className='grid grid-cols-5 grid-rows-5 gap-4 justify-items-center relative mt-32'>
         <div className="rounded bg-white line_1"></div>
         <div className="rounded bg-white absolute line_2"></div>
+        <div className='corner_1'></div>
+        <div className='corner_2'></div>
+        <div className='corner_3'></div>
+        <div className='corner_4'></div>
         <div className="col-start-1 row-start-1 relative p-10 rounded-lg text-center">
           <div className="img_container bg-white w-32">
             <img src="lshail.jpeg" alt="Avatar" className=" mx-auto rounded-full" />
