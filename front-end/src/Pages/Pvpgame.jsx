@@ -4,12 +4,12 @@ import { PiArrowUUpLeftBold } from 'react-icons/pi';
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { useEffect } from 'react';
 
-import './Pvpgame.css';
-import './Matchmaking.css';
+import '../Components/Game/Pvpgame.css';
+import '../Components/Game/Matchmaking.css';
 
 import mypic from '/avatar/sbzizal.jpeg';
 import vs_avatar from '/avatar/lshail.jpeg';
-import avatar from '/avatar/test2.png';
+import avatar from '/avatar/anonym.png';
 
 
 function Header() {

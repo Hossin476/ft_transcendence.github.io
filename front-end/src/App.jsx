@@ -3,7 +3,7 @@ import LayoutOne from "./Layouts/LayoutOne"
 import { BrowserRouter,Routes,Route } from "react-router-dom"
 import Dashboard from "./Pages/Dashboard"
 import ManageFriends from "./Pages/ManageFriends"
-import PingPong from './Pvpgame';
+import PingPong from './Pages/Pvpgame';
 
 function App() {
   
