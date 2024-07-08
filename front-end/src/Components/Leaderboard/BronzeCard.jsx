@@ -2,7 +2,7 @@ import React from 'react'
 
 function BronzeCard() {
     return (
-        <div className='p-4 rounded-3xl sm:w-1/3 lg:w-1/4 w-full text-center pt-16 space-y-4 card_bronze'>
+        <div className='p-4 rounded-3xl w-full text-center pt-16 space-y-4 card_bronze'>
             <img src='/copper_badge.svg' alt='copper badge' className='mx-auto relative bottom-4 badge' />
             <h5 className='text-md relative bottom-6 font-thin text-white'>Elite</h5>
             <h3 className='text-3xl  relative bottom-6 sm-text-sm rank_copper'>Rank #3</h3>

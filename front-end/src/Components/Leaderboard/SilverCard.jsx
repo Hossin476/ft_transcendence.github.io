@@ -2,7 +2,7 @@ import React from 'react'
 
 function SilverCard() {
     return (
-        <div className='p-4 pt-16 space-y-4 max-h-fit rounded-3xl sm:w-1/3 w-full lg:w-1/4 text-center   card_silver'>
+        <div className='p-4 pt-16 space-y-4 max-h-fit rounded-3xl w-full text-center   card_silver'>
             <img src='/silver_badge.svg' alt='silver badge' className='mx-auto relative bottom-4 badge' />
             <h5 className='text-sm relative bottom-6 text-white font-thin'>Elite</h5>
             <h3 className='text-2xl font-bold relative bottom-6 rank_silver'>Rank #2</h3>

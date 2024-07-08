@@ -2,7 +2,7 @@ import React from 'react'
 
 function GoldCard() {
     return (
-        <div className=' sm:w-1/3 lg:w-1/4 rounded-3xl w-full text-center pt-16 space-y-6 card_gold'>
+        <div className='rounded-3xl w-full text-center card_gold'>
             <img src='/gold_badge.svg' alt='gold badge' className='mx-auto relative bottom-6 badge' />
             <h5 className='text-md relative bottom-8 text-white'>Elite</h5>
             <h3 className='text-3xl relative bottom-8 rank_gold'>Rank #1</h3>
