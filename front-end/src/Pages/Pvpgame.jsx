@@ -10,6 +10,9 @@ import '../Components/Game/Matchmaking.css';
 import mypic from '/avatar/sbzizal.jpeg';
 import vs_avatar from '/avatar/lshail.jpeg';
 import avatar from '/avatar/anonym.png';
+// import LoadingText from '../Components/Game/Loadingtext';
+
+import 'ldrs/dotPulse';
 
 
 function Header() {
@@ -41,7 +44,7 @@ function Wait_card() {
       <img src={avatar} alt="Avatar" className="anonymous" />
       <div className="add-player-info">
         <h2>WAITING</h2>
-        <p>. . .</p>
+        <l-dot-pulse size="30" speed="1.3" color="white"></l-dot-pulse>
       </div>
     </div>
   );
@@ -73,7 +76,7 @@ function Add_card() {
   return (
     <div className="add-player-card">
       <img src={avatar} alt="Avatar" className="anonymous" />
-      <p className="add-player-info">. . .</p>
+      <p className="add-player-info">No_Name</p>
     </div>
   );
 }
@@ -115,7 +118,7 @@ function PingPong() {
     if (isstart) {
       const timer = setTimeout(() => {
         setStarted(true);
-      }, 3000); // 3 seconds
+      }, 4000); // 4 seconds
       return () => clearTimeout(timer);
     }
   }, [isstart]);

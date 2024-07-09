@@ -7,7 +7,6 @@ import PingPong from './Pages/Pvpgame';
 
 function App() {
   
-
   return (
     <BrowserRouter>
 		<Routes>
@@ -15,8 +14,7 @@ function App() {
 					<Route path="/example1" element={<></>}/>
 					<Route path="/dashboard" element={<Dashboard/>}/>
 					<Route path="/managefriends" element={<ManageFriends/>}/>
-					{/* <Route path="/example" element={} */}
-					<Route path="/PvPingpong" element={<PingPong />}/>
+					<Route path="/Pvpgame" element={<PingPong />}/>
 					/* here u w will add ur page component that has the friends bar */
 			</Route>
 		</Routes>
