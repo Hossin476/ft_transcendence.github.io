@@ -13,15 +13,23 @@ import avatar from '/avatar/anonym.png';
 // import LoadingText from '../Components/Game/Loadingtext';
 
 import 'ldrs/dotPulse';
+import { useNavigate } from 'react-router';
 
 
-function Header() {
+function Header({ title}) {
+
+  const navigate = useNavigate();
+
+  function navigateToGame() {
+    navigate('/game');
+  }
+
   return (
     <header className="header">
-      <button className="back-button">
+      <button onClick={navigateToGame} className="back-button">
         <PiArrowUUpLeftBold style={{ fontSize: '2rem', color: 'white' }} />
       </button>
-      <h1>PING PONG</h1>
+      <h1>{title}</h1>
     </header>
   )
 }
@@ -100,7 +108,7 @@ function Started_button({onClick}) {
 
 }
 
-function PingPong() {
+function PvpGame({ title}) {
 
   const [isstart, setStart] = React.useState(false);
   const [isstarted, setStarted] = React.useState(false);
@@ -126,7 +134,7 @@ function PingPong() {
 
   return (
     <div className="ping-pong-container">
-      <Header />
+      <Header title={title}/>
       <div className="player-cards">
         <Mycard />
         {
@@ -148,4 +156,4 @@ function PingPong() {
   );
 };
 
-export default PingPong;
+export default PvpGame;

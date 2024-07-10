@@ -1,5 +1,5 @@
 
-import img from "/public/ykhourba.jpeg"
+import img from "/public/avatar/sbzizal.jpeg"
 import { IoNotifications } from "react-icons/io5";
 import { LiaCoinsSolid } from "react-icons/lia";
 export default function NavBar() {
@@ -18,7 +18,7 @@ export default function NavBar() {
                         <LiaCoinsSolid/>
                     </span>
                 </li>
-                <li className="text-2xl font-thin xsm:hidden lg:block" >YKHOURBA</li>
+                <li className="text-2xl font-thin xsm:hidden lg:block" >KIRAZIZI</li>
                 <li className=" xsm:w-8 xsm:h-8 sm:w-16 sm:h-16 border-2 rounded-full"><img className="w-full rounded-full" src={img} alt="" /></li>
             </ul>
         </div>
