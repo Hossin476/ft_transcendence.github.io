@@ -2,6 +2,7 @@
   padding: 0;
   margin: 0;
   scroll-behavior: smooth;
+  /* overflow: auto; */
 }
 
 @font-face {
@@ -24,12 +25,12 @@
 }
 .card_container {
   height: 100%;
-  overflow: auto;
+  overflow: hidden;
 }
 
 .leader {
   font-family: valorax;
-  margin: 2rem auto;
+  /* margin: 2rem auto; */
   color: white;
 }
 
@@ -101,6 +102,10 @@
 .state {
   color: rgba(255, 255, 255, 0.5);
   font-size: x-small;
+}
+
+.footer {
+  overflow: auto;
 }
 
 /* @media (max-width: 1024px) {
