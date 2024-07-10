@@ -7,12 +7,12 @@ function Tournament() {
         <h1 className='text-4xl bg-slate-800 text-center top_title'>PING PONG</h1>
         <h3 className='text-white text-md bg-slate-800 text-center down_title'>TOURNAMENT</h3>
       <div className='grid grid-cols-5 grid-rows-5 gap-4 tor_cont my-auto sm:mx-5 lg:mx-20 md-mx-10'>
-        {/* <div className="rounded bg-white line_1"></div>
-        <div className="rounded bg-white absolute line_2"></div> */}
-        {/* <div className='corner_1'></div>
+        <div className="rounded bg-white line_1"></div>
+        <div className="rounded bg-white absolute line_2"></div>
+        <div className='corner_1'></div>
         <div className='corner_2'></div>
         <div className='corner_3'></div>
-        <div className='corner_4'></div> */}
+        <div className='corner_4'></div> 
         <div className=" relative rounded-lg text-center col-start-1 row-start-2">
           <div className="img_container w-14 h-14 mx-auto">
             <img src="lshail.jpeg" alt="Avatar" className="rounded-full" />

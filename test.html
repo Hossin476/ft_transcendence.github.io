@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centered Card</title>
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #282c34;
+        }
+
+        .container {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 30px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            max-height: 100%;
+            overflow: hidden;
+        }
+
+        .card img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .card h5,
+        .card h3,
+        .card span,
+        .card button {
+            margin: 10px 0;
+            color: white;
+        }
+
+        .card .flex {
+            display: flex;
+            justify-content: space-evenly;
+            width: 100%;
+        }
+
+        .card .flex div {
+            margin: 0 10px;
+        }
+
+        .card button {
+            padding: 10px 20px;
+            background-color: #ff9800;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <img src="/gold_badge.svg" alt="gold badge" class="badge">
+            <h5 class="md:text-md sm:text-xs lg:text-lg">Elite</h5>
+            <h3 class="md:text-md sm:text-xs lg:text-3xl rank_gold">Rank #1</h3>
+            <img src="/gold.png" alt="avatar" class="avatar">
+            <span class="block md:text-md sm:text-xs lg:text-lg">charles leclerc</span>
+            <div class="flex">
+                <div>
+                    <span class="block md:text-md sm:text-xs lg:text-lg state">games</span>
+                    <span class="block md:text-md sm:text-xs lg:text-lg">5000</span>
+                </div>
+                <div>
+                    <span class="block md:text-md sm:text-xs lg:text-lg state">wins</span>
+                    <span class="block md:text-md sm:text-xs lg:text-lg">1000</span>
+                </div>
+                <div>
+                    <span class="block md:text-md sm:text-xs lg:text-lg state">loses</span>
+                    <span class="block md:text-md sm:text-xs lg:text-lg">500</span>
+                </div>
+            </div>
+            <button class="text-white rounded-xl button_gold md:text-md sm:text-xs lg:text-lg">
+                View Profile
+            </button>
+        </div>
+    </div>
+</body>
+
+</html>

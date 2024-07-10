@@ -7,9 +7,9 @@ import Rank from '../Components/Leaderboard/Rank';
 
 function Leaderboard() {
   return (
-    <div className='m-auto container_all flex flex-col'>
-      <h1 className='text-6xl font-bold text-center leader '>LeaderBoard</h1>
-      <div className='grid grid-cols-3 gap-10 card_container my-auto mx-10'>
+    <div className='m-auto container_all flex flex-col '>
+      <h1 className='lg:text-6xl md:text-3xl sm:text-xs font-bold text-center leader'>LeaderBoard</h1>
+      <div className='grid lg:grid-cols-3 md:grid-cols-3 gap-5 card_container my-auto mx-20'>
         <SilverCard />
         <GoldCard />
         <BronzeCard />
