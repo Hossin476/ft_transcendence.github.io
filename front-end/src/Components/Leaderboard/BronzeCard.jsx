@@ -2,8 +2,8 @@ import React from 'react'
 
 function BronzeCard() {
     return (
-        <div className='px-auto py-auto rounded-3xl my-auto text-center card_bronze '>
-            <img src='/copper_badge.svg' alt='copper badge' className='mx-auto badge' />
+        <div className='rounded-3xl my-auto text-center card_bronze md:h-5/6 lg:h-5/6 flex flex-col justify-center items-center'>
+            <img src='/copper_badge.svg' alt='copper badge' className='mx-auto badge my-auto ' />
             <h5 className='md:text-md sm:text-xs lg:text-lg font-thin text-white'>Elite</h5>
             <h3 className='md:text-md sm:text-xs lg:text-3xl sm-text-sm rank_copper'>Rank #3</h3>
             <img src='/copper.jpg' alt='avatar' className='avatar' />
@@ -22,7 +22,7 @@ function BronzeCard() {
                     <span className='block  md:text-md sm:text-xs lg:text-lg text-white'>500</span>
                 </div>
             </div>
-            <button className='text-white rounded-xl button_copper md:text-md sm:text-xs lg:text-lg'>
+            <button className='text-white rounded-xl button_copper md:text-md sm:text-xs lg:text-lg my-auto'>
                 View Profile
             </button>
         </div>
