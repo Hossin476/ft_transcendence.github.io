@@ -1,0 +1,20 @@
+*
+{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+@font-face
+{
+    font-family: valorax;
+    src: url(./valorax-lg25v.otf);
+}
+
+@font-face
+{
+    font-family: poppins;
+    src: url(./Poppins/Poppins-Bold.ttf);
+}
+

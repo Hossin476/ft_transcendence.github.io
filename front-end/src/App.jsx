@@ -5,6 +5,7 @@ import Dashboard from "./Pages/Dashboard"
 import ManageFriends from "./Pages/ManageFriends"
 import Leaderboard from "./Pages/Leaderboard"
 import Tournament from "./Pages/Tournament"
+import TicTacToe from "./Pages/TicTacToe"
 
 function App() {
   
@@ -18,7 +19,7 @@ function App() {
 					<Route path="/managefriends" element={<ManageFriends/>}/>
 					<Route path="/leaderboard" element={<Leaderboard/>}/>
 					<Route path="/tournament" element={<Tournament/>}/>
-					{/* <Route path="/example" element={} */}
+					<Route path="/tictactoe" element={<TicTacToe/>}/>
 					/* here u w will add ur page component that has the friends bar */
 			</Route>
 		</Routes>
