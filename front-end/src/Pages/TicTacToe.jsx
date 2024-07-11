@@ -3,14 +3,14 @@ import '../tictactoe.css'
 
 function TicTacToe() {
   return (
-    <div className='container_tictactoe flex flex-col mx-auto'>
+    <div className='container_tictactoe flex flex-col justify-around items-center w-full mx-0'>
       <div className='top_container w-full'>
         <h1 className='lg:text-4xl md:text-4xl sm:text-md font-bold text-center h-1/6 leader flex justify-center items-center'>TIC TAC TOE</h1>
-        <span>return</span>
+        <span className='text-red-300'>return</span>
       </div>
-      <div className='game_container my-auto'>
-        <div className="top_layer bg-red-400 grid grid-cols-3 h-2/5 relative">
-          <div className="first_player bg-indigo-400">
+      <div className='game_container mx-auto relative grid '>
+        <div className="top_layer bg-red-400 grid grid-cols-3 relative h-2/5 mt-auto ">
+          <div className="first_player bg-indigo-400 my-auto mx-auto">
             <span>image</span>
             <h1>Player 1</h1>
             <h4>level 2</h4>
@@ -27,7 +27,7 @@ function TicTacToe() {
             <h2>04</h2>
           </div>
         </div>
-        <div className="bottom_layer bg-green-600 grid grid-cols-3">
+        <div className="bottom_layer bg-green-600 grid grid-cols-3 h-3/5 mb-auto">
           <p> X </p>
           <div className="game_board">
             <div className="row">

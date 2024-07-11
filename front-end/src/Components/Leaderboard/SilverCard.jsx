@@ -17,7 +17,7 @@ function SilverCard({ data }) {
     //     ))
     // }
     return (
-        <div className='rounded-3xl text-center card_silver flex flex-col justify-center items-center my-auto md:h-5/6 lg:h-5/6 relative'>
+        <div className='rounded-3xl text-center card_silver flex flex-col justify-center items-center my-auto md:h-11/12 lg:h-11/12 relative'>
             <img src='/silver_badge.svg' alt='silver badge' className='mx-auto mt-auto badge' />
             <h5 className='md:text-md sm:text-xs lg:text-lg relative text-white font-thin mb-6'>Elite</h5>
             <h3 className='md:text-md sm:text-xs lg:text-3xl font-bold relative rank_silver mb-6'>Rank #2</h3>
