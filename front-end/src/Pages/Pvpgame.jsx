@@ -10,7 +10,6 @@ import '../Components/Game/Matchmaking.css';
 import mypic from '/avatar/sbzizal.jpeg';
 import vs_avatar from '/avatar/lshail.jpeg';
 import avatar from '/avatar/anonym.png';
-// import LoadingText from '../Components/Game/Loadingtext';
 
 import 'ldrs/dotPulse';
 import { useNavigate } from 'react-router';

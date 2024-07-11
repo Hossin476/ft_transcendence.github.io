@@ -5,6 +5,7 @@ import Dashboard from "./Pages/Dashboard"
 import ManageFriends from "./Pages/ManageFriends"
 import PvpGame from './Pages/Pvpgame';
 import Game from './Pages/Game';
+import Settings from './Pages/Settings';
 
 function App() {
   
@@ -18,7 +19,8 @@ function App() {
 					<Route path="/game" element={<Game />}/>
 					<Route path="/game/pingpong/pvpgame" element={<PvpGame title="PING PONG"/>}/>
 					<Route path="/game/tictactoe/pvpgame" element={<PvpGame title="TIC TAC TOE"/>}/>
-					/* here u w will add ur page component that has the friends bar */
+					<Route path="/settings" element={<Settings />}/>
+					<Route path="/settings/2fa" element={<Settings/>}/>
 			</Route>
 		</Routes>
     </BrowserRouter>
