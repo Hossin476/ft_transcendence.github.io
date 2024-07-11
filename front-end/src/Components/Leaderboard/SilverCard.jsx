@@ -21,9 +21,9 @@ function SilverCard({ data }) {
             <img src='/silver_badge.svg' alt='silver badge' className='mx-auto mt-auto badge' />
             <h5 className='md:text-md sm:text-xs lg:text-lg relative text-white font-thin mb-6'>Elite</h5>
             <h3 className='md:text-md sm:text-xs lg:text-3xl font-bold relative rank_silver mb-6'>Rank #2</h3>
-            <img src='/silver.jpg' alt='avatar' className='avatar mb-4' />
-            <span className='block md:text-md sm:text-xs lg:text-lg relative  text-white mb-2'>Funny Guy</span>
-            <div className='grid grid-cols-3 py-auto'>
+            <img src='/silver.jpg' alt='avatar' className='avatar mb-2' />
+            <span className='block md:text-md sm:text-xs lg:text-lg relative  text-white mb-4'>Funny Guy</span>
+            <div className='flex justify-evenly w-full items-center mt-10'>
                 <div>
                     <span className='block md:text-md sm:text-xs lg:text-lg state'>games</span>
                     <span className='block  md:text-md sm:text-xs lg:text-lg text-white'>4000</span>
@@ -34,7 +34,7 @@ function SilverCard({ data }) {
                 </div>
                 <div>
                     <span className='block md:text-md sm:text-xs lg:text-lg state'>loses</span>
-                    <span className='block md:text-md sm:text-xs lg:text-lg text-white'>{data}</span>
+                    <span className='block md:text-md sm:text-xs lg:text-lg text-white'>100</span>
                 </div>
             </div>
             <button className='text-white rounded-xl sm:w-3/5 py-5 button_silver md:text-md sm:text-xs lg:text-lg mx-auto my-auto'>
