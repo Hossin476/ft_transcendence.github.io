@@ -63,9 +63,9 @@ function TicTacToe() {
   }
 
   return (
-    <div className='container_tictactoe w-11/12 mx-auto h-5/6 my-auto'>
+    <div className='container_tictactoe w-11/12 mx-auto h-11/12 my-auto'>
       <Header />
-      <div className='game_container grid mx-auto h-5/6 my-auto'>
+      <div className='game_container grid mx-auto h-11/12 my-auto'>
         <div className="top_layer grid px-5 mt-5">
           <FirstPlayer />
           <Timer />

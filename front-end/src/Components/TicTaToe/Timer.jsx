@@ -20,7 +20,7 @@ function Timer() {
     };
 
     return (
-        <div className="timer_container my-auto mx-auto w-full h-2/4 flex flex-col items-center border-2 max-w-48 border-white rounded-lg">
+        <div className="timer_container my-auto mx-auto w-full h-3/4 flex flex-col items-center border-2 max-w-48 border-white rounded-lg">
             <h1 className="text-2xl text-white my-auto mx-auto">Time</h1>
             <h2 className="text-xl text-white my-auto mx-auto">{formatTime(time)}</h2>
         </div>

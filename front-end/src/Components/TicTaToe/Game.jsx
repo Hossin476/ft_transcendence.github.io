@@ -4,7 +4,7 @@ function Game({ renderCell }) {
     return (
         <div className="bottom_layer grid h-5/6 mx-auto w-full mb-auto" >
             <div className=''>
-                <img src="/x_sign.png" alt="x_sign" className='border rounded-md p-4 mx-auto mt-10' />
+                <img src="/x_sign.png" alt="x_sign" className='border rounded-2xl p-6 mx-auto mt-10' />
             </div>
             <div className="game_board grid justify-center border-white border-4 w-full h-full mx-auto">
                 {renderCell(0, 'cell text-white border-t-0 border-l-0 right-border bottom-border')}
@@ -18,7 +18,7 @@ function Game({ renderCell }) {
                 {renderCell(8, 'cell text-white border-b-0 border-r-0')}
             </div>
             <div className="">
-            <img src="/o_sign.png" alt="x_sign" className='border rounded-md p-4 mx-auto mt-10' />
+            <img src="/o_sign.png" alt="x_sign" className='border rounded-2xl p-6 mx-auto mt-10' />
             </div>
         </div>
     )
