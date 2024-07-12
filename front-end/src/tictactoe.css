@@ -1,41 +1,104 @@
-*
-{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    scroll-behavior: smooth;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
 }
 
-@font-face
-{
-    font-family: valorax;
-    src: url(./valorax-lg25v.otf);
+@font-face {
+  font-family: valorax;
+  src: url(./valorax-lg25v.otf);
 }
 
-@font-face
-{
-    font-family: poppins;
-    src: url(./Poppins/Poppins-Bold.ttf);
+@font-face {
+  font-family: poppins;
+  src: url(./Poppins/Poppins-Bold.ttf);
 }
 
-.game_board
-{
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    /* grid-template-rows: repeat(3, 1fr); */
-    width: 100%;
-    height: 100%;
-    /* justify-content: center; */
-    /* align-content: center; */
-    background-color: #f5f5f5;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+@font-face {
+  font-family: plaguard;
+  src: url(./Plaguard/Plaguard.otf);
+}
+
+@font-face {
+  font-family: inter;
+  src: url(./Inter/static/Inter-Light.ttf);
 }
 
 .game_container {
-    width: 100%;
-    height: 100%;
-    background-color: rgba(33, 22, 44, 1);
-    border: 1px solid #c77dff;
-    border-radius: 20px;
-    overflow: auto;
-  }
+  width: 100%;
+  height: 100%;
+  background-color: rgba(33, 22, 44, 1);
+  border: 1px solid #c77dff;
+  border-radius: 20px;
+}
+
+.header {
+  font-family: valorax;
+  color: rgba(255, 255, 255, 1);
+  -webkit-text-stroke: 0.1px rgba(199, 125, 255, 1);
+}
+
+.cell {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+}
+
+.top_layer {
+  height: 50%;
+  display: grid;
+  grid-template-columns: 2fr 1fr 2fr;
+}
+
+.bottom_layer {
+  grid-template-columns: 1fr 3fr 1fr;
+  height: 100%;
+}
+
+.game_board {
+  place-content: center;
+  grid-template-columns: 100px 100px 100px;
+  grid-template-rows: 100px 100px 100px;
+}
+
+.cell {
+  width: 100%;
+  height: 100%;
+}
+
+.right-border {
+  border-right: 0.2em solid white;
+}
+
+.bottom-border {
+  border-bottom: 0.2em solid white;
+}
+
+.user {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.username {
+  font-family: inter;
+  font-size: 1.5rem;
+  color: white;
+}
+
+.level {
+  font-family: inter;
+  font-size: 0.7rem;
+  color: white;
+}
+
+.score {
+  font-family: plaguard;
+  font-size: 1.5rem;
+  color: white;
+}

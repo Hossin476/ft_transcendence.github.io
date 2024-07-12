@@ -3,7 +3,7 @@ import '../tournament.css'
 
 function Tournament() {
   return (
-    <div className='container_tournament flex flex-col justify-items-center max-w-5xl'>
+    <div className='container_tournament flex flex-col w-11/12 mx-auto h-5/6 my-auto'>
         <h1 className='text-4xl bg-slate-800 text-center top_title'>PING PONG</h1>
         <h3 className='text-white text-md bg-slate-800 text-center down_title'>TOURNAMENT</h3>
       <div className='grid grid-cols-5 grid-rows-5 gap-4 tor_cont my-auto sm:mx-5 lg:mx-20 md-mx-10'>
