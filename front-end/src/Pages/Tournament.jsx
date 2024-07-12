@@ -5,25 +5,25 @@ import User from '../Components/Tournament/User';
 
 function Tournament() {
   return (
-    <div className='container_tournament flex flex-col w-11/12 mx-auto h-11/12 my-auto'>
-        <h1 className='text-4xl bg-slate-800 text-center top_title'>PING PONG</h1>
-        <h3 className='text-white text-md bg-slate-800 text-center down_title'>TOURNAMENT</h3>
-      <div className='grid grid-cols-5 grid-rows-5 gap-4 tor_cont my-auto sm:mx-5 lg:mx-20 md-mx-10'>
-        <div className="rounded bg-white line_1"></div>
-        <div className="rounded bg-white absolute line_2"></div>
-        <div className='corner_1'></div>
-        <div className='corner_2'></div>
-        <div className='corner_3'></div>
-        <div className='corner_4'></div> 
-        <User className={"relative rounded-lg text-center col-start-1 row-start-2"}  />
-        <User className={"col-start-1 row-start-4 rounded-lg text-center"}  />
-        <User className={"col-start-5 row-start-2  rounded-lg text-center"}  />
-        <User className={"col-start-5 row-start-4  rounded-lg text-center"}  />
-        <User className={"col-start-2 row-start-3  rounded-lg text-center"}  />
-        <User className={"col-start-4 row-start-3  rounded-lg text-center"}  />
-        <User className={"winner_container col-start-3 row-start-3  rounded-lg text-center"}  />
-        {/* <div className="bg-white  rounded absolute line_3"></div>
-        <div className="bg-white rounded absolute line_4"></div> */}
+    <div className='container_tournament flex flex-col w-11/12 mx-auto h-11/12 lg:my-auto md:my-auto sm:my-auto py-auto'>
+      <h1 className='text-4xl bg-slate-800 text-center top_title'>PING PONG</h1>
+      <h3 className='text-white text-md bg-slate-800 text-center down_title'>TOURNAMENT</h3>
+      <div className='grid tor_cont w-full h-2/4 my-auto'>
+        <div className="first_half w-full h-full justify-center flex">
+          <div className="inner_container border-2 h-2/4 relative w-2/4 ">
+            <User className={"rounded-lg text-center absolute top-2/4"} />
+            <User className={"rounded-lg text-center absolute"} />
+            <User className={"  rounded-lg text-center absolute"} />
+          </div>
+        </div>
+        <div className="middle_half  relative flex justify-center">
+          <User className={"winner_container absolute  top-2/4 rounded-lg text-center"} />
+        </div>
+        <div className="last_half  relative border-2">
+          <User className={" rounded-lg text-center absolute right-0"} />
+          <User className={"rounded-lg text-center absolute right-0 bottom-0"} />
+          <User className={"rounded-lg text-center absolute top-2/4"} />
+        </div>
       </div>
     </div>
   );
