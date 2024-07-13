@@ -1,8 +1,6 @@
-import Enable2fa from "./Enable2fa";
-import Lottie from 'lottie-react';
-// import animationDatta from './animation.json'
 
-import LottieControl from './Animation';
+import AnimationE from './AnimationE';
+import AnimationD from './AnimationD';
 import Mid_Nav_disable from './Disable2fa';
 import Mid_Nav_enable from './Enable2fa';
 
@@ -13,7 +11,7 @@ import './Settings.css';
 import { useState } from "react";
 import AuthCode from "react-auth-code-input";
 import { PiWarningCircleBold } from "react-icons/pi";
-
+import { useEffect } from 'react';
 
 function Tittle(){
     return (
@@ -32,16 +30,14 @@ function Header(){
     );
 }
 
-function InputQrCode(){
-
-    const [result, setResult] = useState();
+function InputQrCode({result, setResult, IsNotCorrect, setNotCorrect}) {
 
     const handleOnChange = (res) => {
       setResult(res);
+      setNotCorrect(false);
     };
 
-    console.log(result);
-    return <AuthCode containerClassName="input-holder" inputClassName="input" 
+    return <AuthCode containerClassName="input-holder" inputClassName={IsNotCorrect ? 'input-error' : 'input'} 
                      allowedCharacters='numeric' onChange={handleOnChange} />;
 }
 
@@ -53,16 +49,39 @@ function Title_section({Title}){
   );
 }
 
-function Button_section({Name}){
+function Button_section({Name, handleClick}){
+
   return(
     <div className='button-section'>
-      <button className='cancel'>Cancel</button>
-      <button className='enable'>{Name}</button>
+        <button className='cancel'>Cancel</button>
+        <button onClick={handleClick} className='enable'>{Name}</button>
     </div>
   )
 }
 
-function TwofaSetD(){
+function TwofaSetD({SetEnable , IsEnable, setAnimation}){
+
+  const [result, setResult] = useState();
+  const [IsNotCorrect, setNotCorrect] = useState(false);
+
+
+  function handleClick(){
+    if (result == '000000'){
+      SetEnable(false);
+    }
+    else
+      setNotCorrect(true);
+  }
+
+  useEffect(() => {
+    if (IsEnable == false) {
+      const timer = setTimeout(() => {
+        setAnimation(false);
+      }, 3000); // 3 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [IsEnable]);
+
   return (
       <div className='settings-2fa'>
           <div className='tittle-section2'>
@@ -70,27 +89,55 @@ function TwofaSetD(){
                   <Mid_Nav_disable />
           </div>
           <div className='input-section2'>
-              <InputQrCode />
+              <InputQrCode  result={result} setResult={setResult} IsNotCorrect={IsNotCorrect} setNotCorrect={setNotCorrect} />
               <div className="warning-text">
                   <PiWarningCircleBold color="#E33838" size={"2vw"}/>
                   <p>You will be logged out from all your devices and browsers that have been used to log in to your account recently for security reasons.</p>
               </div>
           </div>
-          <Button_section Name={"Disable"}/>
+          <Button_section Name={"Disable"} handleClick={handleClick}/>
+          {
+              !IsEnable ? <Save_animation Status={false} /> : null
+          }
       </div>
   );
 }
 
-function  Save_animation(){
+function  Save_animation({Status}){
   return (
     <div className="animation">
-      <LottieControl />
+      {
+        Status ? <AnimationE /> : <AnimationD />
+      }
     </div>
   )
 }
 
-function TwofaSetE(){
+function TwofaSetE({SetEnable , IsEnable, setAnimation}){
+
+  const [result, setResult] = useState();
+  const [IsNotCorrect, setNotCorrect] = useState(false);
+
+
+  function handleClick(){
+    if (result == '000000'){
+      SetEnable(true);
+    }
+    else
+      setNotCorrect(true);
+  }
+
+  useEffect(() => {
+    if (IsEnable) {
+      const timer = setTimeout(() => {
+        setAnimation(true);
+      }, 3000); // 3 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [IsEnable]);
+
   return (
+
     <>
       <div className='settings-2fa'>
           <div className='tittle-section'>
@@ -98,20 +145,28 @@ function TwofaSetE(){
                   <Mid_Nav_enable />
                   </div>
                   <div className='input-section'>
-                  <InputQrCode />
+                  <InputQrCode  result={result} setResult={setResult} IsNotCorrect={IsNotCorrect} setNotCorrect={setNotCorrect} />
                   <div className="warning-text">
                   <PiWarningCircleBold color="#E33838" size={"2vw"}/>
                   <p>You will be logged out from all your devices and browsers that have been used to log in to your account recently for security reasons.</p>
                   </div>
           </div>
-                <Button_section Name={"Enable"}/>
-          <Save_animation />
+            <Button_section Name={"Enable"} handleClick={handleClick}/>
+            {
+              IsEnable ? <Save_animation Status={true} /> : null
+            }
       </div>
       </>
   );
 }
 
 function Two2fa(){
+
+  // const [Password, SetPassword] = useState(false);
+
+  const [IsEnable, SetEnable] = useState(false);
+  const [Isanimation, setAnimation] = useState(false);
+
   return (
     <div className="holder-container">
       <div className='settings-tittle'>
@@ -119,8 +174,9 @@ function Two2fa(){
       </div>
       <div className="settings-container">
           <Header/>
-          <TwofaSetE />
-          {/* <TwofaSetD /> */}
+          {
+            Isanimation ? <TwofaSetD SetEnable={SetEnable} IsEnable={IsEnable} setAnimation={setAnimation}  /> : <TwofaSetE SetEnable={SetEnable} IsEnable={IsEnable} setAnimation={setAnimation} />
+          }
       </div>
     </div>
   )
