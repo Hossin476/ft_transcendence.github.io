@@ -63,15 +63,19 @@ function TicTacToe() {
   }
 
   return (
-    <div className='container_tictactoe w-11/12 mx-auto h-11/12 my-auto'>
-      <Header />
-      <div className='game_container grid mx-auto h-11/12 my-auto'>
-        <div className="top_layer grid px-5 mt-5">
-          <FirstPlayer />
-          <Timer />
-          <SecondPlayer />
+    <div className="container_tournament bg-primaryColor w-full grid grid-rows-1 justify-items-center items-center">
+      <div className="flex justify-center items-center w-11/12 h-full">
+        <div className='border border-forthColor  w-full text-white flex flex-col h-5/6 items-center justify-evenly bg-linkBgColor rounded-3xl'>
+          <Header />
+          <div className='game_container grid h-11/12 w-full justify-around items-center'>
+            <div className="top_layer grid px-5">
+              <FirstPlayer />
+              <Timer />
+              <SecondPlayer />
+            </div>
+            <Game renderCell={renderCell} />
+          </div>
         </div>
-        <Game renderCell={renderCell} />
       </div>
     </div>
   );

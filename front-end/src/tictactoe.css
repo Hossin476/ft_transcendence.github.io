@@ -25,14 +25,6 @@
   src: url(./Inter/static/Inter-Light.ttf);
 }
 
-.game_container {
-  width: 100%;
-  height: 100%;
-  background-color: rgba(33, 22, 44, 1);
-  border: 1px solid #c77dff;
-  border-radius: 20px;
-}
-
 .header {
   font-family: valorax;
   color: rgba(255, 255, 255, 1);

@@ -2,7 +2,7 @@ import React from 'react'
 
 function Game({ renderCell }) {
     return (
-        <div className="bottom_layer grid h-5/6 mx-auto w-full mb-auto" >
+        <div className="bottom_layer grid h-5/6 mx-auto w-full" >
             <div className=''>
                 <img src="/x_sign.png" alt="x_sign" className='border rounded-2xl p-6 mx-auto mt-10' />
             </div>

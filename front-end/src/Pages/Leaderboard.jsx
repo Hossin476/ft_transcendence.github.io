@@ -6,17 +6,25 @@ import BronzeCard from '../Components/Leaderboard/BronzeCard';
 import Rank from '../Components/Leaderboard/Rank';
 import data from "../test.json";
 
-function Leaderboard({ data}) {
+function Leaderboard({ data }) {
   return (
-    <div className=' container_leaderboard flex flex-col w-11/12 mx-auto h-11/12 my-auto'>
-      <h1 className='lg:text-4xl md:text-4xl sm:text-md text-center h-1/6 leader flex justify-center items-center'>LeaderBoard</h1>
-      <div className='grid lg:grid-cols-3 md:grid-cols-3 gap-5 card_container my-auto mx-20 sm:overflow-auto md:overflow-hidden lg:overflow-hidden'>
-        <SilverCard  data={data} />
-        <GoldCard />
-        <BronzeCard />
+    <div className="container_tournament bg-primaryColor w-full grid grid-rows-1 justify-items-center items-center">
+      <div className="flex items-center justify-center w-11/12 h-full">
+        <div className='border border-forthColor lg:w-11/12 md:w-11/12  w-full text-white flex flex-col items-center justify-center h-5/6 bg-linkBgColor rounded-3xl'>
+          <h1 className='lg:text-4xl md:text-4xl sm:text-2xl xsm:text-2xl text-center leader w-full flex justify-center items-center h-[15%]'>LEADERBOARD</h1>
+          <div className="flex justify-center items-center h-[80%] w-full flex-col">
+            <div className=" w-full flex flex-col items-center justify-center">
+              <div className="grid grid-cols-3 h-full w-[90%] gap-5 items-center justify-center">
+                <SilverCard data={data} />
+                <GoldCard />
+                <BronzeCard />
+              </div>
+            </div>
+          </div>
+          <Rank />
+        </div>
       </div>
-      <Rank />
-    </div>
+    </div >
   );
 }
 
