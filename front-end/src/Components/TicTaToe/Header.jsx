@@ -1,11 +1,12 @@
 import React from 'react'
 import { FiCornerUpLeft } from "react-icons/fi";
+import { PiArrowUUpLeftBold } from 'react-icons/pi';
 
 function Header() {
     return (
-        <div className='top_container grid grid-cols-2 justify-center'>
-            <button><FiCornerUpLeft className='text-4xl cursor-pointer text-white'/></button> 
-            <h1 className='lg:text-4xl md:text-4xl sm:text-md text-center header'>
+        <div className='flex justify-center w-[80%] items-center'>
+            <button className='border-white border-2 bg-secondaryColor'><PiArrowUUpLeftBold style={{  color: 'white' }} /></button> 
+            <h1 className='flex-1 text-center leader'>
                 TIC TAC TOE
             </h1>
         </div>
