@@ -67,13 +67,13 @@ function TicTacToe() {
           <Header />
       <div className="flex justify-center items-center w-11/12 h-full">
         <div className='border border-forthColor  w-11/12 text-white flex flex-col h-5/6 items-center justify-evenly bg-linkBgColor rounded-3xl'>
-          <div className='game_container h-11/12 w-full justify-evenly items-center'>
+          <div className='game_container h-11/12 w-full items-center'>
             <div className=" flex w-full px-10 justify-center items-center xsm:gap-2 lg:gap-9">
               <FirstPlayer />
               <Timer />
               <SecondPlayer />
             </div>
-            {/* <Game renderCell={renderCell} /> */}
+            <Game renderCell={renderCell} />
           </div>
         </div>
       </div>

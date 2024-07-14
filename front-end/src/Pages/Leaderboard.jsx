@@ -12,9 +12,9 @@ function Leaderboard({ data }) {
       <div className="flex items-center justify-center w-11/12 h-full">
         <div className='border border-forthColor lg:w-11/12 md:w-11/12  w-full text-white flex flex-col items-center justify-center h-5/6 bg-linkBgColor rounded-3xl'>
           <h1 className='lg:text-4xl md:text-4xl sm:text-2xl xsm:text-2xl text-center leader w-full flex justify-center items-center h-[15%]'>LEADERBOARD</h1>
-          <div className="flex justify-center items-center h-[80%] w-full flex-col">
-            <div className=" w-full flex flex-col items-center justify-center">
-              <div className="grid grid-cols-3 h-full w-[90%] gap-5 items-center justify-center">
+          <div className="flex justify-center items-center h-[70%] w-full flex-col">
+            <div className=" w-full flex h-full flex-col items-center justify-center">
+              <div className="grid grid-cols-3 h-full max-h-[60vh] w-[90%] gap-5 items-center justify-center">
                 <SilverCard data={data} />
                 <GoldCard />
                 <BronzeCard />
