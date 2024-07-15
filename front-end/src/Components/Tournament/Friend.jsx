@@ -1,7 +1,7 @@
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import 'ldrs/hourglass'
+// import 'ldrs/hourglass'
 import { useState } from 'react';
 
 export default function Friend({ icon = false, gameName, hidden = false, PlayerName }) {
