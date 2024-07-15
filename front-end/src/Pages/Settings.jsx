@@ -161,9 +161,6 @@ function TwofaSetE({SetEnable , IsEnable, setAnimation}){
 }
 
 function Two2fa(){
-
-  // const [Password, SetPassword] = useState(false);
-
   const [IsEnable, SetEnable] = useState(false);
   const [Isanimation, setAnimation] = useState(false);
 

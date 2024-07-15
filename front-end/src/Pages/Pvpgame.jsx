@@ -25,10 +25,14 @@ function Header({ title}) {
 
   return (
     <header className="header">
-      <button onClick={navigateToGame} className="back-button">
-        <PiArrowUUpLeftBold style={{ fontSize: '2rem', color: 'white' }} />
-      </button>
-      <h1>{title}</h1>
+      <div className='back-div'>
+        <button onClick={navigateToGame} className="back-button">
+          <PiArrowUUpLeftBold style={{ fontSize: '2rem', color: 'white' }} />
+        </button>
+      </div>
+      <div className='tittle-div'>
+        <h1>{title}</h1>
+      </div>
     </header>
   )
 }
@@ -132,25 +136,27 @@ function PvpGame({ title}) {
 
 
   return (
-    <div className="ping-pong-container">
-      <Header title={title}/>
-      <div className="player-cards">
-        <Mycard />
-        {
-          isstarted ? (
-            <Vsplayer_card />
-          ) : (
-            isstart ? <Wait_card /> : <Add_card />
-          )
-        }
+    <div className='holder'>
+      <div className="ping-pong-container">
+        <Header title={title}/>
+        <div className="player-cards">
+          <Mycard />
+          {
+            isstarted ? (
+              <Vsplayer_card />
+            ) : (
+              isstart ? <Wait_card /> : <Add_card />
+            )
+          }
+        </div>
+          {
+            isstarted ? (
+              <Started_button />
+            ) : (
+              isstart ? <Matchmaking_button onClick={stopGame} /> : <Start_button onClick={startGame} />
+            )
+          }
       </div>
-        {
-          isstarted ? (
-            <Started_button />
-          ) : (
-            isstart ? <Matchmaking_button onClick={stopGame} /> : <Start_button onClick={startGame} />
-          )
-        }
     </div>
   );
 };
