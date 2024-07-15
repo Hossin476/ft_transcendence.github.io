@@ -15,7 +15,6 @@
     border: 2px solid hsl(0, 0%, 80%);
     color: white;
     font-size: 15px;
-    padding: 10px 20px;
     cursor: pointer;
     width: 128px;
     height: 50px;
@@ -29,9 +28,7 @@
   .matchmaking {
     width: 128px;
     height: 94px;
-    /* margin-top: 10px; */
   }
-
 
   .matchmaking p{
   background-color: #2A2035;
@@ -45,6 +42,23 @@
   width: 100%;
   }
 
+@media only screen and (max-width: 900px){
+  .cancel-button {
+    width: 100px;
+    height: 40px;
+    font-size: 10px;
+  }
+
+  .matchmaking {
+    width: 100px;
+    height: 72px;
+  }
+
+  .matchmaking p{
+    font-size: 8px;
+  }
+
+}
 
 
   

@@ -129,7 +129,7 @@ function PvpGame({ title}) {
     if (isstart) {
       const timer = setTimeout(() => {
         setStarted(true);
-      }, 4000); // 4 seconds
+      }, 400000); // 4 seconds
       return () => clearTimeout(timer);
     }
   }, [isstart]);

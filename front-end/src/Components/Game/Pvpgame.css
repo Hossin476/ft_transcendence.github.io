@@ -24,7 +24,7 @@
     justify-content: center;
     background-color: #21162C;
     color: white;
-    width: 60%;
+    width: 70%;
     height: 575px;
     border-style: solid;
     border-color: #C77DFF;
@@ -129,12 +129,12 @@
 
 .player-info h2 {
   font-family: Inter, Arial, sans-serif;
-  font-size: 20px;
+  font-size: 1.3vw;
 }
 
 .player-info p {
   margin: 5px 0 0;
-  font-size: 10px;
+  font-size: 0.7vw;
   text-align: center;
 }
 
@@ -198,3 +198,152 @@
   height: 50px;
 }
 
+@media only screen and (min-width: 2560px){
+  .player-info p {
+    font-size: 0.5vw;
+  }
+
+  .player-info h2 {
+    font-size: 1vw;
+  }
+}
+
+@media only screen and (max-width: 900px){
+  .player-info p {
+    font-size: 1.2vw;
+  }
+
+  .player-info h2 {
+    font-size: 2vw;
+  }
+
+  .add-player-card p{
+    font-size: 2vw;
+  }
+
+  .add-player-card h2{
+    font-size: 2vw;
+  }
+
+  .avatar {
+    width: 50%;
+  }
+
+  .anonymous {
+    width: 50%;
+  }
+
+  .player-card {
+    width: 30%;
+    height: 70%;
+  }
+
+  .add-player-card {
+    width: 30%;
+    height: 70%;
+  }
+
+  .tittle-div h1{
+    font-size: 4vw;
+  }
+
+  .start-button {
+    width: 100px;
+    height: 40px;
+    font-size: 10px;
+  }
+
+  .started-button {
+    width: 100px;
+    height: 40px;
+    font-size: 10px;
+  }
+
+  .empty_start {
+    width: 100px;
+    height: 40px;
+  }
+
+  .start-button_div {
+    width: 100px;
+    height: 70px;
+  }
+
+}
+
+
+@media only screen and (max-width: 640px){
+  .player-info p {
+    font-size: 1.2vw;
+  }
+
+  .player-info h2 {
+    font-size: 2vw;
+  }
+  
+  .add-player-card p{
+    font-size: 2vw;
+  }
+
+  .add-player-card h2{
+    font-size: 2vw;
+  }
+
+  .avatar {
+    width: 50%;
+  }
+
+  .anonymous {
+    width: 50%;
+  }
+
+  .player-card {
+    width: 30%;
+    height: 50%;
+  }
+
+  .add-player-card {
+    width: 30%;
+    height: 50%;
+  }
+
+  .tittle-div h1{
+    font-size: 4vw;
+  }
+
+  .start-button {
+    width: 100px;
+    height: 40px;
+    font-size: 10px;
+  }
+
+  .started-button {
+    width: 100px;
+    height: 40px;
+    font-size: 10px;
+  }
+
+  .empty_start {
+    width: 100px;
+    height: 40px;
+  }
+
+  .start-button_div {
+    width: 100px;
+    height: 70px;
+  }
+
+  .ping-pong-container {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    border: none;
+    background-color: transparent;
+
+  }
+
+  .holder{
+    width: 100%;
+    height: 80%;
+  }
+}
