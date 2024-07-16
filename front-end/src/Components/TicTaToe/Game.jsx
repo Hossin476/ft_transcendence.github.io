@@ -52,7 +52,7 @@ function Game({ updateScores }) {
     };
 
     return (
-        <div className="bottom_layer h-[90%] sm:flex xsm:flex justify-evenly items-center w-full">
+        <div className="">
             <Canvas dpr={window.devicePixelRatio} camera={{ fov: 75, position: [0, 0, -6] }}>
                 <Sky mieCoefficient={0.001} mieDirectionalG={6} rayleigh={4} sunPosition={[0, 0, 1]} turbidity={8} />
                 <OrbitControls />
