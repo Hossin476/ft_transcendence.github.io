@@ -1,5 +1,5 @@
 
-import img from "/public/lshail.jpeg"
+import img from "/lshail.jpeg"
 import { IoNotifications } from "react-icons/io5";
 import { LiaCoinsSolid } from "react-icons/lia";
 export default function NavBar() {

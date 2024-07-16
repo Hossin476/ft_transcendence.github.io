@@ -1,17 +1,8 @@
+import React, { useState, useEffect, forwardRef, Suspense } from 'react';
+import { Canvas } from '@react-three/fiber';
+import { Line, OrbitControls, Stage, Sky } from '@react-three/drei';
+import { Physics, RigidBody } from '@react-three/rapier';
 
-
-import { Environment, Line, OrbitControls, Stage } from "@react-three/drei";
-import React, { Suspense, useState } from "react";
-import { Canvas } from "@react-three/fiber";
-import { useRef } from "react";
-import { forwardRef } from "react";
-import { Physics, RigidBody } from "@react-three/rapier";
-
-
-
-/* TODO: add the hidden tiles, make them clickable to render either the x or the o meshes, manage state */
-
-//? The positions of the meshes
 const positions = [
     [-1, 1, 0],
     [0, 1, 0],
@@ -24,64 +15,67 @@ const positions = [
     [1, -1, 0],
 ];
 
-function Game() {
+function Game({ updateScores }) {
     const [board, setBoard] = useState(Array(9).fill(null));
-    // const [winnerLine, setWinnerLine] = useState(null);
+    const [xIsNext, setXIsNext] = useState(true);
+    const [winnerLine, setWinnerLine] = useState(null);
+    const [isGameOver, setIsGameOver] = useState(false);
 
-    // const handleClick = (index) => {
-    //     const newBoard = board.slice();
-    //     if (calculateWinner(board) || newBoard[index]) return;
-    //     newBoard[index] = xIsNext ? "X" : "O";
-    //     setBoard(newBoard);
-    //     setXIsNext(!xIsNext);
-    // };
+    const handleClick = (index) => {
+        if (isGameOver || board[index]) return;
 
-    // const winner = calculateWinner(board);
-    // const isBoardFull = board.every(cell => cell !== null);
+        const newBoard = board.slice();
+        newBoard[index] = xIsNext ? 'X' : 'O';
+        setBoard(newBoard);
+        setXIsNext(!xIsNext);
 
-    // const resetGame = () => {
-    //     setBoard(Array(9).fill(null));
-    //     setXIsNext(true);
-    //     // setWinnerLine(null);
-    // };
+        const winner = calculateWinner(newBoard);
+        if (winner) {
+            setWinnerLine(winner.line);
+            updateScores(winner.player);
+            setIsGameOver(true);
+        } else if (newBoard.every(cell => cell !== null)) {
+            setIsGameOver(true);
+        }
+    };
 
-    // if (winner) {
-    //     // setWinnerLine(winner.line);
-    //     console.log(`Winner: ${winner.player}`);
-    //     setTimeout(() => resetGame(), 4000);
-    // }
+    useEffect(() => {
+        if (isGameOver) {
+            const timer = setTimeout(() => {
+                resetGame();
+            }, 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [isGameOver]);
 
-    // if (!winner && isBoardFull) {
-    //     console.log('Draw');
-    //     setTimeout(() => resetGame(), 4000);
-    // }
-
-    // const renderXO = (value, index) => {
-    //     if (value === "X") return <MeshX key={index} position={positions[index]} />;
-    //     if (value === "O") return <MeshO key={index} position={positions[index]} />;
-    //     return null;
-    // };
-    const xIsNext = useRef(false)
-
-
+    const resetGame = () => {
+        setBoard(Array(9).fill(null));
+        setXIsNext(true);
+        setWinnerLine(null);
+        setIsGameOver(false);
+    };
 
     return (
         <div className="bottom_layer h-[90%] sm:flex xsm:flex justify-evenly items-center w-full">
-            <Canvas dpr={window.devicePixelRatio}  camera={{fov: 75 ,position:[0,0,-6]}}>
+            <Canvas dpr={window.devicePixelRatio} camera={{ fov: 75, position: [0, 0, -6] }}>
+                <Sky mieCoefficient={0.001} mieDirectionalG={6} rayleigh={4} sunPosition={[0, 0, 1]} turbidity={8} />
                 <OrbitControls />
                 <Suspense fallback={null}>
-                        <ambientLight intensity={0.4} />
-                        <pointLight position={[10, 10, 10]} />
+                    <ambientLight intensity={0.4} />
+                    <pointLight position={[10, 10, 10]} />
                     <Stage contactShadow shadows adjustCamera intensity={1} environment="city">
-                        <Physics gravity={[0, 0, 9.8]}>
-                            <RigidBody colliders='cuboid' type='kinematicPosition' position={[0,0,0.1]}>
+                        <Physics gravity={[0, 0, 9.81]}>
+                            <RigidBody colliders="cuboid" type="kinematicPosition" position={[0, 0, 0.1]}>
                                 <mesh>
-                                    <boxGeometry args={[3,3,0]}/>
-                                    <meshStandardMaterial attach="material" color={'#1A1333'} transparent opacity={0.2} metalness={0.3} roughness={0.3}/>
+                                    <boxGeometry args={[3, 3, 0]} />
+                                    <meshStandardMaterial attach="material" color="#1A1333" transparent opacity={0} />
                                 </mesh>
                             </RigidBody>
                             <TicTacToeGrid />
-                            {positions.map((item , index)=> <Holder key={index} position={item}  ref={xIsNext}/>)}
+                            {positions.map((item, index) => (
+                                <Holder key={index} position={item} board={board} index={index} handleClick={handleClick} />
+                            ))}
+                            {winnerLine && <WinnerLine line={winnerLine} />}
                         </Physics>
                     </Stage>
                 </Suspense>
@@ -90,23 +84,30 @@ function Game() {
     );
 }
 
+const Holder = forwardRef(({ position, board, index, handleClick }, ref) => {
+    const value = board[index];
 
-const Holder = forwardRef( ({position},ref) =>{
-    const [click, setClick] = useState(false)
-    const handleClick = ()=> {
-         setClick(true)
-         ref.current  = !ref.current
-    }
+    const onClick = () => {
+        if (!value) {
+            handleClick(index);
+        }
+    };
+
     return (
         <>
-        {!click ? 
-            <mesh position={position} onClick={handleClick}>
-                <boxGeometry args={[0.9,0.9,0]}/>
-                <meshStandardMaterial attach="material" color={'#1A1333'} transparent opacity={0} />
-            </mesh>: ref.current ?  <MeshX position={position} /> : <MeshO  position={position} />}
+            {!value ? (
+                <mesh position={position} onClick={onClick}>
+                    <boxGeometry args={[0.9, 0.9, 0]} />
+                    <meshStandardMaterial attach="material" color="#1A1333" transparent opacity={0} />
+                </mesh>
+            ) : value === 'X' ? (
+                <MeshX position={position} />
+            ) : (
+                <MeshO position={position} />
+            )}
         </>
-    )
-})
+    );
+});
 
 const calculateWinner = (squares) => {
     const lines = [
@@ -122,51 +123,37 @@ const calculateWinner = (squares) => {
     for (let i = 0; i < lines.length; i++) {
         const [a, b, c] = lines[i];
         if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-            return { player: squares[a], line: [positions[a],positions[b], positions[c]] };
+            return { player: squares[a], line: [positions[a], positions[b], positions[c]] };
         }
     }
     return null;
 };
 
-const MeshX = ({ position }) => {
-
-    return (
-        <RigidBody position={[position[0],position[1],position[2]-1]} restitution={1}>
-            <group>
-                <mesh rotation={[0, 0, Math.PI / 4]}>
-                    <boxGeometry args={[0.6, 0.1, 0.1]} />
-                    <meshStandardMaterial color="green" />
-                </mesh>
-                <mesh rotation={[0, 0, -Math.PI / 4]}>
-                    <boxGeometry args={[0.6, 0.1, 0.1]} />
-                    <meshStandardMaterial color="green" />
-                </mesh>
-            </group> 
-        </RigidBody>
-
-    )
-}
-
-const MeshO = ({ position }) => {
-
-    return (
-        <RigidBody position={[position[0],position[1],position[2]-1]} restitution={0.9} >
-            <mesh >
-                <torusGeometry args={[0.2, 0.07, 16, 100]} />
-                <meshStandardMaterial color="red" />
+const MeshX = ({ position }) => (
+    <RigidBody position={[position[0], position[1], position[2] - 1]} restitution={0.5}>
+        <group>
+            <mesh rotation={[0, 0, Math.PI / 4]}>
+                <boxGeometry args={[0.6, 0.1, 0.1]} />
+                <meshStandardMaterial color="green" />
             </mesh>
-        </RigidBody>
-    )
-    
-}
+            <mesh rotation={[0, 0, -Math.PI / 4]}>
+                <boxGeometry args={[0.6, 0.1, 0.1]} />
+                <meshStandardMaterial color="green" />
+            </mesh>
+        </group>
+    </RigidBody>
+);
 
-// const WinnerLine = ({ line }) => (
-//     <Line
-//         points={line}
-//         color="yellow"
-//         lineWidth={8}
-//     />
-// );
+const MeshO = ({ position }) => (
+    <RigidBody position={[position[0], position[1], position[2] - 1]} restitution={0.5}>
+        <mesh>
+            <torusGeometry args={[0.2, 0.07, 16, 48]} />
+            <meshStandardMaterial color="red" />
+        </mesh>
+    </RigidBody>
+);
+
+const WinnerLine = ({ line }) => <Line points={line} color="yellow" lineWidth={8} />;
 
 const TicTacToeGrid = () => {
     const lines = [

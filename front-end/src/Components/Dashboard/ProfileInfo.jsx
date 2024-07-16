@@ -1,5 +1,5 @@
 import { RiFileCopy2Line } from "react-icons/ri";
-import imgProfle from "/public/ykhourba.jpeg"
+import imgProfle from "/ykhourba.jpeg"
 
 
 export default function ProfileInfo() {

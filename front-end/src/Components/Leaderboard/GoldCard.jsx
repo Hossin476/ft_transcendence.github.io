@@ -3,7 +3,7 @@ import React from 'react'
 function GoldCard() {
     return (
         <div className='rounded-3xl relative flex flex-col items-center justify-evenly h-[95%] text-center card_gold pb-4'>
-            <div className='flex flex-col gap-2 justify-center items-center h-[100px]'>
+            <div className='flex flex-col gap-2 justify-center items-center'>
                 <img src='/gold_badge.svg' alt='gold badge' className='' />
                 <h5 className='md:text-md sm:text-xs lg:text-lg text-sm  text-white'>Elite</h5>
             </div>

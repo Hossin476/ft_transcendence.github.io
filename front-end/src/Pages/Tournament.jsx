@@ -10,6 +10,7 @@ function Tournament() {
   return (
     <div className="container_tournament bg-primaryColor w-full grid grid-rows-1 justify-items-center items-center">
       <div className="flex justify-center items-center w-11/12 h-full">
+        < Challenge />
         <div className='border  border-forthColor lg:w-11/12 md:w-11/12  w-full text-white flex flex-col items-center h-5/6 justify-evenly bg-linkBgColor rounded-3xl'>
           < Header />
           <div className=" w-full mx-auto grid justify-center h-2/4 my-auto tor_cont px-10">

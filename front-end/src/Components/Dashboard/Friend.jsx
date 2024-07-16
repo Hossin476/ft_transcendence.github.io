@@ -1,5 +1,5 @@
 import { BsChatText } from "react-icons/bs";
-import img from "/public/ykhourba.jpeg"
+import img from "/ykhourba.jpeg"
 
 export default function Friend()
 {

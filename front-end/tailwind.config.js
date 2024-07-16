@@ -56,7 +56,13 @@ export default {
       },
       height:{
         '11/12':'90%'
-      }
+      },
+      fontFamily:{
+        'Valorax':['Valorax','sans-serif'],
+        'Plaguard':['plaguard','sans-serif'],
+        'poppins': ['poppins','sans-serif'],
+        'inter': ['inter','sans-serif'],
+      },
     },
   },
   plugins: [],

@@ -44,3 +44,22 @@
 .dash-main-wrapper {
     height: calc(100% - 420px);
 }
+
+@font-face {
+    font-family: Valorax; /* Use a custom name for your font */
+    src: url('/font/valorax.otf');
+  }
+
+  @font-face {
+    font-family: Plaguard; /* Use a custom name for your font */
+    src: url('/font/Plaguard.otf') 
+  }
+  @font-face {
+    font-family: poppins;
+    src: url('font/Poppins-Medium.ttf');
+  }
+  
+  @font-face {
+    font-family: inter;
+    src: url('font/Inter-Medium.ttf');
+  }

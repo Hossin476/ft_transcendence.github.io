@@ -1,6 +1,6 @@
 
 
-import icon from  '/public/achievement.png'
+import icon from  '/achievement.png'
 
 export default function Achievement()
 {
