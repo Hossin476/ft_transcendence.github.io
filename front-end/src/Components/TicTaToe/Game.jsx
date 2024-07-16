@@ -34,16 +34,12 @@ function Game({ updateScores }) {
             setWinnerLine(winner.line);
             updateScores(winner.player);
             setIsGameOver(true);
-        } else if (newBoard.every(cell => cell !== null)) {
-            setIsGameOver(true);
-        }
+        } else if (newBoard.every(cell => cell !== null)) setIsGameOver(true);
     };
 
     useEffect(() => {
         if (isGameOver) {
-            const timer = setTimeout(() => {
-                resetGame();
-            }, 5000);
+            const timer = setTimeout(() => resetGame(), 5000);
             return () => clearTimeout(timer);
         }
     }, [isGameOver]);
