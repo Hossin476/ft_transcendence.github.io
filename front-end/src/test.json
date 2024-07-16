@@ -1,0 +1,25 @@
+{
+    "leaderboard": [
+        {
+            "rank": 1,
+            "name": "John Doe",
+            "games": 100,
+            "wins": 50,
+            "losses": 50
+        },
+        {
+            "rank": 2,
+            "name": "Jane Doe",
+            "games": 100,
+            "wins": 60,
+            "losses": 40
+        },
+        {
+            "rank": 3,
+            "name": "John Smith",
+            "games": 100,
+            "wins": 70,
+            "losses": 30
+        }
+    ]
+}
