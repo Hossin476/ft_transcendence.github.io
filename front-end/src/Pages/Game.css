@@ -28,6 +28,8 @@
     transform: translate(-50%, -50%);
     width: 60%;
     height: 60%;
+    max-width:1024px;
+
 }
 
 .text-div{
@@ -210,8 +212,156 @@
     border-color: #C77DFF;
 }
 
-/* @media screen and (max-width: 768px) {
+@media only screen and (max-width: 600px){
+
     .text-section h1 {
-       
+        font-size: 25px;
+        margin-top: 0px;
     }
-} */
+
+    .text-section{
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+        width: 100%;
+        border-radius: 20px;
+        align-items: center;
+
+    }
+
+    .ping-buttons {
+        margin: 0px;
+        margin-top: 30px;
+    }
+
+    .text-section2 h1 {
+        font-size: 25px;
+        margin-top: 0px;
+    }
+
+    .text-section2 {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+        width: 100%;
+        border-radius: 20px;
+        align-items: center;
+    }
+
+    .tic-buttons{
+        margin: 0px;
+        margin-top: 30px;
+    }
+
+    .pvp-button {
+        font-size: 8px;
+        height: 40px;
+        width: 55px;
+    }
+
+    .pvp-button2{
+        font-size: 8px;
+        height: 40px;
+        width: 55px;
+    }
+
+    .tournament-button {
+        font-size: 8px;
+        height: 40px;
+        width: 80px;
+    }
+
+    .tournament-button2{
+        font-size: 8px;
+        height: 40px;
+        width: 80px;
+    }
+    
+}
+
+@media only screen and (min-width: 600px) {
+    .text-section h1 {
+        font-size: 20px;
+    }
+
+    .text-section2 h1 {
+        font-size: 20px;
+    }
+
+    .pvp-button {
+        font-size: 6px;
+        height: 30px;
+        width: 20px;
+    }
+
+    .pvp-button2{
+        font-size: 6px;
+        height: 30px;
+        width: 20px;
+    }
+
+    .tournament-button {
+        font-size: 6px;
+        height: 30px;
+        width: 60px;
+    }
+
+    .tournament-button2{
+        font-size: 6px;
+        height: 30px;
+        width:60px;
+    }
+
+}
+
+@media only screen and (min-width: 900px) {
+    .text-section h1 {
+        font-size: 30px;
+    }
+
+    .text-section2 h1 {
+        font-size: 30px;
+    }
+
+    .pvp-button {
+        font-size: 8px;
+        height: 40px;
+        width: 55px;
+    }
+
+    .pvp-button2{
+        font-size: 8px;
+        height: 40px;
+        width: 55px;
+    }
+
+    .tournament-button {
+        font-size: 8px;
+        height: 40px;
+        width: 80px;
+    }
+
+    .tournament-button2{
+        font-size: 8px;
+        height: 40px;
+        width: 80px;
+    }
+
+}
+
+
+@media only screen and (min-width: 1250px) {
+    .text-section h1 {
+        font-size: 45px;
+    }
+
+    .text-section2 h1 {
+        font-size: 45px;
+    }
+}
+
+@media only screen and (min-width: 2560px) {
+    .text-section h1 {
+        font-size: 55px;
+    }
+
+    .text-section2 h1 {
+        font-size: 55px;
+    }
+}
