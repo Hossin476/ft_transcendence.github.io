@@ -44,10 +44,3 @@ p {
   color: rgba(255, 255, 255, 1);
   -webkit-text-stroke: 1px rgba(199, 125, 255, 1);
 }
-
-
-.all_cont
-{
-  grid-template-columns: 4fr 1fr;
-  margin:auto;
-}
