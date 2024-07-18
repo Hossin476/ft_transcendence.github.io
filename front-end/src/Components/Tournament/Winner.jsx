@@ -2,7 +2,7 @@ import React from 'react';
 
 function Winner({ className }) {
     return (
-        <div className={`${className} flex flex-col items-center justify-center sm:h-[30%] xsm:[30%]`}>
+        <div className={`${className} flex flex-col items-center justify-center `}>
             <div className="relative grid place-items-center w-full h-full">
                 <img 
                     src="/winner.png" 
