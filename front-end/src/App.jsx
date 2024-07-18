@@ -16,12 +16,12 @@ function App() {
       <Routes>
         <Route element={<LayoutOne />}>
           <Route path="dashboard" element={<Dashboard />} />
+          <Route path="" element={<Dashboard />} />
           <Route path="managefriends" element={<ManageFriends />} />
 		  <Route path="settings" element={<Settings/>}/>
 		  <Route path='leaderboard' element={<Leaderboard/>}/>
 		  <Route path="chat" element={<></>} />
           <Route path="game">
-
             <Route index element={<Game />} />
             <Route path="tictactoe">
               <Route path="pvpgame">
