@@ -1,13 +1,13 @@
 
-import AnimationE from './AnimationE';
-import AnimationD from './AnimationD';
-import Mid_Nav_disable from './Disable2fa';
-import Mid_Nav_enable from './Enable2fa';
+import AnimationE from '../Components/Settings/AnimationE';
+import AnimationD from '../Components/Settings/AnimationD';
+import Mid_Nav_disable from '../Components/Settings/Disable2fa';
+import Mid_Nav_enable from '../Components/Settings/Enable2fa';
 
 
-import './Disable2fa.css';
-import './Enable2fa.css';
-import './Settings.css';
+import '../Components/Settings/Disable2fa.css';
+import '../Components/Settings/Enable2fa.css';
+import '../Components/Settings/Settings.css';
 import { useState } from "react";
 import AuthCode from "react-auth-code-input";
 import { PiWarningCircleBold } from "react-icons/pi";

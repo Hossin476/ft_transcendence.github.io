@@ -4,8 +4,8 @@ import { PiArrowUUpLeftBold } from 'react-icons/pi';
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { useEffect } from 'react';
 
-import '../Components/Game/Pvpgame.css';
-import '../Components/Game/Matchmaking.css';
+import './Pvpgame.css';
+import './Matchmaking.css';
 
 import mypic from '/avatar/sbzizal.jpeg';
 import vs_avatar from '/avatar/lshail.jpeg';
@@ -129,7 +129,7 @@ function PvpGame({ title}) {
     if (isstart) {
       const timer = setTimeout(() => {
         setStarted(true);
-      }, 400000); // 4 seconds
+      }, 4000); // 4 seconds
       return () => clearTimeout(timer);
     }
   }, [isstart]);

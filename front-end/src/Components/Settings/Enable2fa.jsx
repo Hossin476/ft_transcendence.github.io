@@ -1,5 +1,5 @@
 import { CgCopy } from "react-icons/cg";
-import qrcode from '../../public/avatar/qrcode.png';
+import qrcode from '../../../public/avatar/qrcode.png';
 
 import './Disable2fa.css';
 import './Enable2fa.css';

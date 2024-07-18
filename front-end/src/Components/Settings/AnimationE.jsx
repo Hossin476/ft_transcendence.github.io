@@ -1,6 +1,6 @@
 import React from 'react'
 import Lottie from 'react-lottie';
-import Enable from './Enable.json'
+import Enable from '../../../public/Enable.json';
 
 
 const AnimationE = () => {

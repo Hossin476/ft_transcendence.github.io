@@ -1,6 +1,6 @@
 import React from 'react'
 import Lottie from 'react-lottie';
-import Disable from './Disable.json'
+import Disable from '../../../public/Disable.json';
 
 const AnimationD = ({Status}) => {
 

@@ -1,4 +1,4 @@
-import './Game.css'
+import '../Components/Game/Game.css'
 import Pingpic from '../../public/avatar/PingPong.png';
 import TicPic from '../../public/avatar/TicTacToe.png';
 import { useNavigate } from "react-router-dom";
