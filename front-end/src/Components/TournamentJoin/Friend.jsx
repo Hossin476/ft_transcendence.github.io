@@ -20,7 +20,7 @@ export default function Friend({ icon = false, gameName, hidden = false,PlayerNa
                 <h3 className='font-medium text-ellipsis overflow-hidden whitespace-nowrap xsm:text-[10px] lg:text-[15px] xsm:w-[50px] lg:w-[100px] font-inter'>{PlayerName}</h3>
                 <p className='text-xs opacity-70 text-ellipsis overflow-hidden whitespace-nowrap font-inter xsm:text-[6px]  lg:text-[10px]'>{icon ? "in lobby" : 'palying ' + gameName}</p>
             </div>
-            {icon && (!WaitRequest ? <button onClick={notify}><img src="./png.png" className="w-[19px] h-[19px]" /> </button>: <l-hourglass  size="19"bg-opacity="0.1" speed="1.75" color="white" ></l-hourglass>)}
+            {icon && (!WaitRequest ? <button onClick={notify}><img src="/png.png" className="w-[19px] h-[19px]" /> </button>: <l-hourglass  size="19"bg-opacity="0.1" speed="1.75" color="white" ></l-hourglass>)}
         </div>
     </div>)
 }

@@ -14,6 +14,7 @@ import {useLocation} from 'react-router-dom'
 
 import 'ldrs/dotPulse';
 import { useNavigate } from 'react-router';
+import Challenge from '../TournamentJoin/Challenge';
 
 
 function Header({ title}) {
@@ -31,8 +32,8 @@ function Header({ title}) {
           <PiArrowUUpLeftBold style={{ fontSize: '2rem', color: 'white' }} />
         </button>
       </div>
-      <div className='tittle-div'>
-        <h1>{title}</h1>
+      <div className='tittle-div '>
+        <h1 className='text-border'>{title}</h1>
       </div>
     </header>
   )
@@ -140,28 +141,34 @@ function PvpGame({ title}) {
 
 
   return (
-    <div className='holder'>
-      <div className="ping-pong-container">
-        <Header title={title}/>
-        <div className="player-cards">
-          <Mycard />
-          {
-            isstarted ? (
-              <Vsplayer_card />
-            ) : (
-              isstart ? <Wait_card /> : <Add_card />
-            )
-          }
+
+    <div className='bg-primaryColor w-full flex items-center justify-between px-7 relative h-[100%]'>
+            <div className="h-[100%] flex  justify-center flex-col items-center xsm:w-[90%] lg:w-[80%] ">
+                <div className='holder'>
+                  <div className="ping-pong-container">
+                    <Header title={title}/>
+                    <div className="player-cards">
+                      <Mycard />
+                      {
+                        isstarted ? (
+                          <Vsplayer_card />
+                        ) : (
+                          isstart ? <Wait_card /> : <Add_card />
+                        )
+                      }
+                    </div>
+                      {
+                        isstarted ? (
+                          <Started_button />
+                        ) : (
+                          isstart ? <Matchmaking_button onClick={stopGame} /> : <Start_button onClick={startGame} />
+                        )
+                      }
+                  </div>
+                </div>
+            </div>
+            <Challenge/>
         </div>
-          {
-            isstarted ? (
-              <Started_button />
-            ) : (
-              isstart ? <Matchmaking_button onClick={stopGame} /> : <Start_button onClick={startGame} />
-            )
-          }
-      </div>
-    </div>
   );
 };
 

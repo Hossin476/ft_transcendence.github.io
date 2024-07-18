@@ -10,17 +10,17 @@ import TournamentJoin from "./Pages/TournamentJoin";
 import Tournament from "./Pages/Tournament";
 import Settings from "./Pages/Settings";
 import Leaderboard from "./Pages/Leaderboard";
+import './server.js'
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route element={<LayoutOne />}>
           <Route path="dashboard" element={<Dashboard />} />
-          <Route path="" element={<Dashboard />} />
           <Route path="managefriends" element={<ManageFriends />} />
-		  <Route path="settings" element={<Settings/>}/>
-		  <Route path='leaderboard' element={<Leaderboard/>}/>
-		  <Route path="chat" element={<></>} />
+          <Route path="settings" element={<Settings />} />
+          <Route path="leaderboard" element={<Leaderboard />} />
+          <Route path="chat" element={<></>} />
           <Route path="game">
             <Route index element={<Game />} />
             <Route path="tictactoe">
@@ -29,8 +29,11 @@ function App() {
                 <Route path="match" element={<TicTacToe />} />
               </Route>
               <Route path="tournament">
-				<Route index element={<TournamentJoin title={"TIC TAC TOE"}/>}/>
-			  </Route>
+                <Route
+                  index
+                  element={<TournamentJoin title={"TIC TAC TOE"} />}
+                />
+              </Route>
             </Route>
             <Route path="pingpong">
               <Route path="pvpgame">
@@ -38,9 +41,9 @@ function App() {
                 <Route path="match" element={<PingPongGame />} />
               </Route>
               <Route path="tournament">
-				<Route index element={<TournamentJoin title={"PING PONG"}/>}/>
-				<Route path="tournaments" element={<Tournament/>}/>
-			  </Route>
+                <Route index element={<TournamentJoin title={"PING PONG"} />} />
+                <Route path="tournaments" element={<Tournament />} />
+              </Route>
             </Route>
           </Route>
         </Route>

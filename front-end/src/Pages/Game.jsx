@@ -2,6 +2,7 @@ import '../Components/Game/Game.css'
 import Pingpic from '../../public/avatar/PingPong.png';
 import TicPic from '../../public/avatar/TicTacToe.png';
 import { useNavigate } from "react-router-dom";
+import Challenge from '../Components/TournamentJoin/Challenge';
 
 function PingPong() {
 
@@ -62,9 +63,12 @@ function TicTacToe() {
 
 function Game() {
     return (
-        <div className="game-container">
-            <PingPong />
-            <TicTacToe />        
+        <div className='bg-primaryColor w-full flex flex-row items-center justify-between px-7 relative h-[100%]'>
+            <div className="game-container flex  justify-center flex-col items-center xsm:w-[90%] w-[80%] ">
+                <PingPong />
+                <TicTacToe />        
+            </div>
+            <Challenge/>
         </div>
     );
 }

@@ -38,9 +38,9 @@
   grid-template-columns: 3fr 2fr 3fr;
 }
 
-p {
+/* p {
   font-size: x-small;
   font-family: poppins;
   color: rgba(255, 255, 255, 1);
   -webkit-text-stroke: 1px rgba(199, 125, 255, 1);
-}
+} */
