@@ -38,7 +38,9 @@ function Mid_Nav_enable(){
                 <img src={qrcode} alt="QR code" className="lg:w-[116px] lg:h-[116px] xsm:w-[10vw] xsm:h-[10vw]"/>
         </div>
         <div className="number2-nav">
-            <CircleIcon iconText='2'/>
+            <div className="icon-left">
+                <CircleIcon iconText='2'/>
+            </div>
             <p>Enter the 6 figure confirmation code shown on the app:</p>
         </div>
     </div>

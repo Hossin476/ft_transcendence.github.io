@@ -42,7 +42,7 @@ function Header({ title}) {
 function Mycard() {
   return (
     <div className="player-card">
-      <img src={mypic} alt="Avatar" className="avatar" />
+      <img src={mypic} alt="Avatar" className="avatar-ping" />
       <div className="player-info">
         <h2>KIRAZIZI</h2>
         <p>LEVEL 2</p>
@@ -66,7 +66,7 @@ function Wait_card() {
 function Vsplayer_card() {
   return (
     <div className="player-card">
-      <img src={vs_avatar} alt="Avatar" className="avatar" />
+      <img src={vs_avatar} alt="Avatar" className="avatar-ping" />
       <div className="player-info">
         <h2>LAHOUCINE</h2>
         <p>LEVEL 1</p>
@@ -133,8 +133,8 @@ function PvpGame({ title}) {
     if (isstart) {
       const timer = setTimeout(() => {
         setStarted(true);
+        // nav(locations.pathname+'/match')
       }, 4000); // 4 seconds
-      nav(locations.pathname+'/match')
       return () => clearTimeout(timer);
     }
   }, [isstart]);

@@ -339,11 +339,35 @@
 
 @media only screen and (min-width: 1250px) {
     .text-section h1 {
-        font-size: 45px;
+        font-size: 50px;
     }
 
     .text-section2 h1 {
-        font-size: 45px;
+        font-size: 50px;
+    }
+
+    .pvp-button {
+        font-size: 10px;
+        height: 50px;
+        width: 80px;
+    }
+
+    .pvp-button2{
+        font-size: 10px;
+        height: 50px;
+        width: 80px;
+    }
+
+    .tournament-button {
+        font-size: 10px;
+        height: 50px;
+        width: 100px;
+    }
+
+    .tournament-button2{
+        font-size: 10px;
+        height: 50px;
+        width: 100px;
     }
 }
 
@@ -355,4 +379,8 @@
     .text-section2 h1 {
         font-size: 55px;
     }
+}
+
+@media only screen and (min-width: ) {
+    
 }

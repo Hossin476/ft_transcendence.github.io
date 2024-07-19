@@ -10,7 +10,7 @@ import TournamentJoin from "./Pages/TournamentJoin";
 import Tournament from "./Pages/Tournament";
 import Settings from "./Pages/Settings";
 import Leaderboard from "./Pages/Leaderboard";
-import './server.js'
+// import './server.js'
 function App() {
   return (
     <BrowserRouter>
