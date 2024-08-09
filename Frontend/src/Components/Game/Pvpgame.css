@@ -1,0 +1,350 @@
+@font-face {
+  font-family: 'Valorax';
+  src: url('/fonts/valorax-lg25v.otf') format('opentype');
+}
+
+:root {
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+}
+
+.holder{
+  width: 90%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 1440px;
+}
+
+.ping-pong-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #21162C;
+    color: white;
+    width: 100%;
+    height: 60%;
+    border-style: solid;
+    padding: 10px;
+    border-color: #C77DFF;
+    border-radius: 20px;
+    border-width: 2px;
+}
+
+.header {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.back-div {
+  display: flex;
+  width: 10%;
+  justify-content: center;
+  padding-left: 5%;
+}
+
+.tittle-div{
+  width: 90%;
+  display: flex;
+  justify-content: center;
+  padding-right: 10%;
+
+}
+
+.back-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.header h1 {
+  font-size: 50px;
+  font-family: 'Valorax', sans-serif;
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.player-cards {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15%;
+  margin-top: 25px;
+  width: 100%;
+  height: 60%;
+}
+
+.player-card {
+  background-color: #2A2035;
+  border-radius: 10px;
+  border-style: solid;
+  border-color: #C77DFF;
+  border-width: 2px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 50%;
+  height: 90%;
+  max-width: 230px;
+}
+
+.add-player-card {
+  background-color: #2A2035;
+  border-radius: 10px;
+  border-style: solid;
+  border-color: gray;
+  border-width: 2px;
+  padding: 20px;
+  text-align: center;
+  width: 50%;
+  height: 90%;
+  align-items: center;
+  flex-direction: column;
+  display: flex;
+  max-width: 230px;
+}
+
+.avatar-ping {
+  width:63%;
+  border-radius: 50%;
+  margin-bottom: 10px;
+  margin-top: 40px;
+
+}
+
+.anonymous {
+  width:63%;
+  border-radius: 50%;
+  margin-bottom: 10px;
+  margin-top: 40px;
+}
+
+
+.player-info h2 {
+  font-family: Inter, Arial, sans-serif;
+  font-size: 1.3vw;
+}
+
+.player-info p {
+  margin: 5px 0 0;
+  font-size: 0.7vw;
+  text-align: center;
+}
+
+.IoIosAdd{
+  font-size: 50px;
+  color: #6E6767;
+}
+
+.add-player-info {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 18px;
+}
+
+.add-player-info h2{
+  margin-bottom: 8px;
+}
+
+.start-button_div {
+  width: 128px;
+  height: 94px;
+  display: flex;
+  flex-direction: column;
+}
+
+.empty_start {
+  width: 100%;
+  height: 40%;
+}
+
+.start-button {
+  background-color: #2A2035;
+  border: 2px solid hsl(0, 0%, 80%);
+  border-radius: 0px;
+  color: white;
+  font-size: 15px;
+  padding: 10px 20px;
+  cursor: pointer;
+  width: 128px;
+  height: 50px;
+}
+
+.start-button:hover {
+  background-color: #3D3346;
+  border-color: #C77DFF;
+}
+
+
+.started-button{
+  background-color: #2A2035;
+  border: 2px solid;
+  border-color: #C77DFF;
+  border-radius: 0px;
+  color: white;
+  font-size: 15px;
+  padding: 10px 20px;
+  cursor: pointer;
+  width: 128px;
+  height: 50px;
+}
+
+@media only screen and (min-width: 2560px){
+  .player-info p {
+    font-size: 0.5vw;
+  }
+
+  .player-info h2 {
+    font-size: 0.8vw;
+  }
+}
+
+@media only screen and (max-width: 900px){
+  .player-info p {
+    font-size: 1.2vw;
+  }
+
+  .player-info h2 {
+    font-size: 2vw;
+  }
+
+  .add-player-card p{
+    font-size: 2vw;
+  }
+
+  .add-player-card h2{
+    font-size: 2vw;
+  }
+
+  .avatar-ping {
+    width: 50%;
+  }
+
+  .anonymous {
+    width: 50%;
+  }
+
+  .player-card {
+    width: 30%;
+    height: 70%;
+  }
+
+  .add-player-card {
+    width: 30%;
+    height: 70%;
+  }
+
+  .tittle-div h1{
+    font-size: 4vw;
+  }
+
+  .start-button {
+    width: 100px;
+    height: 40px;
+    font-size: 10px;
+  }
+
+  .started-button {
+    width: 100px;
+    height: 40px;
+    font-size: 10px;
+  }
+
+  .empty_start {
+    width: 100px;
+    height: 40px;
+  }
+
+  .start-button_div {
+    width: 100px;
+    height: 70px;
+  }
+
+}
+
+
+@media only screen and (max-width: 640px){
+  .player-info p {
+    font-size: 1.2vw;
+  }
+
+  .player-info h2 {
+    font-size: 2vw;
+  }
+  
+  .add-player-card p{
+    font-size: 2vw;
+  }
+
+  .add-player-card h2{
+    font-size: 2vw;
+  }
+
+  .avatar-ping {
+    width: 50%;
+  }
+
+  .anonymous {
+    width: 50%;
+  }
+
+  .player-card {
+    width: 30%;
+    height: 50%;
+  }
+
+  .add-player-card {
+    width: 30%;
+    height: 50%;
+  }
+
+  .tittle-div h1{
+    font-size: 4vw;
+  }
+
+  .start-button {
+    width: 100px;
+    height: 40px;
+    font-size: 10px;
+  }
+
+  .started-button {
+    width: 100px;
+    height: 40px;
+    font-size: 10px;
+  }
+
+  .empty_start {
+    width: 100px;
+    height: 40px;
+  }
+
+  .start-button_div {
+    width: 100px;
+    height: 70px;
+  }
+
+  .ping-pong-container {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    border: none;
+    background-color: transparent;
+
+  }
+
+  .holder{
+    width: 100%;
+    height: 80%;
+  }
+}

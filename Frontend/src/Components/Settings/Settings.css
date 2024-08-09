@@ -1,0 +1,56 @@
+.holder-container{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+    padding-left: 10%;
+}
+
+.settings-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #21162C;
+    color: white;
+    width: 90%;
+    height:60%;
+    border-style: solid;
+    border-color: #C77DFF;
+    border-radius: 20px;
+    border-width: 2px;
+    max-width:1024px;
+}
+
+.settings-tittle{
+    font-size: 3vw;
+    color: white;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.animation{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    border: 0.1px solid white;
+    backdrop-filter: blur(5px);
+    z-index: 1;
+}
+
+@media only screen and (min-width: 1024px) {
+    .settings-tittle{
+        font-size: 30px;
+    }
+
+    
+}

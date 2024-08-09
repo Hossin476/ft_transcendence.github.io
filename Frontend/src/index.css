@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+.friendsBar
+{
+    border-radius: 85px;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 5px;
+    display: none;
+}
+ 
+/* Track */
+::-webkit-scrollbar-track {
+    background: #693535;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+}
+
+.main-wrapper {
+    height: calc(100% - 112px);
+}
+
+@media (max-width: 639px) {
+    .main-wrapper{
+        height: calc(100% - 48px);
+    }
+    
+}
+
+@font-face {
+    font-family: 'Valorax'; /* Use a custom name for your font */
+    src: url('/font/valorax.otf');
+  }
+
+  @font-face {
+    font-family: 'Plaguard'; /* Use a custom name for your font */
+    src: url('/font/Plaguard.otf');
+  }
+  @font-face {
+    font-family: poppins;
+    src: url('/font/Poppins-Medium.ttf');
+  }
+  
+  @font-face {
+    font-family: inter;
+    src: url('/font/Inter-Medium.ttf');
+  }
+
+  .text-border {
+    -webkit-text-stroke: 0.1px #C77DFF; /* Adjust the pixel value and color as needed */
+    color: white; /* Text color */
+  }
+
+  .blurHelp {
+    backdrop-filter: blur(10px);
+  }
