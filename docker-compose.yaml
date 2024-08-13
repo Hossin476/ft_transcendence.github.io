@@ -9,6 +9,8 @@ services:
     restart: always
   backend:
     container_name: backend
+    environment:
+      - pym="python manager.py"
     build: ./Backend
     ports:
       - "8000:8000"

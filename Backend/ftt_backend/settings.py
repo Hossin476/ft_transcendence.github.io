@@ -42,8 +42,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     "corsheaders",
+    'users',
 
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -59,6 +61,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'ftt_backend.urls'
+AUTH_USER_MODEL = "users.CustomUser"
 
 TEMPLATES = [
     {
