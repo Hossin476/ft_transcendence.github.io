@@ -18,6 +18,8 @@ class User(AbstractUser):
     draws = models.IntegerField()
     #Friend Field
     friends = models.ManyToManyField("User", blank=True)
+    #2FA
+    key = models.CharField(max_length=255, null=True, default=None)
 
     USERNAME_FIELD = "username"
     REQUIRED_FIELDS = []
