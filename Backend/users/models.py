@@ -32,14 +32,19 @@ class CustomUser(AbstractUser):
         return self.email
 
 
-class Friend_Request(models.Model):
+class Friendship(models.Model):
 
     REQUEST_STATE = [
         ('P', 'Pending'),
         ('A', 'Accepted')
     ]
+    ACTIVE_STATE = [
+        ('B', "BLOCKED"),
+        ('A', "ACTIVE")
+    ]
 
     request = models.CharField(max_length=1, choices=REQUEST_STATE, default='P')
+    active = models.CharField(max_length=1, choices=ACTIVE_STATE, default='A')
     from_user = models.ForeignKey(
         CustomUser,
         related_name='from_user',
@@ -50,4 +55,8 @@ class Friend_Request(models.Model):
         related_name='to_user',
         on_delete=models.CASCADE
     )
-    
+
+# class Private_message(models.Model):
+#     friendship = models.ForeignKey("Friendship", on_delete=models.CASCADE)
+#     UserID = models.BigIntegerField()
+#     time = models.DateTimeField(auto_now=True)
