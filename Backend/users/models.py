@@ -19,8 +19,8 @@ class CustomUser(AbstractUser):
     #2FA
     key = models.CharField(max_length=255, null=True, default=None)
     # profile image 
-    profile_image = models.ImageField(upload_to='images/')
-    cover_image = models.ImageField(upload_to='images/')
+    profile_image = models.ImageField(upload_to='images/profile/', null=True)
+    cover_image = models.ImageField(upload_to='images/cover/', null=True)
 
     USERNAME_FIELD = "username"
     REQUIRED_FIELDS = []
@@ -42,7 +42,6 @@ class Friendship(models.Model):
         ('B', "BLOCKED"),
         ('A', "ACTIVE")
     ]
-
     request = models.CharField(max_length=1, choices=REQUEST_STATE, default='P')
     active = models.CharField(max_length=1, choices=ACTIVE_STATE, default='A')
     from_user = models.ForeignKey(
