@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'djoser',
     'rest_framework_simplejwt',
     "corsheaders",
     'users',
@@ -172,11 +173,15 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
+    'COERCE_DECIMAL_TO_STRING': False,
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ]
 }
 
+SIMPLE_JWT = {
+   'AUTH_HEADER_TYPES': ('JWT',),
+}
 
 CORS_ALLOW_ALL_ORIGINS = True
 
@@ -184,3 +189,8 @@ CORS_ALLOW_ALL_ORIGINS = True
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
+DJOSER = {
+   'SERIALIZERS': {
+       'user_create': 'users.serializers.UserCreateSerializer'
+   }
+}
