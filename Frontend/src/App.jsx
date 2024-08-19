@@ -10,6 +10,7 @@ import TournamentJoin from "./Pages/TournamentJoin";
 import Tournament from "./Pages/Tournament";
 import Settings from "./Pages/Settings";
 import Leaderboard from "./Pages/Leaderboard";
+import ChatPage from "./Pages/ChatPage";
 // import './server.js'
 function App() {
   return (
@@ -20,7 +21,7 @@ function App() {
           <Route path="managefriends" element={<ManageFriends />} />
           <Route path="settings" element={<Settings />} />
           <Route path="leaderboard" element={<Leaderboard />} />
-          <Route path="chat" element={<></>} />
+          <Route path="chat" element={<ChatPage/>} />
           <Route path="game">
             <Route index element={<Game />} />
             <Route path="tictactoe">
