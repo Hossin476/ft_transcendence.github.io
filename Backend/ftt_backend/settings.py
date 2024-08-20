@@ -45,6 +45,9 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     "corsheaders",
     'users',
+    'tictactoe',
+    'notifications',
+    'pingpong'
 
 ]
 
@@ -180,6 +183,20 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": False,
+    "UPDATE_LAST_LOGIN": False,
+    
+    "ALGORITHM": "HS256",
+    "VERIFYING_KEY": "",
+    "AUDIENCE": None,
+    "ISSUER": None,
+    "JSON_ENCODER": None,
+    "JWK_URL": None,
+    "LEEWAY": 0,
+    
    'AUTH_HEADER_TYPES': ('JWT',),
 }
 

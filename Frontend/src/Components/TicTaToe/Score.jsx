@@ -2,8 +2,10 @@ import React, { forwardRef } from 'react';
 import FirstPlayer from './FirstPlayer';
 import SecondPlayer from './SecondPlayer';
 import Timer from './Timer';
+import { useTicTacToe } from '../../context/TicTacToeContext';
 
-function Score({scores}, ref) {
+function Score() {
+    const {scores} = useTicTacToe();
     return (
         <div className="mt-4 flex w-full items-center xsm:gap-2 lg:gap-9">
             <FirstPlayer user_name="Player X" level={120} scores={scores} />
@@ -13,5 +15,5 @@ function Score({scores}, ref) {
     );
 }
 
-export default forwardRef(Score);
+export default (Score);
 

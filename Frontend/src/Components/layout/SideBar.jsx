@@ -6,9 +6,18 @@ import { FaChartSimple } from "react-icons/fa6";
 import { FiSettings } from "react-icons/fi";
 import { CiLogout } from "react-icons/ci";
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import {useNavigate} from "react-router"
 
 export default function SideBar()
 {
+    const {logout} = useAuth()
+    const navigate = useNavigate()
+    const handleLogout = ()=>{
+        logout()
+        navigate('/login')
+
+    }
     return (
         <div className="xsm:hidden lg:flex   lg:flex-col justify-between h-screen pb-8 items-center">
             <div className=" py-12 h-28">
@@ -39,7 +48,7 @@ export default function SideBar()
                 </ul>
             </div>
             <div >
-                <CiLogout className="text-4xl font-normal" />
+                <CiLogout className="text-4xl font-normal" onClick={handleLogout}/>
             </div>
         </div>
     )

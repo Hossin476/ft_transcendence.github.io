@@ -133,11 +133,50 @@ function PvpGame({ title}) {
     if (isstart) {
       const timer = setTimeout(() => {
         setStarted(true);
-        // nav(locations.pathname+'/match')
-      }, 4000); // 4 seconds
+        if (socket && socket.readyState === WebSocket.OPEN) {
+          const message = JSON.stringify({
+            type: 'game_request',
+            opponent: 'admin',
+          });
+          socket.send(message);
+        } else {
+          console.error('WebSocket is not open. Unable to send game request.');
+        }
+      }, 4000);
       return () => clearTimeout(timer);
     }
   }, [isstart]);
+
+
+
+  useEffect(() => {
+    if (socket) {
+      socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.type === 'game_request') {
+          toast(`${data.from} has challenged you to a game. Do you accept?`, {
+            position: "top-right",
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            onClick: () => {
+              setOpponent(data.from);
+              const message = JSON.stringify({
+                type: 'accept_game_request',
+                opponent: data.from,
+              });
+              socket.send(message);
+            }
+          });
+        } else if (data.type === 'start_game') {
+          nav(`/game/tictactoe/pvpgame/match/${data.game_id}`);
+        }
+      };
+    }
+  }, [socket, nav]);
 
 
   return (

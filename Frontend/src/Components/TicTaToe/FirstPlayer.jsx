@@ -8,7 +8,7 @@ function FirstPlayer({ user_name, level, scores }) {
                 <h1 className="xsm:text-[2vw] lg:text-lg font-inter">{user_name}</h1>
                 <h4 className="xsm:text-[1vw] lg:text-[0.7rem] font-inter">LEVEL {level}</h4>
             </div>
-            <h2 className="font-Plaguard xsm:text-[2vw] lg:text-4xl">{scores.X}</h2>
+            <h2 className="font-Plaguard xsm:text-[2vw] lg:text-4xl">{scores.X !== null ? scores.X : '--'}</h2>
         </div>
     );
 }

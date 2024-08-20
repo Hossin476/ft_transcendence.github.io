@@ -2,7 +2,19 @@
 import img from "/public/ykhourba.jpeg"
 import { IoNotifications } from "react-icons/io5";
 import { LiaCoinsSolid } from "react-icons/lia";
+import { useAuth } from "../../context/AuthContext";
 export default function NavBar() {
+
+    const {socket, global_socket} = useAuth()
+
+    useEffect(() => {
+        global_socket();
+        return () => {
+            if (socket)
+                socket.close()
+        };
+    }, []);
+
     return (
         <div className="  xsm:py-4  flex xsm:h-full  items-center justify-between lg:justify-end">
             <div className="lg:hidden  sm:pl-12 xsm:pl-4">

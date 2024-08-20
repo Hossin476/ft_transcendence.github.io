@@ -1,7 +1,11 @@
-import React, { useState, useEffect, forwardRef, Suspense } from 'react';
+import React, { useState, useEffect, useRef, Suspense, useCallback, forwardRef } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { Line, OrbitControls, Stage, Sky } from '@react-three/drei';
+import { Line, Stage, OrbitControls, Sky } from '@react-three/drei';
 import { Physics, RigidBody } from '@react-three/rapier';
+import { useTicTacToe } from '../../context/TicTacToeContext';
+// import { useAuth } from '../../context/AuthContext';
+import Win from './win';
+
 
 const positions = [
     [-1, 1, 0],
@@ -13,43 +17,73 @@ const positions = [
     [-1, -1, 0],
     [0, -1, 0],
     [1, -1, 0],
-];
+]; 
 
-function Game({ updateScores }) {
+const Game = ({ room }) => {
+    const socket = useRef(null);
     const [board, setBoard] = useState(Array(9).fill(null));
-    const [xIsNext, setXIsNext] = useState(true);
     const [winnerLine, setWinnerLine] = useState(null);
-    const [isGameOver, setIsGameOver] = useState(false);
+    const [final_winner, setFinalWinner] = useState(null);
 
-    const handleClick = (index) => {
-        if (isGameOver || board[index]) return;
+    const { setScores, setTimer, setPlayerRole } = useTicTacToe();
+    // const { tokens } = useAuth();
 
-        const newBoard = board.slice();
-        newBoard[index] = xIsNext ? 'X' : 'O';
-        setBoard(newBoard);
-        setXIsNext(!xIsNext);
-
-        const winner = calculateWinner(newBoard);
-        if (winner) {
-            setWinnerLine(winner.line);
-            updateScores(winner.player);
-            setIsGameOver(true);
-        } else if (newBoard.every(cell => cell !== null)) setIsGameOver(true);
-    };
-
+    // let tok = tokens ? tokens : localStorage.getItem('accessToken');
     useEffect(() => {
-        if (isGameOver) {
-            const timer = setTimeout(() => resetGame(), 5000);
-            return () => clearTimeout(timer);
-        }
-    }, [isGameOver]);
 
-    const resetGame = () => {
-        setBoard(Array(9).fill(null));
-        setXIsNext(true);
-        setWinnerLine(null);
-        setIsGameOver(false);
-    };
+        // const online_url = `ws://localhost:8000/ws/game/room/${room}/?token=${tok}`;
+        const online_url = `ws://localhost:8000/ws/game/room/${room}/?token=1`;
+        // const local_url = `ws://localhost:8000/ws/game/local/room/${room}/?token=${tok}`;
+        socket.current = new WebSocket(online_url);
+
+        socket.current.onopen = () => {
+            console.log('WebSocket connected');
+            socket.current.onmessage = (e) => {
+                const data = JSON.parse(e.data);
+                if (data.state)
+                        setBoard(data.state);
+                if (data.winner_line)
+                {
+                    const winnerLinePoints = data.winner_line.map(index => positions[index]);
+                    setWinnerLine(winnerLinePoints);
+                }
+                setScores({ X: data.score_x, O: data.score_o });
+                if (!data.winner)
+                    setWinnerLine(null);
+                if (data.countdown !== undefined)
+                        setTimer(data.countdown)
+                if (data.player_role)
+                        setPlayerRole(data.player_role)
+                if (data.final_winner)
+                        setFinalWinner(data.final_winner);
+                if (data.reconnect_countdown)
+                    console.log("the reconnect countdown is:", data.reconnect_countdown)
+            };
+        };
+
+        socket.current.onerror = (error) => {
+            console.error('WebSocket error:', error);
+        };
+
+        socket.current.onclose = () => {
+            console.log('WebSocket disconnected');
+        };
+
+        return () => {
+            if (socket.current) {
+                socket.current.close();
+            }
+        };
+    }, []);
+
+    const handleClick = useCallback((index) => {
+        if (!board[index] && socket.current.readyState === WebSocket.OPEN) {
+            socket.current.send(JSON.stringify({
+                'action': 'move',
+                'index': index
+            }));
+        }
+    }, [board]);
 
     return (
         <div className="h-[70%] w-full flex items-center justify-evenly">
@@ -76,9 +110,10 @@ function Game({ updateScores }) {
                     </Stage>
                 </Suspense>
             </Canvas>
+            {final_winner && <Win final_winner={final_winner} />}
         </div>
     );
-}
+};
 
 const Holder = forwardRef(({ position, board, index, handleClick }, ref) => {
     const value = board[index];
@@ -105,26 +140,6 @@ const Holder = forwardRef(({ position, board, index, handleClick }, ref) => {
     );
 });
 
-const calculateWinner = (squares) => {
-    const lines = [
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-        [0, 4, 8],
-        [2, 4, 6],
-    ];
-    for (let i = 0; i < lines.length; i++) {
-        const [a, b, c] = lines[i];
-        if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-            return { player: squares[a], line: [positions[a], positions[b], positions[c]] };
-        }
-    }
-    return null;
-};
-
 const MeshX = ({ position }) => (
     <RigidBody position={[position[0], position[1], position[2] - 1]} restitution={0.5}>
         <group>
@@ -142,29 +157,24 @@ const MeshX = ({ position }) => (
 
 const MeshO = ({ position }) => (
     <RigidBody position={[position[0], position[1], position[2] - 1]} restitution={0.5}>
-        <mesh>
-            <torusGeometry args={[0.2, 0.07, 16, 48]} />
+        <mesh rotation={[0, 0, 0]}>
+            <torusGeometry args={[0.25, 0.08, 16, 48]} />
             <meshStandardMaterial color="red" />
         </mesh>
     </RigidBody>
 );
 
-const WinnerLine = ({ line }) => <Line points={line} color="yellow" lineWidth={8} />;
+const TicTacToeGrid = () => (
+    <>
+        <Line points={[[-1.5, 0.5, 0], [1.5, 0.5, 0]]} color="#E5DDC8" lineWidth={10} />
+        <Line points={[[-1.5, -0.5, 0], [1.5, -0.5, 0]]} color="#E5DDC8" lineWidth={10} />
+        <Line points={[[0.5, 1.5, 0], [0.5, -1.5, 0]]} color="#E5DDC8" lineWidth={10} />
+        <Line points={[[-0.5, 1.5, 0], [-0.5, -1.5, 0]]} color="#E5DDC8" lineWidth={10} />
+    </>
+);
 
-const TicTacToeGrid = () => {
-    const lines = [
-        [[-0.5, 1.5, 0], [-0.5, -1.5, 0]],
-        [[0.5, 1.5, 0], [0.5, -1.5, 0]],
-        [[-1.5, 0.5, 0], [1.5, 0.5, 0]],
-        [[-1.5, -0.5, 0], [1.5, -0.5, 0]],
-    ];
-    return (
-        <>
-            {lines.map((line, index) => (
-                <Line key={index} points={line} color="white" lineWidth={10} />
-            ))}
-        </>
-    );
-};
+const WinnerLine = ({ line }) => (
+    <Line points={line} color="#FFBF00" lineWidth={10} />
+);
 
 export default Game;
