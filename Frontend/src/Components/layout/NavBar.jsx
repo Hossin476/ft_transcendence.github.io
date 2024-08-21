@@ -3,6 +3,8 @@ import img from "/public/ykhourba.jpeg"
 import { IoNotifications } from "react-icons/io5";
 import { LiaCoinsSolid } from "react-icons/lia";
 import { useAuth } from "../../context/AuthContext";
+import {useEffect} from 'react';
+
 export default function NavBar() {
 
     const {socket, global_socket} = useAuth()

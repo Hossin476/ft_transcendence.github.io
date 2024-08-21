@@ -2,7 +2,7 @@ import json
 import asyncio
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .gamelogic.game import GameLogic
-from .models import GameOnlime, GameOffline
+from .models import GameOnline, GameOffline
 from channels.db import database_sync_to_async
 
 
@@ -67,7 +67,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             room_obj.setPlayer2(self.user, True)
             room_obj.game = GameLogic('online')
             # Retrieve the match from the database
-            room_obj.match = await database_sync_to_async(GameOnlime.objects.get)(id=int(self.game_id))
+            room_obj.match = await database_sync_to_async(GameOnline.objects.get)(id=int(self.game_id))
             # Create a task to send data to the match
             room_obj.task = asyncio.create_task(self.send_data(room_obj.match.id))
 

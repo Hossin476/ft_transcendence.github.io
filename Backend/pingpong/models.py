@@ -1,7 +1,7 @@
 from django.db import models
 from users.models import CustomUser
 
-class GameOnlime(models.Model):
+class GameOnline(models.Model):
     player1 = models.ForeignKey(CustomUser, related_name='match_home', on_delete=models.CASCADE)
     player2 = models.ForeignKey(CustomUser, related_name='match_away', on_delete=models.CASCADE)
     winner = models.ForeignKey(CustomUser, related_name='winner_game', on_delete=models.CASCADE, null=True)

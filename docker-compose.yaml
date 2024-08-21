@@ -30,6 +30,7 @@ services:
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres", "-h", "db"]
     restart: always
+  
   redis:
     container_name: redis
     image: redis:7

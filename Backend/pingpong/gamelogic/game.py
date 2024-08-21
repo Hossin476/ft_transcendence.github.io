@@ -1,5 +1,5 @@
 from channels.db import database_sync_to_async
-from users.models import GameOnlime, GameOffline
+from users.models import GameOnline, GameOffline
 import asyncio
 import sys
 class GameLogic:
@@ -73,7 +73,7 @@ class GameLogic:
 
     @database_sync_to_async
     def update_winner_score_online(self, matchId, scoreNumber):
-        match = GameOnlime.objects.get(id=matchId)
+        match = GameOnline.objects.get(id=matchId)
         if scoreNumber == 1:
             match.score1 = self.score1
         else:
@@ -102,7 +102,7 @@ class GameLogic:
 
     @database_sync_to_async
     def reconnect(self,player1_status, player2_status, matchid):
-            matchObj = GameOnlime.objects.get(id=matchid)
+            matchObj = GameOnline.objects.get(id=matchid)
             if player1_status == False and player2_status == False:
                 matchObj.delete()
             elif player1_status:
