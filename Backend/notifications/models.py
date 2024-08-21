@@ -17,6 +17,7 @@ class GameNotification(models.Model):
 
 
 class FriendshipNotification(models.Model):
+    # i remove those line because we have the sender and 
     sender = models.ForeignKey(CustomUser, verbose_name='sender', on_delete=models.CASCADE, related_name = "friend_notifcation_sender")
     receiver = models.ForeignKey(CustomUser, verbose_name='receiver', on_delete=models.CASCADE, related_name = "friend_notifcation_receiver")
     created_at = models.DateTimeField(auto_now_add=True)

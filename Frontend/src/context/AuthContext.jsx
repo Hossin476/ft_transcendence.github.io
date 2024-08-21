@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     const global_socket = () => {
-        const ws = new WebSocket(`ws://backend:8000/ws/notifications/?token=${tokens.access}`)
+        const ws = new WebSocket(`ws://localhost:8000/ws/notifications/?token=${tokens.access}`)
         setSocket(ws);
 
         ws.onopen = () => {

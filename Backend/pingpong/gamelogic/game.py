@@ -1,5 +1,5 @@
 from channels.db import database_sync_to_async
-from users.models import GameOnline, GameOffline
+from ..models import GameOnline, GameOffline
 import asyncio
 import sys
 class GameLogic:
