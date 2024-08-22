@@ -3,7 +3,7 @@ import img from "/public/ykhourba.jpeg"
 import { IoNotifications } from "react-icons/io5";
 import { LiaCoinsSolid } from "react-icons/lia";
 import { useAuth } from "../../context/AuthContext";
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import NotificationModal from '../Notifications/NotificationModal';
 
 export default function NavBar() {
