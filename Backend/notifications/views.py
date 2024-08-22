@@ -15,6 +15,8 @@ class NotifitationView(APIView):
         return Response(notification_fr_serializer.data)
 
 
+
+
     # def put(self, request):
 
 
