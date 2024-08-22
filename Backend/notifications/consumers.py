@@ -5,6 +5,8 @@ from channels.db import database_sync_to_async
 from users.models import CustomUser,Friendship
 from tictactoe.models import OnlineGameModel
 from pingpong.models import GameOnline
+from .serializers import NotificationSerializers
+from pingpong.serializers import GameOnlineSerializer
 
 
 @database_sync_to_async
@@ -24,13 +26,14 @@ def create_friend_db(sender, receiver_id):
 
 
 @database_sync_to_async
-def create_game_object(sender, receiver_id, game):
-    receiver = CustomUser.objects.get(id=receiver_id)
+def create_game_object(sender, receiver_name, game):
+    receiver = CustomUser.objects.get(username=receiver_name)
     game_obj = None
     if game == 'P':
-        game_obj = GameOnline.objects.create(sender, receiver)
+        game_obj = GameOnline.objects.create(player1=sender, player2=receiver)
+        game_obj = GameOnlineSerializer(game_obj).data
     elif game == 'T':
-        game_obj = OnlineGameModel.objects.create(sender, receiver)
+        game_obj = OnlineGameModel.objects.create(player1=sender, player2=receiver)
     return game_obj
 
 
@@ -80,24 +83,27 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             elif types == 'friend_request':
                 obj = await create_friend_db(self.user, data['receiver'])
                 print(obj)
-                self.channel_layer.group_send(f'notification_{obj.receiver.id}',{
+                await self.channel_layer.group_send(f'notification_{obj.receiver.id}',{
                     'type': 'friend.request',
-                    'Friendship_id': obj.friendship
+                    'Friendship_id': NotificationSerializers(obj).data
                 })
 
             elif types == 'accept_game':
+                game_type = data['game']
                 game_object = await create_game_object(self.user, data['receiver'], game_type)
-                await self.channel_layer.group_send(f'notification_{game_object.palyer1.id}', {
+                print(game_object)
+                print(game_object["player1"]["username"])
+                await self.channel_layer.group_send(f'notification_{game_object["player1"]["id"]}', {
                 'type': 'game.accept',
-                'from': game_object.palyer1.username,
-                'to': game_object.palyer2.username,
-                'game': game_object.id,
+                'from': game_object["player1"]["username"],
+                'to': game_object["player2"]["username"],
+                'game': game_object['id'],
                 })
-                await self.channel_layer.group_send(f'notification_{game_object.palyer2.id}', {
+                await self.channel_layer.group_send(f'notification_{game_object["player2"]["id"]}', {
                 'type': 'game.accept',
-                'from': game_object.palyer1.username,
-                'to': game_object.palyer2.username,
-                'game': game_object.id,
+                'from': game_object["player1"]["username"],
+                'to': game_object["player2"]["username"],
+                'game': game_object['id'],
                 })
 
             elif types == 'reject_game':
@@ -106,12 +112,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             print(f"Error in receive: {e}")
         
     async def game_request(self, event):
-        print("event is :", event)
-        await self.send(text_data=json.dumps({
-            'game': event.get('game'),
-            'from': event.get('from'),
-            'to': event.get('to')
-        }))
+        await self.send(text_data=json.dumps(event))
     
     async def game_accept(self, event):
         await self.send(text_data=json.dumps(event))
@@ -119,4 +120,4 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     async def friend_request(self, event):
         await self.send(text_data=json.dumps(event))
-        
+
