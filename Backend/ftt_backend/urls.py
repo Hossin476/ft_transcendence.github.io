@@ -24,6 +24,7 @@ urlpatterns = [
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.jwt')),
     path('', include('tictactoe.urls')),
+    path('notification/', include('notifications.urls')),
     # path('', include('pingpong.urls')),
 ]
 

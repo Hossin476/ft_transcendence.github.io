@@ -5,7 +5,7 @@ from channels.db import database_sync_to_async
 from users.models import CustomUser,Friendship
 from tictactoe.models import OnlineGameModel
 from pingpong.models import GameOnline
-from .serializers import NotificationSerializers
+from .serializers import FriendshipNotification
 from pingpong.serializers import GameOnlineSerializer
 
 
@@ -52,6 +52,9 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         self.group_name = None
 
     async def connect(self):
+        if 'error' in self.scope:
+            await self.close()
+            return
         self.user = self.scope['user']
         self.group_name = f"notification_{self.user.id}"
         print( self.group_name)
@@ -64,6 +67,8 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code):
+        if 'error' in self.scope:
+            return
         NotificationConsumer.connected_users.remove(self.user)
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
@@ -85,7 +90,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 print(obj)
                 await self.channel_layer.group_send(f'notification_{obj.receiver.id}',{
                     'type': 'friend.request',
-                    'Friendship_id': NotificationSerializers(obj).data
+                    'Friendship_id': FriendshipNotification(obj).data
                 })
 
             elif types == 'accept_game':
