@@ -14,6 +14,7 @@ import ChatPage from "./Pages/ChatPage";
 import LoginPage from "./Pages/Login";
 import { AuthProvider } from "./context/AuthContext";
 import PrivateRoute from "./utils/privateRoute";
+import NotificationModal from "./Components/Notifications/NotificationModal";
 // import './server.js'
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="login" element={<LoginPage />} />
+          <Route path="notification" element={<NotificationModal/>} />
           <Route element={<PrivateRoute />}>
             <Route element={<LayoutOne />}>
               <Route index element={<Dashboard />} />

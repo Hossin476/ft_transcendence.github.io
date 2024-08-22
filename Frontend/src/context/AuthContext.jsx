@@ -12,6 +12,7 @@ export const AuthProvider = ({ children }) => {
     const [tokens, setTokens] = useState(fillToken);
     const [user, setUser] = useState(tokens ? jwtDecode(tokens.access) : null)
     const [socket, setSocket] = useState(null)
+    const [username, setUserName] = useState(null);
 
     const login = async (data) => {
         localStorage.setItem('tokens', JSON.stringify(data.tokens))
@@ -19,7 +20,7 @@ export const AuthProvider = ({ children }) => {
         setUser(jwtDecode(data.tokens.access))
     }
 
-    const logout = ()=>{
+    const logout = () => {
         localStorage.removeItem('tokens');
         setUser(null)
         setTokens(null)
@@ -31,6 +32,17 @@ export const AuthProvider = ({ children }) => {
 
         ws.onopen = () => {
             console.log('WebSocket connected');
+            axios.get('http://127.0.0.1:8000/auth/users/me/',
+                {
+                    headers: {
+                        "Authorization": "JWT " + tokens.access
+                    }
+                }
+            ).then((data) => {
+                setUserName(data.data.username)
+            }).catch((error) => {
+                console.log("error ", error.message)
+            })
         };
 
         ws.onerror = (error) => {
@@ -50,9 +62,10 @@ export const AuthProvider = ({ children }) => {
     let value = {
         login,
         logout,
-        user:user,
-        tokens:tokens,
+        user: user,
+        tokens: tokens,
         socket: socket,
+        username: username,
         global_socket
     }
 
