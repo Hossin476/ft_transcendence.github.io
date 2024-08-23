@@ -28,9 +28,9 @@ export const AuthProvider = ({ children }) => {
 
     const global_socket = () => {
         const ws = new WebSocket(`ws://localhost:8000/ws/notifications/?token=${tokens.access}`)
-        setSocket(ws);
-
+        
         ws.onopen = () => {
+            setSocket(ws);
             console.log('WebSocket connected');
             axios.get('http://127.0.0.1:8000/auth/users/me/',
                 {
