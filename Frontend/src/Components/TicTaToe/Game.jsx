@@ -5,6 +5,7 @@ import { Physics, RigidBody } from '@react-three/rapier';
 import { useTicTacToe } from '../../context/TicTacToeContext';
 import { useAuth } from '../../context/AuthContext';
 import Win from './win';
+import ReconnectModal from './ReconnectModal';
 
 
 const positions = [
@@ -17,13 +18,14 @@ const positions = [
     [-1, -1, 0],
     [0, -1, 0],
     [1, -1, 0],
-]; 
+];
 
 const Game = ({ room }) => {
     const socket = useRef(null);
     const [board, setBoard] = useState(Array(9).fill(null));
     const [winnerLine, setWinnerLine] = useState(null);
     const [final_winner, setFinalWinner] = useState(null);
+    const [reconnectModal, setReconnectModal] = useState(false)
 
     const { setScores, setTimer, setPlayerRole } = useTicTacToe();
     const { tokens } = useAuth();
@@ -39,9 +41,8 @@ const Game = ({ room }) => {
             socket.current.onmessage = (e) => {
                 const data = JSON.parse(e.data);
                 if (data.state)
-                        setBoard(data.state);
-                if (data.winner_line)
-                {
+                    setBoard(data.state);
+                if (data.winner_line) {
                     const winnerLinePoints = data.winner_line.map(index => positions[index]);
                     setWinnerLine(winnerLinePoints);
                 }
@@ -49,13 +50,17 @@ const Game = ({ room }) => {
                 if (!data.winner)
                     setWinnerLine(null);
                 if (data.countdown !== undefined)
-                        setTimer(data.countdown)
+                    setTimer(data.countdown)
                 if (data.player_role)
-                        setPlayerRole(data.player_role)
+                    setPlayerRole(data.player_role)
                 if (data.final_winner)
-                        setFinalWinner(data.final_winner);
-                if (data.reconnect_countdown)
-                    console.log("the reconnect countdown is:", data.reconnect_countdown)
+                    setFinalWinner(data.final_winner);
+                if (data.reconnect_countdown !== undefined) {
+                    setReconnectTimer(data.reconnect_countdown)
+                    setReconnectModal(true);
+                }
+                else
+                    setReconnectModal(false);
             };
         };
 
@@ -109,6 +114,7 @@ const Game = ({ room }) => {
                 </Suspense>
             </Canvas>
             {final_winner && <Win final_winner={final_winner} />}
+            {reconnectModal && <ReconnectModal/>}
         </div>
     );
 };

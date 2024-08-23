@@ -1,18 +1,16 @@
 import React from 'react';
-import {useAuth} from '../../context/AuthContext'
+import { useAuth } from '../../context/AuthContext'
 import moment from 'moment';
 
 
 function Notification({ notification }) {
 
-    const {socket} = useAuth();
+    const { socket } = useAuth();
 
-    function accept_game()
-    {
+    function accept_game() {
         console.log("accept")
     }
-    function reject_game()
-    {
+    function reject_game() {
         console.log("reject")
     }
 
@@ -24,7 +22,7 @@ function Notification({ notification }) {
             </div>
             <div className="flex-grow ml-4">
                 <h3 className="text-black text-lg mt-1 max-w-[15rem] flex-wrap">
-                  {notification.sender.username}  user has invited you to game
+                    {notification.sender.username}  user has invited you to game
                 </h3>
                 <p className="text-sm text-gray-400 mt-1">{moment(notification.created_at).fromNow()}</p>
             </div>
