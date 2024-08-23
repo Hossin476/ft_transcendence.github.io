@@ -1,11 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Notification from './Notification';
+import { useAuth } from '../../context/AuthContext';
 
 function NotificationModal() {
-    const [notifications, setNotifications] = useState([
-        { profile_pic: '/lshail.jpeg', content: 'This is notification 1', username: 'lahoucine', created_at: 'now', date: 'last week' },
-        { profile_pic: '/lshail.jpeg', content: 'has invited you to a TicTacToe game', username: 'lahoucine', created_at: '2 minutes ago', date: 'today' },
-    ]);
+    const [notifications, setNotifications] = useState([]);
+    const {tokens} = useAuth()
+
+    useEffect(()=>
+    {
+        async function fetchData()
+        {
+            const response = await fetch('http://localhost:8000/notification/', {
+                headers: {
+                    "Authorization": "JWT " + tokens.access,
+                    "content-Type": "application/json"
+                }
+            })
+
+            // console.log(await response.json())
+            setNotifications(await response.json())
+        }
+        fetchData();
+    }, [])
 
     return (
         <div className="relative">

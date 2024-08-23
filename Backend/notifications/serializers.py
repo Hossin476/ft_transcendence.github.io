@@ -19,13 +19,11 @@ class FriendSerializer(serializers.ModelSerializer):
 
 class GameNotificationSerializers(serializers.ModelSerializer):
     sender = playerSerializers()
-    receiver = playerSerializers()
     isgame = serializers.BooleanField(default=True)
     class Meta:
         model = GameNotification
         fields = [
             'sender',
-            'receiver',
             'created_at'
             'game',
             'isgame',
@@ -33,13 +31,11 @@ class GameNotificationSerializers(serializers.ModelSerializer):
 
 class FriendshipNotificationSerializer(serializers.ModelSerializer):
     sender = playerSerializers()
-    receiver = playerSerializers()
     isgame = serializers.BooleanField(default=False)
     class Meta:
         model = FriendshipNotification
         fields = [
             'sender',
-            'receiver',
             'friendship',
             'isgame',
             'created_at'
