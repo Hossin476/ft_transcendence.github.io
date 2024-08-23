@@ -3,7 +3,7 @@ import { Canvas } from '@react-three/fiber';
 import { Line, Stage, OrbitControls, Sky } from '@react-three/drei';
 import { Physics, RigidBody } from '@react-three/rapier';
 import { useTicTacToe } from '../../context/TicTacToeContext';
-// import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import Win from './win';
 
 
@@ -26,13 +26,11 @@ const Game = ({ room }) => {
     const [final_winner, setFinalWinner] = useState(null);
 
     const { setScores, setTimer, setPlayerRole } = useTicTacToe();
-    // const { tokens } = useAuth();
-
-    // let tok = tokens ? tokens : localStorage.getItem('accessToken');
+    const { tokens } = useAuth();
     useEffect(() => {
 
-        // const online_url = `ws://localhost:8000/ws/game/room/${room}/?token=${tok}`;
-        const online_url = `ws://localhost:8000/ws/game/room/${room}/?token=1`;
+        const online_url = `ws://localhost:8000/ws/game/${room}/?token=${tokens.access}`;
+        // const online_url = `ws://localhost:8000/ws/game/${room}/?token=1`;
         // const local_url = `ws://localhost:8000/ws/game/local/room/${room}/?token=${tok}`;
         socket.current = new WebSocket(online_url);
 
