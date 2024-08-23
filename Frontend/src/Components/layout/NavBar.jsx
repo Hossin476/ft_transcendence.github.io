@@ -3,8 +3,10 @@ import img from "/public/ykhourba.jpeg"
 import { IoNotifications } from "react-icons/io5";
 import { LiaCoinsSolid } from "react-icons/lia";
 import { useAuth } from "../../context/AuthContext";
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import NotificationModal from '../Notifications/NotificationModal';
+import NotificationHandler from "../Notifications/NotificationHandler";
+import toast, { Toaster } from 'react-hot-toast'
 
 export default function NavBar() {
 
@@ -52,6 +54,7 @@ export default function NavBar() {
                     <img className="w-full rounded-full" src={img} alt="Profile" />
                 </li>
             </ul>
+            <NotificationHandler/>
         </div>
     )
 }
