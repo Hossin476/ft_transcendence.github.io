@@ -23,7 +23,7 @@ class CustomUser(AbstractUser):
     REQUIRED_FIELDS = []
 
     def __str__(self):
-        return self.email
+        return self.username
 
 
 class Friendship(models.Model):

@@ -12,22 +12,21 @@ class playerSerializers(serializers.ModelSerializer):
             'profile_image',
         ]
 
-class FriendSerializer(serializers.ModelSerializer):
-    class Meta:
-        model =  Friendship
-        fields = ['id']
 
 class GameNotificationSerializers(serializers.ModelSerializer):
     sender = playerSerializers()
     isgame = serializers.BooleanField(default=True)
+    game_type = serializers.SerializerMethodField()
     class Meta:
         model = GameNotification
         fields = [
             'sender',
-            'created_at'
-            'game',
+            'created_at',
+            'game_type',
             'isgame',
         ]
+    def get_game_type(self, obj):
+        return obj.get_game_display()
 
 class FriendshipNotificationSerializer(serializers.ModelSerializer):
     sender = playerSerializers()
@@ -38,5 +37,7 @@ class FriendshipNotificationSerializer(serializers.ModelSerializer):
             'sender',
             'friendship',
             'isgame',
-            'created_at'
+            'created_at',
         ]
+
+

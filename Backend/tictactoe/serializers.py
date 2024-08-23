@@ -1,22 +1,18 @@
 from .models import OnlineGameModel
-
 from rest_framework import serializers
-from .models import OnlineGameModel
+from users.serializers import  AppUserSerializer
 
-class OnlineGameModelSerializer(serializers.ModelSerializer):
+
+class  OnlineGameModelSerializer(serializers.ModelSerializer):
+    player1 = AppUserSerializer()
+    player2 = AppUserSerializer()
+    game_type = serializers.CharField(max_length=20, default="tictactoe")
     class Meta:
         model = OnlineGameModel
-        fields = [
-            'player1', 
-            'player2', 
-            'winner', 
-            'score_x', 
-            'score_o', 
-            'game_start', 
-            'game_end', 
-            'board_state', 
-            'countdown_value'
-        ]
+        fields = ['id', 'player1', 'player2', 'game_type']
+
+
+
     
 
     # async def send_game_update(self):
