@@ -1,6 +1,7 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .models import GameNotification, FriendshipNotification
 import json
+from django.db.models import Q
 from channels.db import database_sync_to_async
 from users.models import CustomUser,Friendship
 from tictactoe.models import OnlineGameModel
@@ -29,7 +30,6 @@ def create_friend_db(sender, receiver_id):
     obj = FriendshipNotification.objects.create(sender=sender, receiver=receiver, friendship=friendship)
     return obj
     
-
 
 @database_sync_to_async
 def create_game_object(sender, receiver_name, game):
@@ -71,6 +71,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         NotificationConsumer.connected_users.append(self.user)
         await self.channel_layer.group_add(self.group_name, self.channel_name)
         await change_online_state(self.user, True)
+        await self.online_check(True)
         await self.accept()
 
     async def disconnect(self, close_code):
@@ -105,7 +106,9 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     async def friend_request(self, event):
         await self.send(text_data=json.dumps(event))
-
+    
+    async def online_state(self, event):
+        await self.send(text_data=json.dumps(event))
 
 
     # handle notifications events 
@@ -137,14 +140,33 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             'from': game_object["player1"]["username"],
             'to': game_object["player2"]["username"],
             'game_id': game_object['id'],
+            'game_type': data['game']
         })
         await self.channel_layer.group_send(f'notification_{game_object["player2"]["id"]}', {
             'type': 'game.accept',
             'from': game_object["player1"]["username"],
             'to': game_object["player2"]["username"],
             'game_id': game_object['id'],
+            'game_type': data['game']
         })
 
     async def handle_reject_game(self, data):
         await delete_game_request(data['id'])
+
+    @database_sync_to_async
+    def online_check(self, state):
+        try:
+            friends = Friendship.objects.select_related('from_user', 'to_user')\
+                    .filter(Q(request='A'), Q(from_user__is_online=True) | Q(to_user__is_online=True))
+            users_list = []
+            for obj in friends:
+                if self.user != obj.from_user:
+                    users_list.append(obj.from_user)
+                elif self.user != obj.to_user:
+                    users_list.append(obj.from_user)
+            instance = playerSerializers(users_list, many=True)
+            print("friends users",users_list)
+            print(NotificationConsumer.connected_users)
+        except Exception as e:
+            print("error",e)
 

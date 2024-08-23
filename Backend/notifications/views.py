@@ -29,7 +29,6 @@ class NotifitationView(APIView):
 def onlineFriends(request):
     friends = Friendship.objects.select_related('from_user', 'to_user')\
         .filter(Q(request='A'), Q(from_user__is_online=True) | Q(to_user__is_online=True))
-    print(friends)
     users_list = []
     for obj in friends:
         if request.user != obj.from_user:
