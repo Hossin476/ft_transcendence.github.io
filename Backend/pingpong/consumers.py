@@ -4,7 +4,14 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from .gamelogic.game import GameLogic
 from .models import GameOnline, GameOffline
 from channels.db import database_sync_to_async
+from users.models import CustomUser
 
+
+@database_sync_to_async
+def change_ingame_state(user, state):
+    currentUser = CustomUser.objects.get(id=user.id)
+    currentUser.is_ingame = state
+    currentUser.save()
 
 class RoomObject:
     
@@ -36,17 +43,18 @@ class GameConsumer(AsyncWebsocketConsumer):
     game_room = {}
     # This function handles the connection of a user to a game
     async def connect(self):
+        # If there's an error in the scope, close the connection and return
+        if "error" in self.scope:
+            await self.close()
+            return
         # Retrieve the user and game ID from the scope
         self.user = self.scope['user']
         self.game_id = self.scope["url_route"]["kwargs"]["game_id"]
         # Create a unique group ID for the game
         self.game_group_id = f"game_{self.game_id}"
         # Accept the connection
+        await change_ingame_state(self.user, True)
         await self.accept()
-        # If there's an error in the scope, close the connection and return
-        if "error" in self.scope:
-            await self.close()
-            return
         # Add the channel to the game group
         await self.channel_layer.group_add(self.game_group_id, self.channel_name)
         
@@ -113,6 +121,7 @@ class GameConsumer(AsyncWebsocketConsumer):
     # This Function called when user disconnect 
     async def disconnect(self, code_status):
         await self.channel_layer.group_discard(self.game_group_id, self.channel_name)
+        await change_ingame_state(self.user, False)
         if self.game_group_id in GameConsumer.game_room:
             room_obj = GameConsumer.game_room[self.game_group_id]
             if room_obj.game_end:

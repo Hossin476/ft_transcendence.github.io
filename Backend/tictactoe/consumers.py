@@ -3,10 +3,17 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 import asyncio
 from .game_logic import TicTacToe
 from .models import OnlineGameModel
+from users.models import CustomUser
 from channels.db import database_sync_to_async
 from asgiref.sync import sync_to_async
 
 
+
+@database_sync_to_async
+def change_ingame_state(user, state):
+    currentUser = CustomUser.objects.get(id=user.id)
+    currentUser.is_ingame = state
+    currentUser.save()
 class Room:
     def __init__(self):
         self.players = {"X": None, "O": None}
@@ -84,6 +91,7 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
         self.player_role = self.room.add_player(self.user)
         if self.player_role:
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+            await change_ingame_state(self.user, True)
             await self.accept()
             self.game_record = await database_sync_to_async(OnlineGameModel.objects.get)(id=self.room_name)
             await self.channel_layer.group_send(self.room_group_name, {
@@ -107,6 +115,7 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         self.room.remove_player(self.user)
+        await change_ingame_state(self.user, False)
         if not self.room.are_both_players_present():
             self.room.start_reconnect_countdown(self.disconnect_countdown())
             self.room.cancel_countdown()
@@ -133,6 +142,8 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
         action = data.get('action')
         index = data.get('index')
         if action == 'move':
+            if not self.room.are_both_players_present():
+                return
             move_made = self.game.make_move(index, self.player_role)
             if move_made:
                 await self.channel_layer.group_send(self.room_group_name, {
