@@ -47,7 +47,7 @@ export default function Challenge({ setopen }) {
                 toastOptions={{
                     className: '',
                     duration: 5000,
-                    style: {
+                    style: {   
                         background: 'white',
                         color: '#000',
                     },

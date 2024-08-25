@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import Challenge from "../Components/TournamentJoin/Challenge";
+import Challenge from "../Components/Challenge/Challenge";
 import CreateTournament from "../Components/TournamentJoin/createTournament";
 
 export default function TournamentJoin({title})

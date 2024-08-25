@@ -122,7 +122,8 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             'type': 'game_request',
             'from': self.user.username,
             'from_img': str(self.user.profile_image.url) if self.user.profile_image else None,
-            'to': data['receiver']
+            'to': data['receiver'],
+            "game_type": game_type
         })
 
     async def handle_friend_request(self, data):

@@ -14,7 +14,7 @@ import {useLocation} from 'react-router-dom'
 
 import 'ldrs/dotPulse';
 import { useNavigate } from 'react-router';
-import Challenge from '../TournamentJoin/Challenge';
+import Challenge from '../Challenge/Challenge';
 import { useAuth } from '../../context/AuthContext';
 
 

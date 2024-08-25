@@ -7,15 +7,13 @@ import { useAuth } from '../../context/AuthContext';
 
 export default function Friend({ icon = false, gameName, hidden = false, PlayerName, image }) {
     const [WaitRequest, setwaitRequest] = useState(false)
-    const { socket, username } = useAuth();
-    // console.log(username)
+    const { socket} = useAuth();
     const notify = () => {
         if (socket && socket.readyState === WebSocket.OPEN) {
-            console.log("test socket")
             const message = JSON.stringify({
                 type: 'game_request',
-                receiver: 'hamza',
-                game: 'T'
+                receiver: 'hossin',
+                game: 'P'
             });
             socket.send(message);
         } else {

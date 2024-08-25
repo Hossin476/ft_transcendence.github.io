@@ -16,8 +16,6 @@ function NotificationModal() {
                     "content-Type": "application/json"
                 }
             })
-
-            // console.log(await response.json())
             setNotifications(await response.json())
         }
         fetchData();
