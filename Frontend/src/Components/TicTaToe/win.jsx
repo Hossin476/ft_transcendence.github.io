@@ -1,14 +1,9 @@
-
-// import { useAuth } from "../../context/AuthContext";
 import { useTicTacToe } from "../../context/TicTacToeContext";
 import { Progress } from "./progressBar";
 
 export default function Win({final_winner})
 {
     const {playerRole} = useTicTacToe()
-    // const {user} = useAuth()
-
-    console.log("the user is:", user)
     let iswin = final_winner === playerRole;
 
     function handle_reload()

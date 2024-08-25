@@ -4,7 +4,7 @@ import '../tournament.css';
 import User from '../Components/Tournament/User';
 import Winner from '../Components/Tournament/Winner';
 import Header from '../Components/Tournament/Header';
-import Challenge from '../Components/Tournament/Challenge';
+import Challenge from '../Components/Challenge/Challenge';
 
 function Tournament() {
   return (

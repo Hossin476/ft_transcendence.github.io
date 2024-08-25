@@ -27,7 +27,7 @@ const Game = ({ room }) => {
     const [final_winner, setFinalWinner] = useState(null);
     const [reconnectModal, setReconnectModal] = useState(false)
 
-    const { setScores, setTimer, setPlayerRole } = useTicTacToe();
+    const { setScores, setTimer, setPlayerRole, setReconnectTimer } = useTicTacToe();
     const { tokens } = useAuth();
     useEffect(() => {
 
