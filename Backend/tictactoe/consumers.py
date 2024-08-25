@@ -81,10 +81,10 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
         self.game_record = None
 
     async def connect(self):
-        self.user = self.scope.get('user')
-        if self.user is None or  'error' in self.scope:
+        if 'error' in self.scope:
             await self.close()
             return
+        self.user = self.scope.get('user')
 
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = f"game_{self.room_name}"
