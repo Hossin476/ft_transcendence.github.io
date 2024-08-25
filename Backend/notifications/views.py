@@ -34,7 +34,8 @@ def onlineFriends(request):
         if request.user != obj.from_user:
             users_list.append(obj.from_user)
         elif request.user != obj.to_user:
-            users_list.append(obj.from_user)
+            users_list.append(obj.to_user)
+    users_list = list(set(users_list))
     instance = playerSerializers(users_list, many=True)
     return Response(instance.data)
     

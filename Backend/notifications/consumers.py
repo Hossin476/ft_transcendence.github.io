@@ -71,12 +71,15 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         NotificationConsumer.connected_users.append(self.user)
         await self.channel_layer.group_add(self.group_name, self.channel_name)
         await change_online_state(self.user, True)
-        await self.online_check(True)
+        table = await self.online_check(True)
+        await self.send_each(table)
         await self.accept()
 
     async def disconnect(self, close_code):
         if 'error' in self.scope:
             return
+        table = await self.online_check(False)
+        await self.send_each(table)
         await change_online_state(self.user, False)
         NotificationConsumer.connected_users.remove(self.user)
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
@@ -156,6 +159,8 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def online_check(self, state):
         try:
+            current_online_users = [*NotificationConsumer.connected_users]
+            current_online_users.remove(self.user)
             friends = Friendship.objects.select_related('from_user', 'to_user')\
                     .filter(Q(request='A'), Q(from_user__is_online=True) | Q(to_user__is_online=True))
             users_list = []
@@ -163,10 +168,24 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 if self.user != obj.from_user:
                     users_list.append(obj.from_user)
                 elif self.user != obj.to_user:
-                    users_list.append(obj.from_user)
-            instance = playerSerializers(users_list, many=True)
-            print("friends users",users_list)
-            print(NotificationConsumer.connected_users)
+                    users_list.append(obj.to_user)
+            # instance = playerSerializers(users_list, many=True)
+            data_send = []
+            for obj in users_list:
+               if obj in current_online_users:
+                   data_send.append({"receiver":f'notification_{obj.id}', "obj": {
+                       'type': "online.state",
+                       'user': playerSerializers(obj).data,
+                       'online': state
+                   }})
+            return data_send
         except Exception as e:
             print("error",e)
-
+    
+    async def online_state(self, event):
+        await self.send(text_data=json.dumps(event))
+    
+    async def send_each(self, table):
+        for obj in table:
+            await  self.channel_layer.group_send(obj['receiver'], obj['obj'])
+        
