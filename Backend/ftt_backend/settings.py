@@ -27,8 +27,19 @@ SECRET_KEY = 'django-insecure-6y_4ve(gh-37qk2i=9)6qelyefb2xfs4p18i4^@4*!%qhozcyn
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "frontend",
+    "127.0.0.1",
+    "localhost"
+]
 
+CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://frontend:5173",
+]
 
 # Application definition
 
@@ -47,7 +58,8 @@ INSTALLED_APPS = [
     'users',
     'tictactoe',
     'notifications',
-    'pingpong'
+    'pingpong',
+    'chat'
 
 ]
 

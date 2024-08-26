@@ -12,6 +12,7 @@ export const AuthProvider = ({ children }) => {
     const [tokens, setTokens] = useState(fillToken);
     const [user, setUser] = useState(tokens ? jwtDecode(tokens.access) : null)
     const [socket, setSocket] = useState(null)
+    const [chatsocket, setChatSocket] = useState(null)
     const [username, setUserName] = useState(null);
 
     const login = async (data) => {
@@ -58,6 +59,17 @@ export const AuthProvider = ({ children }) => {
         };
     }
 
+    const createSocket = ()=> {
+       let ws = new WebSocket(`ws://127.0.0.1:8000/ws/chat/?token=${tokens.access}`)
+        ws.onopen = (e)=> {
+            setChatSocket(()=>ws)
+            console.log("socket opened")
+        }
+        ws.onclose = (e)=> {
+            console.log("socket closed")
+        }
+    }
+   
 
     let value = {
         login,
@@ -66,7 +78,10 @@ export const AuthProvider = ({ children }) => {
         tokens: tokens,
         socket: socket,
         username: username,
-        global_socket
+        global_socket,
+        createSocket,
+        chatsocket:chatsocket
+        
     }
 
     return (

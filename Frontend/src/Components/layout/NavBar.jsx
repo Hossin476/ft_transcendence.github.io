@@ -8,7 +8,7 @@ import NotificationModal from '../Notifications/NotificationModal';
 
 export default function NavBar() {
 
-    const { socket, global_socket } = useAuth()
+    const { socket, global_socket,createSocket,chatsocket } = useAuth()
     const [showNotifications, setShowNotifications] = useState(false);
 
 
@@ -18,9 +18,12 @@ export default function NavBar() {
 
     useEffect(() => {
         global_socket();
+        createSocket();
         return () => {
             if (socket)
                 socket.close()
+            if(chatsocket)
+                chatsocket.close()
         };
     }, []);
 

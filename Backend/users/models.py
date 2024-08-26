@@ -23,7 +23,7 @@ class CustomUser(AbstractUser):
     REQUIRED_FIELDS = []
 
     def __str__(self):
-        return self.email
+        return self.username
 
 
 class Friendship(models.Model):
@@ -49,6 +49,8 @@ class Friendship(models.Model):
         on_delete=models.CASCADE
     )
 
+    def __str__(self):
+        return  str(self.id) + "friendship"
 # class Private_message(models.Model):
 #     friendship = models.ForeignKey("Friendship", on_delete=models.CASCADE)
 #     UserID = models.BigIntegerField()
