@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 
-export function Progress({value, max})
+export function Progress({value})
 {
     const [progress, setProgress] = useState(0)
     const ref = useRef()

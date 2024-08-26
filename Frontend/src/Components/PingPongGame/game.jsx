@@ -1,104 +1,92 @@
-import { KeyboardControls, OrbitControls, PerspectiveCamera, Stage } from "@react-three/drei";
 import Ball from "./ball";
 import Table from "./table";
 import Walls from "./walls";
-import { useRef } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import * as THREE  from 'three'
+import { useContext, useEffect, useRef, useState } from "react";
+import { useFrame } from "@react-three/fiber";
 import Paddle from "./paddle";
-import { useKeyboardControls } from "@react-three/drei";
-import { forwardRef } from "react";
+import {  useKeyboardControls} from "@react-three/drei";
+import  { useAuth } from "../../context/AuthContext";
+import { useLocation } from "react-router";
+import GameContext from "../../context/gameContext";
 
-function Game(props,scoreRef)
+
+function Game(props)
 {
-
+  const  {score1, score2, waiting, waitingStatus}  = useContext(GameContext)
+  const {tokens,user} = useAuth()
+  const [socket,setsocket] = useState(null)
   const BallRef =  useRef()
   const MyPaddleRef= useRef()
+  const [start, setStart] = useState(false)
   const  OtherPaddleRef = useRef()
-  const positionBall = useRef({vx: 0.05, vz: 0.05, x: 0, z: 0.1 })
+  const location = useLocation()
   const  [,get] = useKeyboardControls()
+  useEffect(() => {
+  // const wsUrl = `ws://localhost:8000/ws/game/${location.state.gameid}/?token=${authTokens.access}`;
+  const wsUrl = `ws://localhost:8000/ws/game/s/1/?token=${tokens.access}`;
+  const ws = new WebSocket(wsUrl);
+
+  ws.onopen = () => {
+    console.log("message: connection between the client and the server started");
+    setsocket(ws);
+  }
+
+  ws.onmessage = async (msg) => {
+    const hold = await JSON.parse(msg.data);
+    const { type, ball_position, paddle_one_position, paddle_two_position, winner, iswaiting, status, currentSecond, message} = hold;
+
+    switch (type) {
+      case 'game.start':
+        setStart(() => true);
+        break;
+      case 'game.update':
+        BallRef.current.position.x = ball_position[0];
+        BallRef.current.position.z = ball_position[2];
+        MyPaddleRef.current.position.x = paddle_one_position.x;
+        OtherPaddleRef.current.position.x = paddle_two_position.x;
+        score1.current.innerText = '0' + hold[user.username];
+        score2.current.innerText = '0' + hold['other'];
+        break;
+      case 'game.winner':
+        props.handleWin(winner === user.username, true);
+        break;
+      case 'game.waiting':
+        props.handleWaiting(() => iswaiting);
+        if (iswaiting && (status === 'reconnect' || status === 'pause')) {
+          waiting.current.innerText = currentSecond;
+          waitingStatus.current.innerText = message;
+        }
+        break;
+    }
+  }
+
+  const handleClick = (e) => {
+    console.log(e);
+    if (e.code === 'KeyP') {
+      ws.send(JSON.stringify({ "type": "pause", 'username': user.username }));
+    } else if (e.code === 'Space' && start == false) {
+      ws.send(JSON.stringify({ "type": "start" }));
+    }
+  }
+
+  window.addEventListener('keydown', handleClick);
+  return () => {
+    ws.close();
+    window.removeEventListener('keydown', handleClick);
+  }
+}, []);
+
   useFrame(()=>{
-      if(props.endGame)
-          return 
       let move = get()
-      const positionPaddle  = MyPaddleRef.current.position
-      let x = positionPaddle.x
-      if(move.left)
-          x -= 0.04
-      if (move.right)
-          x += 0.04
-
-      if(x >0.25 && x < 1.75)
-              MyPaddleRef.current.position.x  = x;
-      const positionOtherPaddle = OtherPaddleRef.current.position
-      let OtherX = positionOtherPaddle.x
-      if(OtherX - positionBall.current.x <=0.1  &&  positionBall.current.z < 0.2)
-          OtherX += 0.04
-      if(OtherX - positionBall.current.x >=-0.1  &&  positionBall.current.z < 0.2)
-          OtherX -= 0.04
-      if(move.leftOther)
-          OtherX -= 0.04
-      if(move.rightOther)
-          OtherX += 0.04
-
-      if(OtherX >0.25 && OtherX < 1.75)
-          OtherPaddleRef.current.position.x = OtherX
-      positionBall.current.x += positionBall.current.vx 
-      positionBall.current.z += positionBall.current.vz
-      if( positionBall.current.z >= 2.8 || positionBall.current.z <= -2.8 )
-          {
-              if(positionBall.current.z >= 2.8)
-                {
-                  let number = Number(scoreRef.current.Score2Ref.current.innerText) + 1
-                  if(number == 7)
-                    props.handleWin(false,true)
-                  if(number >= 10)
-                    scoreRef.current.Score2Ref.current.innerText = number
-                  else 
-                    scoreRef.current.Score2Ref.current.innerText = '0' + number
-                }
-                if(positionBall.current.z <= -2.8)
-                  {
-                    let number = Number(scoreRef.current.Score1Ref.current.innerText) + 1
-                    if(number == 7)
-                      props.handleWin(true,true)
-                    if(number >= 10)
-                      scoreRef.current.Score1Ref.current.innerText =  number
-                    else
-                      scoreRef.current.Score1Ref.current.innerText = '0' + number
-                  }
-              positionBall.current.z = 0
-              if(positionBall.current.vz < 0)
-                  positionBall.current.vz = 0.05
-              else 
-                  positionBall.current.vz = -0.05
-              if(positionBall.current.vx < 0 )
-                  positionBall.current.vx = 0.05 
-              else
-                  positionBall.current.vx = -0.05 
-              positionBall.current.x = 1
-          }
-      if( positionBall.current.x >= 1.98 || positionBall.current.x <= 0.01 )
-          positionBall.current.vx *= -1
-      if((positionBall.current.z >= positionPaddle.z -0.05  && positionBall.current.z <= positionPaddle.z  )  &&
-       (positionBall.current.x >= positionPaddle.x -0.3  && positionBall.current.x <= positionPaddle.x  + 0.3))
-      {
-          const collisionPosition =  positionPaddle.x - positionBall.current.x
-          positionBall.current.vz *=  -1 
-          positionBall.current.vx = collisionPosition * -0.2
-      }
-      if((positionBall.current.z >= positionOtherPaddle.z -0.05  && positionBall.current.z <= positionOtherPaddle.z  )  &&
-       (positionBall.current.x >= positionOtherPaddle.x -0.3  && positionBall.current.x <= positionOtherPaddle.x  + 0.3))
-      {
-          const collisionPosition =  positionOtherPaddle.x - positionBall.current.x
-          positionBall.current.vz *=  -1 
-          positionBall.current.vx = collisionPosition * -0.2
-      }
-      BallRef.current.position.x = positionBall.current.x
-      BallRef.current.position.z = positionBall.current.z
+      if(move.left || move.down)
+        socket.send(JSON.stringify({"type":"move_paddle","move": "left"}))
+      if (move.right || move.up)
+        socket.send(JSON.stringify({"type":"move_paddle","move": "right"}))
+      if(move.leftOther || move.upOther)
+        socket.send(JSON.stringify({"type":"move_paddle_two","move": "left"}))
+      if (move.rightOther || move.downOther)
+        socket.send(JSON.stringify({"type":"move_paddle_two","move": "right"}))
   })
-    
-   
     return (
       <>
         <Table/>
@@ -109,4 +97,4 @@ function Game(props,scoreRef)
       </>
     )
 }
-export default forwardRef(Game)
+export default Game

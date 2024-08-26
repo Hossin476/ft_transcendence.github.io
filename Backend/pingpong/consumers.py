@@ -5,13 +5,7 @@ from .gamelogic.game import GameLogic
 from .models import GameOnline, GameOffline
 from channels.db import database_sync_to_async
 from users.models import CustomUser
-
-
-@database_sync_to_async
-def change_ingame_state(user, state):
-    currentUser = CustomUser.objects.get(id=user.id)
-    currentUser.is_ingame = state
-    currentUser.save()
+from django.core.cache import cache
 
 class RoomObject:
     
@@ -40,6 +34,7 @@ class RoomObject:
         return self
 
 class GameConsumer(AsyncWebsocketConsumer):
+    user_in_Game_pingpong = []
     game_room = {}
     # This function handles the connection of a user to a game
     async def connect(self):
@@ -53,7 +48,8 @@ class GameConsumer(AsyncWebsocketConsumer):
         # Create a unique group ID for the game
         self.game_group_id = f"game_{self.game_id}"
         # Accept the connection
-        await change_ingame_state(self.user, True)
+        GameConsumer.user_in_Game_pingpong.append(self.user)
+        cache.set("users_pingping", GameConsumer.user_in_Game_pingpong)
         await self.accept()
         # Add the channel to the game group
         await self.channel_layer.group_add(self.game_group_id, self.channel_name)
@@ -121,7 +117,8 @@ class GameConsumer(AsyncWebsocketConsumer):
     # This Function called when user disconnect 
     async def disconnect(self, code_status):
         await self.channel_layer.group_discard(self.game_group_id, self.channel_name)
-        await change_ingame_state(self.user, False)
+        GameConsumer.user_in_Game_pingpong.remove(self.user)
+        cache.set("users_pingping", GameConsumer.user_in_Game_pingpong)
         if self.game_group_id in GameConsumer.game_room:
             room_obj = GameConsumer.game_room[self.game_group_id]
             if room_obj.game_end:
@@ -294,11 +291,12 @@ class GameConsumer(AsyncWebsocketConsumer):
 class LocalGameConsumer(AsyncWebsocketConsumer):
     game_room = {}
     async def connect(self, *args, **kwargs):
-        self.user = self.scope['user']
-        # self.game_id = self.scope["url_route"]["kwargs"]["game_id"]
+
         if "error" in self.scope:
             await self.close()
             return
+        self.user = self.scope['user']
+        # self.game_id = self.scope["url_route"]["kwargs"]["game_id"]
         if self.game_group_id not in LocalGameConsumer.game_room:
             match = await database_sync_to_async(GameOffline.objects.create)(creater_game=self.user, player1="hamza", player2="younsi")
             LocalGameConsumer.game_room[f"game_{match.id}"] = RoomObject().setPlayer1(self.user, True)

@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.decorators  import  api_view
 from itertools import chain
 from operator import attrgetter
+from django.core.cache import cache
 
 # Create your views here.
 class NotifitationView(APIView):
@@ -28,7 +29,7 @@ class NotifitationView(APIView):
 @api_view(['GET'])
 def onlineFriends(request):
     friends = Friendship.objects.select_related('from_user', 'to_user')\
-        .filter(Q(request='A'), Q(from_user__is_online=True) | Q(to_user__is_online=True))
+        .filter(request='A')
     users_list = []
     for obj in friends:
         if request.user != obj.from_user:
@@ -36,8 +37,31 @@ def onlineFriends(request):
         elif request.user != obj.to_user:
             users_list.append(obj.to_user)
     users_list = list(set(users_list))
-    instance = playerSerializers(users_list, many=True)
-    return Response(instance.data)
-    
-    
-    
+    connected_users = cache.get('connected_users')
+    if request.user in connected_users:
+        connected_users.remove(request.user)
+    online_users = []
+    for obj in users_list:
+        if obj in connected_users:
+            online_users.append(obj)
+    users_pingpong = []
+    users_tictactoe = []
+    if cache.has_key('users_pingping'):
+        users_pingpong = cache.get('users_pingping')
+    if cache.has_key('users_tictactoe'):
+        users_tictactoe = cache.get('users_tictactoe')
+    data = {'inlobby':[], 'ingame':[]}
+    for obj in online_users:
+        if obj in users_pingpong:
+            sr_obj = playerSerializers(obj).data
+            sr_obj['game_type'] = 'P',
+            data['ingame'].append(sr_obj)
+            online_users.remove(obj)
+        elif obj in users_tictactoe:
+            sr_obj = playerSerializers(obj).data
+            sr_obj['game_type'] = 'T',
+            data['ingame'].append(sr_obj)
+            online_users.remove(obj)
+    instance = playerSerializers(online_users, many=True)
+    data['inlobby'] = instance.data
+    return Response(data)

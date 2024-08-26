@@ -13,6 +13,7 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(tokens ? jwtDecode(tokens.access) : null)
     const [socket, setSocket] = useState(null)
     const [username, setUserName] = useState(null);
+    const [socketMessage, setSocketMessage] = useState(null)
 
     const login = async (data) => {
         localStorage.setItem('tokens', JSON.stringify(data.tokens))
@@ -55,9 +56,13 @@ export const AuthProvider = ({ children }) => {
             console.log('WebSocket disconnected');
             ws.close();
             setSocket(null);
+            setTimeout(global_socket, 5000)
         };
+        ws.onmessage  = (e) =>{
+            const data = JSON.parse(e.data);
+            setSocketMessage(data)
+        }
     }
-
 
     let value = {
         login,
@@ -66,7 +71,8 @@ export const AuthProvider = ({ children }) => {
         tokens: tokens,
         socket: socket,
         username: username,
-        global_socket
+        global_socket,
+        socketMessage : socketMessage
     }
 
     return (

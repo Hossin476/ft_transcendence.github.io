@@ -6,14 +6,9 @@ from .models import OnlineGameModel
 from users.models import CustomUser
 from channels.db import database_sync_to_async
 from asgiref.sync import sync_to_async
+from django.core.cache import cache
 
 
-
-@database_sync_to_async
-def change_ingame_state(user, state):
-    currentUser = CustomUser.objects.get(id=user.id)
-    currentUser.is_ingame = state
-    currentUser.save()
 class Room:
     def __init__(self):
         self.players = {"X": None, "O": None}
@@ -65,19 +60,20 @@ class Room:
             self.reconnect_countdown_value = 0
 
 
-global_room = Room()
-global_game = TicTacToe()
 
 
 class TicTacToeConsumer(AsyncWebsocketConsumer):
+    global_room = Room()
+    global_game = TicTacToe()
+    users_ingame = []
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.room_name = None
         self.room_group_name = None
-        self.room = global_room
+        self.room = TicTacToeConsumer.global_room
         self.user = None
-        self.game = global_game
+        self.game = TicTacToeConsumer.global_game
         self.game_record = None
 
     async def connect(self):
@@ -89,9 +85,10 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = f"game_{self.room_name}"
         self.player_role = self.room.add_player(self.user)
+        TicTacToeConsumer.users_ingame.append(self.user)
+        cache.set('users_tictactoe', TicTacToeConsumer.users_ingame)
         if self.player_role:
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
-            await change_ingame_state(self.user, True)
             await self.accept()
             self.game_record = await database_sync_to_async(OnlineGameModel.objects.get)(id=self.room_name)
             await self.channel_layer.group_send(self.room_group_name, {
@@ -115,7 +112,8 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         self.room.remove_player(self.user)
-        await change_ingame_state(self.user, False)
+        TicTacToeConsumer.users_ingame.remove(self.user)
+        cache.set('users_tictactoe',TicTacToeConsumer.users_ingame)
         if not self.room.are_both_players_present():
             self.room.start_reconnect_countdown(self.disconnect_countdown())
             self.room.cancel_countdown()
