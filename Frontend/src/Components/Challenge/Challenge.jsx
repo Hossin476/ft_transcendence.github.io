@@ -2,8 +2,6 @@ import { useState } from "react";
 import Friend from "./Friend";
 import { IoIosArrowUp } from "react-icons/io";
 import { useEffect } from "react";
-import { Toaster } from "react-hot-toast";
-import { ChallengeData } from "../data/challangeData";
 import { useAuth } from "../../context/AuthContext";
 
 export default function Challenge({ setopen }) {
@@ -16,9 +14,7 @@ export default function Challenge({ setopen }) {
     const fetchData = async () => {
         const response = await fetch('http://localhost:8000/notification/online/',
             {
-                headers: {
-                    Authorization: "JWT " + tokens.access
-                }
+                headers: {Authorization: "JWT " + tokens.access}
             }
         );
         const data = await response.json();
@@ -36,28 +32,21 @@ export default function Challenge({ setopen }) {
                 console.log(data)
                 if (data.type == "online.state" && online_ingame){
                     if (data.online == false){
-                        const index1 = online_ingame.inlobby.findIndex(user => user.username == data.user.username);
-                        const index2 = online_ingame.ingame.findIndex(user => user.username == data.user.username);
-                        if (index1 != -1)
-                            setChallengeData((current)=>({inlobby: current.inlobby.slice(index1), ingame: current.ingame}))
-                        else if (index2 != -1)
-                            setChallengeData((current)=>({inlobby: current.inlobby, ingame: current.ingame.slice(index2)}))
+                        const index_lobby = online_ingame.inlobby.findIndex(user => user.username == data.user.username);
+                        const index_game = online_ingame.ingame.findIndex(user => user.username == data.user.username);
+                        setChallengeData((current)=>({inlobby: (index_lobby != -1 ? current.inlobby.slice(index_lobby,index_lobby): current.inlobby)
+                            , ingame:(index_game != -1 ? current.ingame.slice(index_game,index_game) : current.ingame)}))
                         return
                     }
                     else if (data.ingame == false){
-                            const index = online_ingame.ingame.findIndex(user => user.username == data.user.username)
-                            if (online_ingame.inlobby.findIndex(user => user.username == data.user.username) != -1)
-                                return
-                            if (index != -1)
-                                setChallengeData((current) => ({ inlobby: [...current.inlobby, online_ingame.ingame[index]], ingame: current.ingame.slice(index) }));
-                            else
-                                setChallengeData((current) => ({ inlobby: [...current.inlobby, data.user], ingame: current.ingame }));
+                            const index_game = online_ingame.ingame.findIndex(user => user.username == data.user.username)
+                            const index_lobby = online_ingame.inlobby.findIndex(user => user.username == data.user.username)
+                            setChallengeData((current) => ({ inlobby: (index_lobby != -1 ? [...current.inlobby.slice(index_lobby,index_game), data.user] : [...current.inlobby, data.user]),ingame: (index_game != -1 ? current.ingame.slice(index_game,index_game) : current.ingame ) }));
                     }else if (data.ingame == true){
-                            const index = online_ingame.inlobby.findIndex(user => user.username == data.user.username)
-                            if (index != -1)
-                                setChallengeData((current) => ({ ingame: [...current.ingame, online_ingame.inlobby[index]], inlobby: current.inlobby.slice(index) }));
-                            else
-                                setChallengeData((current) => ({ ingame: [...current.ingame, data.user], inlobby: current.lobby }));
+                            const index_lobby = online_ingame.inlobby.findIndex(user => user.username == data.user.username)
+                            const index_game = online_ingame.ingame.findIndex(user => user.username == data.user.username)
+                            console.log([...online_ingame.ingame.slice(index_game,index_game), data.user])
+                            setChallengeData((current) => ({ ingame: (index_game != -1 ? [...current.ingame.slice(index_game,index_game), data.user]: [...current.ingame, data.user]),inlobby: (index_lobby != -1 ?current.inlobby.slice(index_lobby, index_lobby) : current.inlobby) }));
                     }
                 }
             }
@@ -82,7 +71,7 @@ export default function Challenge({ setopen }) {
             <div className='flex  flex-col w-[93%] xsm:gap-2 lg:gap-4 h-[40%]'>
                 <h2 className='text-xl font-medium opacity-90 lg:text-xl xsm:text-[8px] sm:text-[10px]'>In game</h2>
                 <div className=' flex flex-col overflow-auto lg:gap-4 xsm:gap-2 '>
-                {online_ingame && online_ingame.ingame.map((item, index) => <Friend icon={false} hidden={open} PlayerName={item.username} key={index} image={item.profile_image} />)}
+                {online_ingame && online_ingame.ingame.map((item, index) => <Friend icon={false} hidden={open} PlayerName={item.username} key={index} image={item.profile_image} gameName={item.game_type} />)}
                 </div>
             </div>
 

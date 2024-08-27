@@ -13,7 +13,7 @@ import GameContext from "../../context/gameContext";
 function Game(props)
 {
   const  {score1, score2, waiting, waitingStatus}  = useContext(GameContext)
-  const {tokens,user} = useAuth()
+  const {tokens,username} = useAuth()
   const [socket,setsocket] = useState(null)
   const BallRef =  useRef()
   const MyPaddleRef= useRef()
@@ -22,8 +22,8 @@ function Game(props)
   const location = useLocation()
   const  [,get] = useKeyboardControls()
   useEffect(() => {
-  // const wsUrl = `ws://localhost:8000/ws/game/${location.state.gameid}/?token=${authTokens.access}`;
-  const wsUrl = `ws://localhost:8000/ws/game/s/1/?token=${tokens.access}`;
+  const wsUrl = `ws://localhost:8000/ws/game/pingpoing/${location.state.gameid}/?token=${tokens.access}`;
+  // const wsUrl = `ws://localhost:8000/ws/game/s/1/?token=${tokens.access}`;
   const ws = new WebSocket(wsUrl);
 
   ws.onopen = () => {
@@ -44,11 +44,11 @@ function Game(props)
         BallRef.current.position.z = ball_position[2];
         MyPaddleRef.current.position.x = paddle_one_position.x;
         OtherPaddleRef.current.position.x = paddle_two_position.x;
-        score1.current.innerText = '0' + hold[user.username];
+        score1.current.innerText = '0' + hold[username];
         score2.current.innerText = '0' + hold['other'];
         break;
       case 'game.winner':
-        props.handleWin(winner === user.username, true);
+        props.handleWin(winner === username, true);
         break;
       case 'game.waiting':
         props.handleWaiting(() => iswaiting);
@@ -63,7 +63,7 @@ function Game(props)
   const handleClick = (e) => {
     console.log(e);
     if (e.code === 'KeyP') {
-      ws.send(JSON.stringify({ "type": "pause", 'username': user.username }));
+      ws.send(JSON.stringify({ "type": "pause", 'username': username }));
     } else if (e.code === 'Space' && start == false) {
       ws.send(JSON.stringify({ "type": "start" }));
     }

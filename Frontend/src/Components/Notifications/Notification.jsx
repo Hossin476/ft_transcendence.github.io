@@ -5,13 +5,13 @@ import moment from 'moment';
 
 function Notification({ notification }) {
 
-    const { socket } = useAuth();
+    const { socket, username } = useAuth();
 
     function accept_game() {
         if (socket) {
             const message = JSON.stringify({
                 type: "accept_game",
-                receiver: "hamza",
+                receiver: notification.sender.username,
                 game: "P"
             })
             socket.send(message);

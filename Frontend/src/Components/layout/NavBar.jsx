@@ -6,20 +6,29 @@ import { useAuth } from "../../context/AuthContext";
 import { useEffect, useState } from 'react';
 import NotificationModal from '../Notifications/NotificationModal';
 import NotificationHandler from "../Notifications/NotificationHandler";
-import toast, { Toaster } from 'react-hot-toast'
+import { useNavigate } from 'react-router-dom';
 
 export default function NavBar() {
 
-    const { socket, global_socket } = useAuth()
+    const { socket, global_socket, socketMessage } = useAuth()
     const [showNotifications, setShowNotifications] = useState(false);
+    const nav = useNavigate();
 
 
     const toggleNotifications = () => {
         setShowNotifications(!showNotifications);
     };
+    useEffect(()=>{
+        console.log("the game has been accepted : " , socketMessage)
+        if (socketMessage && socketMessage.type == 'game.accept'){
+            if (socketMessage.game_type = "P")
+               nav('/game/pingpong/pvpgame/match', { state: { gameid: socketMessage.game_id } });
+        }
+    },[socketMessage])
 
     useEffect(() => {
         global_socket();
+        console.log("connect again ")
         return () => {
             if (socket)
                 socket.close()

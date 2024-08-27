@@ -7,6 +7,11 @@ from users.models import CustomUser
 from channels.db import database_sync_to_async
 from asgiref.sync import sync_to_async
 from django.core.cache import cache
+from channels.layers import get_channel_layer
+
+
+
+channle_layer = get_channel_layer()
 
 
 class Room:
@@ -86,6 +91,11 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
         self.room_group_name = f"game_{self.room_name}"
         self.player_role = self.room.add_player(self.user)
         TicTacToeConsumer.users_ingame.append(self.user)
+        await  channle_layer.group_send(f'notification_{self.user.id}', {
+            'type': 'game.state',
+            'game_type': 'tic tac teo',
+            'ingame': True,
+        })
         cache.set('users_tictactoe', TicTacToeConsumer.users_ingame)
         if self.player_role:
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
@@ -113,6 +123,11 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         self.room.remove_player(self.user)
         TicTacToeConsumer.users_ingame.remove(self.user)
+        await channle_layer.group_send(f'notification_{self.user.id}', {
+            'type': 'game.state',
+            'game_type': None,
+            'ingame': False,
+        })
         cache.set('users_tictactoe',TicTacToeConsumer.users_ingame)
         if not self.room.are_both_players_present():
             self.room.start_reconnect_countdown(self.disconnect_countdown())

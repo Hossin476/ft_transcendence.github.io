@@ -2,6 +2,11 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from .game_logic import TicTacToeLocal
 import json
 import asyncio
+from channels.layers import get_channel_layer
+
+
+
+channle_layer = get_channel_layer()
 
 class Room:
     def __init__(self):
@@ -50,6 +55,11 @@ class TicTacToeLocalConsumer(AsyncWebsocketConsumer):
             return
 
         self.player_role = self.room.add_player(self.user)
+        await  channle_layer.group_send(f'notification_{self.user.id}', {
+            'type': 'game.state',
+            'game_type': 'tic tac teo',
+            'ingame': True
+        })
         if self.player_role:
             await self.accept()
             await self.send(text_data=json.dumps({
@@ -89,6 +99,11 @@ class TicTacToeLocalConsumer(AsyncWebsocketConsumer):
                     asyncio.create_task(self.reset_game())
 
     async def disconnect(self, close_code):
+        await  channle_layer.group_send(f'notification_{self.user.id}', {
+            'type': 'game.state',
+            'game_type': None,
+            'ingame': False
+        })
         self.room.remove_player(self.user)
         self.game.reset_game()
         self.room.cancel_countdown()

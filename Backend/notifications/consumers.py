@@ -69,14 +69,14 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         NotificationConsumer.connected_users.append(self.user)
         await self.channel_layer.group_add(self.group_name, self.channel_name)
         cache.set("connected_users",NotificationConsumer.connected_users )
-        table = await self.online_check(True,False)
+        table = await self.online_check(True)
         await self.send_each(table)
         await self.accept()
 
     async def disconnect(self, close_code):
         if 'error' in self.scope:
             return
-        table = await self.online_check(False,)
+        table = await self.online_check(False)
         await self.send_each(table)
         NotificationConsumer.connected_users.remove(self.user)
         cache.set("connected_users",NotificationConsumer.connected_users )
@@ -126,7 +126,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     async def handle_friend_request(self, data):
         obj = await create_friend_db(self.user, data['receiver'])
-        print(obj)
         await self.channel_layer.group_send(f'notification_{obj.receiver.id}',{
             'type': 'friend.request',
             'Friendship_id': FriendshipNotificationSerializer(obj).data
@@ -135,8 +134,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     async def handle_accept_game(self, data):
         game_type = data['game']
         game_object = await create_game_object(self.user, data['receiver'], game_type)
-        print(game_object)
-        print(game_object["player1"]["username"])
         await self.channel_layer.group_send(f'notification_{game_object["player1"]["id"]}', {
             'type': 'game.accept',
             'from': game_object["player1"]["username"],
@@ -156,7 +153,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         await delete_game_request(data['id'])
 
     @database_sync_to_async
-    def online_check(self, state, ingame):
+    def online_check(self, state, ingame=False  , game_type=None):
         try:
             current_online_users = [*NotificationConsumer.connected_users]
             current_online_users.remove(self.user)
@@ -176,19 +173,16 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 if obj in connected_users:
                     online_users.append(obj)
             data_send = []
-            users_pingpong = []
-            users_tictactoe = []
-            if cache.has_key('users_pingping'):
-                users_pingpong = cache.get('users_pingping')
-            if cache.has_key('users_tictactoe'):
-                users_tictactoe = cache.get('users_tictactoe')
             for obj in users_list:
                if obj in online_users:
-                   data_send.append({"receiver":f'notification_{obj.id}', "obj": {
+                    user_s = playerSerializers(self.user).data
+                    if ingame == True:
+                        user_s['game_type'] =  game_type
+                    data_send.append({"receiver":f'notification_{obj.id}', "obj": {
                        'type': "online.state",
-                       'user': playerSerializers(self.user).data,
+                       'user': user_s,
                        'online': state,
-                       'ingame' : ingame
+                       'ingame' : ingame,
                    }})
             return data_send
         except Exception as e:
@@ -200,3 +194,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     async def send_each(self, table):
         for obj in table:
             await  self.channel_layer.group_send(obj['receiver'], obj['obj'])
+    
+    async def game_state(self, event):
+        table =  await  self.online_check(True, event['ingame'], event['game_type'])
+        await self.send_each(table)

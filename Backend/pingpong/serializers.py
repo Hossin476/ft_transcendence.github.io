@@ -1,9 +1,9 @@
 from rest_framework import serializers
 from .models import GameOnline
-from users.serializers import  AppUserSerializer
+from notifications.serializers import playerSerializers
 class  GameOnlineSerializer(serializers.ModelSerializer):
-    player1 = AppUserSerializer()
-    player2 = AppUserSerializer()
+    player1 = playerSerializers()
+    player2 = playerSerializers()
     game_type = serializers.CharField(max_length=20, default="pinopong")
     class Meta:
         model = GameOnline

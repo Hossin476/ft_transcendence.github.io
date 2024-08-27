@@ -37,7 +37,9 @@ def onlineFriends(request):
         elif request.user != obj.to_user:
             users_list.append(obj.to_user)
     users_list = list(set(users_list))
-    connected_users = cache.get('connected_users')
+    connected_users = []
+    if cache.has_key('users_pingping'):
+        connected_users = cache.get('connected_users')
     if request.user in connected_users:
         connected_users.remove(request.user)
     online_users = []
@@ -54,12 +56,12 @@ def onlineFriends(request):
     for obj in online_users:
         if obj in users_pingpong:
             sr_obj = playerSerializers(obj).data
-            sr_obj['game_type'] = 'P',
+            sr_obj['game_type'] = 'pingpong',
             data['ingame'].append(sr_obj)
             online_users.remove(obj)
         elif obj in users_tictactoe:
             sr_obj = playerSerializers(obj).data
-            sr_obj['game_type'] = 'T',
+            sr_obj['game_type'] = 'tictacteo',
             data['ingame'].append(sr_obj)
             online_users.remove(obj)
     instance = playerSerializers(online_users, many=True)

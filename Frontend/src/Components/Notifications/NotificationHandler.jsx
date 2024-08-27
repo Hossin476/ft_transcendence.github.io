@@ -6,15 +6,16 @@ import { useNavigate } from 'react-router'
 function NotificationHandler() {
     const nav = useNavigate()
 
-    const { socket, username, socketMessage } = useAuth();
+    const { socket, socketMessage } = useAuth();
 
     function handle_accept_game() {
         if (socket) {
             const message = JSON.stringify({
                 type: "accept_game",
-                receiver: "hamza",
+                receiver: socketMessage.from,
                 game: "P"
             })
+            console.log("socket data here messgae : ", socketMessage)
             socket.send(message);
         }
     }
@@ -29,10 +30,6 @@ function NotificationHandler() {
         }
     }
 
-    function createGameUrl(gameType, gameId) {
-        const gameName = gameType === "T" ? "tictactoe" : "pingpong";
-        return `/game/${gameName}/pvpgame/match/${gameId}`;
-    }
     useEffect(() =>
     {
         if (socketMessage) {
@@ -80,9 +77,7 @@ function NotificationHandler() {
                             </div>
                         </div>
                     ))
-                } else if (data.type === 'game_accept')
-                    nav(createGameUrl(data.game_type, data.game_id))
-                
+                }
         }
 
     }, [socketMessage])

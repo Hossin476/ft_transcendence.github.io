@@ -10,8 +10,6 @@ class playerSerializers(serializers.ModelSerializer):
             'id',
             'username',
             'profile_image',
-            'is_online',
-            'is_ingame',
         ]
 
 

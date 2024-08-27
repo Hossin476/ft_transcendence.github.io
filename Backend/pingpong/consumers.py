@@ -6,7 +6,11 @@ from .models import GameOnline, GameOffline
 from channels.db import database_sync_to_async
 from users.models import CustomUser
 from django.core.cache import cache
+from channels.layers import get_channel_layer
 
+
+
+channle_layer = get_channel_layer()
 class RoomObject:
     
     def __init__(self):
@@ -50,6 +54,11 @@ class GameConsumer(AsyncWebsocketConsumer):
         # Accept the connection
         GameConsumer.user_in_Game_pingpong.append(self.user)
         cache.set("users_pingping", GameConsumer.user_in_Game_pingpong)
+        await channle_layer.group_send(f'notification_{self.user.id}', {
+            'type': 'game.state',
+            'game_type': 'ping pong',
+            'ingame': True
+        })
         await self.accept()
         # Add the channel to the game group
         await self.channel_layer.group_add(self.game_group_id, self.channel_name)
@@ -112,13 +121,18 @@ class GameConsumer(AsyncWebsocketConsumer):
             # Set the pause flag to True
             room_obj.pause = True
             # Set the stop message to indicate who paused the game
-            room_obj.stopMessage = f"{data['username']} paused the game"
+            room_obj.stopMessage = f"{self.user.username} paused the game"
 
     # This Function called when user disconnect 
     async def disconnect(self, code_status):
         await self.channel_layer.group_discard(self.game_group_id, self.channel_name)
         GameConsumer.user_in_Game_pingpong.remove(self.user)
         cache.set("users_pingping", GameConsumer.user_in_Game_pingpong)
+        await channle_layer.group_send(f'notification_{self.user.id}', {
+            'type': 'game.state',
+            'game_type': None,
+            'ingame': False
+        })
         if self.game_group_id in GameConsumer.game_room:
             room_obj = GameConsumer.game_room[self.game_group_id]
             if room_obj.game_end:
@@ -304,6 +318,11 @@ class LocalGameConsumer(AsyncWebsocketConsumer):
         room_obj = LocalGameConsumer.game_room[self.game_group_id]
         self.game_group_id = f"game_{room_obj.match.id}"
         await self.channel_layer.group_add(self.game_group_id, self.channel_name)
+        await  channle_layer.group_send(f'notification_{self.user.id}', {
+            'type': 'game.state',
+            'game_type': 'ping pong',
+            'ingame': True
+        })
         await self.accept()
         if room_obj.creater_user is None:
             room_obj.creater_user = self.user
@@ -323,6 +342,11 @@ class LocalGameConsumer(AsyncWebsocketConsumer):
             data = {'type': 'game.start'}
 
     async def disconnect(self, code_status):
+        await  channle_layer.group_send(f'notification_{self.user.id}', {
+            'type': 'game.state',
+            'game_type': None,
+            'ingame': False
+        })
         await self.channel_layer.group_discard(self.game_group_id, self.channel_name)
 
     async def send_data(self, matchId):
