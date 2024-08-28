@@ -1,6 +1,41 @@
 import { AiOutlineUserAdd } from "react-icons/ai";
 import Friend from "./Friend";
+import { useEffect, useState } from "react";
+import { useAuth } from "../../context/AuthContext";
 export default function FriendsBar() {
+    const [friends , setFriends] = useState(null)
+    const {tokens, socketMessage} = useAuth()
+    useEffect(()=>{
+        const fetch_friends = async ()=>{
+            const response = await fetch('http://localhost:8000/notification/online/',{
+                headers: { Authorization : "JWT " + tokens.access}
+            })
+            const data = await response.json()
+            console.log(data)
+            setFriends(data)
+        }
+        fetch_friends()
+    },[])
+    useEffect(()=>{
+        const data = socketMessage
+        if(socketMessage){
+            if (data.type == "online.state" && friends){
+                console.log("")
+               if (data.online == false){
+                const index_online = friends.online.findIndex(user => user.username == data.user.username);
+                const index_offline = friends.offline.findIndex(user => user.username == data.user.username);
+                setFriends((current)=>({online: (index_online != -1 ? current.online.slice(index_online,index_online): current.online)
+                    ,offline:[...(index_offline != -1 ? current.offline.slice(index_offline,index_offline) : current.offline),data.user]}))
+                return
+               }else {
+                const index_online = friends.online.findIndex(user => user.username == data.user.username);
+                const index_offline = friends.offline.findIndex(user => user.username == data.user.username);
+                setFriends((current)=>({online: [...(index_online != -1 ? current.online.slice(index_online,index_online): current.online),data.user]
+                    ,offline:(index_offline != -1 ? current.offline.slice(index_offline,index_offline) : current.offline)}))
+               }
+            }
+        }
+    },[socketMessage])
     return (
         <div className="bg-secondaryColor rounded-3xl  xsm:w-12 sm:w-16 xl:w-4/5   h-2/5 xl:h-full xl:p-5">
             <h3 className=" xsm:hidden xl:block text-center text-2xl">Friends</h3>
@@ -10,12 +45,7 @@ export default function FriendsBar() {
                 </div>
             <div className=" xsm:1/5 xsm:h-1/3 sm:h-2/5 pt-4 xsm:px-1 xl:px-4">
                 <div className="h-full xsm:flex xsm:flex-col xl:block xsm:items-center overflow-y-scroll">
-                    <Friend />
-                    <Friend />
-                    <Friend />
-                    <Friend />
-                    <Friend />
-                    <Friend />
+                {friends && friends.online.map((item)=> (<Friend online={true} img={item.profile_image} friendName={item.username}  currentAction={item.ingame ? "playing "+item.game_type: "in lobby"} />))}
                 </div>
             </div>
 
@@ -24,13 +54,7 @@ export default function FriendsBar() {
             <div className=" xl:px-4 xsm:h-1/2 xl:h-2/5 h-1/4  xsm:px-2">
                 <h3 className="xsm:hidden xl:block text-xl"> Offline</h3>
                 <div className="  h-5/6 xsm:flex xsm:flex-col xl:block xsm:items-center overflow-y-scroll ">
-                    <Friend />
-                    <Friend />
-                    <Friend />
-                    <Friend />
-                    <Friend />
-                    <Friend />
-                    <Friend />
+                {friends && friends.offline.map((item)=> (<Friend online={false} img={item.profile_image} friendName={item.username}  currentAction={item.ingame ? "playing "+item.game_type: "in lobby"} />))}
                 </div>
             </div>
         </div>
