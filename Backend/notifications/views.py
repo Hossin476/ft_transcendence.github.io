@@ -26,7 +26,7 @@ class NotifitationView(APIView):
 
 
 @api_view(['GET'])
-def onlineFriends(request):
+def onlineGame(request):
     friends = Friendship.objects.select_related('from_user', 'to_user')\
         .filter(request='A')
     users_list = []
@@ -66,3 +66,71 @@ def onlineFriends(request):
     instance = playerSerializers(online_users, many=True)
     data['inlobby'] = instance.data
     return Response(data)
+
+
+@api_view(['GET'])
+def onlineFriends(request):
+    friends = Friendship.objects.select_related('from_user', 'to_user')\
+        .filter(request='A')
+    users_list = []
+    for obj in friends:
+        if request.user != obj.from_user:
+            users_list.append(obj.from_user)
+        elif request.user != obj.to_user:
+            users_list.append(obj.to_user)
+    users_list = list(set(users_list))
+    connected_users = []
+    if cache.has_key('connected_users'):
+        connected_users = cache.get('connected_users')
+    if request.user in connected_users:
+        connected_users.remove(request.user)
+
+
+    remaining_users = users_list.copy()
+    online_users = []
+    for obj in users_list:
+        if obj in connected_users:
+            online_users.append(obj)
+            remaining_users.remove(obj)
+
+    users_list = remaining_users
+    users_pingpong = []
+    users_tictactoe = []
+    if cache.has_key('users_pingping'):
+        users_pingpong = cache.get('users_pingping')
+    if cache.has_key('users_tictactoe'):
+        users_tictactoe = cache.get('users_tictactoe')
+    data = {'online':[], 'offline':[]}
+    online_users_data = []
+    for obj in online_users:
+        if obj in users_pingpong:
+            sr_obj = playerSerializers(obj).data
+            sr_obj['game_type'] = 'pingpong'
+            sr_obj['ingame'] = True
+            online_users_data.append(sr_obj)
+        elif obj in users_tictactoe:
+            sr_obj = playerSerializers(obj).data
+            sr_obj['game_type'] = 'tictacteo'
+            sr_obj['ingame'] = True
+            online_users_data.append(sr_obj)
+        else:
+            sr_obj = playerSerializers(obj).data
+            sr_obj['ingame'] = False
+            online_users_data.append(sr_obj)
+    data['online'] = online_users_data
+    data['offline'] = playerSerializers(users_list, many=True).data
+    return Response(data)
+
+
+# id
+# : 
+# 1
+# in_game
+# : 
+# false
+# profile_image
+# : 
+# "/media/images/profile/IMG_2127.jpeg"
+# username
+# : 
+# "hamza"

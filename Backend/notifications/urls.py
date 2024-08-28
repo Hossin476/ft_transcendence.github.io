@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('online/',views.onlineFriends),
     path("", views.NotifitationView.as_view()),
-    path('online/',views.onlineFriends)
+    path('onlinegame/',views.onlineGame),
 ]
