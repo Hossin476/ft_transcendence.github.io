@@ -2,6 +2,7 @@ import { AiOutlineUserAdd } from "react-icons/ai";
 import Friend from "./Friend";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
+
 export default function FriendsBar() {
     const [friends , setFriends] = useState(null)
     const {tokens, socketMessage} = useAuth()
@@ -54,7 +55,7 @@ export default function FriendsBar() {
             <div className=" xl:px-4 xsm:h-1/2 xl:h-2/5 h-1/4  xsm:px-2">
                 <h3 className="xsm:hidden xl:block text-xl"> Offline</h3>
                 <div className="  h-5/6 xsm:flex xsm:flex-col xl:block xsm:items-center overflow-y-scroll ">
-                {friends && friends.offline.map((item)=> (<Friend online={false} img={item.profile_image} friendName={item.username}  currentAction={item.ingame ? "playing "+item.game_type: "in lobby"} />))}
+                {friends && friends.offline.map((item)=> (<Friend online={false} img={item.profile_image} friendName={item.username}  currentAction={item.last_time} />))}
                 </div>
             </div>
         </div>
