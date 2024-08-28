@@ -25,7 +25,6 @@ class NotifitationView(APIView):
         return Response(result)
 
 
-
 @api_view(['GET'])
 def onlineFriends(request):
     friends = Friendship.objects.select_related('from_user', 'to_user')\
@@ -38,7 +37,7 @@ def onlineFriends(request):
             users_list.append(obj.to_user)
     users_list = list(set(users_list))
     connected_users = []
-    if cache.has_key('users_pingping'):
+    if cache.has_key('connected_users'):
         connected_users = cache.get('connected_users')
     if request.user in connected_users:
         connected_users.remove(request.user)

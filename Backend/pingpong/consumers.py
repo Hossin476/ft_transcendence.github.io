@@ -125,6 +125,8 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     # This Function called when user disconnect 
     async def disconnect(self, code_status):
+        if 'error'in self.scope:
+            return
         await self.channel_layer.group_discard(self.game_group_id, self.channel_name)
         GameConsumer.user_in_Game_pingpong.remove(self.user)
         cache.set("users_pingping", GameConsumer.user_in_Game_pingpong)

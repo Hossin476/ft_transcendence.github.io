@@ -91,12 +91,12 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
         self.room_group_name = f"game_{self.room_name}"
         self.player_role = self.room.add_player(self.user)
         TicTacToeConsumer.users_ingame.append(self.user)
+        cache.set('users_tictactoe', TicTacToeConsumer.users_ingame)
         await  channle_layer.group_send(f'notification_{self.user.id}', {
             'type': 'game.state',
             'game_type': 'tic tac teo',
             'ingame': True,
         })
-        cache.set('users_tictactoe', TicTacToeConsumer.users_ingame)
         if self.player_role:
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
             await self.accept()
@@ -121,14 +121,16 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
             await self.close()
 
     async def disconnect(self, close_code):
+        if 'error' in self.scope:
+            return
         self.room.remove_player(self.user)
         TicTacToeConsumer.users_ingame.remove(self.user)
+        cache.set('users_tictactoe',TicTacToeConsumer.users_ingame)
         await channle_layer.group_send(f'notification_{self.user.id}', {
             'type': 'game.state',
             'game_type': None,
             'ingame': False,
         })
-        cache.set('users_tictactoe',TicTacToeConsumer.users_ingame)
         if not self.room.are_both_players_present():
             self.room.start_reconnect_countdown(self.disconnect_countdown())
             self.room.cancel_countdown()

@@ -196,5 +196,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             await  self.channel_layer.group_send(obj['receiver'], obj['obj'])
     
     async def game_state(self, event):
+        table = []
         table =  await  self.online_check(True, event['ingame'], event['game_type'])
         await self.send_each(table)
