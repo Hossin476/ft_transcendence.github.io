@@ -3,21 +3,20 @@ from .models import GameNotification, FriendshipNotification
 import json
 from django.db.models import Q
 from channels.db import database_sync_to_async
-from users.models import CustomUser,Friendship
+from users.models import CustomUser, Friendship
 from tictactoe.models import OnlineGameModel
 from pingpong.models import GameOnline
-from .serializers import FriendshipNotificationSerializer,playerSerializers
-from pingpong.serializers import GameOnlineSerializer 
-from tictactoe.serializers import  OnlineGameModelSerializer
+from .serializers import FriendshipNotificationSerializer, playerSerializers
+from pingpong.serializers import GameOnlineSerializer
+from tictactoe.serializers import OnlineGameModelSerializer
 from django.core.cache import cache
-
-
 
 
 @database_sync_to_async
 def create_game_db(sender, receiver, game):
     receiver_obj = CustomUser.objects.get(username=receiver)
-    GameNotification.objects.create( sender=sender, receiver=receiver_obj, game=game)
+    GameNotification.objects.create(
+        sender=sender, receiver=receiver_obj, game=game)
     return receiver_obj.pk
 
 
@@ -25,9 +24,10 @@ def create_game_db(sender, receiver, game):
 def create_friend_db(sender, receiver_id):
     receiver = CustomUser.objects.get(username=receiver_id)
     friendship = Friendship.objects.create(from_user=sender, to_user=receiver)
-    obj = FriendshipNotification.objects.create(sender=sender, receiver=receiver, friendship=friendship)
+    obj = FriendshipNotification.objects.create(
+        sender=sender, receiver=receiver, friendship=friendship)
     return obj
-    
+
 
 @database_sync_to_async
 def create_game_object(sender, receiver_name, game):
@@ -37,7 +37,8 @@ def create_game_object(sender, receiver_name, game):
         game_obj = GameOnline.objects.create(player1=sender, player2=receiver)
         game_obj = GameOnlineSerializer(game_obj).data
     elif game == 'T':
-        game_obj = OnlineGameModel.objects.create(player1=sender, player2=receiver)
+        game_obj = OnlineGameModel.objects.create(
+            player1=sender, player2=receiver)
         game_obj = OnlineGameModelSerializer(game_obj).data
     return game_obj
 
@@ -68,7 +69,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
         NotificationConsumer.connected_users.append(self.user)
         await self.channel_layer.group_add(self.group_name, self.channel_name)
-        cache.set("connected_users",NotificationConsumer.connected_users )
+        cache.set("connected_users", NotificationConsumer.connected_users)
         table = await self.online_check(True)
         await self.send_each(table)
         await self.accept()
@@ -79,7 +80,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         table = await self.online_check(False)
         await self.send_each(table)
         NotificationConsumer.connected_users.remove(self.user)
-        cache.set("connected_users",NotificationConsumer.connected_users )
+        cache.set("connected_users", NotificationConsumer.connected_users)
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
     async def receive(self, text_data):
@@ -96,23 +97,21 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 await self.handle_reject_game(data)
         except Exception as e:
             print(f"Error in receive: {e}")
-    
 
     async def game_request(self, event):
         await self.send(text_data=json.dumps(event))
-    
+
     async def game_accept(self, event):
         await self.send(text_data=json.dumps(event))
-    
 
     async def friend_request(self, event):
         await self.send(text_data=json.dumps(event))
-    
+
     async def online_state(self, event):
         await self.send(text_data=json.dumps(event))
 
+    # handle notifications events
 
-    # handle notifications events 
     async def handle_game_request(self, data):
         game_type = data['game']
         receiver_id = await create_game_db(self.user, data['receiver'], game_type)
@@ -126,7 +125,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     async def handle_friend_request(self, data):
         obj = await create_friend_db(self.user, data['receiver'])
-        await self.channel_layer.group_send(f'notification_{obj.receiver.id}',{
+        await self.channel_layer.group_send(f'notification_{obj.receiver.id}', {
             'type': 'friend.request',
             'Friendship_id': FriendshipNotificationSerializer(obj).data
         })
@@ -153,12 +152,12 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         await delete_game_request(data['id'])
 
     @database_sync_to_async
-    def online_check(self, state, ingame=False  , game_type=None):
+    def online_check(self, state, ingame=False, game_type=None):
         try:
             current_online_users = [*NotificationConsumer.connected_users]
             current_online_users.remove(self.user)
             friends = Friendship.objects.select_related('from_user', 'to_user')\
-                    .filter(Q(request='A'))
+                .filter(Q(request='A'))
             users_list = []
             for obj in friends:
                 if self.user != obj.from_user:
@@ -174,28 +173,28 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                     online_users.append(obj)
             data_send = []
             for obj in users_list:
-               if obj in online_users:
+                if obj in online_users:
                     user_s = playerSerializers(self.user).data
                     if ingame == True:
-                        user_s['game_type'] =  game_type
-                    data_send.append({"receiver":f'notification_{obj.id}', "obj": {
-                       'type': "online.state",
-                       'user': user_s,
-                       'online': state,
-                       'ingame' : ingame,
-                   }})
+                        user_s['game_type'] = game_type
+                    data_send.append({"receiver": f'notification_{obj.id}', "obj": {
+                        'type': "online.state",
+                        'user': user_s,
+                        'online': state,
+                        'ingame': ingame,
+                    }})
             return data_send
         except Exception as e:
-            print("error",e)
-    
+            print("error", e)
+
     async def online_state(self, event):
         await self.send(text_data=json.dumps(event))
-    
+
     async def send_each(self, table):
         for obj in table:
-            await  self.channel_layer.group_send(obj['receiver'], obj['obj'])
-    
+            await self.channel_layer.group_send(obj['receiver'], obj['obj'])
+
     async def game_state(self, event):
         table = []
-        table =  await  self.online_check(True, event['ingame'], event['game_type'])
+        table = await self.online_check(True, event['ingame'], event['game_type'])
         await self.send_each(table)

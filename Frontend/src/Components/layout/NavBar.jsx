@@ -19,9 +19,10 @@ export default function NavBar() {
         setShowNotifications(!showNotifications);
     };
     useEffect(()=>{
-        console.log("the game has been accepted : " , socketMessage)
-        if (socketMessage && socketMessage.type == 'game.accept'){
+        if (socketMessage && socketMessage.type == 'game.accept')
+        {
             const gameType = socketMessage.game_type === "T" ? "tictactoe" : "pingpong"
+            console.log(socketMessage.game_type)
             nav(`/game/${gameType}/pvpgame/match`, { state: { gameid: socketMessage.game_id } });
         }
     },[socketMessage])

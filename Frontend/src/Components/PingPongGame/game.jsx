@@ -22,7 +22,7 @@ function Game(props)
   const location = useLocation()
   const  [,get] = useKeyboardControls()
   useEffect(() => {
-  const wsUrl = `ws://localhost:8000/ws/game/pingpoing/${location.state.gameid}/?token=${tokens.access}`;
+  const wsUrl = `ws://localhost:8000/ws/game/pingpong/${location.state.gameid}/?token=${tokens.access}`;
   // const wsUrl = `ws://localhost:8000/ws/game/s/1/?token=${tokens.access}`;
   const ws = new WebSocket(wsUrl);
 

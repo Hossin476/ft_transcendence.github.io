@@ -74,7 +74,7 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.room_name = None
+        self.game_id = None
         self.room_group_name = None
         self.room = TicTacToeConsumer.global_room
         self.user = None
@@ -87,8 +87,8 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
             return
         self.user = self.scope.get('user')
 
-        self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = f"game_{self.room_name}"
+        self.game_id = self.scope['url_route']['kwargs']['game_id']
+        self.room_group_name = f"game_{self.game_id}"
         self.player_role = self.room.add_player(self.user)
         TicTacToeConsumer.users_ingame.append(self.user)
         cache.set('users_tictactoe', TicTacToeConsumer.users_ingame)
@@ -100,7 +100,7 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
         if self.player_role:
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
             await self.accept()
-            self.game_record = await database_sync_to_async(OnlineGameModel.objects.get)(id=self.room_name)
+            self.game_record = await database_sync_to_async(OnlineGameModel.objects.get)(id=self.game_id)
             await self.channel_layer.group_send(self.room_group_name, {
                 'type': 'game.update',
                 'state': self.game.board,

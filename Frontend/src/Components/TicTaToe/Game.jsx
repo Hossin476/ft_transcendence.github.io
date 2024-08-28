@@ -6,6 +6,7 @@ import { useTicTacToe } from '../../context/TicTacToeContext';
 import { useAuth } from '../../context/AuthContext';
 import Win from './win';
 import ReconnectModal from './ReconnectModal';
+import {useLocation} from 'react-router'
 
 
 const positions = [
@@ -20,7 +21,7 @@ const positions = [
     [1, -1, 0],
 ];
 
-const Game = ({ room }) => {
+const Game = () => {
     const socket = useRef(null);
     const [board, setBoard] = useState(Array(9).fill(null));
     const [winnerLine, setWinnerLine] = useState(null);
@@ -29,10 +30,10 @@ const Game = ({ room }) => {
 
     const { setScores, setTimer, setPlayerRole, setReconnectTimer } = useTicTacToe();
     const { tokens } = useAuth();
+    const location = useLocation()
     useEffect(() => {
 
-        const online_url = `ws://localhost:8000/ws/game/${room}/?token=${tokens.access}`;
-        // const online_url = `ws://localhost:8000/ws/game/${room}/?token=1`;
+        const online_url = `ws://localhost:8000/ws/game/tictactoe/${location.state.gameid}/?token=${tokens.access}`;
         // const local_url = `ws://localhost:8000/ws/game/local/room/${room}/?token=${tok}`;
         socket.current = new WebSocket(online_url);
 
