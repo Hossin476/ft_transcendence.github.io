@@ -5,7 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 
 export default function FriendsBar() {
     const [friends , setFriends] = useState(null)
-    const {tokens, socketMessage} = useAuth()
+    let {tokens, socketMessage} = useAuth()
     useEffect(()=>{
         const fetch_friends = async ()=>{
             const response = await fetch('http://localhost:8000/notification/online/',{
@@ -35,6 +35,7 @@ export default function FriendsBar() {
                     ,offline:(index_offline != -1 ? current.offline.slice(index_offline,index_offline) : current.offline)}))
                }
             }
+            socketMessage = null
         }
     },[socketMessage])
     return (
