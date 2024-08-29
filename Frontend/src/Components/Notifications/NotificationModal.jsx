@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import GameNotification from './GameNotification';
 import { useAuth } from '../../context/AuthContext';
-import ReconnectNotification from './ReconnectNotification'
-import FriendsNotification from './FriendsNotification';
+// import FriendResponseNotification from './FriendResponseNotification';
+// import GameResponseNotification from './GameResponseNotification'
+// import ReconnectNotification from './ReconnectNotification'
+// import FriendNotification from './FriendNotification'
+import GameNotification from './GameNotification';
 
 function NotificationModal() {
     const [notifications, setNotifications] = useState([]);
@@ -33,11 +35,13 @@ function NotificationModal() {
                     </h1>
                 </div>
                 <div className="p-4 space-y-4 overflow-y-auto h-[calc(100%-5rem)]">
+                        {/* <FriendNotification key={index} notification={notification}/> */}
                     {notifications.map((notification, index) => (
-                        // <GameNotification key={index} notification={notification} />
-                        <FriendsNotification key={index} notification={notification}/>
+                        <GameNotification key={index} notification={notification} />
                     ))}
                     {/* <ReconnectNotification /> */}
+                    {/* <FriendResponseNotification username={"hamza"} response={"rejected"} />
+                    <GameResponseNotification username={"user"} response={"rejected"} /> */}
                 </div>
             </div>
         </div>

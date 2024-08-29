@@ -12,7 +12,6 @@ function NotificationHandler() {
 
     const location = useLocation();
     const gameType = location.pathname.split('/')[2] === "tictactoe" ? 'T' : 'P';
-    console.log("game type is", gameType)
     function handle_accept_game() {
         if (socket) {
             const message = JSON.stringify({

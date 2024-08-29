@@ -10,6 +10,7 @@ from .serializers import FriendshipNotificationSerializer, playerSerializers
 from pingpong.serializers import GameOnlineSerializer
 from tictactoe.serializers import OnlineGameModelSerializer
 from django.core.cache import cache
+from django.utils import timezone
 
 
 @database_sync_to_async
@@ -159,6 +160,9 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             friends = Friendship.objects.select_related('from_user', 'to_user')\
                 .filter(Q(request='A'))
             users_list = []
+            if state is False:
+                self.user.last_time =  timezone.now()
+                self.user.save()
             for obj in friends:
                 if self.user != obj.from_user:
                     users_list.append(obj.from_user)
@@ -191,6 +195,8 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps(event))
 
     async def send_each(self, table):
+        if table is None:
+            return 
         for obj in table:
             await self.channel_layer.group_send(obj['receiver'], obj['obj'])
 

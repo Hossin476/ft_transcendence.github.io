@@ -119,6 +119,7 @@ def onlineFriends(request):
             online_users_data.append(sr_obj)
     data['online'] = online_users_data
     data['offline'] = playerSerializers(users_list, many=True).data
+    print(data)
     return Response(data)
 
 

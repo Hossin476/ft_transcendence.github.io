@@ -10,6 +10,8 @@ class playerSerializers(serializers.ModelSerializer):
             'id',
             'username',
             'profile_image',
+            'last_time',
+
         ]
 
 

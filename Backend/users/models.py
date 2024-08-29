@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from django.utils import timezone
+
 
 
 class CustomUser(AbstractUser):
@@ -13,6 +15,7 @@ class CustomUser(AbstractUser):
     wins = models.IntegerField(default=0)
     loses = models.IntegerField(default=0)
     draws = models.IntegerField(default=0)
+    last_time = models.DateTimeField(default=timezone.now)
     # 2FA
     key = models.CharField(max_length=255, null=True, default=None)
     # profile image 
