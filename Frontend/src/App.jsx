@@ -12,6 +12,7 @@ import Settings from "./Pages/Settings";
 import Leaderboard from "./Pages/Leaderboard";
 import ChatPage from "./Pages/ChatPage";
 import LoginPage from "./Pages/Login";
+import Chat from "./Pages/Chat";
 import { AuthProvider } from "./context/AuthContext";
 import PrivateRoute from "./utils/privateRoute";
 import NotificationModal from "./Components/Notifications/NotificationModal";
@@ -31,6 +32,7 @@ function App() {
               <Route path="managefriends" element={<ManageFriends />} />
               <Route path="settings" element={<Settings />} />
               <Route path="leaderboard" element={<Leaderboard />} />
+              <Route path="chats" element={<Chat />}/>
               <Route path="chat" element={<ChatProvider><ChatPage /></ChatProvider> } />
               <Route path="game">
                 <Route index element={<Game />} />

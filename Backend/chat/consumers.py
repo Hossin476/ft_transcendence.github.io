@@ -39,7 +39,9 @@ def update_seen(text_data_json):
 
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
-
+        if "error" in self.scope:
+            self.close()
+            return
         self.user_id = self.scope['user'].id
         self.group_name = f"chat_{self.user_id}"
     
@@ -49,6 +51,8 @@ class ChatConsumer(WebsocketConsumer):
         )
         self.accept()
     def disconnect(self,code):
+        if "error" in self.scope:
+            return
         async_to_sync(self.channel_layer.group_discard) (
             self.group_name,
             self.channel_name

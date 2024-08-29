@@ -13,17 +13,24 @@
 ::-webkit-scrollbar {
     width: 5px;
     display: none;
+    -ms-overflow-style: none;   
 }
+
  
 /* Track */
 ::-webkit-scrollbar-track {
     background: #693535;
 }
+
  
 /* Handle */
 ::-webkit-scrollbar-thumb {
     background: #888;
     border-radius: 5px;
+}
+
+* {
+  scrollbar-width: none;
 }
 
 .main-wrapper {

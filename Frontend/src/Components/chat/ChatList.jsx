@@ -32,7 +32,7 @@ const getConversations = async (tokens,user)=> {
 
 export default function ChatList() {
 
-  const {setCurrentUser,conversation,setConversation} = useContext(ChatContext)
+  const {setCurrentUser,conversation,setConversation,currantUser} = useContext(ChatContext)
   const {user,tokens} = useAuth()
   const [selectedChat,setSelectedChat] = useState(-1)
 
@@ -51,7 +51,7 @@ export default function ChatList() {
 
     return useMemo(()=> {
       return (
-        <div className="h-5/6 mx-5 bg-secondaryColor rounded-3xl w-full lg:w-1/4 mt-5 sm:mt-0">
+        <div className={`xsm:${currantUser ? 'hidden' : 'block'} h-[90%] md:block bg-secondaryColor rounded-3xl xsm:w-full md:w-[18rem] xl:w-[24rem]  `}>
           <div className="mt-10 flex center justify-center relative">
               <div className="relative w-5/6 mx-5">
                 <input
@@ -74,5 +74,5 @@ export default function ChatList() {
         </div>
       )
     },
-    [conversation,selectedChat])
+    [conversation,selectedChat,currantUser])
 }

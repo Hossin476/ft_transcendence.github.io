@@ -8,6 +8,8 @@ class Message(models.Model):
     created_at      = models.DateTimeField(auto_now_add=True)
     seen            = models.BooleanField(default=False)
 
+    class Meta:
+        ordering = ['created_at']
     def __str__(self):
        return str(self.pk) + "Message"
 

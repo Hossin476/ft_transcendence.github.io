@@ -1,12 +1,14 @@
+import {useContext} from 'react'
 import FriendHeader from "./FriendHeader.jsx"
 import Conversation from "./Conversation.jsx"
 import SendMessage from "./SendMessage"
-import MessageSearch from "./MessageSearch.jsx"
+import ChatContext from "../../context/ChatContext.jsx"
 
-export default function ChatField({chatUser}){
+export default function ChatField(){
+
+    const { currantUser} = useContext(ChatContext)
     return(
-        <div className="hidden lg:block 3xl:mt-10 w-2/3 h-5/6 bg-gray-300 rounded-3xl">
-            <MessageSearch />
+        <div className={`xsm:${currantUser ? 'flex' : 'hidden'} h-[90%] md:flex   flex-1  flex-col h-[90%] bg-gray-300  sm:px-4 xl:px-8 rounded-3xl`}>
             <FriendHeader  />
             <Conversation />
             <SendMessage />

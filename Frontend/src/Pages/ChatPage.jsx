@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect,useState } from 'react';
 import ChatList from '../Components/chat/ChatList';
 // import ChatList from '../Components/chat/ChatList';
 import ChatField from '../Components/chat/ChatField';
@@ -23,7 +23,6 @@ function handleDirectMessaging({ convo, sender, receiver }, currentContact, user
 const ChatPage = () => {
     const { chatsocket, user } = useAuth()
     const { currantUser, setMessages,setSeen } = useContext(ChatContext)
-
     if (chatsocket) {
         (chatsocket.onmessage = (e) => {
             const data = JSON.parse(e.data)
@@ -45,11 +44,11 @@ const ChatPage = () => {
 
     console.log(user)
     return (
-        <>
+        <div className="flex-1 h-[90%] relative flex items-center p-4 gap-4 ">
             <ChatList />
             <ChatField />
             <ChatProfileBrief />
-        </>
+        </div>
     );
 }
 

@@ -13,7 +13,7 @@ export default function LayoutOne(){
                         <div className="   text-white xsm:h-12 sm:h-28 ">
                             <NavBar/>
                         </div>
-                        <div className="flex main-wrapper relative" >
+                        <div className="flex flex-col main-wrapper relative" >
                                 <Outlet/>
                             <BottomBar/>
                         </div>

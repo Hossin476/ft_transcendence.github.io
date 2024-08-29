@@ -7,7 +7,7 @@ import { NavLink } from "react-router-dom";
 export default function BottomBar()
 {
     return (
-    <ul className=" xsm:text-lg w-screen   lg:hidden flex sm:text-2xl flex-row justify-center xsm:gap-2 sm:gap-6  xsm:py-4 sm:py-4 h-16 absolute bottom-0 text-white ">
+    <ul className=" xsm:text-lg w-full   bg-green-500  lg:hidden flex sm:text-2xl flex-row justify-center xsm:gap-2 sm:gap-6  xsm:py-4 sm:py-4 h-16 z-40 text-white ">
         <li>
             <NavLink to="/example1"  className={({isActive})=>isActive ? "text-thirdColor block  rounded-lg p-3 bg-linkBgColor": "p-3 block"}
             > <RiDashboardFill className=" font-normal"/> </NavLink>

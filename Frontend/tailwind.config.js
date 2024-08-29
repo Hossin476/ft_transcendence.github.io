@@ -61,6 +61,7 @@ export default {
     },
   },
   plugins: [],
+  mode: 'jit',
 }
 
 985
