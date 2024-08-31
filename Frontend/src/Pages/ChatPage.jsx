@@ -27,7 +27,7 @@ const ChatPage = () => {
         (chatsocket.onmessage = (e) => {
             const data = JSON.parse(e.data)
             const { type,reciever } = data.event
-            console.log(data)
+            // console.log(data)
             if (type === "chat.message") {
                 setSeen(()=>false)
                 handleDirectMessaging(data.event, currantUser, user, setMessages)
@@ -37,10 +37,11 @@ const ChatPage = () => {
                 if (data.event.reciever === user.user_id)
                     setSeen(()=>true)
             }
+            if (type === "typing") {
+                console.log("typing...")
+            }
         })
     }
-
-
 
     console.log(user)
     return (

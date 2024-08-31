@@ -11,5 +11,5 @@ class Message(models.Model):
     class Meta:
         ordering = ['created_at']
     def __str__(self):
-       return str(self.pk) + "Message"
+        return f'{self.sendId} to {self.friendshipid} : {self.content}'
 

@@ -1,4 +1,4 @@
-from channels.generic.websocket import WebsocketConsumer
+from channels.generic.websocket import WebsocketConsumer, AsyncWebsocketConsumer
 from asgiref.sync import async_to_sync
 import json
 from django.db.models import Q
@@ -59,46 +59,71 @@ class ChatConsumer(WebsocketConsumer):
         )
     def receive(self, text_data=None):
         text_data_json = json.loads(text_data)
-        print(text_data_json["type"])
-        if(text_data_json["type"] == "new_messgaes"):
-            receiver = "chat_" + str(text_data_json["receiver"])
-            convo =  async_to_sync(set_message)(text_data_json)
-            async_to_sync(self.channel_layer.group_send) (
-                receiver,
-                {
-                    "type": "chat.message",
-                    "convo" : convo,
-                    "sender": text_data_json["sender"],
-                    "receiver":text_data_json["receiver"]
-                }
-            )
-            print(self.group_name)
-            async_to_sync(self.channel_layer.group_send) (
-                self.group_name,
-                {
-                    "type": "chat.message",
-                    "convo" : convo,
-                    "sender": text_data_json["sender"],
-                    "receiver":text_data_json["receiver"]
-                }
-            )
-        if(text_data_json["type"] == "seen_message"):
-            print("zeeeb khdaaam olyaaa")
-            receiver = "chat_"+str(text_data_json["reciever"])
-            async_to_sync(update_seen)(text_data_json)
-            async_to_sync(self.channel_layer.group_send) (
-             receiver,
+        event_type = text_data_json.get("type")
+    
+        if event_type == "new_messgaes":
+            self.handle_new_message(text_data_json)
+        elif event_type == "seen_message":
+            self.handle_seen_message(text_data_json)
+        elif event_type == "typing":
+            self.handle_typing(text_data_json)
+        else:
+            print("error f recieve")
+
+
+    def handle_new_message(self, text_data_json):
+        receiver = "chat_" + str(text_data_json["receiver"])
+        convo = async_to_sync(set_message)(text_data_json)
+        async_to_sync(self.channel_layer.group_send) (
+            receiver,
+            {
+                "type": "chat.message",
+                "convo" : convo,
+                "sender": text_data_json["sender"],
+                "receiver": text_data_json["receiver"]
+            }
+        )
+        async_to_sync(self.channel_layer.group_send) (
+            self.group_name,
+            {
+                "type": "chat.message",
+                "convo" : convo,
+                "sender": text_data_json["sender"],
+                "receiver": text_data_json["receiver"]
+            }
+        )
+
+    def handle_seen_message(self, text_data_json):
+        receiver = "chat_"+str(text_data_json["reciever"])
+        async_to_sync(update_seen)(text_data_json)
+        async_to_sync(self.channel_layer.group_send) (
+            receiver,
             {
                 "type": "message.seen",
                 "reciever" : text_data_json["reciever"]
             }
         )
-    def chat_message(self,event):
-        print("zebi 3ndk mochkil f front")
+    
+    def handle_typing(self, text_data_json):
+        receiver = "chat_"+str(text_data_json["reciever"])
+        async_to_sync(self.channel_layer.group_send) (
+            receiver,
+            {
+                "type": "typing",
+                "reciever" : text_data_json["reciever"]
+            }
+        )
+
+
+    def chat_message(self, event):
         self.send(text_data=json.dumps({
             "event": event
         }))
-    def message_seen(self,event):
+    def message_seen(self, event):
+        self.send(text_data=json.dumps({
+            "event": event
+        }))
+    def typing(self, event):
         self.send(text_data=json.dumps({
             "event": event
         }))
