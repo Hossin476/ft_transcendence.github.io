@@ -2,6 +2,23 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import {useContext} from 'react'
 import ChatContext from '../../context/ChatContext';
 import { useAuth } from '../../context/AuthContext';
+import Lottie from 'react-lottie';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+// import typing_animation from '../../../public/typing.json';
+
+
+const Typing_render = () => {
+    return (
+      <div className="self-start bg-gray-400  border-linkColor border-[2px] rounded-xl w-20 h-10">
+        <DotLottieReact
+            src="https://lottie.host/b2bb6c89-5bae-4a2e-98e8-3acf68655ca0/zXc9PPXQHf.json"
+            loop
+            autoplay
+            style={{width: '100%', height: '100%'}}
+          />
+        </div>
+    )
+} 
 
 
 const getMessages = async (chatUser,tokens)=> {
@@ -37,7 +54,7 @@ function getFormatedDate(messageTime) {
 const Conversation = () => {
 
   const {user,tokens,chatsocket} = useAuth()
-  const {currantUser,messages,setMessages,seen,setSeen} = useContext(ChatContext)
+  const {currantUser,messages,setMessages,seen,setSeen, typing} = useContext(ChatContext)
   const elementRef = useRef(null)
 
   useEffect(()=> {
@@ -89,11 +106,16 @@ const Conversation = () => {
         {
           seen === true ? <p className="self-end pr-4">seen</p>: ""
         }
+        {
+          currantUser && currantUser.user.id === typing.sender &&
+          // typing.typing === true ? <p className="self-start"> typing...</p> : ""
+          typing.typing === true ? <Typing_render /> : ""
+        }
         <div ref={elementRef}></div>
       </div>
     );
   }
-  ,[messages,currantUser,seen])
+  ,[messages,currantUser,seen, typing])
 }
 
 export default Conversation;

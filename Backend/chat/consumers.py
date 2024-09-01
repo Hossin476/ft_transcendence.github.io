@@ -50,6 +50,7 @@ class ChatConsumer(WebsocketConsumer):
             self.channel_name
         )
         self.accept()
+
     def disconnect(self,code):
         if "error" in self.scope:
             return
@@ -57,6 +58,7 @@ class ChatConsumer(WebsocketConsumer):
             self.group_name,
             self.channel_name
         )
+
     def receive(self, text_data=None):
         text_data_json = json.loads(text_data)
         event_type = text_data_json.get("type")
@@ -110,7 +112,8 @@ class ChatConsumer(WebsocketConsumer):
             receiver,
             {
                 "type": "typing",
-                "reciever" : text_data_json["reciever"]
+                "reciever" : text_data_json["reciever"],
+                "sender" : text_data_json["senderId"],
             }
         )
 

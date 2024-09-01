@@ -19,31 +19,48 @@ function handleDirectMessaging({ convo, sender, receiver }, currentContact, user
 
 }
 
+function handleTyping(typing, setTyping, sender) {
+    if (typing.timer) {
+        clearTimeout(typing.timer)
+    }
+
+    setTyping({ typing: true, timer: typing.timer, sender: sender })
+
+    const newTimer = setTimeout(() => {
+        setTyping({ typing: false, timer: null, sender: sender })
+    }, 2000)
+
+    setTyping(prev => ({ ...prev, timer: newTimer }))
+}
+
 
 const ChatPage = () => {
     const { chatsocket, user } = useAuth()
-    const { currantUser, setMessages,setSeen } = useContext(ChatContext)
-    if (chatsocket) {
-        (chatsocket.onmessage = (e) => {
-            const data = JSON.parse(e.data)
-            const { type,reciever } = data.event
-            // console.log(data)
-            if (type === "chat.message") {
-                setSeen(()=>false)
-                handleDirectMessaging(data.event, currantUser, user, setMessages)
-            }
-            if(type == "message.seen" && user.user_id === reciever) {
-                console.log("check the seeen ----------")
-                if (data.event.reciever === user.user_id)
-                    setSeen(()=>true)
-            }
-            if (type === "typing") {
-                console.log("typing...")
-            }
-        })
-    }
+    const { currantUser, setMessages,setSeen} = useContext(ChatContext)
+    const {typing, setTyping} = useContext(ChatContext)
 
-    console.log(user)
+    useEffect(() => {
+        if (chatsocket) {
+            (chatsocket.onmessage = (e) => {
+                const data = JSON.parse(e.data)
+                const { type,reciever, sender } = data.event
+                if (type === "chat.message") {
+                    setSeen(()=>false)
+                    handleDirectMessaging(data.event, currantUser, user, setMessages)
+                }
+                if(type == "message.seen" && user.user_id === reciever) {
+                    console.log("check the seeen ----------")
+                    if (data.event.reciever === user.user_id)
+                        setSeen(()=>true)
+                }
+                if (type === "typing" && user.user_id === reciever) {
+                    handleTyping(typing, setTyping, sender)
+                }
+            })
+        }
+    }, [chatsocket, currantUser, user, setMessages, setSeen, typing, setTyping])
+
+    // console.log(user)
     return (
         <div className="flex-1 h-[90%] relative flex items-center p-4 gap-4 ">
             <ChatList />
