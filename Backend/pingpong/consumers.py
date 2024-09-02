@@ -152,92 +152,96 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def send_data(self, matchId):
         # this line retrieves  the game object from the global list that holds all games currenly running games. 
         room_obj = GameConsumer.game_room[self.game_group_id]
-        game = None
+        game = room_obj.game
         #  This loop works if one or both users disconnect. it give them 30 seconds to reconnect .
         #  if neither user returns to the game, it gets canceled and is not stored  in databse.
         #  However if one user remains in the game, wait for the other player 
         #  that player will win the game with score of 3-0
-        while True:
-            # time ot wait 
-            timeSpand = 30
-            # Check  both  players to  see if one or both are not connected
-            while room_obj.player1_connect == False or room_obj.player2_connect == False:
-                # Substract 1 from the timestamp 
-                timeSpand -= 1
-                # This data is sent to the connected user showing the remaining time.
-                data = {
-                    'type': 'game.waiting',
-                    'iswaiting': True,
-                    'currentSecond': timeSpand,
-                    'status': 'reconnect',
-                    'message':  "wait for your opponent to reconnect"
-                }
-                # This condition  checks if the time has ended when the time reaches 0 the connected player is set as winner.
-                if timeSpand == 0:
-                # Create a task to either save the result in the database or remove the object from it if both players are disconnected.
-                    asyncio.create_task(game.reconnect(room_obj.player1_connect, room_obj.player2_connect, int(self.game_id)))
-                    room_obj.game_end = True
-                    data['iswaiting'] = False
-                    await self.channel_layer.group_send(self.game_group_id, data)
-                    await self.winner()
-                    self.disconnect()
-                    break
-                # Here , the data is sent to  the user,  and the program sleeps for  1 second between each frame.
-                await self.channel_layer.group_send(self.game_group_id, data)
-                await asyncio.sleep(1)
-                # Check if both players reconnect. Send a frame to the frontend. Stop the countdown.
-                if room_obj.player1_connect == True and room_obj.player2_connect == True:
-                    data['iswaiting'] = False
-                    await self.channel_layer.group_send(self.game_group_id, data)
-
-            # chech is the game is start 
-            if room_obj.start == False:
-                await asyncio.sleep(1/60)
-                continue
-            # this used to stop game 15 second if one of players pause the game 
-            if room_obj.pause == True:
-                # how mush  time in each stop
-                timeSpand = 15
-                data = {
-                    'type': 'game.waiting',
-                    'iswaiting': True,
-                    'currentSecond': timeSpand,
-                    'status': 'pause',
-                    'message': room_obj.stopMessage
-                }
-                # countdown  and sender   
-                while timeSpand >= 0:
+        try:
+            while True:
+                # time ot wait 
+                timeSpand = 30
+                # Check  both  players to  see if one or both are not connected
+                while room_obj.player1_connect == False or room_obj.player2_connect == False:
+                    # Substract 1 from the timestamp 
                     timeSpand -= 1
-                    data['currentSecond'] = timeSpand
-                    await asyncio.sleep(1)
+                    # This data is sent to the connected user showing the remaining time.
+                    data = {
+                        'type': 'game.waiting',
+                        'iswaiting': True,
+                        'currentSecond': timeSpand,
+                        'status': 'reconnect',
+                        'message':  "wait for your opponent to reconnect"
+                    }
+                    # This condition  checks if the time has ended when the time reaches 0 the connected player is set as winner.
+                    print(timeSpand)
+                    # Create a task to either save the result in the database or remove the object from it if both players are disconnected.
+                    if timeSpand == 0:
+                        await asyncio.create_task(game.reconnect(room_obj.player1_connect, room_obj.player2_connect, int(self.game_id)))
+                        room_obj.game_end = True
+                        data['iswaiting'] = False
+                        await self.channel_layer.group_send(self.game_group_id, data)
+                        await self.winner()
+                        return
+
+                    # Here , the data is sent to  the user,  and the program sleeps for  1 second between each frame.
                     await self.channel_layer.group_send(self.game_group_id, data)
-                # after the 15 second finish send frame to remind to palyers to continue the game  
-                data['iswaiting'] = False
-                room_obj.pause = False
+                    await asyncio.sleep(1)
+                    # Check if both players reconnect. Send a frame to the frontend. Stop the countdown.
+                    if room_obj.player1_connect == True and room_obj.player2_connect == True:
+                        data['iswaiting'] = False
+                        await self.channel_layer.group_send(self.game_group_id, data)
+
+                # chech is the game is start 
+                if room_obj.start == False:
+                    await asyncio.sleep(1/60)
+                    continue
+                # this used to stop game 15 second if one of players pause the game 
+                if room_obj.pause == True:
+                    # how mush  time in each stop
+                    timeSpand = 15
+                    data = {
+                        'type': 'game.waiting',
+                        'iswaiting': True,
+                        'currentSecond': timeSpand,
+                        'status': 'pause',
+                        'message': room_obj.stopMessage
+                    }
+                    # countdown  and sender   
+                    while timeSpand >= 0:
+                        timeSpand -= 1
+                        data['currentSecond'] = timeSpand
+                        await asyncio.sleep(1)
+                        await self.channel_layer.group_send(self.game_group_id, data)
+                    # after the 15 second finish send frame to remind to palyers to continue the game  
+                    data['iswaiting'] = False
+                    room_obj.pause = False
+                    await self.channel_layer.group_send(self.game_group_id, data)
+                    continue
+                # this is function handle game logic 
+                room_obj.game.gameMove(matchId)
+                # set the game in varail to make code clean 
+                game = room_obj.game
+                # this data needed to  move the ball and paddles 
+                data = {
+                    "type": "game.update",
+                    "ball_position": list(game.ball_position.values()),
+                    "paddle_one_position": game.paddle_one_position,
+                    "paddle_two_position": game.paddle_two_position,
+                }
+
+
                 await self.channel_layer.group_send(self.game_group_id, data)
-                continue
-            # this is function handle game logic 
-            room_obj.game.gameMove(matchId)
-            # set the game in varail to make code clean 
-            game = room_obj.game
-            # this data needed to  move the ball and paddles 
-            data = {
-                "type": "game.update",
-                "ball_position": list(game.ball_position.values()),
-                "paddle_one_position": game.paddle_one_position,
-                "paddle_two_position": game.paddle_two_position,
-            }
-
-
-            await self.channel_layer.group_send(self.game_group_id, data)
-            # this is use to make the game work  60 fps  
-            # 60 fps means 60 frame per second in otherward  60 data per second
-            await asyncio.sleep(1/60)
-            #check is one of players is win 
-            if game.score1 == 7 or game.score2  == 7:
-                game.game_end = True
-                await self.winner()
-                break
+                # this is use to make the game work  60 fps  
+                # 60 fps means 60 frame per second in otherward  60 data per second
+                await asyncio.sleep(1/60)
+                #check is one of players is win 
+                if game.score1 == 7 or game.score2  == 7:
+                    game.game_end = True
+                    await self.winner()
+                    break
+        except Exception as e:
+            print('error have here :' , e)  
             
 
     #Those functions used to send data to all connected sockets in the group
@@ -273,6 +277,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                 'winner': winner
             }
             await self.channel_layer.group_send(self.game_group_id, data)
+            # await self.disconnect(2000)
 
 
 

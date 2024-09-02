@@ -48,7 +48,7 @@ function Game(props)
         score2.current.innerText = '0' + hold['other'];
         break;
       case 'game.winner':
-        props.handleWin(winner === username, true);
+        props.handleWin(winner === username, true, location.state.gameid);
         break;
       case 'game.waiting':
         props.handleWaiting(() => iswaiting);

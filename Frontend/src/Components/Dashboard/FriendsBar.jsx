@@ -12,7 +12,7 @@ export default function FriendsBar() {
                 headers: { Authorization : "JWT " + tokens.access}
             })
             const data = await response.json()
-            console.log(data)
+            console.log("online users :" , data)
             setFriends(data)
         }
         fetch_friends()
@@ -21,7 +21,7 @@ export default function FriendsBar() {
         const data = socketMessage
         if(socketMessage){
             if (data.type == "online.state" && friends){
-                console.log("")
+                console.log("data new user state : ", data.type)
                if (data.online == false){
                 const index_online = friends.online.findIndex(user => user.username == data.user.username);
                 const index_offline = friends.offline.findIndex(user => user.username == data.user.username);

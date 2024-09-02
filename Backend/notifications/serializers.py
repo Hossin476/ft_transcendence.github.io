@@ -11,7 +11,11 @@ class playerSerializers(serializers.ModelSerializer):
             'username',
             'profile_image',
             'last_time',
-
+            'rank',
+            'xp',
+            'wins',
+            'loses',
+            'draws',
         ]
 
 
