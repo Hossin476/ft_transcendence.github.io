@@ -32,7 +32,7 @@ export default function Challenge({ setopen }) {
                 console.log(data)
                 if (data.type == "online.state" && online_ingame){
                     if (data.online == false){
-                        const index_lobby = online_ingame.online.findIndex(user => user.username == data.user.username);
+                        const index_lobby = online_ingame.inlobby.findIndex(user => user.username == data.user.username);
                         const index_game = online_ingame.ingame.findIndex(user => user.username == data.user.username);
                         setChallengeData((current)=>({inlobby: (index_lobby != -1 ? current.inlobby.slice(index_lobby,index_lobby): current.inlobby)
                             , ingame:(index_game != -1 ? current.ingame.slice(index_game,index_game) : current.ingame)}))

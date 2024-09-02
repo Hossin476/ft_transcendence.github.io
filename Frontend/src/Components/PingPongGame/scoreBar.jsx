@@ -18,6 +18,7 @@ function ScoreBar({gameid})
             }
           })
           const data = await response.json()
+          console.log("data users played match : ", data)
           setPlayers(data)
         }
         fetch_game()
@@ -25,9 +26,9 @@ function ScoreBar({gameid})
     return <>
       {players && 
         <div className=" flex  px-5 mt-5 w-[100%] justify-center items-center  max-w-[1024px] xsm:gap-2 lg:gap-9 ">
-          <FirstPlayer name={players.player1.username} level="6" image={`http://localhost:8000${players.player1.profile_image}`} score={2} ref={score1}/>
+          <FirstPlayer name={players.player1.username} level={players.player1.rank} image={`http://localhost:8000${players.player1.profile_image}`} score={2} ref={score1}/>
           <Timer />
-          <SecondPlayer name={players.player2.username} level="3" image={`http://localhost:8000${players.player2.profile_image}`} score={7} ref={score2}/>
+          <SecondPlayer name={players.player2.username} level={players.player2.rank} image={`http://localhost:8000${players.player2.profile_image}`} score={7} ref={score2}/>
         </div>
       }
     </>

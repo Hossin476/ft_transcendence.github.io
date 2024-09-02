@@ -4,8 +4,6 @@ import json
 import asyncio
 from channels.layers import get_channel_layer
 
-
-
 channle_layer = get_channel_layer()
 
 class Room:
@@ -37,16 +35,17 @@ class Room:
             self.countdown_task = None
 
 
-global_room = Room()
-global_game = TicTacToeLocal()
 
 class TicTacToeLocalConsumer(AsyncWebsocketConsumer):
+    global_room = Room()
+    global_game = TicTacToeLocal()
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.user = None
         self.player_role = None
-        self.room = global_room
-        self.game = global_game
+        self.room = TicTacToeLocalConsumer.global_room
+        self.game = TicTacToeLocalConsumer.global_game
 
     async def connect(self):
         self.user = self.scope.get('user')

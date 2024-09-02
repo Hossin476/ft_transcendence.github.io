@@ -5,14 +5,14 @@ import { useAuth } from "../../context/AuthContext";
 
 export default function FriendsBar() {
     const [friends, setFriends] = useState(null)
-    const { tokens, socketMessage } = useAuth()
+    let { tokens, socketMessage } = useAuth()
     useEffect(() => {
         const fetch_friends = async () => {
             const response = await fetch('http://localhost:8000/notification/online/', {
                 headers: { Authorization: "JWT " + tokens.access }
             })
             const data = await response.json()
-            console.log(data)
+            console.log("online users :", data)
             setFriends(data)
         }
         fetch_friends()
@@ -21,7 +21,7 @@ export default function FriendsBar() {
         const data = socketMessage
         if (socketMessage) {
             if (data.type == "online.state" && friends) {
-                console.log("")
+                console.log("data new user state : ", data.type)
                 if (data.online == false) {
                     const index_online = friends.online.findIndex(user => user.username == data.user.username);
                     const index_offline = friends.offline.findIndex(user => user.username == data.user.username);
@@ -39,6 +39,7 @@ export default function FriendsBar() {
                     }))
                 }
             }
+            socketMessage = null
         }
     }, [socketMessage])
     return (
@@ -59,7 +60,7 @@ export default function FriendsBar() {
             <div className=" xl:px-4 xsm:h-1/2 xl:h-2/5 h-1/4  xsm:px-2">
                 <h3 className="xsm:hidden xl:block text-xl"> Offline</h3>
                 <div className="  h-5/6 xsm:flex xsm:flex-col xl:block xsm:items-center overflow-y-scroll ">
-                {friends && friends.offline.map((item)=> (<Friend online={false} img={item.profile_image} friendName={item.username}  currentAction={item.last_time} />))}
+                    {friends && friends.offline.map((item) => (<Friend online={false} img={item.profile_image} friendName={item.username} currentAction={item.last_time} />))}
                 </div>
             </div>
         </div>

@@ -9,6 +9,18 @@ import hh from './icons/hh.json';
 
 export default function Friend({img, friendName , currentAction, online})
 {
+    const ref = useRef();
+
+    useEffect(() => {
+        let settime;
+        if (online === false) {
+            settime = setInterval(() => {
+                ref.current.innerText = "last seen " + moment(currentAction).fromNow();
+            }, 60000);
+        }
+        return () => clearInterval(settime);
+    }, [currentAction, online]);
+
     const defaultOptions = {
         loop: true,
         autoplay: true, 
@@ -16,15 +28,6 @@ export default function Friend({img, friendName , currentAction, online})
             preserveAspectRatio: 'xMidYMid slice'
         }
     };
-    const ref = useRef()
-    if(online==false){
-        useEffect(()=>{
-            const settime = setTimeout(()=>{
-                ref.current.innerText = "last seen " + moment(currentAction).fromNow()
-            },60000)
-            return ()=> clearTimeout(settime)
-        }, [currentAction])
-    }
     return (
         <div className="flex justify-between my-2 center">
             <div className="flex xsm:gap-0 xl:gap-4 center">
