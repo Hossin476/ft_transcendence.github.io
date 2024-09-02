@@ -51,7 +51,7 @@ export default function FriendsBar() {
             </div>
             <div className=" xsm:1/5 xsm:h-1/3 sm:h-2/5 pt-4 xsm:px-1 xl:px-4">
                 <div className="h-full xsm:flex xsm:flex-col xl:block xsm:items-center overflow-y-scroll">
-                    {friends && friends.online.map((item) => (<Friend online={true} img={item.profile_image} friendName={item.username} currentAction={item.ingame ? "playing " + item.game_type : "in lobby"} />))}
+                    {friends && friends.online.map((item, index) => (<Friend online={true} img={item.profile_image} key={index} friendName={item.username} currentAction={item.ingame ? "playing " + item.game_type : "in lobby"} />))}
                 </div>
             </div>
 
@@ -60,7 +60,7 @@ export default function FriendsBar() {
             <div className=" xl:px-4 xsm:h-1/2 xl:h-2/5 h-1/4  xsm:px-2">
                 <h3 className="xsm:hidden xl:block text-xl"> Offline</h3>
                 <div className="  h-5/6 xsm:flex xsm:flex-col xl:block xsm:items-center overflow-y-scroll ">
-                    {friends && friends.offline.map((item) => (<Friend online={false} img={item.profile_image} friendName={item.username} currentAction={item.last_time} />))}
+                    {friends && friends.offline.map((item, index) => (<Friend online={false} img={item.profile_image} key={index} friendName={item.username} currentAction={item.last_time} />))}
                 </div>
             </div>
         </div>
