@@ -161,7 +161,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 .filter(Q(request='A'))
             users_list = []
             if state is False:
-                self.user.last_time =  timezone.now()
+                self.user.last_time = timezone.now()
                 self.user.save()
             for obj in friends:
                 if self.user != obj.from_user:
@@ -196,7 +196,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     async def send_each(self, table):
         if table is None:
-            return 
+            return
         for obj in table:
             await self.channel_layer.group_send(obj['receiver'], obj['obj'])
 

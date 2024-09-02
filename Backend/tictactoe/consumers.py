@@ -13,8 +13,6 @@ from channels.layers import get_channel_layer
 channel_layer = get_channel_layer()
 
 # Define a Room class to manage game rooms
-
-
 class Room:
     def __init__(self):
         # Initialize players, countdown tasks, and reconnect countdown
