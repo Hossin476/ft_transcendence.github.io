@@ -32,32 +32,6 @@ def conversations(request):
             del users["to_user"]
         # print("haha error here", serialize_convo.data)
         return Response(serialize_convo.data,status.HTTP_200_OK)
-    
-
-
-
-@api_view(["POST"])
-def allUsers(request):
-    user  = request.user
-
-    conversations =  models.FriendShip.objects.filter(
-        Q(user1 = user.id)| Q(user2 = user.id)
-    )
-
-    if not conversations.exists():
-        return Response([],status.HTTP_200_OK)
-    else:
-        users = []
-        serialized_friends = serializers.FriendShipSerializer(conversations, many=True)
-        for friends in serialized_friends.data:
-            if friends["user1"]["id"] == user.id:
-                friends['user'] = friends["user2"]
-            if friends["user2"]["id"] == user.id:
-                friends['user'] = friends["user1"]
-            del friends["user1"]
-            del friends["user2"]
-        print(serialized_friends.data)
-        return Response(serialized_friends.data,status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 def messages(request):

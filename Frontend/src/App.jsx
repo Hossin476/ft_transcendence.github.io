@@ -28,6 +28,7 @@ function App() {
           <Route element={<PrivateRoute />}>
             <Route element={<LayoutOne />}>
               <Route index element={<Dashboard />} />
+              <Route path="tour" element={<Tournament />} />
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="managefriends" element={<ManageFriends />} />
               <Route path="settings" element={<Settings />} />

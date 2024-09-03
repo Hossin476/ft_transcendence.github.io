@@ -8,7 +8,7 @@ import Challenge from '../Components/Tournament/Challenge';
 
 function Tournament() {
   return (
-    <div className="container_tournament bg-primaryColor w-full grid grid-rows-1 justify-items-center items-center">
+    <div className="container_tournament h-[90%] flex-1 bg-primaryColor w-full grid grid-rows-1 justify-items-center items-center">
       <div className="flex justify-center items-center w-11/12 h-full">
         {/* < Challenge /> */}
         <div className='border border-forthColor lg:w-11/12 md:w-11/12 w-full text-white flex flex-col items-center h-[70%] bg-linkBgColor rounded-3xl'>

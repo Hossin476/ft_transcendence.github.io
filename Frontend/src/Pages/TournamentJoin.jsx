@@ -14,7 +14,7 @@ export default function TournamentJoin({title})
         window.addEventListener('resize',handleResize)
         return ()=> window.removeEventListener('resize', handleResize)
     },[])
-    return(<div className='bg-primaryColor w-full flex flex-row items-center justify-between px-7 relative'>
+    return(<div className='bg-primaryColor h-[100%] w-full flex flex-row items-center justify-between px-7 relative'>
         <div className='flex  justify-center items-center xsm:w-[90%] w-[80%] h-[100%]'>
             <CreateTournament title={title}/>
         </div>

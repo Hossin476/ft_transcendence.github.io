@@ -48,7 +48,7 @@ export default function ChatList() {
     }
     fetchConversation()
   },[])
-
+  console.log(conversation)
     return useMemo(()=> {
       return (
         <div className={`xsm:${currantUser ? 'hidden' : 'block'} h-[90%] md:block bg-secondaryColor rounded-3xl xsm:w-full md:w-[18rem] xl:w-[24rem]  `}>

@@ -19,7 +19,6 @@ function handleDirectMessaging({ convo, sender, receiver }, currentContact, user
 
 }
 
-
 const ChatPage = () => {
     const { chatsocket, user } = useAuth()
     const { currantUser, setMessages,setSeen } = useContext(ChatContext)

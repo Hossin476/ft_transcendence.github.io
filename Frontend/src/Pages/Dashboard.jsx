@@ -4,7 +4,7 @@ import ProfileInfo from "../Components/Dashboard/ProfileInfo"
 import MatchHistory from "../Components/Dashboard/MatchHistory"
 export default function Dashboard() {
     return (
-        <div className="text-white flex    flex-1">
+        <div className="text-white flex  h-[90%]  flex-1">
                 <div className=" flex flex-col flex-1  lg:pb-8 md:pl-12  gap-y-4 gap-x-16 xsm:p-2 ">
                     <ProfileInfo/>
                     <div className="flex lg:flex-1  xsm:h-1/2 md:h-3/5 lg:h-2/4 gap-x-8 ">

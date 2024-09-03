@@ -77,9 +77,9 @@ const Conversation = () => {
       <div  className="flex-1 overflow-y-scroll flex flex-col space-y-4 px-4  text-gray-600">
         {messages && messages.map((conv, index) => (
             <div key={`${index}`} className="w-full  flex flex-col mt-4">
-              <div className={`w-fit rounded-xl  ${conv.sendId === user.user_id ? 'self-end bg-linkColor  border-forthColor' : 'self-start bg-gray-400  border-linkColor'} border-[2px]  relative`}>
+              <div className={`w-fit h-auto max-w-[50%] rounded-xl  ${conv.sendId === user.user_id ? 'self-end bg-linkColor  border-forthColor' : 'self-start bg-gray-400  border-linkColor'} border-[2px]  relative`}>
                 <div 
-                    className={` pt-2 w-fit  px-5 p-2 flex items-center `}>
+                    className={` pt-2 w-fit break-all px-5 p-2 flex items-center `}>
                     <p className="text-gray-600">{conv.content}</p>
                 </div>
                 <p style={{fontSize: '10px'}} className={`absolute right-2  opacity-60`}>{getFormatedDate(conv.created_at)}</p>
