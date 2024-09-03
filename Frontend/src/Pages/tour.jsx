@@ -73,14 +73,52 @@ const Tour = () => {
           </Stage>
         </Canvas>
       </div>
-      <div className="relative  h-[calc(100%-70%)] xsm:w-[99%] md:w-[70%]  rounded-[20px] flex  text-white flex-col bg-secondaryColor border-[2px] border-forthColor">
-          <div className="flex justify-center  w-[33%] bg-red">
+      <div className="  h-[calc(100%-70%)] xsm:w-[99%] md:w-[70%] gap-2 rounded-[20px] flex-col  text-white flex-wrap  bg-secondaryColor border-[2px] border-forthColor">
+        <div className="flex jus-between w-[100%] bg-green-500">
+          <p>PLAYER IN TOURNAMENT</p>
+          <p>MARHBA BI HBABI</p>
+        </div>
+        <div>
+          <div className="flex items-center  w-[23%] h-[20%] gap-3 border-[2px] border-forthColor m-2 bg-green-500">
              <img src="./silver.jpg" className="rounded-full w-[52px] h-[52px]"/>
-             <div>
-              <p>Hamza Younsi</p>
-              
+             <div className="flex flex-col">
+                <p>Hamza Younsi</p>
+                <p className="text-[10px] font-inter">RANK 2</p>
              </div>
           </div>
+          <div className="flex items-center  w-[23%] h-[20%] gap-3 border-[2px] border-forthColor m-2 bg-green-500">
+             <img src="./silver.jpg" className="rounded-full w-[52px] h-[52px]"/>
+             <div className="flex flex-col">
+                <p>Hamza Younsi</p>
+                <p className="text-[10px] font-inter">RANK 2</p>
+             </div>
+          </div>
+          <div className="flex items-center  w-[23%] h-[20%] gap-3 border-[2px] border-forthColor m-2 bg-green-500">
+             <img src="./silver.jpg" className="rounded-full w-[52px] h-[52px]"/>
+             <div className="flex flex-col">
+                <p>Hamza Younsi</p>
+                <p className="text-[10px] font-inter">RANK 2</p>
+             </div>
+          </div>
+          <div className="flex items-center  w-[23%] h-[20%] gap-3 border-[2px] border-forthColor m-2 bg-green-500">
+             <img src="./silver.jpg" className="rounded-full w-[52px] h-[52px]"/>
+             <div className="flex flex-col">
+                <p>Hamza Younsi</p>
+                <p className="text-[10px] font-inter">RANK 2</p>
+             </div>
+          </div>
+          <div className="flex items-center  w-[23%] h-[20%] gap-3 border-[2px] border-forthColor m-2 bg-green-500">
+             <img src="./silver.jpg" className="rounded-full w-[52px] h-[52px]"/>
+             <div className="flex flex-col">
+                <p>Hamza Younsi</p>
+                <p className="text-[10px] font-inter">RANK 2</p>
+             </div>
+          </div>
+
+        </div>
+
+              
+           
       </div>
     </div>
   );
