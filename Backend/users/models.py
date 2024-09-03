@@ -19,8 +19,14 @@ class CustomUser(AbstractUser):
     # 2FA
     key = models.CharField(max_length=255, null=True, default=None)
     # profile image 
-    profile_image = models.ImageField(upload_to='images/profile/', null=True)
-    cover_image = models.ImageField(upload_to='images/cover/', null=True)
+    def your_view(request):
+        if request.method == 'POST':
+            form = YourForm(request.POST, request.FILES)
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.profile_image = request.FILES['profile_image']
+                instance.cover_image = request.FILES['cover_image']
+                instance.save()
 
     USERNAME_FIELD = "username"
     REQUIRED_FIELDS = []

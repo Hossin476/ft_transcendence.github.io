@@ -53,7 +53,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         self.game_group_id = f"game_{self.game_id}"
         # Accept the connection
         GameConsumer.user_in_Game_pingpong.append(self.user)
-        cache.set("users_pingping", GameConsumer.user_in_Game_pingpong)
+        cache.set("users_pingping", GameConsumer.user_in_Game_pingpong) 
         await channle_layer.group_send(f'notification_{self.user.id}', {
             'type': 'game.state',
             'game_type': 'ping pong',
