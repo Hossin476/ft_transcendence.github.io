@@ -47,7 +47,6 @@ const UserBox  = ({username, position, boxcolor})=>{
 
 const Tour = () => {
   const texture = useLoader(TextureLoader, "copper.jpg");
-
   return (
     <div className="h-[100%] w-[100%] flex flex-col relative gap-5">
       <div className=" h-[70%] relative xsm:w-[99%] md:w-[70%] md:h-[70%] max-w-[1300px] rounded-[20px] flex justify-center items-center text-white flex-col bg-secondaryColor border-[2px] border-forthColor">

@@ -26,10 +26,14 @@ def set_start(tour_id):
         )
         j+=2
         tournament.matches.add(game)
+    for i in range(0,3):
+        game = GameOnline.objects.create()
+        tournament.matches.add(game)
     tournament.save()
     return TournamentSerializer(tournament).data
 
 class TournamentConsumer(AsyncWebsocketConsumer):
+    tasks = {}
     def __init__(self, *args, **kwargs):
         super().__init__(args, kwargs)
         self.user = None
@@ -81,15 +85,25 @@ class TournamentConsumer(AsyncWebsocketConsumer):
                         "data" : tournament
                     })
                 asyncio.create_task(self.countdown(tournament))
+                TournamentConsumer.tasks[f'tour_{self.tour_id}']= asyncio.create_task(self.match_watcher(tournament.id))
+
+
     
         except Exception as e:
             print("error",e)
+
+    async def match_watcher(self,id):
+        await asyncio.sleep(60)
+        tournament = database_sync_to_async(Tournament.objects.get(id=id))
+        
+
+
+
 
 
     async def countdown(self,tournament):
         try:
             await asyncio.sleep(6)
-            print("hello task")
             matches = tournament["matches"]
 
             for match in matches:

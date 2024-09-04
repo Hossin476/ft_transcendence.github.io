@@ -12,6 +12,7 @@ class Tournament(models.Model):
     name            = models.CharField(max_length=255)
     is_start        = models.BooleanField(default=False)
     is_end          = models.BooleanField(default=False)
+    knockout        = models.IntegerField(default=4)
 
     def __str__(self):
         return self.name + "tour"

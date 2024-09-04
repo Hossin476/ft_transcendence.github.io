@@ -5,7 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 
 
 
-export default function Win({iswin, game_id=5})
+export default function Win({iswin, game_id})
 {
     const {tokens, username} = useAuth()
     const [userGame, setGame] = useState(null)

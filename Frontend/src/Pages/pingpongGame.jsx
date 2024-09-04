@@ -52,8 +52,8 @@ function PingPongGame() {
   ], [])
   const [status , setStatus] = useState({win:false,endGame:false})
   const [stop , setstop] = useState(false)
-  const handleWin = (win,endGame)=> {
-    setStatus(()=>({win:win, endGame:endGame}))
+  const handleWin = (win,endGame,game_id)=> {
+    setStatus(()=>({win:win, endGame:endGame,game_id:game_id  }))
   }
   return (
     <Suspense>
@@ -61,7 +61,7 @@ function PingPongGame() {
       <div className="h-[100%] w-[100%] flex flex-col items-center justify-center relative">
         <Header gameName={"PING PONG"}/>
         <div className=" h-[70%] relative xsm:w-[96%] md:w-[80%] max-w-[1400px] rounded-[20px] flex justify-center items-center text-white flex-col bg-secondaryColor border-[2px] border-forthColor">
-        {status.endGame && <Win iswin={status.win}/>}
+        {status.endGame && <Win iswin={status.win} game_id={status.game_id} />}
         {stop && <GameCounter/>}
         <ScoreBar gameid={location.state.gameid}/>
           <button className=" lg:h-[40px] lg:w-[60px] xsm:h-[20px] xsm:w-[40px]" onClick={handleCamera}> <VscDeviceCameraVideo className="h-[100%] w-[100%]" style={{color: 'white'}} /></button>
