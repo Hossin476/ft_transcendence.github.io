@@ -9,9 +9,10 @@ import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 const Typing_render = () => {
     return (
-      <div className="self-start bg-gray-400  border-linkColor border-[2px] rounded-xl w-20 h-10">
+      <div className="self-start bg-gray-400 border-linkColor border-[2px] rounded-xl w-20">
         <DotLottieReact
-            src="https://lottie.host/b2bb6c89-5bae-4a2e-98e8-3acf68655ca0/zXc9PPXQHf.json"
+            // src="https://lottie.host/b2bb6c89-5bae-4a2e-98e8-3acf68655ca0/zXc9PPXQHf.json"
+            src="https://lottie.host/0c9dffbe-e667-45cd-be77-9bd29512c886/CpM7tDcwmk.json"
             loop
             autoplay
             style={{width: '100%', height: '100%'}}

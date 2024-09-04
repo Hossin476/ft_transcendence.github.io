@@ -10,7 +10,7 @@ const SendMessage = () => {
 
   const [message,setMessages] = useState("")
   const {chatsocket,user} = useAuth()
-  const {currantUser}  = useContext(ChatContext)
+  const {currantUser, setTyping, typing}  = useContext(ChatContext)
 
   const handleMessage = () => {
     chatsocket && ( message.trim() && chatsocket.send(JSON.stringify({
@@ -36,6 +36,7 @@ const SendMessage = () => {
     setMessages(e.target.value)
     handleTyping()
     if (e.key === "Enter") {
+      setTyping({typing:false , timer:null})
       handleMessage()
     }
   }
