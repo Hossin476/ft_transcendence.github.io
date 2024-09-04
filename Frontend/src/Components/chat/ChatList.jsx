@@ -24,6 +24,17 @@ const getConversations = async (tokens,user)=> {
 
       // if(!convoUser)
       //     data.unshift(chatUser)
+
+      data.map((convo, )=> {
+          if(convo.last_msg == null) {
+              convo.last_msg = {
+                  content: "",
+                  created_at: 0,
+                }
+          }
+      })
+      console.log(data)
+      data.sort((a, b) => new Date(b.last_msg.created_at) - new Date(a.last_msg.created_at));
       return data
   }
   return null
@@ -66,9 +77,18 @@ export default function ChatList() {
             <h3 className="hidden lg:block text-xl text-white mt-5 ml-7">Last chats</h3>
             <section className="h-5/6 text-white mt-10 lg:mt-5">
                 <div className="text-xs h-5/6 block items-center overflow-y-scroll">
-                    {
-                      conversation && conversation.map((convo)=>(<FriendChat key={convo.id} contacts={convo} handleOnClick={handleClick} selected ={selectedChat} />))
-                    }
+                {
+                  conversation && conversation.map((convo) => {
+                      return (
+                        <FriendChat 
+                          key={convo.id} 
+                          contacts={convo} 
+                          handleOnClick={handleClick} 
+                          selected={selectedChat}
+                        />
+                      );
+                  })
+              }
                 </div>
             </section>
         </div>

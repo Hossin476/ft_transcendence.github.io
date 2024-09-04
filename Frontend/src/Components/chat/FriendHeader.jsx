@@ -3,8 +3,6 @@ import React,{useContext, useMemo} from 'react'
 import ChatContext from "../../context/ChatContext";
 import { HiMiniArrowUturnLeft } from "react-icons/hi2";
 
-
-
 const FriendHeader = () => {
 
   const {currantUser,setCurrentUser} = useContext(ChatContext)

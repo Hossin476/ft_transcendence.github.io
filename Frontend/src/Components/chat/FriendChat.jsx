@@ -1,9 +1,21 @@
 import React, { useState,useContext } from 'react';
 import img from "/user.jpeg";
 import ChatContext from '../../context/ChatContext';
+
+
 export default function FriendChat({contacts,handleOnClick,selected}) {
   
+  function timeConverter(timestamp) {
+      const a = new Date(timestamp);
+      const hour = a.getHours();
+      const min = a.getMinutes();
 
+      if (hour < 12) {
+        return (hour + ':' + min + ' AM');
+      }
+      const Newhour = hour - 12;
+      return (Newhour + ':' + min + ' PM');
+    }
   return (
     <>
         <span 
@@ -21,7 +33,7 @@ export default function FriendChat({contacts,handleOnClick,selected}) {
             </div>
           </div>
           <div className="text-sm text-gray-500">
-            9 am
+            {timeConverter(contacts.last_msg.created_at)}
           </div>
         </span>
     </>

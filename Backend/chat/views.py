@@ -55,7 +55,7 @@ class conversations(generics.ListCreateAPIView):
         user  = request.user
         conversations = Friendship.objects.select_related("from_user","to_user").filter(
             Q(from_user=user.id) | Q(to_user=user.id)
-        ).filter(friendship__isnull=False).distinct()
+        ).distinct()
         if not conversations.exists():
                 return Response([], status.HTTP_200_OK)
         else:
@@ -68,7 +68,6 @@ class conversations(generics.ListCreateAPIView):
                     users["user"] = users["from_user"]
                 del users["from_user"]
                 del users["to_user"]
-            # print("haha error here", serialize_convo.data)
             return Response(serialize_convo.data, status.HTTP_200_OK)
        
 
