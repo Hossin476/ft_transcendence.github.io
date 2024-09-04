@@ -26,6 +26,7 @@ urlpatterns = [
     path('', include('tictactoe.urls')),
     path('notification/', include('notifications.urls')),
     path('pingpong/', include('pingpong.urls')),
+    path('tournament/',include('tournament.urls'))
     # path('', include('pingpong.urls')),
 ]
 

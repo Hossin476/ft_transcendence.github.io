@@ -13,7 +13,8 @@ class GameOnline(models.Model):
 
     def __str__(self):
         return f'owner_{self.player1.username}'
-
+    class Meta:
+        ordering = ['startTime']
 
 class GameOffline(models.Model):
     creater_game = models.ForeignKey(CustomUser, on_delete=models.CASCADE)

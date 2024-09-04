@@ -11,7 +11,8 @@ import { useLoader } from "@react-three/fiber";
 import { HemisphereLight, SphereGeometry, TextureLoader } from "three";
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { useGLTF } from '@react-three/drei';
-import { useControls } from 'leva'
+import { IoMdExit } from "react-icons/io";
+import { GiExitDoor } from "react-icons/gi";
 
 
 // const Model = () => {
@@ -46,7 +47,7 @@ const UserBox  = ({username, position, boxcolor})=>{
 
 const Tour = () => {
   const texture = useLoader(TextureLoader, "copper.jpg");
-  const {intansty} = useControls({intansty: {value: 1 , min: 0, max:1}})
+
   return (
     <div className="h-[100%] w-[100%] flex flex-col relative gap-5">
       <div className=" h-[70%] relative xsm:w-[99%] md:w-[70%] md:h-[70%] max-w-[1300px] rounded-[20px] flex justify-center items-center text-white flex-col bg-secondaryColor border-[2px] border-forthColor">
@@ -73,48 +74,71 @@ const Tour = () => {
           </Stage>
         </Canvas>
       </div>
-      <div className="  h-[calc(100%-70%)] xsm:w-[99%] md:w-[70%] gap-2 rounded-[20px] flex-col  text-white flex-wrap  bg-secondaryColor border-[2px] border-forthColor">
-        <div className="flex jus-between w-[100%] bg-green-500">
-          <p>PLAYER IN TOURNAMENT</p>
-          <p>MARHBA BI HBABI</p>
+      <div className="h-[calc(100%-70%)] xsm:w-[99%] md:w-[70%] gap-2 rounded-[20px] flex-col flex text-white   bg-secondaryColor border-[2px] border-forthColor justify-between font-inter">
+        <div className="flex justify-center w-[100%]  min-w-[150px] ">
+          <p className="font-Valorax">PLAYER IN TOURNAMENT</p>
         </div>
-        <div>
-          <div className="flex items-center  w-[23%] h-[20%] gap-3 border-[2px] border-forthColor m-2 bg-green-500">
+        <div className=" flex justify-end gap-4 mx-10">
+           <button className="border-[2px] border-forthColor rounded-[5px]">START TOURNAMENT</button>
+           <GiExitDoor fontSize={30} className=""/>
+        </div>
+        <div className="flex  w-[100%] h-[70%]  flex-wrap justify-center">
+          <div className="flex items-center  w-[23%] h-[33%] gap-3 border-[2px] border-forthColor m-1  min-w-[150px] rounded-[20px]">
              <img src="./silver.jpg" className="rounded-full w-[52px] h-[52px]"/>
              <div className="flex flex-col">
                 <p>Hamza Younsi</p>
                 <p className="text-[10px] font-inter">RANK 2</p>
              </div>
           </div>
-          <div className="flex items-center  w-[23%] h-[20%] gap-3 border-[2px] border-forthColor m-2 bg-green-500">
+          <div className="flex items-center  w-[23%] h-[33%] gap-3 border-[2px] border-forthColor m-1  min-w-[150px] rounded-[20px]">
              <img src="./silver.jpg" className="rounded-full w-[52px] h-[52px]"/>
              <div className="flex flex-col">
                 <p>Hamza Younsi</p>
                 <p className="text-[10px] font-inter">RANK 2</p>
              </div>
           </div>
-          <div className="flex items-center  w-[23%] h-[20%] gap-3 border-[2px] border-forthColor m-2 bg-green-500">
+          <div className="flex items-center  w-[23%] h-[33%] gap-3 border-[2px] border-forthColor m-1  min-w-[150px] rounded-[20px]">
              <img src="./silver.jpg" className="rounded-full w-[52px] h-[52px]"/>
              <div className="flex flex-col">
                 <p>Hamza Younsi</p>
                 <p className="text-[10px] font-inter">RANK 2</p>
              </div>
           </div>
-          <div className="flex items-center  w-[23%] h-[20%] gap-3 border-[2px] border-forthColor m-2 bg-green-500">
+          <div className="flex items-center  w-[23%] h-[33%] gap-3 border-[2px] border-forthColor m-1  min-w-[150px] rounded-[20px]">
              <img src="./silver.jpg" className="rounded-full w-[52px] h-[52px]"/>
              <div className="flex flex-col">
                 <p>Hamza Younsi</p>
                 <p className="text-[10px] font-inter">RANK 2</p>
              </div>
           </div>
-          <div className="flex items-center  w-[23%] h-[20%] gap-3 border-[2px] border-forthColor m-2 bg-green-500">
+          <div className="flex items-center  w-[23%] h-[33%] gap-3 border-[2px] border-forthColor m-1  min-w-[150px] rounded-[20px]">
              <img src="./silver.jpg" className="rounded-full w-[52px] h-[52px]"/>
              <div className="flex flex-col">
                 <p>Hamza Younsi</p>
                 <p className="text-[10px] font-inter">RANK 2</p>
              </div>
           </div>
-
+          <div className="flex items-center  w-[23%] h-[33%] gap-3 border-[2px] border-forthColor m-1  min-w-[150px] rounded-[20px]">
+             <img src="./silver.jpg" className="rounded-full w-[52px] h-[52px]"/>
+             <div className="flex flex-col">
+                <p>Hamza Younsi</p>
+                <p className="text-[10px] font-inter">RANK 2</p>
+             </div>
+          </div>
+          <div className="flex items-center  w-[23%] h-[33%] gap-3 border-[2px] border-forthColor m-1  min-w-[150px] rounded-[20px]">
+             <img src="./silver.jpg" className="rounded-full w-[52px] h-[52px]"/>
+             <div className="flex flex-col">
+                <p>Hamza Younsi</p>
+                <p className="text-[10px] font-inter">RANK 2</p>
+             </div>
+          </div>
+          <div className="flex items-center  w-[23%] h-[33%] gap-3 border-[2px] border-forthColor m-1  min-w-[150px] rounded-[20px]">
+             <img src="./silver.jpg" className="rounded-full w-[52px] h-[52px]"/>
+             <div className="flex flex-col">
+                <p>Hamza Younsi</p>
+                <p className="text-[10px] font-inter">RANK 2</p>
+             </div>
+          </div>
         </div>
 
               

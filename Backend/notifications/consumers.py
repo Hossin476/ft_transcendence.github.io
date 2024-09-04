@@ -11,6 +11,7 @@ from pingpong.serializers import GameOnlineSerializer
 from tictactoe.serializers import  OnlineGameModelSerializer
 from django.core.cache import cache
 from django.utils import timezone
+import asyncio
 
 
 
@@ -104,6 +105,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     
     async def game_accept(self, event):
         await self.send(text_data=json.dumps(event))
+        print("hello game accept ")
     
 
     async def friend_request(self, event):
@@ -205,3 +207,18 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         table = []
         table =  await  self.online_check(True, event['ingame'], event['game_type'])
         await self.send_each(table)
+
+    async def event_tournament(self,event):
+        players = event["data"]["players"]
+        data = event["data"]
+        for player in players:
+            await self.channel_layer.group_send(f'notification_{player["id"]}',{
+                "type":"tour_notification",
+                "data": data["name"],
+            })
+    
+    async def game_tourstart(self,event):
+        matches = event["games"]
+
+    async def tour_notification(self,event):
+        await self.send(text_data = json.dumps(event))

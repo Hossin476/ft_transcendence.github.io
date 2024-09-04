@@ -6,8 +6,8 @@ import PingPongGame from "./Pages/pingpongGame";
 import PvpGame from "./Components/Game/Pvpgame";
 import Game from "./Pages/Game";
 import TicTacToe from "./Pages/TicTacToe";
-import TournamentJoin from "./Pages/TournamentJoin";
 import Tournament from "./Pages/Tournament";
+
 import Settings from "./Pages/Settings";
 import Leaderboard from "./Pages/Leaderboard";
 import ChatPage from "./Pages/ChatPage";
@@ -43,7 +43,7 @@ function App() {
                   <Route path="tournament">
                     <Route
                       index
-                      element={<TournamentJoin title={"TIC TAC TOE"} />}
+                      element={<Tournament title={"TIC TAC TOE"} />}
                     />
                   </Route>
                 </Route>
@@ -53,7 +53,7 @@ function App() {
                     <Route path="match" element={<PingPongGame />} />
                   </Route>
                   <Route path="tournament">
-                    <Route index element={<TournamentJoin title={"PING PONG"} />} />
+                    <Route index element={<Tournament title={"PING PONG"} />} />
                     <Route path="tournaments" element={<Tournament />} />
                   </Route>
                 </Route>
