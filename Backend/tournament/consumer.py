@@ -41,7 +41,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         self.room_name = None
 
     async def connect(self):
-        try:
+        # try:
             if 'error' in self.scope:
                 await self.close()
                 return
@@ -54,8 +54,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
                 "type": "send_player_info",
                 "user": playerSerializers(self.user).data
             })
-        except Exception as e:
-            print("error", e)
+        # except Exception as e:
+        #     print("error", e)
 
     async def disconnect(self,close_code):
         print("test")
@@ -64,7 +64,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard(self.room_name,self.channel_name)
 
     async def receive(self,text_data):
-        try:
+        # try:
             data_json = json.loads(text_data)
             print("tour_id",self.tour_id)
             tournament = None
@@ -84,47 +84,102 @@ class TournamentConsumer(AsyncWebsocketConsumer):
                         "type" : "event_tournament",
                         "data" : tournament
                     })
-                asyncio.create_task(self.countdown(tournament))
-                TournamentConsumer.tasks[f'tour_{self.tour_id}']= asyncio.create_task(self.match_watcher(tournament.id))
+
+                asyncio.create_task(self.countdown(tournament,0,4))
+                asyncio.create_task(self.match_watcher(tournament["id"],0,4))
 
 
     
-        except Exception as e:
-            print("error",e)
+        # except Exception as e:
+        #     print("error",e)
 
-    async def match_watcher(self,id):
+    async def match_watcher(self,id, start, nbr_matches):
+
         await asyncio.sleep(60)
-        tournament = database_sync_to_async(Tournament.objects.get(id=id))
+        print("the watcher is watching the games")
+        tournament = await database_sync_to_async(
+            lambda: Tournament.objects.prefetch_related('matches').get(id=id)
+        )()
+        print("tournament", tournament)
+        matches_state  = start
+        tour_knockouts = nbr_matches
+        match_list = await database_sync_to_async(lambda: list(tournament.matches.select_related("player1", "player2","winner").all()))()
+        while matches_state <= tour_knockouts:
+            for match in match_list:
+                if match.is_game_end == True or match.is_start == False:
+                    matches_state += 1
+            await asyncio.sleep(10)
+        print("round is finished")
+        print("knock out before",tournament.knockout)
+        tournament.knockout = tournament.knockout/2
+        print("knock out afore",tournament.knockout)
+        knockout = tournament.knockout
+        await database_sync_to_async(tournament.save)()
+        #make the next matches
+        j = start
+        match_indx:int = 0
+        if nbr_matches == 7:
+            match_indx = 6
+        else:
+            match_indx = nbr_matches
+        print("start",start)
+        print("round",int(start + knockout))
+        for i in range(start, int(start + knockout)):
+            print("j = " ,j)
+            print("i = " ,i)
+            player1 = None
+            player2 = None
+            if match_list[j].winner is not  None:
+                player1 = match_list[j].winner
+            if match_list[j+1].winner is not  None:
+                player2 = match_list[j+1].winner
+            match_list[match_indx].player1 = player1
+            match_list[match_indx].player2 = player2
+            if player1 is None and player2 is None:
+                match_list[match_indx].is_game_end = True
+            await database_sync_to_async(match_list[match_indx].save)()
+            print("the match is saved")
+            j +=2
+            match_indx+=1
+        tour = await database_sync_to_async(lambda: TournamentSerializer(tournament).data)()
+        if knockout > 0:
+            asyncio.create_task(self.countdown( tour, nbr_matches, nbr_matches + knockout))
+            asyncio.create_task(self.match_watcher(tour["id"],nbr_matches,nbr_matches + knockout))
+            
+
         
 
 
 
 
-
-    async def countdown(self,tournament):
-        try:
+    async def countdown(self,tournament,start,nbr_matches):
+        # try:
             await asyncio.sleep(6)
-            matches = tournament["matches"]
-
-            for match in matches:
-                print("matches are : ",match)
-                await self.channel_layer.group_send(f'notification_{match["player1"]["id"]}', {
-                    'type': 'game.accept',
-                    'from': match["player1"]["username"],
-                    'to': match["player2"]["username"],
-                    'game_id': match['id'],
-                    'game_type': 'P'
-                })
-                await self.channel_layer.group_send(f'notification_{match["player2"]["id"]}', {
-                    'type': 'game.accept',
-                    'from': match["player1"]["username"],
-                    'to': match["player2"]["username"],
-                    'game_id': match['id'],
-                    'game_type': 'P'
-                })
+            match_query = tournament["matches"]
+            matches = list(match_query)
+            print(tournament)
+            for i in range(int(start),int(nbr_matches)):
+                if matches[i]["is_game_end"] is True:
+                    continue
+                if matches[i]["player1"] is not  None:
+                    await self.channel_layer.group_send(f'notification_{matches[i]["player1"]["id"]}', {
+                        'type': 'game.accept',
+                        'from': matches[i]["player1"]["username"],
+                        'to': matches[i]["player2"]["username"],
+                        'game_id': matches[i]['id'],
+                        'game_type': 'P'
+                    })
+                if matches[i]["player2"]  is not  None:
+                    await self.channel_layer.group_send(f'notification_{matches[i]["player2"]["id"]}', {
+                        'type': 'game.accept',
+                        'from': matches[i]["player1"]["username"],
+                        'to': matches[i]["player2"]["username"],
+                        'game_id': matches[i]['id'],
+                        'game_type': 'P'
+                    })
             # print("try catch")
-        except Exception as e:
-            print(e)
+        # except Exception as e:
+        #     print(e)
     async def send_data(self, event):
         self.send(text_data=json.dumps(event))
     

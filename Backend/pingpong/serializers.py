@@ -8,4 +8,4 @@ class  GameOnlineSerializer(serializers.ModelSerializer):
     game_type = serializers.CharField(max_length=20, default="pinopong")
     class Meta:
         model = GameOnline
-        fields = ['id', 'player1', 'player2', 'game_type', 'winner']
+        fields = ['id', 'player1', 'player2', 'game_type', 'winner','is_game_end','is_start']
