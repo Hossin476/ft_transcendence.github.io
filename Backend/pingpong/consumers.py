@@ -17,6 +17,7 @@ def getPlayers(match):
     match.is_start = True
     match.save()
     print(match.player1)
+    players = {"player1": match.player1, "player2": match.player2}
     return players
 
 class RoomObject:
@@ -71,6 +72,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 
         await self.channel_layer.group_add(self.game_group_id, self.channel_name)
         if self.game_group_id not in GameConsumer.game_room:
+            GameConsumer.game_room[self.game_group_id] = None
             match = await database_sync_to_async(GameOnline.objects.get)(id=int(self.game_id))
             players = await getPlayers(match)
             GameConsumer.game_room[self.game_group_id] = RoomObject().setPlayer1(players['player1'])
@@ -80,6 +82,9 @@ class GameConsumer(AsyncWebsocketConsumer):
             room_obj.game = GameLogic('online')
             room_obj.task = asyncio.create_task(self.send_data(room_obj.match.id))
         room_obj = GameConsumer.game_room[self.game_group_id]
+        while(room_obj == None):
+            room_obj = GameConsumer.game_room[self.game_group_id]
+            await asyncio.sleep(1)
         if self.user == room_obj.player1:
             room_obj.player1_connect = True
         elif self.user == room_obj.player2:
@@ -155,6 +160,8 @@ class GameConsumer(AsyncWebsocketConsumer):
         room_obj = GameConsumer.game_room[self.game_group_id]
         game = room_obj.game
         await asyncio.sleep(10)
+        room_obj.start = True
+
         #  This loop works if one or both users disconnect. it give them 30 seconds to reconnect .
         #  if neither user returns to the game, it gets canceled and is not stored  in databse.
         #  However if one user remains in the game, wait for the other player 

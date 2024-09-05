@@ -85,7 +85,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
     async def receive(self, text_data):
-        try:
             data = json.loads(text_data)
             types = data['type']
             if types == 'game_request':
@@ -96,8 +95,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 await self.handle_accept_game(data)
             elif types == 'reject_game':
                 await self.handle_reject_game(data)
-        except Exception as e:
-            print(f"Error in receive: {e}")
     
 
     async def game_request(self, event):
@@ -105,7 +102,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     
     async def game_accept(self, event):
         await self.send(text_data=json.dumps(event))
-        print("hello game accept ")
     
 
     async def friend_request(self, event):
@@ -157,7 +153,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def online_check(self, state, ingame=False  , game_type=None):
-        try:
             current_online_users = [*NotificationConsumer.connected_users]
             current_online_users.remove(self.user)
             friends = Friendship.objects.select_related('from_user', 'to_user')\
@@ -191,8 +186,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                        'ingame' : ingame,
                    }})
             return data_send
-        except Exception as e:
-            print("error",e)
     
     async def online_state(self, event):
         await self.send(text_data=json.dumps(event))
