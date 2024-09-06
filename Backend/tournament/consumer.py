@@ -110,21 +110,20 @@ class TournamentConsumer(AsyncWebsocketConsumer):
                     matches_state += 1
             await asyncio.sleep(10)
         print("round is finished")
-        print("knock out before",tournament.knockout)
         tournament.knockout = tournament.knockout/2
         print("knock out afore",tournament.knockout)
-        knockout = tournament.knockout
+        knockout = int(tournament.knockout)
         await database_sync_to_async(tournament.save)()
         #make the next matches
         j = start
-        match_indx:int = 0
         if nbr_matches == 7:
             match_indx = 6
         else:
-            match_indx = nbr_matches
+            match_indx = int(nbr_matches)
         print("start",start)
         print("round",int(start + knockout))
         for i in range(start, int(start + knockout)):
+            print(" match_indx : ", match_indx)
             print("j = " ,j)
             print("i = " ,i)
             player1 = None
@@ -135,12 +134,19 @@ class TournamentConsumer(AsyncWebsocketConsumer):
                 player2 = match_list[j+1].winner
             match_list[match_indx].player1 = player1
             match_list[match_indx].player2 = player2
-            if player1 is None and player2 is None:
+            if player1 is None or player2 is None:
                 match_list[match_indx].is_game_end = True
+                if player1:
+                    match_list[match_indx].winner = player1
+                elif player2:
+                    match_list[match_indx].winner = player2
             await database_sync_to_async(match_list[match_indx].save)()
             print("the match is saved")
             j +=2
             match_indx+=1
+        tournament = await database_sync_to_async(
+            lambda: Tournament.objects.prefetch_related('matches').get(id=id)
+        )()
         tour = await database_sync_to_async(lambda: TournamentSerializer(tournament).data)()
         if knockout > 0:
             asyncio.create_task(self.countdown( tour, nbr_matches, nbr_matches + knockout))
@@ -159,25 +165,24 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             matches = list(match_query)
             print(tournament)
             for i in range(int(start),int(nbr_matches)):
+                print("i : " , i)
                 if matches[i]["is_game_end"] is True:
                     continue
-                if matches[i]["player1"] is not  None:
-                    await self.channel_layer.group_send(f'notification_{matches[i]["player1"]["id"]}', {
-                        'type': 'game.accept',
-                        'from': matches[i]["player1"]["username"],
-                        'to': matches[i]["player2"]["username"],
-                        'game_id': matches[i]['id'],
-                        'game_type': 'P'
-                    })
-                if matches[i]["player2"]  is not  None:
-                    await self.channel_layer.group_send(f'notification_{matches[i]["player2"]["id"]}', {
-                        'type': 'game.accept',
-                        'from': matches[i]["player1"]["username"],
-                        'to': matches[i]["player2"]["username"],
-                        'game_id': matches[i]['id'],
-                        'game_type': 'P'
-                    })
-            # print("try catch")
+                await self.channel_layer.group_send(f'notification_{matches[i]["player1"]["id"]}', {
+                    'type': 'game.accept',
+                    'from': matches[i]["player1"]["username"],
+                    'to': matches[i]["player2"]["username"],
+                    'game_id': matches[i]['id'],
+                    'game_type': 'P'
+                })
+                await self.channel_layer.group_send(f'notification_{matches[i]["player2"]["id"]}', {
+                    'type': 'game.accept',
+                    'from': matches[i]["player1"]["username"],
+                    'to': matches[i]["player2"]["username"],
+                    'game_id': matches[i]['id'],
+                    'game_type': 'P'
+                })
+            print("try catch")
         # except Exception as e:
         #     print(e)
     async def send_data(self, event):

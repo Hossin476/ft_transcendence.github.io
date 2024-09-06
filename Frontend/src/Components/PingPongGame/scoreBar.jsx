@@ -4,9 +4,11 @@ import SecondPlayer from "./scoreBar&Header/SecondPlayer"
 import Timer from "./scoreBar&Header/Timer"
 import GameContext from "../../context/gameContext"
 import { useAuth } from "../../context/AuthContext"
+import { useLocation } from 'react-router-dom';
 
 function ScoreBar({gameid})
 {
+    const location = useLocation();
     const {score1, score2} = useContext(GameContext)
     const [players, setPlayers] = useState(null)
     const {tokens} = useAuth()
@@ -22,7 +24,7 @@ function ScoreBar({gameid})
           setPlayers(data)
         }
         fetch_game()
-    },[]) 
+    },[location]) 
     return <>
       {players && 
         <div className=" flex  px-5 mt-5 w-[100%] justify-center items-center  max-w-[1024px] xsm:gap-2 lg:gap-9 ">

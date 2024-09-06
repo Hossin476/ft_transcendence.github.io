@@ -16,6 +16,7 @@ import { AuthProvider } from "./context/AuthContext";
 import PrivateRoute from "./utils/privateRoute";
 import NotificationModal from "./Components/Notifications/NotificationModal";
 import Tour from "./Pages/tour";
+import { GameProvider } from "./context/gameContext";
 // import './server.js'
 function App() {
   return (
@@ -50,7 +51,7 @@ function App() {
                 <Route path="pingpong">
                   <Route path="pvpgame">
                     <Route index element={<PvpGame title="PING PONG" />} />
-                    <Route path="match" element={<PingPongGame />} />
+                    <Route path="match" element={<GameProvider><PingPongGame /></GameProvider>} />
                   </Route>
                   <Route path="tournament">
                     <Route index element={<Tournament title={"PING PONG"} />} />
