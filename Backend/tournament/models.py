@@ -16,3 +16,9 @@ class Tournament(models.Model):
 
     def __str__(self):
         return self.name + "tour"
+    
+class InviteTournament(models.Model):
+    tournament  = models.ForeignKey(Tournament,on_delete=models.CASCADE)
+    user        = models.ForeignKey(CustomUser,on_delete=models.CASCADE)
+    created_at  = models.DateTimeField(auto_now_add=True)
+    state       = models.BooleanField(default = False)

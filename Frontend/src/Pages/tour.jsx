@@ -13,6 +13,9 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { useGLTF } from '@react-three/drei';
 import { IoMdExit } from "react-icons/io";
 import { GiExitDoor } from "react-icons/gi";
+import { useEffect, useMemo, useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import defaultImage from './notuser.png';
 
 
 // const Model = () => {
@@ -21,8 +24,8 @@ import { GiExitDoor } from "react-icons/gi";
 //   return <primitive object={gltf.scene} dispose={null} />;
 // };
 
-const UserBox  = ({username, position, boxcolor})=>{
-  const texture = useLoader(TextureLoader, "copper.jpg");
+const UserBox  = ({username, position, image})=>{
+const texture = useLoader(TextureLoader, image || defaultImage);
   return (
     <mesh position={position}>
       <mesh position={[-0.4, 0, 0.2]}>
@@ -40,9 +43,80 @@ const UserBox  = ({username, position, boxcolor})=>{
       </Text>
     </mesh>
     <boxGeometry args={[1.3, 0.7, 0.3]} />
-    <meshStandardMaterial color={"#B795D0"} roughness={0.1} metalness={0.7}/>
+    <meshStandardMaterial color={"black"} roughness={0.1} metalness={0.7}/>
   </mesh>
   )
+}
+const MatchesRound = ({player1, player2, position1, position2})=>{
+   console.log(position1,position2)
+   return (<>
+        <UserBox position={position1} username={player1? player1.username : "not yet" } image={player1 ? player1.profile_image : "./notuser.png"}/> 
+        <UserBox position={position2} username={player2? player2.username : "not yet" } image={player2 ? player2.profile_image : "./notuser.png"}/> 
+   </>)
+}
+const DisplayUser = ()=>{
+   const {tokens} = useAuth()
+   const [tournament, setTournament] = useState(null)
+   useEffect(()=>{
+      const fetch_matches = async ()=>{
+         const response  = await fetch('http://localhost:8000/tournament/1', {
+            headers: {Authorization: "JWT "+ tokens.access}
+         })
+         const data = await response.json()
+         console.log("data matches : ", data)
+         setTournament(data)
+      }
+      fetch_matches()
+   },[])
+   const position = useMemo(()=>[
+                  [4, 1.3, 0],
+                  [4, 2.3, 0],
+                  [4, -1.3, 0],
+                  [4, -2.3, 0],
+                  [-4, -1.3, 0],
+                  [-4, -2.3, 0],
+                  [-4, 1.3, 0],
+                  [-4, 2.3, 0],
+                  [2.5, 1.8, 0],
+                  [2.5, -1.8, 0],
+                  [-2.5, -1.8, 0],
+                  [-2.5, 1.8, 0],
+                  [1.6,0,0],
+                  [-1.6, 0, 0],
+               ])
+
+   return (
+      <>
+         {tournament && tournament.matches.map((item, key)=><MatchesRound player1={item.player1} player2={item.player2} position1={position[key*2]} position2={position[key*2+1]}/>)}
+         {/* <UserBox position={[4, 1.3, 0]} username={"hamza"} boxcolor={'green'}/>
+         <UserBox position={[4, 2.3, 0]} username={"hamza"} boxcolor={'magenta'}/>
+
+
+         <UserBox position={[4, -1.3, 0]} username={"hamza"} boxcolor={'yellow'}/>
+         <UserBox position={[4, -2.3, 0]} username={"hamza"} boxcolor={'cyan'}/>
+
+         <UserBox position={[-4, -1.3, 0]} username={"hamza"} boxcolor={'yellow'}/>
+         <UserBox position={[-4, -2.3, 0]} username={"hamza"} boxcolor={'blue'}/>
+
+
+         <UserBox position={[-4, 1.3, 0]} username={"hamza"} boxcolor={'red'}/>
+         <UserBox position={[-4, 2.3, 0]} username={"hamza"} boxcolor={'magenta'}/>
+
+
+         <UserBox position={[2.5, -1.8, 0]} username={"hamza"} boxcolor={'chartreuse'}/>
+         <UserBox position={[2.5, 1.8, 0]} username={"hamza"} boxcolor={'blue'}/>
+
+
+         <UserBox position={[-2.5, -1.8, 0]} username={"hamza"} boxcolor={'cyan'}/>
+         <UserBox position={[-2.5, 1.8, 0]} username={"hamza"} boxcolor={'green'}/>
+
+         <UserBox position={[1.6,0,0]} username={"hamza"} boxcolor={'blue'}/>
+         <UserBox position={[-1.6, 0, 0]} username={"hamza"} boxcolor={'chartreuse'}/>
+         
+         <UserBox position={[0, 1, 0]} username={"hamza"} boxcolor={'white'}/> */}
+      </>
+
+   )
 }
 
 const Tour = () => {
@@ -55,21 +129,7 @@ const Tour = () => {
           <pointLight position={[10, 10, 10]} rotation={[0,Math.PI/2,0]}/>
           <OrbitControls />
           <Stage adjustCamera={true} intensity={1}>
-            <UserBox position={[1.6,0,0]} username={"hamza"} boxcolor={'blue'}/>
-            <UserBox position={[4, 1.3, 0]} username={"hamza"} boxcolor={'green'}/>
-            <UserBox position={[4, -1.3, 0]} username={"hamza"} boxcolor={'yellow'}/>
-            <UserBox position={[4, -2.3, 0]} username={"hamza"} boxcolor={'cyan'}/>
-            <UserBox position={[4, 2.3, 0]} username={"hamza"} boxcolor={'magenta'}/>
-            <UserBox position={[2.5, -1.8, 0]} username={"hamza"} boxcolor={'chartreuse'}/>
-            <UserBox position={[2.5, 1.8, 0]} username={"hamza"} boxcolor={'blue'}/>
-            <UserBox position={[0, 1, 0]} username={"hamza"} boxcolor={'white'}/>
-            <UserBox position={[-1.6, 0, 0]} username={"hamza"} boxcolor={'chartreuse'}/>
-            <UserBox position={[-4, 1.3, 0]} username={"hamza"} boxcolor={'red'}/>
-            <UserBox position={[-4, -1.3, 0]} username={"hamza"} boxcolor={'yellow'}/>
-            <UserBox position={[-4, -2.3, 0]} username={"hamza"} boxcolor={'blue'}/>
-            <UserBox position={[-4, 2.3, 0]} username={"hamza"} boxcolor={'magenta'}/>
-            <UserBox position={[-2.5, -1.8, 0]} username={"hamza"} boxcolor={'cyan'}/>
-            <UserBox position={[-2.5, 1.8, 0]} username={"hamza"} boxcolor={'green'}/>
+            <DisplayUser/>
           </Stage>
         </Canvas>
       </div>

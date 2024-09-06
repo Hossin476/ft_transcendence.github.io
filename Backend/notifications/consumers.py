@@ -167,7 +167,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 elif self.user != obj.to_user:
                     users_list.append(obj.to_user)
             connected_users = cache.get('connected_users')
-            if self.user in connected_users:
+            if connected_users is not None and self.user in connected_users:
                 connected_users.remove(self.user)
             online_users = []
             for obj in users_list:
