@@ -50,8 +50,8 @@ const texture = useLoader(TextureLoader, image || defaultImage);
 const MatchesRound = ({player1, player2, position1, position2})=>{
    console.log(position1,position2)
    return (<>
-        <UserBox position={position1} username={player1? player1.username : "not yet" } image={player1 ? player1.profile_image : "./notuser.png"}/> 
-        <UserBox position={position2} username={player2? player2.username : "not yet" } image={player2 ? player2.profile_image : "./notuser.png"}/> 
+        <UserBox position={position1} username={player1? player1.username : "not yet" } image={player1 ? player1.profile_image : "./user.jpeg"}/> 
+        <UserBox position={position2} username={player2? player2.username : "not yet" } image={player2 ? player2.profile_image : "./user.jpeg"}/> 
    </>)
 }
 const DisplayUser = ()=>{
@@ -59,7 +59,7 @@ const DisplayUser = ()=>{
    const [tournament, setTournament] = useState(null)
    useEffect(()=>{
       const fetch_matches = async ()=>{
-         const response  = await fetch('http://localhost:8000/tournament/1', {
+         const response  = await fetch('http://localhost:8000/tournament/9', {
             headers: {Authorization: "JWT "+ tokens.access}
          })
          const data = await response.json()
@@ -87,7 +87,7 @@ const DisplayUser = ()=>{
 
    return (
       <>
-         {tournament && tournament.matches.map((item, key)=><MatchesRound player1={item.player1} player2={item.player2} position1={position[key*2]} position2={position[key*2+1]}/>)}
+         {tournament && tournament.matches.map((item, key)=><MatchesRound key={key} player1={item.player1} player2={item.player2} position1={position[key*2]} position2={position[key*2+1]}/>)}
          {/* <UserBox position={[4, 1.3, 0]} username={"hamza"} boxcolor={'green'}/>
          <UserBox position={[4, 2.3, 0]} username={"hamza"} boxcolor={'magenta'}/>
 
