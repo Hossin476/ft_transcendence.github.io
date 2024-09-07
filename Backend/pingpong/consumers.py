@@ -11,8 +11,6 @@ from channels.layers import get_channel_layer
 
 channle_layer = get_channel_layer()
 
-<<<<<<< HEAD
-=======
 @database_sync_to_async
 def getPlayers(match):
     match.is_start = True
@@ -20,7 +18,6 @@ def getPlayers(match):
     print(match.player1)
     players = {"player1": match.player1, "player2": match.player2}
     return players
->>>>>>> 74f7b5647f5d632dbf95b58da73503860de2610f
 
 class RoomObject:
 
@@ -41,13 +38,8 @@ class RoomObject:
     def setPlayer1(self, player):
         self.player1 = player
         return self
-<<<<<<< HEAD
-
-    def setPlayer2(self, player, connect):
-=======
     
     def setPlayer2(self, player):
->>>>>>> 74f7b5647f5d632dbf95b58da73503860de2610f
         self.player2 = player
         return self
 
@@ -55,10 +47,6 @@ class RoomObject:
 class GameConsumer(AsyncWebsocketConsumer):
     user_in_Game_pingpong = []
     game_room = {}
-<<<<<<< HEAD
-    # This function handles the connection of a user to a game
-=======
->>>>>>> 74f7b5647f5d632dbf95b58da73503860de2610f
 
     async def connect(self):
         if "error" in self.scope:
@@ -83,31 +71,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
         await self.channel_layer.group_add(self.game_group_id, self.channel_name)
-<<<<<<< HEAD
-
-        # If the game group ID is not in the game room, add it and set the user as player 1
-        if self.game_group_id not in GameConsumer.game_room:
-            GameConsumer.game_room[self.game_group_id] = RoomObject(
-            ).setPlayer1(self.user, True)
-
-        # Retrieve the room object for the game group
-        room_obj = GameConsumer.game_room[self.game_group_id]
-        # If the user is player 1, set player 1 as connected
-        if self.user == room_obj.player1:
-            GameConsumer.game_room[self.game_group_id].player1_connect = True
-        # If the user is player 2, set player 2 as connected
-        elif self.user == room_obj.player2:
-            GameConsumer.game_room[self.game_group_id].player2_connect = True
-        # If the user is not player 1 and player 2 is not set, set the user as player 2 and initialize the game
-        if room_obj.player1 != self.user and room_obj.player2 == None:
-            room_obj.setPlayer2(self.user, True)
-            room_obj.game = GameLogic('online')
-            # Retrieve the match from the database
-            room_obj.match = await database_sync_to_async(GameOnline.objects.get)(id=int(self.game_id))
-            # Create a task to send data to the match
-            room_obj.task = asyncio.create_task(
-                self.send_data(room_obj.match.id))
-=======
         if self.game_group_id not in GameConsumer.game_room:
             GameConsumer.game_room[self.game_group_id] = None
             match = await database_sync_to_async(GameOnline.objects.get)(id=int(self.game_id))
@@ -127,7 +90,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         elif self.user == room_obj.player2:
             room_obj.player2_connect = True
         
->>>>>>> 74f7b5647f5d632dbf95b58da73503860de2610f
 
     async def receive(self, text_data):
         # Retrieve the game room object using the game group ID

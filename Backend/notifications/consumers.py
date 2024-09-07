@@ -11,6 +11,8 @@ from pingpong.serializers import GameOnlineSerializer
 from tictactoe.serializers import OnlineGameModelSerializer
 from django.core.cache import cache
 from django.utils import timezone
+from tournament.models import Tournament
+from tournament.serializers import TournamentSerializer
 import asyncio
 
 
@@ -50,7 +52,13 @@ def delete_game_request(id):
     game_request = GameNotification.objects.get(id=id)
     game_request.delete()
 
-
+@database_sync_to_async
+def get_tour_from_db(id):
+    try:
+        tournament = Tournament.objects.get(id=id)
+    except Exception as e:
+        print(e)
+    return TournamentSerializer(tournament).data
 class NotificationConsumer(AsyncWebsocketConsumer):
     connected_users = []
 
@@ -96,7 +104,8 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 await self.handle_accept_game(data)
             elif types == 'reject_game':
                 await self.handle_reject_game(data)
-    
+            elif types == 'tour_invite':
+                await self.handle_tour_invite(data)
 
     async def game_request(self, event):
         await self.send(text_data=json.dumps(event))
@@ -110,7 +119,21 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     async def online_state(self, event):
         await self.send(text_data=json.dumps(event))
 
+    async def tour_invite(self, event):
+        await self.send(text_data=json.dumps(event))
+
     # handle notifications events
+    
+    # handle the tournament invitations
+    async def handle_tour_invite(self, data):
+        user = json.loads(data['receiver'])
+        tour = await get_tour_from_db(data['tour_id'])
+        receiver_id = user['id']
+        await self.channel_layer.group_send(f'notification_{receiver_id}', {
+            'type': 'tour_invite',
+            'from': tour["creator"]["username"],
+            'to': user['username'],
+        })
 
     async def handle_game_request(self, data):
         game_type = data['game']
