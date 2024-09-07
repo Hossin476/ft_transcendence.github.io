@@ -11,6 +11,16 @@ from channels.layers import get_channel_layer
 
 channle_layer = get_channel_layer()
 
+<<<<<<< HEAD
+=======
+@database_sync_to_async
+def getPlayers(match):
+    match.is_start = True
+    match.save()
+    print(match.player1)
+    players = {"player1": match.player1, "player2": match.player2}
+    return players
+>>>>>>> 74f7b5647f5d632dbf95b58da73503860de2610f
 
 class RoomObject:
 
@@ -28,43 +38,52 @@ class RoomObject:
         self.game_end = False
         self.stopMessage = None
 
-    def setPlayer1(self, player, connect):
+    def setPlayer1(self, player):
         self.player1 = player
-        self.player1_connect = connect
         return self
+<<<<<<< HEAD
 
     def setPlayer2(self, player, connect):
+=======
+    
+    def setPlayer2(self, player):
+>>>>>>> 74f7b5647f5d632dbf95b58da73503860de2610f
         self.player2 = player
-        self.player2_connect = connect
         return self
 
 
 class GameConsumer(AsyncWebsocketConsumer):
     user_in_Game_pingpong = []
     game_room = {}
+<<<<<<< HEAD
     # This function handles the connection of a user to a game
+=======
+>>>>>>> 74f7b5647f5d632dbf95b58da73503860de2610f
 
     async def connect(self):
-        # If there's an error in the scope, close the connection and return
         if "error" in self.scope:
             await self.close()
             return
-        # Retrieve the user and game ID from the scope
         self.user = self.scope['user']
+
         self.game_id = self.scope["url_route"]["kwargs"]["game_id"]
-        # Create a unique group ID for the game
+
         self.game_group_id = f"game_{self.game_id}"
-        # Accept the connection
+
         GameConsumer.user_in_Game_pingpong.append(self.user)
-        cache.set("users_pingping", GameConsumer.user_in_Game_pingpong)
+
+        cache.set("users_pingping", GameConsumer.user_in_Game_pingpong) 
+
         await channle_layer.group_send(f'notification_{self.user.id}', {
             'type': 'game.state',
             'game_type': 'ping pong',
             'ingame': True
         })
+
         await self.accept()
-        # Add the channel to the game group
+
         await self.channel_layer.group_add(self.game_group_id, self.channel_name)
+<<<<<<< HEAD
 
         # If the game group ID is not in the game room, add it and set the user as player 1
         if self.game_group_id not in GameConsumer.game_room:
@@ -88,6 +107,27 @@ class GameConsumer(AsyncWebsocketConsumer):
             # Create a task to send data to the match
             room_obj.task = asyncio.create_task(
                 self.send_data(room_obj.match.id))
+=======
+        if self.game_group_id not in GameConsumer.game_room:
+            GameConsumer.game_room[self.game_group_id] = None
+            match = await database_sync_to_async(GameOnline.objects.get)(id=int(self.game_id))
+            players = await getPlayers(match)
+            GameConsumer.game_room[self.game_group_id] = RoomObject().setPlayer1(players['player1'])
+            room_obj = GameConsumer.game_room[self.game_group_id]
+            room_obj.match = match
+            room_obj.setPlayer2(players["player2"])
+            room_obj.game = GameLogic('online')
+            room_obj.task = asyncio.create_task(self.send_data(room_obj.match.id))
+        room_obj = GameConsumer.game_room[self.game_group_id]
+        while(room_obj == None):
+            room_obj = GameConsumer.game_room[self.game_group_id]
+            await asyncio.sleep(1)
+        if self.user == room_obj.player1:
+            room_obj.player1_connect = True
+        elif self.user == room_obj.player2:
+            room_obj.player2_connect = True
+        
+>>>>>>> 74f7b5647f5d632dbf95b58da73503860de2610f
 
     async def receive(self, text_data):
         # Retrieve the game room object using the game group ID
@@ -157,10 +197,15 @@ class GameConsumer(AsyncWebsocketConsumer):
         # this line retrieves  the game object from the global list that holds all games currenly running games.
         room_obj = GameConsumer.game_room[self.game_group_id]
         game = room_obj.game
+        await asyncio.sleep(10)
+        room_obj.start = True
+
         #  This loop works if one or both users disconnect. it give them 30 seconds to reconnect .
         #  if neither user returns to the game, it gets canceled and is not stored  in databse.
         #  However if one user remains in the game, wait for the other player
         #  that player will win the game with score of 3-0
+        print("connect player 1 : ", room_obj.player1_connect)
+        print("connect player 2 : ", room_obj.player2_connect)
         try:
             while True:
                 # time ot wait

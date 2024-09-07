@@ -30,7 +30,7 @@ function Game(props)
     console.log("message: connection between the client and the server started");
     setsocket(ws);
   }
-
+  props.handleWin(false, false, location.state.gameid);
   ws.onmessage = async (msg) => {
     const hold = await JSON.parse(msg.data);
     const { type, ball_position, paddle_one_position, paddle_two_position, winner, iswaiting, status, currentSecond, message} = hold;
@@ -74,7 +74,7 @@ function Game(props)
     ws.close();
     window.removeEventListener('keydown', handleClick);
   }
-}, []);
+}, [location.state.gameid]);
 
   useFrame(()=>{
       let move = get()

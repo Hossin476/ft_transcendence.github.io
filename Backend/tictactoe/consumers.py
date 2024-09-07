@@ -105,7 +105,7 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
             'ingame': True,
         })
 
-        # Add user to the game group
+        # Add the game group
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
 
@@ -148,13 +148,13 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
             if self.game_id in TicTacToeConsumer.games:
                 del TicTacToeConsumer.games[self.game_id]
 
-        # Remove user from the game group
+        # Remove the game group
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
     async def disconnect_countdown(self):
         # Handle countdown for player reconnection
         try:
-            self.room.reconnect_countdown_value = 15
+            self.room.reconnect_countdown_value = 10
             while self.room.reconnect_countdown_value > 0:
                 await asyncio.sleep(1)
                 self.room.reconnect_countdown_value -= 1
@@ -164,6 +164,14 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
                 })
         except asyncio.CancelledError:
             pass
+        # if self.room.reconnect_countdown_value == 0 and not self.game.final_winner:
+        #     print("----test-----")
+        #     other_player_role = 'O' if self.player_role == 'X' else 'X'
+        #     other_player = self.room.get_player(other_player_role)
+        #     if other_player:
+        #         self.game.final_winner = other_player_role
+        #         await self.update_record()
+        #         await self.send_game_update()
 
     async def receive(self, text_data):
         # Handle incoming WebSocket messages
@@ -211,8 +219,7 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
             'final_winner': None if reset else self.game.final_winner,
             'score_x': self.game.x_score,
             'score_o': self.game.o_score,
-            'countdown': self.game.countdown_value,
-            'player_role': self.player_role
+            'countdown': self.game.countdown_value
         })
 
     async def handle_reconnect(self, event):
@@ -220,7 +227,6 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'reconnect_countdown': event.get('reconnect_countdown')
         }))
-
 
     async def update_record(self):
         # Update the game record in the database
@@ -236,7 +242,6 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
                     await database_sync_to_async(winner.save)()
             # Save the game record
             await database_sync_to_async(self.game_record.save)()
-
 
     async def game_update(self, event):
         # Send game update to the client

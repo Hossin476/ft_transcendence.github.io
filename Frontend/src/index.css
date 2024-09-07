@@ -37,6 +37,11 @@
     
 }
 
+* {
+  scrollbar-width: none;
+}
+
+
 @font-face {
     font-family: 'Valorax'; /* Use a custom name for your font */
     src: url('/font/valorax.otf');

@@ -11,8 +11,6 @@ function Score() {
     const location = useLocation()
     const {tokens} = useAuth()
 
-    console.log("the game id is", location.state.gameid)
-
     useEffect(() => {
 
         async function fetchData() {

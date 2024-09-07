@@ -27,8 +27,6 @@ export default function Win({ final_winner }) {
     if (!gameData)
         return null;
     const playerData = isWin ? gameData.winner : gameData.loser;
-    let prog = playerData.xp % 100;
-    console.log("the progress is ", prog)
 
     return (
         <div className={`w-[101%] blurHelp h-[101%] absolute ${isWin ? 'border-green-600' : 'border-red-600'} border-[3px] flex flex-col items-center justify-evenly z-10 gap-6 rounded-[20px]`}>
@@ -45,7 +43,7 @@ export default function Win({ final_winner }) {
                             <p className="">LEVEL {playerData.rank}</p>
                             <p>LEVEL {playerData.rank + 1}</p>
                         </div>
-                        <Progress value={prog} max={100} />
+                        <Progress value={playerData.xp % 100} max={100} />
                     </div>
                 </div>
             </div>

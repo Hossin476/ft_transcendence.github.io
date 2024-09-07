@@ -10,6 +10,17 @@ from .serializers import CustomUserSerializer
 
 @api_view(['GET'])
 def get_user_data(req, game_id):
+    """
+    Retrieve the user data for the players involved in a specific game.
+
+    Args:
+        req: The HTTP request object.
+        game_id (int): The ID of the game from which to retrieve player data.
+
+    Returns:
+        Response: A JSON response containing the serialized data of player1 and player2,
+        or an error message if the game does not exist.
+    """
     try:
         game = OnlineGameModel.objects.get(id=game_id)
     except OnlineGameModel.DoesNotExist:
@@ -24,6 +35,17 @@ def get_user_data(req, game_id):
 
 @api_view(['GET'])
 def get_winner_data(request, game_id):
+    """
+    Retrieve the winner and loser data for a specific game.
+
+    Args:
+        request: The HTTP request object.
+        game_id (int): The ID of the game from which to retrieve winner and loser data.
+
+    Returns:
+        Response: A JSON response containing the serialized data of the winner and the loser,
+        or an error message if the game or winner does not exist.
+    """
     try:
         game = OnlineGameModel.objects.get(id=game_id)
         if game:
@@ -37,7 +59,5 @@ def get_winner_data(request, game_id):
                 "winner": winner_serializer.data,
                 "loser": loser_serializer.data
             }, status=status.HTTP_200_OK)
-            
     except OnlineGameModel.DoesNotExist:
         return Response({'error': 'Game not found'}, status=status.HTTP_404_NOT_FOUND)
-

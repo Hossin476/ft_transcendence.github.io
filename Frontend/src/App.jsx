@@ -6,8 +6,8 @@ import PingPongGame from "./Pages/pingpongGame";
 import PvpGame from "./Components/Game/Pvpgame";
 import Game from "./Pages/Game";
 import TicTacToe from "./Pages/TicTacToe";
-import TournamentJoin from "./Pages/TournamentJoin";
 import Tournament from "./Pages/Tournament";
+
 import Settings from "./Pages/Settings";
 import Leaderboard from "./Pages/Leaderboard";
 import ChatPage from "./Pages/ChatPage";
@@ -15,6 +15,8 @@ import LoginPage from "./Pages/Login";
 import { AuthProvider } from "./context/AuthContext";
 import PrivateRoute from "./utils/privateRoute";
 import NotificationModal from "./Components/Notifications/NotificationModal";
+import Tour from "./Pages/tour";
+import { GameProvider } from "./context/gameContext";
 // import './server.js'
 function App() {
   return (
@@ -31,6 +33,7 @@ function App() {
               <Route path="settings" element={<Settings />} />
               <Route path="leaderboard" element={<Leaderboard />} />
               <Route path="chat" element={<ChatPage />} />
+              <Route path="tour" element={<Tour />} />
               <Route path="game">
                 <Route index element={<Game />} />
                 <Route path="tictactoe">
@@ -41,17 +44,17 @@ function App() {
                   <Route path="tournament">
                     <Route
                       index
-                      element={<TournamentJoin title={"TIC TAC TOE"} />}
+                      element={<Tournament title={"TIC TAC TOE"} />}
                     />
                   </Route>
                 </Route>
                 <Route path="pingpong">
                   <Route path="pvpgame">
                     <Route index element={<PvpGame title="PING PONG" />} />
-                    <Route path="match" element={<PingPongGame />} />
+                    <Route path="match" element={<GameProvider><PingPongGame /></GameProvider>} />
                   </Route>
                   <Route path="tournament">
-                    <Route index element={<TournamentJoin title={"PING PONG"} />} />
+                    <Route index element={<Tournament title={"PING PONG"} />} />
                     <Route path="tournaments" element={<Tournament />} />
                   </Route>
                 </Route>
