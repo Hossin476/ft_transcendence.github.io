@@ -1,9 +1,8 @@
 from django.urls import path
-from .views import Game, Room, get_is_ingame
+from .views import get_user_data, get_winner_data
 
 
 urlpatterns = [
-    path('game/', Game),
-    path('game/room/', Room),
-    path('is_ingame/', get_is_ingame)
+    path('user_data/<game_id>/', get_user_data),
+    path('winner_data/<game_id>/', get_winner_data)
 ]
