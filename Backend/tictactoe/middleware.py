@@ -3,7 +3,6 @@ from channels.db import database_sync_to_async
 from users.models import CustomUser
 from urllib.parse import parse_qs
 
-
 class JWTAuthMiddleware:
     def __init__(self, app):
         self.app = app
@@ -15,7 +14,7 @@ class JWTAuthMiddleware:
         query_dict = parse_qs(query_params)
         token = query_dict["token"][0]
         if token == '':
-            scope['error'] = 'you have to provaid auth token'
+            scope['error'] = 'You have to provide the auth token'
         else:
             user = await self.get_user_from_token(token)
             if user is None:

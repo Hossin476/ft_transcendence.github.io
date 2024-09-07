@@ -3,23 +3,24 @@ from .models import GameNotification, FriendshipNotification
 import json
 from django.db.models import Q
 from channels.db import database_sync_to_async
-from users.models import CustomUser,Friendship
+from users.models import CustomUser, Friendship
 from tictactoe.models import OnlineGameModel
 from pingpong.models import GameOnline
-from .serializers import FriendshipNotificationSerializer,playerSerializers
-from pingpong.serializers import GameOnlineSerializer 
-from tictactoe.serializers import  OnlineGameModelSerializer
+from .serializers import FriendshipNotificationSerializer, playerSerializers
+from pingpong.serializers import GameOnlineSerializer
+from tictactoe.serializers import OnlineGameModelSerializer
 from django.core.cache import cache
 from django.utils import timezone
+from tournament.models import Tournament
+from tournament.serializers import TournamentSerializer
 import asyncio
-
-
 
 
 @database_sync_to_async
 def create_game_db(sender, receiver, game):
     receiver_obj = CustomUser.objects.get(username=receiver)
-    GameNotification.objects.create( sender=sender, receiver=receiver_obj, game=game)
+    GameNotification.objects.create(
+        sender=sender, receiver=receiver_obj, game=game)
     return receiver_obj.pk
 
 
@@ -27,9 +28,10 @@ def create_game_db(sender, receiver, game):
 def create_friend_db(sender, receiver_id):
     receiver = CustomUser.objects.get(username=receiver_id)
     friendship = Friendship.objects.create(from_user=sender, to_user=receiver)
-    obj = FriendshipNotification.objects.create(sender=sender, receiver=receiver, friendship=friendship)
+    obj = FriendshipNotification.objects.create(
+        sender=sender, receiver=receiver, friendship=friendship)
     return obj
-    
+
 
 @database_sync_to_async
 def create_game_object(sender, receiver_name, game):
@@ -39,7 +41,8 @@ def create_game_object(sender, receiver_name, game):
         game_obj = GameOnline.objects.create(player1=sender, player2=receiver)
         game_obj = GameOnlineSerializer(game_obj).data
     elif game == 'T':
-        game_obj = OnlineGameModel.objects.create(player1=sender, player2=receiver)
+        game_obj = OnlineGameModel.objects.create(
+            player1=sender, player2=receiver)
         game_obj = OnlineGameModelSerializer(game_obj).data
     return game_obj
 
@@ -49,7 +52,13 @@ def delete_game_request(id):
     game_request = GameNotification.objects.get(id=id)
     game_request.delete()
 
-
+@database_sync_to_async
+def get_tour_from_db(id):
+    try:
+        tournament = Tournament.objects.get(id=id)
+    except Exception as e:
+        print(e)
+    return TournamentSerializer(tournament).data
 class NotificationConsumer(AsyncWebsocketConsumer):
     connected_users = []
 
@@ -70,7 +79,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
         NotificationConsumer.connected_users.append(self.user)
         await self.channel_layer.group_add(self.group_name, self.channel_name)
-        cache.set("connected_users",NotificationConsumer.connected_users )
+        cache.set("connected_users", NotificationConsumer.connected_users)
         table = await self.online_check(True)
         await self.send_each(table)
         await self.accept()
@@ -81,7 +90,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         table = await self.online_check(False)
         await self.send_each(table)
         NotificationConsumer.connected_users.remove(self.user)
-        cache.set("connected_users",NotificationConsumer.connected_users )
+        cache.set("connected_users", NotificationConsumer.connected_users)
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
     async def receive(self, text_data):
@@ -95,23 +104,37 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 await self.handle_accept_game(data)
             elif types == 'reject_game':
                 await self.handle_reject_game(data)
-    
+            elif types == 'tour_invite':
+                await self.handle_tour_invite(data)
 
     async def game_request(self, event):
         await self.send(text_data=json.dumps(event))
-    
+
     async def game_accept(self, event):
         await self.send(text_data=json.dumps(event))
-    
 
     async def friend_request(self, event):
         await self.send(text_data=json.dumps(event))
-    
+
     async def online_state(self, event):
         await self.send(text_data=json.dumps(event))
 
+    async def tour_invite(self, event):
+        await self.send(text_data=json.dumps(event))
 
-    # handle notifications events 
+    # handle notifications events
+    
+    # handle the tournament invitations
+    async def handle_tour_invite(self, data):
+        user = json.loads(data['receiver'])
+        tour = await get_tour_from_db(data['tour_id'])
+        receiver_id = user['id']
+        await self.channel_layer.group_send(f'notification_{receiver_id}', {
+            'type': 'tour_invite',
+            'from': tour["creator"]["username"],
+            'to': user['username'],
+        })
+
     async def handle_game_request(self, data):
         game_type = data['game']
         receiver_id = await create_game_db(self.user, data['receiver'], game_type)
@@ -125,7 +148,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     async def handle_friend_request(self, data):
         obj = await create_friend_db(self.user, data['receiver'])
-        await self.channel_layer.group_send(f'notification_{obj.receiver.id}',{
+        await self.channel_layer.group_send(f'notification_{obj.receiver.id}', {
             'type': 'friend.request',
             'Friendship_id': FriendshipNotificationSerializer(obj).data
         })
@@ -156,10 +179,10 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             current_online_users = [*NotificationConsumer.connected_users]
             current_online_users.remove(self.user)
             friends = Friendship.objects.select_related('from_user', 'to_user')\
-                    .filter(Q(request='A'))
+                .filter(Q(request='A'))
             users_list = []
             if state is False:
-                self.user.last_time =  timezone.now()
+                self.user.last_time = timezone.now()
                 self.user.save()
             for obj in friends:
                 if self.user != obj.from_user:
@@ -175,30 +198,30 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                     online_users.append(obj)
             data_send = []
             for obj in users_list:
-               if obj in online_users:
+                if obj in online_users:
                     user_s = playerSerializers(self.user).data
                     if ingame == True:
-                        user_s['game_type'] =  game_type
-                    data_send.append({"receiver":f'notification_{obj.id}', "obj": {
-                       'type': "online.state",
-                       'user': user_s,
-                       'online': state,
-                       'ingame' : ingame,
-                   }})
+                        user_s['game_type'] = game_type
+                    data_send.append({"receiver": f'notification_{obj.id}', "obj": {
+                        'type': "online.state",
+                        'user': user_s,
+                        'online': state,
+                        'ingame': ingame,
+                    }})
             return data_send
     
     async def online_state(self, event):
         await self.send(text_data=json.dumps(event))
-    
+
     async def send_each(self, table):
         if table is None:
-            return 
+            return
         for obj in table:
-            await  self.channel_layer.group_send(obj['receiver'], obj['obj'])
-    
+            await self.channel_layer.group_send(obj['receiver'], obj['obj'])
+
     async def game_state(self, event):
         table = []
-        table =  await  self.online_check(True, event['ingame'], event['game_type'])
+        table = await self.online_check(True, event['ingame'], event['game_type'])
         await self.send_each(table)
 
     async def event_tournament(self,event):

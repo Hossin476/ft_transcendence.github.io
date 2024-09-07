@@ -1,31 +1,22 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext'
 import moment from 'moment';
-import {useLocation} from "react-router"
 
-
-function GameNotification({ notification }) {
-    const location = useLocation();
-    const gameType = location.pathname.split('/')[2] === "ticatctoe" ? 'T' : 'P';
+function FriendsNotification({notification}) {
 
     const { socket} = useAuth();
 
-    function accept_game() {
+    function accept_friendship() {
         if (socket) {
             const message = JSON.stringify({
-                type: "accept_game",
-                receiver: notification.sender.username,
-                game: gameType
             })
             socket.send(message);
         }
     }
 
-    function reject_game() {
+    function reject_friendship() {
         if (socket) {
             const message = JSON.stringify({
-                type: "reject_game",
-                id: "1"
             })
             socket.send(message);
         }
@@ -39,15 +30,15 @@ function GameNotification({ notification }) {
             </div>
             <div className="flex-grow ml-4">
                 <h3 className="text-black text-lg mt-1 max-w-[15rem] flex-wrap">
-                    {notification.sender.username} has invited you to game
+                    {notification.sender.username} has seny you a friend request
                 </h3>
                 <p className="text-sm text-gray-400 ">{moment(notification.created_at).fromNow()}</p>
             </div>
             <div className="flex items-center ml-4 my-auto space-x-2">
-                <button className="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition duration-300" onClick={accept_game}>
+                <button className="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition duration-300" onClick={accept_friendship}>
                     Accept
                 </button>
-                <button className="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 transition duration-300" onClick={reject_game}>
+                <button className="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 transition duration-300" onClick={reject_friendship}>
                     Reject
                 </button>
             </div>
@@ -55,4 +46,4 @@ function GameNotification({ notification }) {
     );
 }
 
-export default GameNotification;
+export default FriendsNotification

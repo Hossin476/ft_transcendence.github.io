@@ -39,7 +39,7 @@ function App() {
                 <Route path="tictactoe">
                   <Route path="pvpgame">
                     <Route index element={<PvpGame title="TIC TAC TOE" />} />
-                    <Route path="match/:room/*" element={<TicTacToe />} />
+                    <Route path="match/" element={<TicTacToe />} />
                   </Route>
                   <Route path="tournament">
                     <Route

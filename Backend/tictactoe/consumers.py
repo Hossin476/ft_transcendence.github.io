@@ -219,8 +219,7 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
             'final_winner': None if reset else self.game.final_winner,
             'score_x': self.game.x_score,
             'score_o': self.game.o_score,
-            'countdown': self.game.countdown_value,
-            # 'player_role': self.player_role
+            'countdown': self.game.countdown_value
         })
 
     async def handle_reconnect(self, event):

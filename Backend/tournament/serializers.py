@@ -7,6 +7,7 @@ class TournamentSerializer(serializers.ModelSerializer):
     
     players = playerSerializers(many=True)
     matches = GameOnlineSerializer(many=True)
+    creator = playerSerializers()
     class Meta:
         model = Tournament
-        fields = ['id','name','players','matches','is_end','is_start']
+        fields = ['id','name','creator','players','matches','is_end','is_start']

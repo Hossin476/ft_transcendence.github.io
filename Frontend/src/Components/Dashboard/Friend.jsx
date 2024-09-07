@@ -29,7 +29,7 @@ export default function Friend({img, friendName , currentAction, online})
         }
     };
     return (
-        <div  className="flex justify-between my-2 center">
+        <div className="flex justify-between my-2 center">
             <div className="flex xsm:gap-0 xl:gap-4 center">
                 <div className=" xsm:w-6 xsm:h-6 w-8 h-8 xl:w-16 xl:h-16 rounded-full border relative ">
                     <img className="rounded-full xsm:w-6 xsm:h-6 w-8 h-8 xl:w-16 xl:h-16 object-cover " src={'http://localhost:8000'+img} alt="" />

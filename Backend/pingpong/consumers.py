@@ -9,7 +9,6 @@ from django.core.cache import cache
 from channels.layers import get_channel_layer
 
 
-
 channle_layer = get_channel_layer()
 
 @database_sync_to_async
@@ -21,7 +20,7 @@ def getPlayers(match):
     return players
 
 class RoomObject:
-    
+
     def __init__(self):
         self.creater_user = None
         self.player1 = None
@@ -43,6 +42,7 @@ class RoomObject:
     def setPlayer2(self, player):
         self.player2 = player
         return self
+
 
 class GameConsumer(AsyncWebsocketConsumer):
     user_in_Game_pingpong = []
@@ -119,19 +119,19 @@ class GameConsumer(AsyncWebsocketConsumer):
         # If the incoming data is a pause command, and the game is not already paused, and both players have pause commands left
         elif data['type'] == 'pause' and room_obj.pause is False and room_obj.game.pause1 > 0 and room_obj.game.pause2 > 0:
             # If the user is player 1, decrement player 1's pause count
-            if self.user == room_obj.player1 :
+            if self.user == room_obj.player1:
                 room_obj.game.pause1 -= 1
             # If the user is player 2, decrement player 2's pause count
-            elif self.user == room_obj.player2 :
+            elif self.user == room_obj.player2:
                 room_obj.game.pause2 -= 1
             # Set the pause flag to True
             room_obj.pause = True
             # Set the stop message to indicate who paused the game
             room_obj.stopMessage = f"{self.user.username} paused the game"
 
-    # This Function called when user disconnect 
+    # This Function called when user disconnect
     async def disconnect(self, code_status):
-        if 'error'in self.scope:
+        if 'error' in self.scope:
             return
         await self.channel_layer.group_discard(self.game_group_id, self.channel_name)
         GameConsumer.user_in_Game_pingpong.remove(self.user)
@@ -153,10 +153,10 @@ class GameConsumer(AsyncWebsocketConsumer):
                 else:
                     room_obj.player2_connect = False
 
-
     # This function is used to  manage the game pauses, starts, reconnections, and game logic .
+
     async def send_data(self, matchId):
-        # this line retrieves  the game object from the global list that holds all games currenly running games. 
+        # this line retrieves  the game object from the global list that holds all games currenly running games.
         room_obj = GameConsumer.game_room[self.game_group_id]
         game = room_obj.game
         await asyncio.sleep(10)
@@ -164,17 +164,17 @@ class GameConsumer(AsyncWebsocketConsumer):
 
         #  This loop works if one or both users disconnect. it give them 30 seconds to reconnect .
         #  if neither user returns to the game, it gets canceled and is not stored  in databse.
-        #  However if one user remains in the game, wait for the other player 
+        #  However if one user remains in the game, wait for the other player
         #  that player will win the game with score of 3-0
         print("connect player 1 : ", room_obj.player1_connect)
         print("connect player 2 : ", room_obj.player2_connect)
         try:
             while True:
-                # time ot wait 
+                # time ot wait
                 timeSpand = 30
                 # Check  both  players to  see if one or both are not connected
                 while room_obj.player1_connect == False or room_obj.player2_connect == False:
-                    # Substract 1 from the timestamp 
+                    # Substract 1 from the timestamp
                     timeSpand -= 1
                     # This data is sent to the connected user showing the remaining time.
                     data = {
@@ -203,11 +203,11 @@ class GameConsumer(AsyncWebsocketConsumer):
                         data['iswaiting'] = False
                         await self.channel_layer.group_send(self.game_group_id, data)
 
-                # chech is the game is start 
+                # chech is the game is start
                 if room_obj.start == False:
                     await asyncio.sleep(1/60)
                     continue
-                # this used to stop game 15 second if one of players pause the game 
+                # this used to stop game 15 second if one of players pause the game
                 if room_obj.pause == True:
                     # how mush  time in each stop
                     timeSpand = 15
@@ -218,22 +218,22 @@ class GameConsumer(AsyncWebsocketConsumer):
                         'status': 'pause',
                         'message': room_obj.stopMessage
                     }
-                    # countdown  and sender   
+                    # countdown  and sender
                     while timeSpand >= 0:
                         timeSpand -= 1
                         data['currentSecond'] = timeSpand
                         await asyncio.sleep(1)
                         await self.channel_layer.group_send(self.game_group_id, data)
-                    # after the 15 second finish send frame to remind to palyers to continue the game  
+                    # after the 15 second finish send frame to remind to palyers to continue the game
                     data['iswaiting'] = False
                     room_obj.pause = False
                     await self.channel_layer.group_send(self.game_group_id, data)
                     continue
-                # this is function handle game logic 
+                # this is function handle game logic
                 room_obj.game.gameMove(matchId)
-                # set the game in varail to make code clean 
+                # set the game in varail to make code clean
                 game = room_obj.game
-                # this data needed to  move the ball and paddles 
+                # this data needed to  move the ball and paddles
                 data = {
                     "type": "game.update",
                     "ball_position": list(game.ball_position.values()),
@@ -241,22 +241,21 @@ class GameConsumer(AsyncWebsocketConsumer):
                     "paddle_two_position": game.paddle_two_position,
                 }
 
-
                 await self.channel_layer.group_send(self.game_group_id, data)
-                # this is use to make the game work  60 fps  
+                # this is use to make the game work  60 fps
                 # 60 fps means 60 frame per second in otherward  60 data per second
                 await asyncio.sleep(1/60)
-                #check is one of players is win 
-                if game.score1 == 7 or game.score2  == 7:
+                # check is one of players is win
+                if game.score1 == 7 or game.score2 == 7:
                     game.game_end = True
                     await self.winner()
                     break
         except Exception as e:
-            print('error have here :' , e)  
-            
+            print('error have here :', e)
 
-    #Those functions used to send data to all connected sockets in the group
-    #depend on the type of data. Each type has its own function with the same name to handle it.
+    # Those functions used to send data to all connected sockets in the group
+    # depend on the type of data. Each type has its own function with the same name to handle it.
+
     async def game_update(self, event):
         room_obj = GameConsumer.game_room[self.game_group_id]
         if self.user == room_obj.player1:
@@ -272,56 +271,28 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     async def game_waiting(self, event):
         await self.send(text_data=json.dumps(event))
-    
+
     async def game_winner(self, event):
         await self.send(text_data=json.dumps(event))
 
     async def winner(self):
-            room_obj = GameConsumer.game_room[self.game_group_id]
-            winner = None
-            if room_obj.game.score1 > room_obj.game.score2:
-                winner = room_obj.player1.username
-            else:
-                winner = room_obj.player2.username
-            data = {
-                'type': 'game.winner',
-                'winner': winner
-            }
-            await self.channel_layer.group_send(self.game_group_id, data)
-            # await self.disconnect(2000)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        room_obj = GameConsumer.game_room[self.game_group_id]
+        winner = None
+        if room_obj.game.score1 > room_obj.game.score2:
+            winner = room_obj.player1.username
+        else:
+            winner = room_obj.player2.username
+        data = {
+            'type': 'game.winner',
+            'winner': winner
+        }
+        await self.channel_layer.group_send(self.game_group_id, data)
+        # await self.disconnect(2000)
 
 
 class LocalGameConsumer(AsyncWebsocketConsumer):
     game_room = {}
+
     async def connect(self, *args, **kwargs):
 
         if "error" in self.scope:
@@ -331,12 +302,13 @@ class LocalGameConsumer(AsyncWebsocketConsumer):
         # self.game_id = self.scope["url_route"]["kwargs"]["game_id"]
         if self.game_group_id not in LocalGameConsumer.game_room:
             match = await database_sync_to_async(GameOffline.objects.create)(creater_game=self.user, player1="hamza", player2="younsi")
-            LocalGameConsumer.game_room[f"game_{match.id}"] = RoomObject().setPlayer1(self.user, True)
+            LocalGameConsumer.game_room[f"game_{match.id}"] = RoomObject(
+            ).setPlayer1(self.user, True)
             LocalGameConsumer.game_room[f"game_{match.id}"].match = match
         room_obj = LocalGameConsumer.game_room[self.game_group_id]
         self.game_group_id = f"game_{room_obj.match.id}"
         await self.channel_layer.group_add(self.game_group_id, self.channel_name)
-        await  channle_layer.group_send(f'notification_{self.user.id}', {
+        await channle_layer.group_send(f'notification_{self.user.id}', {
             'type': 'game.state',
             'game_type': 'ping pong',
             'ingame': True
@@ -346,21 +318,20 @@ class LocalGameConsumer(AsyncWebsocketConsumer):
             room_obj.creater_user = self.user
             room_obj.game = GameLogic('offline')
             room_obj.task = asyncio.create_task(self.send_data('1'))
-    
 
     async def receive(self, text_data):
         data = json.loads(text_data)
         room_obj = LocalGameConsumer.game_room[self.game_group_id]
         if data['type'] == 'move_paddle':
             room_obj.game.handle_paddle(data['move'])
-        elif data['type']== 'move_paddle_two':
+        elif data['type'] == 'move_paddle_two':
             room_obj.game.handle_paddle_other(data['move'])
         elif data['type'] == 'start':
             room_obj.start = True
             data = {'type': 'game.start'}
 
     async def disconnect(self, code_status):
-        await  channle_layer.group_send(f'notification_{self.user.id}', {
+        await channle_layer.group_send(f'notification_{self.user.id}', {
             'type': 'game.state',
             'game_type': None,
             'ingame': False
@@ -384,7 +355,7 @@ class LocalGameConsumer(AsyncWebsocketConsumer):
             }
             await self.channel_layer.group_send(self.game_group_id, data)
             await asyncio.sleep(1/60)
-            if game.score1 == 7 or game.score2  == 7:
+            if game.score1 == 7 or game.score2 == 7:
                 game.game_end = True
                 await self.winner()
                 break
@@ -398,25 +369,25 @@ class LocalGameConsumer(AsyncWebsocketConsumer):
             event[self.user.username] = room_obj.game.score1
             event['other'] = room_obj.game.score2
         await self.send(text_data=json.dumps(event))
-    
+
     async def game_start(self, event):
         self.send(text_data=json.dumps(event))
 
     async def game_waiting(self, event):
         await self.send(text_data=json.dumps(event))
-    
+
     async def game_winner(self, event):
         await self.send(text_data=json.dumps(event))
 
     async def winner(self):
-            room_obj = LocalGameConsumer.game_room[self.game_group_id]
-            winner = None
-            if room_obj.game.score1 > room_obj.game.score2:
-                winner = room_obj.player1.username
-            else:
-                winner = room_obj.player2.username
-            data = {
-                'type': 'game.winner',
-                'winner': winner
-            }
-            await self.channel_layer.group_send(self.game_group_id, data)
+        room_obj = LocalGameConsumer.game_room[self.game_group_id]
+        winner = None
+        if room_obj.game.score1 > room_obj.game.score2:
+            winner = room_obj.player1.username
+        else:
+            winner = room_obj.player2.username
+        data = {
+            'type': 'game.winner',
+            'winner': winner
+        }
+        await self.channel_layer.group_send(self.game_group_id, data)

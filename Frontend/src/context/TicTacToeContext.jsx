@@ -10,8 +10,20 @@ export const TicTacToeProvider = ({ children }) => {
     const [playerRole, setPlayerRole] = useState(null)
     const [reconnect_timer, setReconnectTimer] = useState(0);
 
+    const values =
+    {
+        scores: scores,
+        setScores,
+        timer: timer,
+        setTimer,
+        playerRole: playerRole,
+        setPlayerRole,
+        reconnect_timer,
+        setReconnectTimer
+    }
+
     return (
-        <TicTacToeContext.Provider value={{ scores: scores , setScores, timer: timer, setTimer, playerRole: playerRole, setPlayerRole, reconnect_timer, setReconnectTimer }}>
+        <TicTacToeContext.Provider value={values}>
             {children}
         </TicTacToeContext.Provider>
     );
