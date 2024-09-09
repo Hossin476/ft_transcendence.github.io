@@ -6,17 +6,18 @@ const ChatProfileBrief = () => {
 
     const {currantUser} = useContext(ChatContext)
     let friend = {
-
         profilePicture: "/public/user.jpeg",
         coverPicture: "/public/bg.jpg",
-        name: "L9ORAYDISS",
-        id: "ID: AD9823X1",
+        name: currantUser && currantUser.user.username,
+        id: "ID: X83L5LM" + (currantUser && currantUser.user.id),
         alt: "alt",
     }
 
     return useMemo(()=> {
         return (
-            <div className="xsm:hidden xl:block h-[90%] bg-secondaryColor flex flex-col rounded-3xl w-80">
+            currantUser && (
+
+                <div className="xsm:hidden xl:block h-[90%] bg-secondaryColor flex flex-col rounded-3xl w-80">
                 <div className="h-[40%]">
                     <div className=" w-full flex center  justify-center relative">
                         <img src={friend.coverPicture} alt={friend.alt} className='relative flex rounded-t-3xl'/>
@@ -50,6 +51,7 @@ const ChatProfileBrief = () => {
                     </div>
                 </div>
             </div>
+            )
       )
     },
     [currantUser])

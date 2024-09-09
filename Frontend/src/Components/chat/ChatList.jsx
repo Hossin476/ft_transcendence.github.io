@@ -43,7 +43,8 @@ const getConversations = async (tokens,user)=> {
 
 export default function ChatList() {
 
-  const {setCurrentUser,conversation,setConversation,currantUser} = useContext(ChatContext)
+  const {setCurrentUser, conversation, setConversation, currantUser} = useContext(ChatContext)
+  const {messages, setMessages} = useContext(ChatContext)
   const {user,tokens} = useAuth()
   const [selectedChat,setSelectedChat] = useState(-1)
   const [search,setSearch] = useState("")
@@ -63,7 +64,6 @@ export default function ChatList() {
 
   const handelSearch = (e) => {
     setSearch(e.target.value)
-    console.log(e.target.value)
   }
 
   const debounce_searchig = useMemo(
@@ -79,15 +79,16 @@ export default function ChatList() {
 
 
   const filterchats = useMemo(()=> {
-    if(search === "") {
-      return conversation
+    if(!search) {
+      return (conversation || []).filter((convo) => (convo.last_msg.content !== ""))
     }
     return conversation.filter((convo) => {
       return convo.user.username.toLowerCase().includes(search.toLowerCase())
     })
-  });
+  }, [search, conversation]);
 
     return useMemo(()=> {
+      // console.log("messages",currantUser)
       return (
         <div className={`xsm:${currantUser ? 'hidden' : 'block'} h-[90%] md:block bg-secondaryColor rounded-3xl xsm:w-full md:w-[18rem] xl:w-[24rem]  `}>
           <div className="mt-10 flex center justify-center relative">
@@ -106,37 +107,23 @@ export default function ChatList() {
             <section className="h-5/6 text-white mt-10 lg:mt-5">
                 <div className="text-xs h-5/6 block items-center overflow-y-scroll">
                 {
-                  filterchats && filterchats.map((convo) => {
-                    // if (convo.last_msg.content !== ""){
-                      console.log(filterchats)
+                  filterchats && filterchats.length > 0 ? (
+                    filterchats.map((convo) => {
+                    // console.log(convo.user.username, convo.last_msg.content)
                       return (
-                        <FriendChat 
+                        <FriendChat
                           key={convo.id} 
                           contacts={convo} 
                           handleOnClick={handleClick} 
                           selected={selectedChat}
                         />
                       );
-                    // }
                   })
-
-                  // conversation && conversation.map((convo) => {
-                  //   if (convo.last_msg.content !== ""){
-                  //     return (
-                  //       <FriendChat 
-                  //         key={convo.id} 
-                  //         contacts={convo} 
-                  //         handleOnClick={handleClick} 
-                  //         selected={selectedChat}
-                  //       />
-                  //     );
-                  //   }
-                  // })
+                  ) : <p className="text-white text-center bg-red-500 p-5 rounded shadow-md max-w-sm mx-auto">No chats or contacts found</p>
                 }
                 </div>
             </section>
         </div>
       )
-    },
-    [conversation,selectedChat,currantUser])
+    }, [filterchats ,selectedChat, currantUser])
 }

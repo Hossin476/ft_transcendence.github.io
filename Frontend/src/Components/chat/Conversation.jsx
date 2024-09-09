@@ -32,6 +32,7 @@ const getMessages = async (chatUser,tokens)=> {
               "friendship" : chatUser.id
       })
   })
+  
 
   let data = await respons.json()
   if(respons.ok)
@@ -56,17 +57,18 @@ const Conversation = () => {
   const {currantUser,messages,setMessages,seen,setSeen, typing} = useContext(ChatContext)
   const elementRef = useRef(null)
 
+
+  
   useEffect(()=> {
     const fetchMessages = async ()=> {
       const data = await getMessages(currantUser,tokens)
       setSeen(()=> {
-        if(!data)
+        if(!data || data.length === 0)
             return false
         let last_msg = data.at(-1)
-        return ( last_msg.sendId === user.user_id && last_msg.seen === true)
+        return (last_msg.sendId === user.user_id && last_msg.seen === true)
       })
       setMessages(()=>data)
-      console.log(data)
     }
     if(currantUser)
       fetchMessages()
@@ -74,18 +76,23 @@ const Conversation = () => {
 
   useEffect(()=> {
     let _message
-    messages && (_message = messages.at(-1))
-    if(messages  && user.user_id != _message.sendId) {
+    let lasts;
+
+    if (messages && messages.length > 0) {
+      lasts = messages.at(-1)
+    }
+
+    if (lasts && lasts.sendId !== user.user_id) {
       chatsocket && chatsocket.send(
-            JSON.stringify({
-                "type" : "seen_message",
-                "msg_id" :_message.id,
-                "reciever":_message.sendId  === user.user_id ? user.user_id :  currantUser.user.id
-            })
-        )
+        JSON.stringify({
+          type: "seen_message",
+          msg_id: lasts.id,
+          reciever: lasts.sendId === user.user_id ? user.user_id : currantUser.user.id,
+        })
+      )
     }
     elementRef.current.scrollIntoView({behavior:"smooth",block: 'end'})
-    console.log("hello world",elementRef.current)
+
 }, [messages])
 
   return useMemo(()=> {
@@ -107,7 +114,6 @@ const Conversation = () => {
         }
         {
           currantUser && currantUser.user.id === typing.sender &&
-          // typing.typing === true ? <p className="self-start"> typing...</p> : ""
           typing.typing === true ? <Typing_render /> : ""
         }
         <div ref={elementRef}></div>
