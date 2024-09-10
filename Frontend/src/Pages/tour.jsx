@@ -92,7 +92,7 @@ const Tour = () => {
    // console.log("the navigatedTour is :", navigatedTour)
    useEffect(() => {
       const fetch_matches = async () => {
-         const response = await fetch('http://localhost:8000/tournament/10', {
+         const response = await fetch('http://localhost:8000/tournament/1', {
             headers: { Authorization: "JWT " + tokens.access }
          })
          const data = await response.json()
@@ -103,7 +103,7 @@ const Tour = () => {
    }, [])
 
    return (
-      <div className="h-[100%] w-[100%] flex flex-col relative gap-5">
+      tournament && <div className="h-[100%] w-[100%] flex flex-col relative gap-5">
          <div className=" h-[70%] relative xsm:w-[99%] md:w-[70%]  max-w-[1300px] md:h-[70%] rounded-[20px] flex justify-center items-center text-white flex-col bg-secondaryColor border-[2px] border-forthColor">
             {tournament && <Canvas >
                <ambientLight intensity={0.7} rotation={[Math.PI / 2, 0, 0]} />
@@ -119,11 +119,11 @@ const Tour = () => {
                <p className="font-Valorax">PLAYER IN TOURNAMENT</p>
             </div>
             <div className=" flex justify-end gap-4 mx-10">
-               {tournament && tournament.creator.username == username && <button className="border-[2px] border-forthColor rounded-[5px]">START TOURNAMENT</button>}
+               {tournament.creator.username == username && <button className="border-[2px] border-forthColor rounded-[5px]">START TOURNAMENT</button>}
                <GiExitDoor fontSize={30} className="" />
             </div>
             <div className="flex  w-[100%] h-[70%]  flex-wrap ">
-               {tournament && tournament.players.map((item) =>
+               {tournament.players.map((item) =>
                   <div className="flex items-center  w-[23%] h-[33%] gap-3 border-[2px] border-forthColor m-1  min-w-[150px] rounded-[20px]">
                      <img src="./silver.jpg" className="rounded-full w-[52px] h-[52px]" />
                      <div className="flex flex-col">
@@ -132,12 +132,12 @@ const Tour = () => {
                      </div>
                   </div>
                )}
-               {tournament && !tournament.is_full && <div className="flex items-center justify-center w-[23%] h-[33%] gap-3 border-[2px] border-forthColor m-1  min-w-[150px] rounded-[20px]">
+               {!tournament.is_full && <div className="flex items-center justify-center w-[23%] h-[33%] gap-3 border-[2px] border-forthColor m-1  min-w-[150px] rounded-[20px]">
                   <IoMdPersonAdd size={30} onClick={render_invite}/>
                </div>}
             </div>
          </div>
-         {invite && <InviteModal setInvite={setInvite} />}
+         {invite && <InviteModal setInvite={setInvite} tour_id={tournament.id} />}
       </div>
    );
 };

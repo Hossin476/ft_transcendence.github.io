@@ -11,7 +11,7 @@ from pingpong.serializers import GameOnlineSerializer
 from tictactoe.serializers import OnlineGameModelSerializer
 from django.core.cache import cache
 from django.utils import timezone
-from tournament.models import Tournament
+from tournament.models import Tournament, InviteTournament
 from tournament.serializers import TournamentSerializer
 import asyncio
 
@@ -53,12 +53,29 @@ def delete_game_request(id):
     game_request.delete()
 
 @database_sync_to_async
-def get_tour_from_db(id):
-    try:
-        tournament = Tournament.objects.get(id=id)
-    except Exception as e:
-        print(e)
+def get_tour_from_db(id,userid):
+    tournament = Tournament.objects.select_related("creator").get(id=id)
+    user = CustomUser.objects.get(id=userid)
+    InviteTournament.objects.create(tournament=tournament, user=user)
     return TournamentSerializer(tournament).data
+
+@database_sync_to_async
+def accept_reject(tour_id, user, state):
+    return_state = False
+    tournament = Tournament.objects.select_related("creator").prefetch_related('players').get(id=tour_id)
+    if tournament.is_full == False and state == "accept" and  user not in tournament.players.all():
+        tournament.players.add(user)
+        count =  tournament.players.count()
+        if count == 8:
+            tournament.is_full = True
+            tournament.save()
+        return_state =True
+    intives = InviteTournament.objects.filter(user=user,tournament=tournament).delete()
+    return return_state
+
+
+
+
 class NotificationConsumer(AsyncWebsocketConsumer):
     connected_users = []
 
@@ -95,6 +112,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
             data = json.loads(text_data)
+            print(data)
             types = data['type']
             if types == 'game_request':
                 await self.handle_game_request(data)
@@ -106,6 +124,10 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 await self.handle_reject_game(data)
             elif types == 'tour_invite':
                 await self.handle_tour_invite(data)
+            elif types == 'tour_accept':
+                await self.handle_tour_accept(data)
+            elif types == 'tour_reject':
+                await self.handle_tour_reject(data)
 
     async def game_request(self, event):
         await self.send(text_data=json.dumps(event))
@@ -122,53 +144,73 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     async def tour_invite(self, event):
         await self.send(text_data=json.dumps(event))
 
+    async def tour_accept(self, event):
+        await self.send(text_data=json.dumps(event))
+
+    async def tour_reject(self, event):
+        await self.send(text_data=json.dumps(event))
+
+    async def handle_tour_reject(self, data):
+        await accept_reject(data["id"], self.user, "reject")
+
+    async def handle_tour_accept(self, data):
+        print(data)
+        state = await accept_reject(data["id"], self.user, "accept")
+        await self.channel_layer.group_send(f'notification_{self.user.id}',{
+            'type': "tour_accept",
+            "message": "you have been added to  this tournament" if state else "this tournament is full",
+            "response": "accepted" if state else "rejected"
+        })
+
+
     # handle notifications events
     
     # handle the tournament invitations
     async def handle_tour_invite(self, data):
-        user = json.loads(data['receiver'])
-        tour = await get_tour_from_db(data['tour_id'])
+        user = data['receiver']
+        tour = await get_tour_from_db(data['tour_id'],user['id'])
         receiver_id = user['id']
         await self.channel_layer.group_send(f'notification_{receiver_id}', {
-            'type': 'tour_invite',
-            'from': tour["creator"]["username"],
-            'to': user['username'],
+            'type'      : 'tour_invite',
+            'from'      : tour["creator"]["username"],
+            'to'        : user['username'],
+            'tour_id'   : tour['id']
         })
 
     async def handle_game_request(self, data):
         game_type = data['game']
         receiver_id = await create_game_db(self.user, data['receiver'], game_type)
         await self.channel_layer.group_send(f'notification_{receiver_id}', {
-            'type': 'game_request',
-            'from': self.user.username,
-            'from_img': str(self.user.profile_image.url) if self.user.profile_image else None,
-            'to': data['receiver'],
-            "game_type": game_type
+            'type'      : 'game_request',
+            'from'      : self.user.username,
+            'from_img'  : str(self.user.profile_image.url) if self.user.profile_image else None,
+            'to'        : data['receiver'],
+            "game_type" : game_type
         })
 
     async def handle_friend_request(self, data):
         obj = await create_friend_db(self.user, data['receiver'])
         await self.channel_layer.group_send(f'notification_{obj.receiver.id}', {
-            'type': 'friend.request',
-            'Friendship_id': FriendshipNotificationSerializer(obj).data
+            'type'          : 'friend.request',
+            'Friendship_id' : FriendshipNotificationSerializer(obj).data
         })
 
     async def handle_accept_game(self, data):
         game_type = data['game']
         game_object = await create_game_object(self.user, data['receiver'], game_type)
         await self.channel_layer.group_send(f'notification_{game_object["player1"]["id"]}', {
-            'type': 'game.accept',
-            'from': game_object["player1"]["username"],
-            'to': game_object["player2"]["username"],
-            'game_id': game_object['id'],
-            'game_type': data['game']
+            'type'      : 'game.accept',
+            'from'      : game_object["player1"]["username"],
+            'to'        : game_object["player2"]["username"],
+            'game_id'   : game_object['id'],
+            'game_type' : data['game']
         })
         await self.channel_layer.group_send(f'notification_{game_object["player2"]["id"]}', {
-            'type': 'game.accept',
-            'from': game_object["player1"]["username"],
-            'to': game_object["player2"]["username"],
-            'game_id': game_object['id'],
-            'game_type': data['game']
+            'type'      : 'game.accept',
+            'from'      : game_object["player1"]["username"],
+            'to'        : game_object["player2"]["username"],
+            'game_id'   : game_object['id'],
+            'game_type' : data['game']
         })
 
     async def handle_reject_game(self, data):
@@ -203,10 +245,10 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                     if ingame == True:
                         user_s['game_type'] = game_type
                     data_send.append({"receiver": f'notification_{obj.id}', "obj": {
-                        'type': "online.state",
-                        'user': user_s,
-                        'online': state,
-                        'ingame': ingame,
+                        'type'      : "online.state",
+                        'user'      : user_s,
+                        'online'    : state,
+                        'ingame'    : ingame,
                     }})
             return data_send
     

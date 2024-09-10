@@ -3,18 +3,18 @@ import { useAuth } from '../../context/AuthContext';
 
 
 
-function UserInvite({user}) {
+function UserInvite({user, tour_id}) {
     const { socket } = useAuth()
 
     function send_tour_invite() {
         if (socket) {
             const message = JSON.stringify({
                 "type": 'tour_invite',
-                "tour_id": 10,
-                "receiver": JSON.stringify({
-                    "id": 2,
+                "tour_id": tour_id,
+                "receiver": {
+                    "id": user.id,
                     "username": user.username
-                })
+                }
             })
             socket.send(message);
         }
