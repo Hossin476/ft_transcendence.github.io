@@ -1,17 +1,21 @@
 import React from 'react'
-import { FaUserCheck, FaUserTimes } from 'react-icons/fa';
+import { TbTournament } from "react-icons/tb";
 
-function TourResponseNotification({msg, response}) {
-    const bgColor = response === "accepted" ? 'bg-green-200 hover:bg-green-300' : 'bg-red-200 hover:bg-red-300';
+
+function TourResponseNotification({ t, data }) {
+    const msg = data.message;
+    const response = data.response;
+
+    const bgColor = response === "accepted" ? 'bg-green-200' : 'bg-red-200';
     const textColor = response === "accepted" ? 'text-green-900' : 'text-red-900';
-    const Icon = response === "accepted" ? FaUserCheck : FaUserTimes;
+    const Icon = TbTournament;
 
     return (
-        <div className={`p-5 rounded-lg shadow-lg flex items-start transition-all duration-300 ease-in-out ${bgColor}`}>
-            <Icon size={35} color={response === "accepted" ? 'green' : 'red'} className="mr-4 my-auto" />
+        <div className={`${t.visible ? 'animate-enter' : 'animate-leave'} max-w-md w-full bg-white p-4 shadow-lg rounded-lg pointer-events-auto flex ${bgColor}` }>
+            <Icon size={25} color={response === "accepted" ? 'green' : 'red'} className="mr-4 my-auto" />
             <div className="flex-grow my-auto">
                 <p className={`text-lg ${textColor}`}>
-                {msg}
+                    {msg}
                 </p>
             </div>
         </div>

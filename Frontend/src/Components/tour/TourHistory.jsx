@@ -1,4 +1,3 @@
-
 import History from "./History"
 
 export default function TourHistory({tours}) {

@@ -18,6 +18,16 @@ class playerSerializers(serializers.ModelSerializer):
             'draws',
         ]
 
+class TourInvitesSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = [
+            'id',
+            'username',
+            'profile_image',
+            'rank'
+        ]
+
 
 class GameNotificationSerializers(serializers.ModelSerializer):
     sender = playerSerializers()

@@ -1,15 +1,11 @@
 import {useNavigate} from 'react-router-dom'
 
-
-
 export default function History({item}) {
 
     const navigate = useNavigate()
     const handleNavigation = ()=> {
-        navigate("/tour",{
-            state: {
-                tournament : item
-            }
+        navigate("./tour",{
+            state:  item
         })
     }
 

@@ -4,8 +4,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from .models import Tournament
-from .serializers import TournamentSerializer
+from .serializers import TournamentSerializer, TournamentInviteSerializer
 from users.models import CustomUser
+from .models import InviteTournament
 import json
 # Create your views here.
 
@@ -35,3 +36,11 @@ class TournamentListView(APIView):
         serilized_tourlist = TournamentSerializer(tours, many=True).data
         print("tourlist", serilized_tourlist)
         return Response(serilized_tourlist, status.HTTP_200_OK)
+
+
+class TournamentInvitesView(APIView):
+    def get(self,request):
+        user    = request.user
+        invites = InviteTournament.objects.filter(user=user)
+        serialized_invites = TournamentInviteSerializer(invites,many=True).data
+        return Response(serialized_invites, status.HTTP_200_OK)

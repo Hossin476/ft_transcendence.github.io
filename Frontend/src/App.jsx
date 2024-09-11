@@ -17,6 +17,7 @@ import PrivateRoute from "./utils/privateRoute";
 import NotificationModal from "./Components/Notifications/NotificationModal";
 import Tour from "./Pages/tour";
 import { GameProvider } from "./context/gameContext";
+import TournamentProvider from "./context/TournamentContext";
 // import './server.js'
 function App() {
   return (
@@ -33,7 +34,6 @@ function App() {
               <Route path="settings" element={<Settings />} />
               <Route path="leaderboard" element={<Leaderboard />} />
               <Route path="chat" element={<ChatPage />} />
-              <Route path="tour" element={<Tour />} />
               <Route path="game">
                 <Route index element={<Game />} />
                 <Route path="tictactoe">
@@ -53,9 +53,10 @@ function App() {
                     <Route index element={<PvpGame title="PING PONG" />} />
                     <Route path="match" element={<GameProvider><PingPongGame /></GameProvider>} />
                   </Route>
+
                   <Route path="tournament">
-                    <Route index element={<Tournament title={"PING PONG"} />} />
-                    <Route path="tournaments" element={<Tournament />} />
+                    <Route index element={ <Tournament/>} />
+                      <Route path="tour" element={<TournamentProvider><Tour /></TournamentProvider> } />
                   </Route>
                 </Route>
               </Route>

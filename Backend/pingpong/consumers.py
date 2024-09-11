@@ -60,7 +60,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 
         GameConsumer.user_in_Game_pingpong.append(self.user)
 
-        cache.set("users_pingping", GameConsumer.user_in_Game_pingpong) 
+        cache.set("users_pingpong", GameConsumer.user_in_Game_pingpong) 
 
         await channle_layer.group_send(f'notification_{self.user.id}', {
             'type': 'game.state',
@@ -135,7 +135,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             return
         await self.channel_layer.group_discard(self.game_group_id, self.channel_name)
         GameConsumer.user_in_Game_pingpong.remove(self.user)
-        cache.set("users_pingping", GameConsumer.user_in_Game_pingpong)
+        cache.set("users_pingpong", GameConsumer.user_in_Game_pingpong)
         await channle_layer.group_send(f'notification_{self.user.id}', {
             'type': 'game.state',
             'game_type': None,

@@ -5,4 +5,5 @@ urlpatterns = [
     path('online/',views.onlineFriends),
     path("", views.NotifitationView.as_view()),
     path('onlinegame/',views.onlineGame),
+    path('tourinvites/<int:tour_id>', views.TournamentInvites),
 ]

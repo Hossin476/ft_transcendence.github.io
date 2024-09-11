@@ -13,15 +13,14 @@ function InviteModal({ setInvite, tour_id }) {
 
     useEffect(() => {
         async function fetchData() {
-            const response = await fetch('http://localhost:8000/notification/online/', {
+            const response = await fetch(`http://localhost:8000/notification/tourinvites/${tour_id}`, {
                 headers: {
                     "Authorization": "JWT " + tokens.access,
                     "content-Type": "application/json"
                 }
             })
             const data = await response.json()
-            const new_table = [...data.online, ...data.offline]
-            setUsers(new_table)
+            setUsers(data)
         }
         fetchData();
     }, [])

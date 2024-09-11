@@ -1,21 +1,27 @@
 from rest_framework.views import APIView
 from django.db.models import Q
-from notifications.models import  FriendshipNotification, GameNotification
-from .serializers import FriendshipNotificationSerializer, GameNotificationSerializers,playerSerializers
-from users.models import CustomUser , Friendship
-from rest_framework.response import Response 
-from rest_framework.decorators  import  api_view
+from notifications.models import FriendshipNotification, GameNotification
+from .serializers import FriendshipNotificationSerializer, GameNotificationSerializers, playerSerializers, TourInvitesSerializers
+from users.models import CustomUser, Friendship
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
 from itertools import chain
 from operator import attrgetter
 from django.core.cache import cache
+from tournament.models import Tournament
 
 # Create your views here.
+
+
 class NotifitationView(APIView):
     def get(self, request):
         self.user = request.user
-        notification_fr = FriendshipNotification.objects.filter(receiver= self.user).order_by('-created_at')
-        notification_game = GameNotification.objects.filter(receiver= self.user).order_by('-created_at')
-        notification_query = sorted(chain(notification_fr, notification_game), key=attrgetter('created_at'), reverse=True)
+        notification_fr = FriendshipNotification.objects.filter(
+            receiver=self.user).order_by('-created_at')
+        notification_game = GameNotification.objects.filter(
+            receiver=self.user).order_by('-created_at')
+        notification_query = sorted(chain(
+            notification_fr, notification_game), key=attrgetter('created_at'), reverse=True)
         result = []
         for obj in notification_query:
             if isinstance(obj, FriendshipNotification):
@@ -47,11 +53,11 @@ def onlineGame(request):
             online_users.append(obj)
     users_pingpong = []
     users_tictactoe = []
-    if cache.has_key('users_pingping'):
-        users_pingpong = cache.get('users_pingping')
+    if cache.has_key('users_pingpong'):
+        users_pingpong = cache.get('users_pingpong')
     if cache.has_key('users_tictactoe'):
         users_tictactoe = cache.get('users_tictactoe')
-    data = {'inlobby':[], 'ingame':[]}
+    data = {'inlobby': [], 'ingame': []}
     for obj in online_users:
         if obj in users_pingpong:
             sr_obj = playerSerializers(obj).data
@@ -85,7 +91,6 @@ def onlineFriends(request):
     if request.user in connected_users:
         connected_users.remove(request.user)
 
-
     remaining_users = users_list.copy()
     online_users = []
     for obj in users_list:
@@ -96,11 +101,11 @@ def onlineFriends(request):
     users_list = remaining_users
     users_pingpong = []
     users_tictactoe = []
-    if cache.has_key('users_pingping'):
-        users_pingpong = cache.get('users_pingping')
+    if cache.has_key('users_pingpong'):
+        users_pingpong = cache.get('users_pingpong')
     if cache.has_key('users_tictactoe'):
         users_tictactoe = cache.get('users_tictactoe')
-    data = {'online':[], 'offline':[]}
+    data = {'online': [], 'offline': []}
     online_users_data = []
     for obj in online_users:
         if obj in users_pingpong:
@@ -123,15 +128,27 @@ def onlineFriends(request):
     return Response(data)
 
 
-# id
-# : 
-# 1
-# in_game
-# : 
-# false
-# profile_image
-# : 
-# "/media/images/profile/IMG_2127.jpeg"
-# username
-# : 
-# "hamza"
+def get_friends(user):
+    friends = Friendship.objects.select_related(
+        'from_user', 'to_user').filter(request='A')
+    return list(set(
+        friend.to_user if friend.from_user == user else friend.from_user
+        for friend in friends
+        if friend.from_user == user or friend.to_user == user
+    ))
+
+
+@api_view(['GET'])
+def TournamentInvites(request, tour_id):
+    try:
+        friends = get_friends(request.user)
+        new_friends = []
+        tournament = Tournament.objects.get(id=tour_id)
+        for friend in friends:
+            if friend not in tournament.players.all():
+                new_friends.append(friend)
+        friends_data = TourInvitesSerializers(new_friends, many=True).data
+    except Exception as e:
+        print("Error : ", e)
+    
+    return Response(friends_data)

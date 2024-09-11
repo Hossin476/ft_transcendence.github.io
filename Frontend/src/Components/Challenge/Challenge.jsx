@@ -25,7 +25,7 @@ export default function Challenge({ setopen }) {
     useEffect(() => {
         fetchData();
     }, []);
-    useEffect(()=>{
+    useEffect(()=>{ 
         if (socketMessage)
             {
                 const data = socketMessage
