@@ -73,47 +73,43 @@ class GameLogic:
 
     @database_sync_to_async
     def update_winner_score_online(self, matchId, scoreNumber):
-        try:
-            match = GameOnline.objects.get(id=matchId)
-            if scoreNumber == 1:
-                match.score1 = self.score1
-            else:
-                match.score2 = self.score2
-            if match.score1 == 7:
-                match.winner = match.player1
-            elif match.score2 == 7:
-                match.winner = match.player2
-            if match.winner is not None : 
-                match.winner.xp =  match.winner.xp + 30
-                match.winner.rank =  match.winner.xp / 100
-                match.winner.save()
-                match.is_game_end = True
-                print('match winner : ',  match.winner.xp, file=sys.stderr)
-                match.save()
-        except Exception as e:
-            print("error : ", e, file=sys.stderr)
+        match = GameOnline.objects.get(id=matchId)
+        if scoreNumber == 1:
+            match.score1 = self.score1
+        else:
+            match.score2 = self.score2
+        if match.score1 == 7:
+            match.winner = match.player1
+        elif match.score2 == 7:
+            match.winner = match.player2
+        if match.winner is not None : 
+            match.winner.xp =  match.winner.xp + 30
+            match.winner.rank =  match.winner.xp / 100
+            match.winner.save()
+            match.is_game_end = True
+            print('match winner : ',  match.winner.xp, file=sys.stderr)
+            match.save()
 
     @database_sync_to_async
     def update_winner_score__offline(self, matchId, scoreNumber):
-        try:
-            match = GameOffline.objects.get(id=matchId)
-            if scoreNumber == 1:
-                match.score1 = self.score1
-            else:
-                match.score2 = self.score2
-            if match.score1 == 7:
-                match.winner = match.player1
-            elif match.score2 == 7:
-                match.winner = match.player2
-            if match.winner is not None : 
-                match.winner.xp += 30
-                match.winner.rank =  match.winner.xp / 100
-                match.winner.save()
-                print('match winner : ',  {match.winner.xp}, file=sys.stderr)
-                match.is_game_end = True
-                match.save()
-        except Exception as e:
-            print("error : ", e, file=sys.stderr)
+        print("game id : ", matchId)
+        match = GameOffline.objects.get(id=matchId)
+        print("score 1: ",  match.score1)
+        print("score 2: ",  match.score2)
+        if scoreNumber == 1:
+            match.score1 = self.score1
+        else:
+            match.score2 = self.score2
+        if match.score1 == 7:
+            match.winner = match.player1
+            print("player 1 win")
+        elif match.score2 == 7:
+            match.winner = match.player2
+            print("player 2 win")
+        if match.winner is not None :
+            print("there is winner ")
+            match.is_game_end = True
+        match.save()
 
 
 

@@ -110,6 +110,7 @@ const Tour = () => {
    useEffect(() => {
       fetch_matches();
       let ws = new WebSocket(`ws://localhost:8000/ws/tournament/${tournament.id}/?token=${tokens.access}`);
+      // let ws = new WebSocket(`ws://localhost:8000/ws/tournament/offline/${tournament.id}/?token=${tokens.access}`);
       ws.onopen = () => {
          console.log("tournament socket connected");
          setTourSocket(ws);

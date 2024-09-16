@@ -10,12 +10,14 @@ export  const GameProvider = ({children})=>{
     const waiting = useRef(null)
     const score1 = useRef(null)
     const score2 = useRef(null)
+    const beforeStart = useRef(null)
     const waitingStatus = useRef(null)
     useEffect(()=>{
 
     },[location])
     const contextData = {
         score1: score1,
+        beforeStart:beforeStart,
         score2: score2,
         waiting: waiting,
         waitingStatus: waitingStatus

@@ -19,11 +19,16 @@ export default function NavBar() {
         setShowNotifications(!showNotifications);
     };
     useEffect(()=>{
-        if (socketMessage && socketMessage.type == 'game.accept')
+        if (socketMessage)
         {
-            const gameType = socketMessage.game_type === "T" ? "tictactoe" : "pingpong"
-            console.log(socketMessage.game_type)
-            nav(`/game/${gameType}/pvpgame/match`, { state: { gameid: socketMessage.game_id } });
+            if (socketMessage.type == 'game.accept'){
+                const gameType = socketMessage.game_type === "T" ? "tictactoe" : "pingpong"
+                console.log(socketMessage.game_type)
+                nav(`/game/${gameType}/pvpgame/match`, { state: { gameid: socketMessage.game_id, isonline:true } });
+            }else if (socketMessage.type == 'game.offline'){
+                const gameType = socketMessage.game_type === "T" ? "tictactoe" : "pingpong"
+                nav(`/game/${gameType}/pvpgame/match`, { state: { gameid: socketMessage.game_id, isonline:false } });
+            }
         }
     },[socketMessage])
 

@@ -84,7 +84,6 @@ def accept_reject(tour_id, user, state):
 
 class NotificationConsumer(AsyncWebsocketConsumer):
     connected_users = []
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.user = None
@@ -291,4 +290,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         matches = event["games"]
 
     async def tour_notification(self, event):
+        await self.send(text_data=json.dumps(event))
+    
+    async def game_offline(self, event):
         await self.send(text_data=json.dumps(event))

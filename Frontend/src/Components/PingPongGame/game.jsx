@@ -12,7 +12,7 @@ import GameContext from "../../context/gameContext";
 
 function Game(props)
 {
-  const  {score1, score2, waiting, waitingStatus}  = useContext(GameContext)
+  const  {score1, score2, beforeStart,waiting, waitingStatus}  = useContext(GameContext)
   const {tokens,username} = useAuth()
   const [socket,setsocket] = useState(null)
   const BallRef =  useRef()
@@ -22,10 +22,13 @@ function Game(props)
   const location = useLocation()
   const  [,get] = useKeyboardControls()
   useEffect(() => {
-  const wsUrl = `ws://localhost:8000/ws/game/pingpong/${location.state.gameid}/?token=${tokens.access}`;
-  // const wsUrl = `ws://localhost:8000/ws/game/s/1/?token=${tokens.access}`;
+  let wsUrl = null 
+  if (location.state.isonline == true)
+      wsUrl = `ws://localhost:8000/ws/game/pingpong/${location.state.gameid}/?token=${tokens.access}`;
+  else
+      wsUrl = `ws://localhost:8000/ws/game/pingpong/offline/${location.state.gameid}/?token=${tokens.access}`;
+  console.log("websocket url :",wsUrl)
   const ws = new WebSocket(wsUrl);
-
   ws.onopen = () => {
     console.log("message: connection between the client and the server started");
     setsocket(ws);
@@ -34,7 +37,7 @@ function Game(props)
   ws.onmessage = async (msg) => {
     const hold = await JSON.parse(msg.data);
     const { type, ball_position, paddle_one_position, paddle_two_position, winner, iswaiting, status, currentSecond, message} = hold;
-
+    console.log("game data : ",hold)
     switch (type) {
       case 'game.start':
         setStart(() => true);
@@ -44,8 +47,11 @@ function Game(props)
         BallRef.current.position.z = ball_position[2];
         MyPaddleRef.current.position.x = paddle_one_position.x;
         OtherPaddleRef.current.position.x = paddle_two_position.x;
-        score1.current.innerText = '0' + hold[username];
-        score2.current.innerText = '0' + hold['other'];
+        if (location.state.isonline == true){
+        }else{
+          score1.current.innerText = '0' + hold['score2'];
+          score2.current.innerText = '0' + hold['score1'];
+        }
         break;
       case 'game.winner':
         props.handleWin(winner === username, true, location.state.gameid);
@@ -56,6 +62,18 @@ function Game(props)
           waiting.current.innerText = currentSecond;
           waitingStatus.current.innerText = message;
         }
+        break;
+      case 'before.start':
+        console.log(beforeStart)
+        console.log(props)
+        if (props.beforeStartState == false){
+          console.log("change state to  true")
+          props.handleBefore(true)
+        }
+        if(beforeStart.current)
+          beforeStart.current.innerText = hold.message
+        if (hold.time == 1)
+          props.handleBefore(false)
         break;
     }
   }

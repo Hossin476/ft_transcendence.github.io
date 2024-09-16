@@ -2,10 +2,11 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 import json
 from channels.db import database_sync_to_async
 from notifications.serializers import playerSerializers
-from tournament.models import Tournament
-from pingpong.models import GameOnline
-from tournament.serializers import TournamentSerializer
+from tournament.models import Tournament, TournamentLocal, PlayerLocal
+from pingpong.models import GameOnline, GameOffline
+from tournament.serializers import TournamentSerializer, TrounamentLocalSerializer
 import asyncio
+import random
 
 
 @database_sync_to_async
@@ -29,7 +30,6 @@ def set_start(tour_id):
     tournament = Tournament.objects.get(id=tour_id)
     if tournament.is_start == True:
         return TournamentSerializer(tournament).data
-
     tournament.is_start = True
     players = tournament.players.all().order_by('?')
     players = list(players)
@@ -206,3 +206,76 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
     async def state_change(self, event):
         await self.send(text_data=json.dumps(event))
+
+
+
+
+
+
+@database_sync_to_async
+def make_matches(tour_id, user, players):
+    tournament = TournamentLocal.objects.get(id=tour_id)
+    tournament.is_start = True
+    random.shuffle(players)
+    j = 0
+    for i in range(0,2):
+        game = GameOffline.objects.create(creater_game=user, player1=players[j], player2=players[j+1])
+        tournament.matches.add(game)
+        j += 2
+    game = GameOffline.objects.create(creater_game=user)
+    tournament.matches.add(game)
+    tournament.save()
+    return TrounamentLocalSerializer(tournament).data
+
+ 
+
+class Tournamentlocal(AsyncWebsocketConsumer):
+
+    async def connect(self):
+        if 'error' in self.scope:
+            await self.close()
+            return
+        self.user = self.scope['user']
+        self.tour_id = self.scope['url_route']['kwargs']['tour_id']
+        self.room_name = f'tourLocal_{self.tour_id}'
+        await self.channel_layer.group_add(self.room_name, self.channel_name)
+        await self.accept()
+    
+    async def disconnect(self, close_code):
+        if ('error' in self.scope):
+            return
+        await self.channel_layer.group_discard(self.room_name, self.channel_name)
+
+    async def receive(self, text_data):
+        data = json.loads(text_data)
+        if data['type'] == "start_tournament":
+            tournament_model =  await make_matches(self.tour_id, self.user,data['players'])
+            await self.channel_layer.group_send(self.room_name,
+                            {
+                                'type':'start.tournament',
+                                'model':tournament_model
+                            })
+            asyncio.create_task(self.matches_watcher(self.tour_id, 2,0))
+    async def start_tournament(self, event):
+        await self.send(text_data=json.dumps(event))
+    
+    async def matches_watcher(self, tour_id, next_match, current_match):
+        tournament = await database_sync_to_async(lambda : TournamentLocal.objects.prefetch_related('matches').get(id=tour_id))()
+        matches = await database_sync_to_async(lambda :list(tournament.matches.select_related('creater_game').all().order_by('id')))()
+        await self.channel_layer.group_send(f'notification_{self.user.id}',{
+            'type': 'game.offline',
+            'game_id': matches[current_match].id,
+            'game_type': 'P'
+        })
+        while matches[current_match].is_game_end != True:
+            matches[current_match] =  await database_sync_to_async(lambda: GameOffline.objects.get(id=matches[current_match].id))()
+            await asyncio.sleep(2)
+        if current_match == 2:
+            return 
+        if current_match % 2 == 0:
+            matches[next_match].player1 = matches[current_match].winner
+        else:
+            matches[next_match].player2 = matches[current_match].winner
+        print("next tour:", next_match)
+        await database_sync_to_async(matches[next_match].save)()
+        asyncio.create_task(self.matches_watcher(self.tour_id, next_match + int(current_match/2), current_match + 1))
