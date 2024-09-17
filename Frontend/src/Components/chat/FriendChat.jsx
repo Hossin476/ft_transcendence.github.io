@@ -18,7 +18,7 @@ export default function FriendChat({ contacts, handleOnClick, selected }) {
   }
 
   const contactCount = count.find((item) => item.id === contacts.user.id);
-
+  // console.log(contacts);
   return (
     <>
       <span
@@ -45,13 +45,20 @@ export default function FriendChat({ contacts, handleOnClick, selected }) {
           </div>
         </div>
         <div className="text-sm text-gray-500">
-          {timeConverter(contacts.last_msg.created_at)}
-            {contacts.last_msg.sendId === contacts.user.id &&
-              (contactCount?.count || contacts.count) > 0 && (
-                <span className="bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center ml-6 mt-1">
-                  {(contactCount?.count || 0) + contacts.count}
-                </span>
-              )}
+          {timeConverter(contacts.last_msg.created_at)
+          }
+          {contacts.last_msg.sendId === contacts.user.id &&
+            (contactCount && contactCount.count > 0 ? (
+              <span className="bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center ml-6 mt-1">
+                {contactCount.count + contacts.count}
+              </span>
+            ) : contacts.count > 0 ? (
+              <span className="bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center ml-6 mt-1">
+                {contacts.count}
+              </span>
+            ) : (
+              ""
+            ))}
         </div>
       </span>
     </>
