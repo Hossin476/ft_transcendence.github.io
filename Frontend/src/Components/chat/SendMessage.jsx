@@ -32,12 +32,21 @@ const SendMessage = () => {
     }));
   };
 
+  const handlecount = () => {
+    chatsocket && chatsocket.send(JSON.stringify({
+      "type": "count",
+      "senderId": user.user_id,
+      "reciever": currantUser.user.id
+    }));
+  }
+
   const handeInput = (e) => {
     setMessages(e.target.value)
     handleTyping()
     if (e.key === "Enter") {
       setTyping({typing:false , timer:null})
       handleMessage()
+      handlecount()
     }
   }
 

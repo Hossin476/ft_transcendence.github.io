@@ -69,6 +69,8 @@ class ChatConsumer(WebsocketConsumer):
             self.handle_seen_message(text_data_json)
         elif event_type == "typing":
             self.handle_typing(text_data_json)
+        elif event_type == "count":
+            self.hundel_count(text_data_json)
         else:
             print("error f recieve")
 
@@ -116,6 +118,16 @@ class ChatConsumer(WebsocketConsumer):
                 "sender" : text_data_json["senderId"],
             }
         )
+    def hundel_count(self, text_data_json):
+        receiver = "chat_"+str(text_data_json["reciever"])
+        async_to_sync(self.channel_layer.group_send) (
+            receiver,
+            {
+                "type": "count",
+                "reciever" : text_data_json["reciever"],
+                "sender" : text_data_json["senderId"],
+            }
+        )
 
 
     def chat_message(self, event):
@@ -127,6 +139,10 @@ class ChatConsumer(WebsocketConsumer):
             "event": event
         }))
     def typing(self, event):
+        self.send(text_data=json.dumps({
+            "event": event
+        }))
+    def count(self, event):
         self.send(text_data=json.dumps({
             "event": event
         }))

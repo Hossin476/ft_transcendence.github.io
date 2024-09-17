@@ -13,16 +13,20 @@ class UserSerializer(serializers.ModelSerializer):
 
 class FriendShipSerializer(serializers.ModelSerializer):
     last_msg = serializers.SerializerMethodField()
+    count = serializers.SerializerMethodField()
     from_user = UserSerializer()
     to_user = UserSerializer()
     class Meta:
         model = Friendship
-        fields = ["id","from_user","to_user","active","last_msg"]
+        fields = ["id","from_user","to_user","active","last_msg", "count"]
     def get_last_msg(self,ob):
         last_msg = ob.friendship.order_by("-created_at").first()
         if(last_msg):
             return MessageSerializer(last_msg).data
-        return None
+    def get_count(self,ob):
+        count = ob.friendship.filter(seen=False).count()
+        return count
+        
 
 class MessageSerializer(serializers.ModelSerializer):
     class Meta:

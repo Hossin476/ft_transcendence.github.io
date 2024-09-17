@@ -38,7 +38,6 @@ class allUsers(generics.ListCreateAPIView):
                     friends['user'] = friends["user1"]
                 del friends["user1"]
                 del friends["user2"]
-            # print(serialized_friends.data)
             return Response(serialized_friends.data, status=status.HTTP_200_OK)
 
 
@@ -68,6 +67,7 @@ class conversations(generics.ListCreateAPIView):
                     users["user"] = users["from_user"]
                 del users["from_user"]
                 del users["to_user"]
+                print(serialize_convo.data)
             return Response(serialize_convo.data, status.HTTP_200_OK)
        
 
@@ -87,7 +87,6 @@ class messages(generics.ListCreateAPIView):
             messages = models.Message.objects.filter(friendshipid=data["friendship"])
             messages.filter(~Q(sendId=user.id),seen=False).update(seen=True)
             serialize_message = serializers.MessageSerializer(messages,many=True)
-            # print(serialize_message.data)
             return Response(serialize_message.data,status=status.HTTP_200_OK)  
         else:
             return Response([], status=status.HTTP_404_NOT_FOUND)

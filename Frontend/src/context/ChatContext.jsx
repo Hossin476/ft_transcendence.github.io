@@ -11,17 +11,20 @@ export const ChatProvider = ({children})=> {
     const [messages,setMessages] = useState(null)
     const [seen ,setSeen] = useState()
     const [typing,setTyping] = useState(false)
+    const [count, setCount] = useState([])
     let values = {
         currantUser:currantUser,
         conversation:conversation,
         messages:messages,
         seen:seen,
         typing:typing,
+        count:count,
         setSeen,
         setCurrentUser,
         setConversation,
         setMessages,
         setTyping,
+        setCount,
     }
     return (
         <ChatContext.Provider value= {values}>

@@ -37,6 +37,7 @@ const ChatPage = () => {
     const { chatsocket, user } = useAuth()
     const { currantUser, setMessages,setSeen} = useContext(ChatContext)
     const {typing, setTyping} = useContext(ChatContext)
+    const {count, setCount} = useContext(ChatContext)
 
     useEffect(() => {
         if (chatsocket) {
@@ -44,7 +45,8 @@ const ChatPage = () => {
                 const data = JSON.parse(e.data)
                 const { type,reciever, sender } = data.event
                 if (type === "chat.message") {
-                    setSeen(()=>false) 
+                    setSeen(()=>false)
+                    console.log("message", data.event)
                     handleDirectMessaging(data.event, currantUser, user, setMessages)
                 }
                 if(type == "message.seen" && user.user_id === reciever) {
@@ -55,11 +57,17 @@ const ChatPage = () => {
                 if (type === "typing" && user.user_id === reciever) {
                     handleTyping(typing, setTyping, sender)
                 }
+                if (type === "count" && user.user_id === reciever) {
+                    setCount((prevCount) => {
+                      const obj = prevCount.find(item => item.id === sender) || {id: sender, count: 0};
+                      obj.count = obj.count + 1;
+                      return [...prevCount.filter(item => item.id !== sender), obj];
+                    });
+                }
             })
         }
     }, [chatsocket, currantUser, user, setMessages, setSeen, typing, setTyping])
 
-    // console.log(user)
     return (
         <div className="flex-1 h-[90%] relative flex items-center p-4 gap-4 ">
             <ChatList />
