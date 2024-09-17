@@ -133,6 +133,11 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             await self.handle_tour_accept(data)
         elif types == 'tour_reject':
             await self.handle_tour_reject(data)
+        elif types == 'pvpmatch_request':
+            asyncio.create_task(self.handle_pvp_request(data)) 
+        elif types == 'cancel_pvp':
+            await self.handle_cancel_pvp(data)
+
 
     async def game_request(self, event):
         await self.send(text_data=json.dumps(event))
@@ -170,6 +175,70 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         await channle_layer.group_send(f'tour_{state["tour_id"]}', {
             'type': "state.change",
         })
+    
+    async def handle_pvp_request(self, data):
+        game_type = data['gameType']
+        print ("game type is : ", game_type)
+        print("array [p]",NotificationConsumer.match_making['P'])
+        if game_type == 'P':
+            NotificationConsumer.match_making['P'].append(self.user)
+        elif game_type == 'T':
+            NotificationConsumer.match_making['T'].append(self.user)
+        
+        if len(NotificationConsumer.match_making[game_type]) == 2:
+            
+            done = False
+            countr = 5
+            player1 = NotificationConsumer.match_making[game_type][0]
+            player2 = NotificationConsumer.match_making[game_type][1]
+            
+            NotificationConsumer.match_making[game_type].remove(player1)
+            NotificationConsumer.match_making[game_type].remove(player2)
+            
+            game_obg = await create_game_object(player1, player2, game_type)
+            
+            await self.channel_layer.group_send(f'notification_{player1.id}', {
+                'type': 'game.player_info',
+                'player': playerSerializers(player2).data,
+            })
+            await self.channel_layer.group_send(f'notification_{player2.id}', {
+                'type': 'game.player_info',
+                'player': playerSerializers(player1).data,
+            })
+            while done == False:
+                await self.channel_layer.group_send(f'notification_{player1.id}', {
+                    'type': 'game.counter',
+                    'counter': countr,
+                })
+                await self.channel_layer.group_send(f'notification_{player2.id}', {
+                    'type': 'game.counter',
+                    'counter': countr,
+                })
+                await asyncio.sleep(1)
+                countr -= 1
+                if countr == 0:
+                    done = True
+
+            await self.channel_layer.group_send(f'notification_{player1.id}', {
+                'type': 'game.accept',
+                'from': player1.username,
+                'to': player2.username,
+                'game_id': game_obg['id'],
+                'game_type': game_type
+            })
+            await self.channel_layer.group_send(f'notification_{player2.id}', {
+                'type': 'game.accept',
+                'from': player1.username,
+                'to': player2.username,
+                'game_id': game_obg['id'],
+                'game_type': game_type
+            })
+            
+    async def handle_cancel_pvp(self, data):
+        game_type = data['gameType']
+        
+        if self.user in NotificationConsumer.match_making[game_type]:
+            NotificationConsumer.match_making[game_type].remove(self.user)
 
     # handle notifications events
 

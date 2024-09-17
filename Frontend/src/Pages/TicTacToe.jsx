@@ -11,7 +11,7 @@ const TicTacToe = () => {
         <div className="container_tournament bg-primaryColor w-full h-full flex flex-col items-center ">
             <TicTacToeProvider>
                 <Header />
-                <div className="flex justify-evenly items-center w-11/12 h-full ">
+                <div className="flex justify-evenly items-center w-11/12 h-full relative">
                     <div className="border border-forthColor w-11/12 text-white flex flex-col h-[80%] items-center bg-linkBgColor rounded-3xl">
                         <div className="game_container h-full w-[90%] flex flex-col items-center justify-around">
                             <Score />

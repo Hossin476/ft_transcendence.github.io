@@ -3,23 +3,22 @@ import FirstPlayer from './FirstPlayer';
 import SecondPlayer from './SecondPlayer';
 import Timer from './Timer';
 import { useTicTacToe } from '../../context/TicTacToeContext';
-import {useLocation} from 'react-router'
+import { useLocation } from 'react-router';
 import { useAuth } from '../../context/AuthContext';
 
 function Score() {
-    const [users, setUsers] = useState({ player1: {}, player2: {} })
-    const location = useLocation()
-    const {tokens} = useAuth()
+    const [users, setUsers] = useState({ player1: {}, player2: {} });
+    const location = useLocation();
+    const { tokens } = useAuth();
 
     useEffect(() => {
-
         async function fetchData() {
             const response = await fetch(`http://localhost:8000/user_data/${location.state.gameid}`, {
                 headers: {
                     "Authorization": "JWT " + tokens.access,
                     "content-Type": "application/json"
                 }
-            })
+            });
             const data = await response.json();
             setUsers(prevState => ({
                 ...prevState,
@@ -28,7 +27,7 @@ function Score() {
             }));
         }
         fetchData();
-    }, [])
+    }, [location.state.gameid, tokens.access]);
 
     return (
         <div className="mt-4 flex w-full items-center xsm:gap-2 lg:gap-9">

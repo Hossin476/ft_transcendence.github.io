@@ -5,7 +5,10 @@ export default function History({item}) {
     const navigate = useNavigate()
     const handleNavigation = ()=> {
         navigate("./tour",{
-            state:  item
+            state: {
+                item:item,
+                status:"online"
+            } 
         })
     }
 

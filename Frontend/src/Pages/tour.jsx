@@ -17,7 +17,7 @@ import { useLocation } from "react-router-dom"
 import InviteModal from "../Components/Tournament/InviteModal";
 import { useTournament } from "../context/TournamentContext";
 import { useNavigate } from 'react-router';
-
+import TournamentForm from "../Components/tour/TournamentForm";
 // const Model = () => {
 //   const gltf = useLoader(GLTFLoader, './golden_trophy.glb');
 
@@ -83,8 +83,10 @@ const DisplayUser = ({ tournament }) => {
 const Tour = () => {
    // const texture = useLoader(TextureLoader, "copper.jpg");
    const location = useLocation()
+   
    const { socket, user, tokens, username } = useAuth();
-   const [tournament, setTournament] = useState(location.state)
+   const [tournament, setTournament] = useState(location.state.item)
+   const status = location.state.status
    const [invite, setInvite] = useState(false)
    const [tour_socker, setTourSocket] = useState(null)
    const navigate = useNavigate();
@@ -110,7 +112,6 @@ const Tour = () => {
    useEffect(() => {
       fetch_matches();
       let ws = new WebSocket(`ws://localhost:8000/ws/tournament/${tournament.id}/?token=${tokens.access}`);
-      // let ws = new WebSocket(`ws://localhost:8000/ws/tournament/offline/${tournament.id}/?token=${tokens.access}`);
       ws.onopen = () => {
          console.log("tournament socket connected");
          setTourSocket(ws);
@@ -149,7 +150,7 @@ const Tour = () => {
       }))
       navigate('../')
    }
-   console.log(tournament)
+   console.log("youuu dog here is ur data",status)
    return (
       tournament && <div className="h-[100%] w-[100%] flex flex-col relative gap-5">
          <div className=" h-[70%] relative xsm:w-[99%] md:w-[70%]  max-w-[1300px] md:h-[70%] rounded-[20px] flex justify-center items-center text-white flex-col bg-secondaryColor border-[2px] border-forthColor">
@@ -162,7 +163,8 @@ const Tour = () => {
                </Stage>
             </Canvas>
          </div>
-         <div className="h-[calc(100%-80%)] xsm:w-[99%] md:w-[70%]  max-w-[1300px] gap-2 rounded-[20px] flex-col flex text-white   bg-secondaryColor border-[2px] border-forthColor justify-between font-inter">
+         <div className="h-[calc(100%-80%)] xsm:w-[99%] md:w-[70%]  max-w-[1300px] gap-2 rounded-[20px] flex-col flex text-white bg-secondaryColor border-[2px] border-forthColor justify-between font-inter">
+               {/* <TournamentForm /> */}
             <div className="flex justify-center w-[100%]  min-w-[150px] ">
                <p className="font-Valorax">PLAYER IN TOURNAMENT</p>
             </div>

@@ -2,7 +2,7 @@
 import React from 'react';
 import { PiArrowUUpLeftBold } from 'react-icons/pi';
 import { IoIosAddCircleOutline } from "react-icons/io";
-import { useEffect } from 'react';
+import { useEffect,useState } from 'react';
 
 import './Pvpgame.css';
 import './Matchmaking.css';
@@ -64,13 +64,13 @@ function Wait_card() {
   );
 }
 
-function Vsplayer_card() {
+function Vsplayer_card({player}) {
   return (
     <div className="player-card">
       <img src={vs_avatar} alt="Avatar" className="avatar-ping" />
       <div className="player-info">
-        <h2>LAHOUCINE</h2>
-        <p>LEVEL 1</p>
+        <h2>{player.username}</h2>
+        <p>{player.rank}</p>
       </div>
     </div>
   );
@@ -118,38 +118,63 @@ function PvpGame({ title}) {
 
   const [isstart, setStart] = React.useState(false);
   const [isstarted, setStarted] = React.useState(false);
+  const [pvpUser,setPvpUser] = useState()
+  const [counter,setCounter] = useState(null)
   const nav = useNavigate()
   const locations = useLocation()
-  const {socket, username} = useAuth()
+  const {socket,socketMessage, username} = useAuth()
 
   function startGame() {
+    let gameType = title === "PING PONG" ? "P" : "T"
     setStart(true);
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      const message = JSON.stringify({
+        type: 'pvpmatch_request',
+        gameType:gameType
+      });
+      socket.send(message);
+    }
     console.log(locations)
   }
 
   function stopGame() {
+    let gameType = title === "PING PONG" ? "P" : "T"
     setStart(false);
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      const message = JSON.stringify({
+        type: 'cancel_pvp',
+        gameType:gameType
+      });
+      socket.send(message);
+    }
   }
 
+
+
   useEffect(() => {
-    if (isstart) {
-      const timer = setTimeout(() => {
-        setStarted(true);
-        if (socket && socket.readyState === WebSocket.OPEN) {
-          const message = JSON.stringify({
-            type: 'game_request',
-            // 'receiver': 
-          });
-          socket.send(message);
-        } else {
-          console.error('WebSocket is not open. Unable to send game request.');
-        }
-      }, 4000);
-      return () => clearTimeout(timer);
+    
+    if(socketMessage && socketMessage.type === 'game.counter')
+        setCounter(socketMessage.counter)
+    if(socketMessage && socketMessage.type === 'game.player_info') {
+      console.log("print event shit",socketMessage.player)
+      setStarted(true);
+      setPvpUser(socketMessage.player)
     }
-  }, [isstart]);
+  }, [socketMessage]);
 
-
+  useEffect(()=>{
+    return ()=> {
+      let gameType = title === "PING PONG" ? "P" : "T"
+      if (socket && socket.readyState === WebSocket.OPEN) {
+        const message = JSON.stringify({
+          type: 'cancel_pvp',
+          gameType:gameType
+        });
+        socket.send(message);
+      }
+    }
+  },[])
+  console.log("i guess u r here successfully!",title)
   return (
 
     <div className='bg-primaryColor w-full flex items-center justify-between px-7 relative h-[100%]'>
@@ -159,9 +184,15 @@ function PvpGame({ title}) {
                     <Header title={title}/>
                     <div className="player-cards">
                       <Mycard />
+                     { counter && 
+                        <div>
+                          <h3>match will start in </h3>
+                          <p className="text-center text-2xl">{counter}</p>
+                        </div>
+                      }
                       {
                         isstarted ? (
-                          <Vsplayer_card />
+                          <Vsplayer_card player={pvpUser} />
                         ) : (
                           isstart ? <Wait_card /> : <Add_card />
                         )
