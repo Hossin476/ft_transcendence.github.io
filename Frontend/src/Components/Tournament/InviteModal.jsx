@@ -24,6 +24,12 @@ function InviteModal({ setInvite, tour_id }) {
         }
         fetchData();
     }, [])
+    const afterinvite = (key)=>{
+        setUsers((current)=>{
+            current.splice(key,1)
+            return [...current]
+        })
+    }
     return (
         <div className='w-[100%] h-[100%] blurHelp absolute top-[50%] translate-y-[-50%] left-[50%] translate-x-[-50%]'>
             <div className={`w-[60%] inset-0 blurHelp h-[70%] min-h-[500px] absolute border-[3px] flex flex-col items-center z-10 gap-6 rounded-[20px] bg-gradient-to-r from-purple-400 via-pink-500 top-[50%] translate-y-[-50%] left-[50%] translate-x-[-50%] to-red-500 shadow-lg`}>
@@ -34,7 +40,7 @@ function InviteModal({ setInvite, tour_id }) {
                 <div className="w-[80%] p-4 space-y-4 overflow-y-auto h-[calc(100%-5rem)]">
                     {
                         users && users.map((user, index) => (
-                            <UserInvite user={user} key={index} tour_id={tour_id}/>
+                            <UserInvite user={user} key={index} tour_id={tour_id} removeuser={afterinvite}/>
                         ))
                     }
                 </div>

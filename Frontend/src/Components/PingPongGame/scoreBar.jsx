@@ -6,13 +6,6 @@ import GameContext from "../../context/gameContext"
 import { useAuth } from "../../context/AuthContext"
 import { useLocation } from 'react-router-dom';
 
-const OfflineScoreBar = ()=>{
-  return <>
-        <FirstPlayer name={players.player1} level={0} image={`/player1.png`} score={2} ref={score1}/>
-          <Timer />
-          <SecondPlayer name={players.player2} level={0} image={`/player2.png`} score={7} ref={score2}/>
-    </>
-}
 
 function ScoreBar({gameid})
 {
@@ -35,23 +28,29 @@ function ScoreBar({gameid})
         setPlayers(data)
     }
     useEffect(()=>{
-      console.log("gameid : ", gameid)
+      if (score1.current && score2.current){
+        score1.current.innerText = '00';
+        score2.current.innerText = '00';
+      }
       fetch_game()
-  },[location])
+  },[gameid])
   console.log(players)
 
     return <>
-      {players && (location.state.isonline == true ? 
+      {players && (location.state.isonline == true ?(
+
         <div className=" flex  px-5 mt-5 w-[100%] justify-center items-center  max-w-[1024px] xsm:gap-2 lg:gap-9 ">
-          <FirstPlayer name={players.player1.username} level={players.player1.rank} image={`http://localhost:8000${players.player1.profile_image}`} score={2} ref={score1}/>
-          <Timer />
-          <SecondPlayer name={players.player2.username} level={players.player2.rank} image={`http://localhost:8000${players.player2.profile_image}`} score={7} ref={score2}/>
-        </div>:
+          <FirstPlayer name={players.player1.username} level={players.player1.rank} image={`http://localhost:8000${players.player1.profile_image}`} ref={score1}/>
+          <Timer game_id={gameid}/>
+          <SecondPlayer name={players.player2.username} level={players.player2.rank} image={`http://localhost:8000${players.player2.profile_image}`} ref={score2}/>
+        </div>
+      ):(
         <div className=" flex  px-5 mt-5 w-[100%] justify-center items-center  max-w-[1024px] xsm:gap-2 lg:gap-9 ">
-          <FirstPlayer name={players.player1} level={0} image={`/player1.png`} score={2} ref={score1}/>
-          <Timer />
-          <SecondPlayer name={players.player2} level={0} image={`/palyer2.png`} score={7} ref={score2}/>
+          <FirstPlayer name={players.player1} level={0} image={`/player1.png`} ref={score1}/>
+          <Timer game_id={gameid}/>
+          <SecondPlayer name={players.player2} level={0} image={`/palyer2.png`} ref={score2}/>
         </div>)
+      )
       }
     </>
 }

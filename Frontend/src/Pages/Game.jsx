@@ -63,7 +63,7 @@ function TicTacToe() {
 
 function Game() {
     return (
-        <div className='bg-primaryColor w-full flex flex-row items-center justify-between px-7 relative h-[100%]'>
+        <div className='bg-primaryColor w-full flex flex-row items-center justify-between px-7 relative h-[100%] fade-in'>
             <div className="game-container flex  justify-center flex-col items-center xsm:w-[90%] w-[80%] ">
                 <PingPong />
                 <TicTacToe />        

@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext'
 import CreateTournament from "../Components/tour/CreateTournament";
 import HistoryAndInvites from "../Components/tour/HistoryAndInvites";
 import Header from "../Components/tour/Header";
+import TournamentProvider from '../context/TournamentContext';
 
 
 const getTours = async (userId, tokens) => {
@@ -47,12 +48,12 @@ export default function Chat() {
     }, [socketMessage])
 
     return (
-        <div className="flex-1 h-[90%] flex items-center   justify-center">
-            <div className="h-[90%] w-[90%] flex flex-col rounded-lg border-[2px] border-thirdColor bg-secondaryColor  items-center py-20">
-                <Header />
-                <CreateTournament setTournamentName={setTournamentName} tournamentName={tournamentName} setTours={setTours} />
-                <HistoryAndInvites tours={tours} />
+            <div className="flex-1 h-[90%] flex items-center   justify-center">
+                <div className="h-[90%] w-[90%] flex flex-col rounded-lg border-[2px] border-thirdColor bg-secondaryColor  items-center py-20">
+                    <Header />
+                    <CreateTournament setTournamentName={setTournamentName} tournamentName={tournamentName} setTours={setTours} />
+                    <HistoryAndInvites tours={tours} />
+                </div>
             </div>
-        </div>
     )
 }

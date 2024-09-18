@@ -1,6 +1,8 @@
 import { useState } from "react"
+import { useTournament } from "../../context/TournamentContext";
 
 export default function TournamentForm() {
+   const {socket} = useTournament()
     const [form,setForm] = useState({
         player1:'',
         player2:'',
@@ -29,10 +31,11 @@ export default function TournamentForm() {
                ["player4"]:'empty'
             }
          })
-         console.log("3la 9wadaaa")
       }
-      if(errorlog.length === 0 && names.length === 4)
-         console.log("cleaaan")
+      if(errorlog.length === 0 && names.length === 4) {
+         const users = Object.values(form)
+         socket.send(JSON.stringify({type:'start_tournament', players: users}))
+      }
     }
 
     const handleInpute = (e)=> {

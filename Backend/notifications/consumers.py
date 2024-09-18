@@ -61,8 +61,12 @@ def delete_game_request(id):
 def get_tour_from_db(id, userid):
     tournament = Tournament.objects.select_related("creator").get(id=id)
     user = CustomUser.objects.get(id=userid)
-    InviteTournament.objects.create(tournament=tournament, user=user)
+    try:
+        InviteTournament.objects.get(tournament=tournament, user=user)
+    except Exception as e:
+        InviteTournament.objects.create(tournament=tournament, user=user)
     return TournamentSerializer(tournament).data
+        
 
 
 @database_sync_to_async
@@ -84,6 +88,7 @@ def accept_reject(tour_id, user, state):
 
 class NotificationConsumer(AsyncWebsocketConsumer):
     connected_users = []
+    match_making ={'T': [], 'P': []}
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.user = None
@@ -362,4 +367,8 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps(event))
     
     async def game_offline(self, event):
+        await self.send(text_data=json.dumps(event))
+    async def game_player_info(self, event):
+        await self.send(text_data=json.dumps(event))
+    async def game_counter(self, event):
         await self.send(text_data=json.dumps(event))

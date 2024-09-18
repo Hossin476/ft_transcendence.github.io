@@ -3,8 +3,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
-from .models import Tournament
-from .serializers import TournamentSerializer, TournamentInviteSerializer
+from .models import Tournament, TournamentLocal
+from .serializers import TournamentSerializer, TournamentInviteSerializer, TrounamentLocalSerializer
 from users.models import CustomUser
 from .models import InviteTournament
 import json
@@ -26,6 +26,23 @@ class TournamentView(APIView):
         tour.players.add(user)
         serialized_tour =  TournamentSerializer(tour)
         return Response(serialized_tour.data)
+
+class TournamentLocalView(APIView):
+    def get(self, request, tourId):
+        tournament = get_object_or_404(TournamentLocal, id=tourId)
+        serialized_tournament = TrounamentLocalSerializer(tournament).data
+        return Response(serialized_tournament, status.HTTP_200_OK)
+
+    def post(self, request):
+        data = json.loads(request.body)
+        user = request.user
+        tour = TournamentLocal.objects.create(
+            creator = user,
+            name = data["name"]
+        )
+        serialized_tour =  TrounamentLocalSerializer(tour)
+        return Response(serialized_tour.data)
+
 
 
 class TournamentListView(APIView):

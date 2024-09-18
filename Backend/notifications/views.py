@@ -8,7 +8,7 @@ from rest_framework.decorators import api_view
 from itertools import chain
 from operator import attrgetter
 from django.core.cache import cache
-from tournament.models import Tournament
+from tournament.models import Tournament, InviteTournament
 
 # Create your views here.
 
@@ -140,15 +140,17 @@ def get_friends(user):
 
 @api_view(['GET'])
 def TournamentInvites(request, tour_id):
+    friends_data = None
     try:
         friends = get_friends(request.user)
         new_friends = []
         tournament = Tournament.objects.get(id=tour_id)
+        invites = InviteTournament.objects.select_related('user').filter(tournament=tournament)
+        invited_users = [invite.user for invite in invites]
         for friend in friends:
-            if friend not in tournament.players.all():
+            if friend not in tournament.players.all() and friend not in invited_users:
                 new_friends.append(friend)
         friends_data = TourInvitesSerializers(new_friends, many=True).data
     except Exception as e:
         print("Error : ", e)
-    
     return Response(friends_data)

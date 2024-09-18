@@ -2,10 +2,11 @@
 import { useEffect, useState } from "react";
 import { Progress } from "./progressBar";
 import { useAuth } from "../../context/AuthContext";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 
 
 const OfflineWin = ({matchObj})=>{
+    const navigate = useNavigate()
     return (
         <div className="w-[99%] h-[99%]  absolute z-20 backdrop-blur-lg  flex flex-col justify-center items-center xsm:text-[10px] lg:text-2xl rounded-lg">
         <div className="w-[70%] h-[100%]flex flex-col space-y-10 bg-secondaryColor p-10 rounded-lg  border-thirdColor border-[2px] ">
@@ -25,8 +26,8 @@ const OfflineWin = ({matchObj})=>{
             </div>
           </div>
           <div className="flex justify-evenly w-[100%] "> 
-            <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 border-[2px] w-[40%] rounded-lg border-thirdColor p-2">HOME</button>
-            <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 border-[2px] w-[40%] rounded-lg border-thirdColor p-2">Play again </button>
+            <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 border-[2px] w-[40%] rounded-lg border-thirdColor p-2" onClick={()=> navigate('/')} >HOME</button>
+            <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 border-[2px] w-[40%] rounded-lg border-thirdColor p-2" onClick={()=> navigate('../')}>Play again </button>
           </div>
         </div>
         </div>
@@ -83,8 +84,8 @@ export default function Win({iswin, game_id})
                     </div>}
                 </div>
                 <div className="w-[100%] flex justify-center gap-9  xsm:text-[8px] lg:text-[15px] ">
-                    <button className="xsm:w-[60px]  xsm:h-[30px] lg:w-[120px] lg:h-[40px] transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110  duration-150 bg-secondaryColor font-inter lg:border-[2px] xsm:border-[1px] border-forthColor rounded-lg ">PLAY AGAIN</button>
-                    <button className="xsm:w-[60px]  xsm:h-[30px] lg:w-[120px] lg:h-[40px] transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110  duration-150 bg-secondaryColor font-inter lg:border-[2px] xsm:border-[1px] border-forthColor rounded-lg ">HOME</button>
+                    <button className="xsm:w-[60px]  xsm:h-[30px] lg:w-[120px] lg:h-[40px] transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110  duration-150 bg-secondaryColor font-inter lg:border-[2px] xsm:border-[1px] border-forthColor rounded-lg " onClick={()=> navigate('../')}>PLAY AGAIN</button>
+                    <button className="xsm:w-[60px]  xsm:h-[30px] lg:w-[120px] lg:h-[40px] transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110  duration-150 bg-secondaryColor font-inter lg:border-[2px] xsm:border-[1px] border-forthColor rounded-lg " onClick={()=> navigate('/')}>HOME</button>
                 </div>
             </div>
         }

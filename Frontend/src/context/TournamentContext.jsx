@@ -17,11 +17,12 @@ function TournamentProvider({ children }) {
     }
     let value = {
         socket: socket,
+        setTournamentSocket:setSocket,
         socketMessage : socketMessage,
         handlesetMessage,
     }
     return (
-        <TournamentContext.Provider values={value}>
+        <TournamentContext.Provider value={value}>
             {children}
         </TournamentContext.Provider>
     )

@@ -7,12 +7,13 @@ import Game from "../Components/PingPongGame/game";
 import Header from "../Components/PingPongGame/scoreBar&Header/Header";
 import { VscDeviceCameraVideo } from "react-icons/vsc";
 import Win from "../Components/PingPongGame/win";
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import ScoreBar from "../Components/PingPongGame/scoreBar";
 import { useLocation } from "react-router";
 import React, { Suspense, lazy } from 'react';
 import GameContext, { GameProvider } from "../context/gameContext";
 import GameCounter from "../Components/PingPongGame/gameCounter";
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -23,24 +24,24 @@ function PingPongGameInstructions() {
   return (
     <div className="w-[50%] h-[100%]flex flex-col space-y-2 bg-secondaryColor p-10 rounded-lg border-[2px]">
        <div className="w-full text-center ">PINGPONG INSTRACTION</div>
-        <div className="flex space-x-2">
-          <Gamepad2 className="text-yellow-400 "/>
+        <div className="flex  space-x-2">
+          <Gamepad2 className="text-yellow-400 w-[10%]"/>
           <p><span className="font-semibold">Control : </span>AWDS</p>
         </div>
         <div className="flex space-x-2 ">
-          <Clock className="text-yellow-400"/>
+          <Clock className="text-yellow-400 w-[10%]" />
           <p><span className="font-semibold">time to reconnect : </span>You have 60 seconds to reconnect if you disconnect</p>
         </div>
         <div className="flex space-x-2 ">
-          <Pause className="text-yellow-400"/>
+          <Pause className="text-yellow-400 w-[10%]"/>
           <p><span className="font-semibold">Pause : </span>You have three pauses, each pause 15 seconds</p>
         </div>
         <div className="flex space-x-2 ">
-          <Camera className="text-yellow-400"/>
+          <Camera className="text-yellow-400 w-[10%]"/>
           <p><span className="font-semibold">Camera : </span>You can change the camera view using the mouse or the camera button on the top</p>
         </div>
         <div className="flex space-x-2 ">
-          <Trophy className="text-yellow-400"/>
+          <Trophy className="text-yellow-400 w-[10%]"/>
           <p><span className="font-semibold">Winner : </span>To win, you should score 7 goals</p>
         </div>
         <p className="w-full text-center text-red-500" ref={beforeStart}></p>
@@ -51,6 +52,7 @@ function PingPongGameInstructions() {
 
 function PingPongGame() {
   const location = useLocation()
+  const navigate = useNavigate()
   const ref = useRef()
   const currentCamera = useRef(0)
   const cameraPositions = useMemo(()=>[
@@ -90,23 +92,26 @@ function PingPongGame() {
   const handleWin = (win,endGame,game_id)=> {
     setStatus(()=>({win:win, endGame:endGame,game_id:game_id  }))
   }
+  useEffect(()=>{
+    if(location.state?.gameid == undefined)
+      navigate('../')
+  },[location.state])
   const handleBefore = (state)=>{
     selBeforeStart(state)
   }
   return (
-    <Suspense>
-      <GameProvider>
-      <div className="h-[100%] w-[100%] flex flex-col items-center justify-center relative">
-        <Header gameName={"PING PONG"}/>
-       <div className=" h-[70%] relative xsm:w-[96%] md:w-[80%] max-w-[1400px] rounded-[20px] flex justify-center items-center text-white flex-col bg-secondaryColor border-[2px] border-forthColor">
+    location.state?.gameid && <>
+        <div className="h-[100%] w-[100%] flex flex-col items-center justify-center relative fade-in">
+          <Header gameName={"PING PONG"}/>
+        <div className=" h-[70%] relative xsm:w-[96%] md:w-[80%] max-w-[1400px] rounded-[20px] flex justify-center items-center text-white flex-col bg-secondaryColor border-[2px] border-forthColor">
           {beforeStart&& <div className="w-[99%] h-[99%]  absolute z-20 backdrop-blur-lg  flex flex-col justify-center items-center xsm:text-[10px] lg:text-2xl rounded-lg">
             <PingPongGameInstructions/>
         </div>}
         {status.endGame && <Win iswin={status.win} game_id={status.game_id} />}
         {stop && <GameCounter/>}
-        <ScoreBar gameid={location.state.gameid}/>
+          <ScoreBar gameid={location.state.gameid}/>
           <button className=" lg:h-[40px] lg:w-[60px] xsm:h-[20px] xsm:w-[40px]" onClick={handleCamera}> <VscDeviceCameraVideo className="h-[100%] w-[100%]" style={{color: 'white'}} /></button>
-        <hr className="h-[2px] xsm:w-[95%] lg:w-[90%] max-w-[1400px] bg-thirdColor my-6"/>
+          <hr className="h-[2px] xsm:w-[95%] lg:w-[90%] max-w-[1400px] bg-thirdColor my-6"/>
           <Canvas >
             <PerspectiveCamera ref={ref} makeDefault rotation={Object.values(cameraPositions[2].rotation)} fov={75} position={Object.values(cameraPositions[2].position)}/>
             <OrbitControls/>
@@ -118,10 +123,9 @@ function PingPongGame() {
               </KeyboardControls>
             </Stage>
           </Canvas>
+          </div>
         </div>
-      </div>
-      </GameProvider>
-    </Suspense>
+    </>
   );
 }
 

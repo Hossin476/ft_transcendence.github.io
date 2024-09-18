@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { Stage, OrbitControls, Sky,Line } from '@react-three/drei';
+import { Stage, OrbitControls, Sky, Line } from '@react-three/drei';
 import { Physics, RigidBody } from '@react-three/rapier';
 import { useTicTacToe } from '../../context/TicTacToeContext';
 import { useAuth } from '../../context/AuthContext';
 import { useLocation } from 'react-router';
-import Win from './win';
+import Win from './Win';
 import StartModal from './StartModal'
 import ReconnectModal from './ReconnectModal'
 
-const WS_URL = 'ws://localhost:8000/ws/game/tictactoe';
+const WS_ONLINE_URL = 'ws://localhost:8000/ws/game/tictactoe';
+const WS_OFFLINE_URL = 'ws://localhost:8000/ws/game/tictactoe/offline';
 
 const GRID_POSITIONS = [
     [-1, 1, 0], [0, 1, 0], [1, 1, 0],
@@ -31,9 +32,8 @@ const Game = () => {
     const location = useLocation();
     const socketRef = useRef(null);
     const startModalShownRef = useRef(false);
-
     const connectWebSocket = useCallback(() => {
-        const url = `${WS_URL}/${location.state?.gameid}/?token=${tokens.access}`;
+        const url = `${location.state?.isonnline == true ? WS_ONLINE_URL : WS_OFFLINE_URL}/${location.state?.gameid}/?token=${tokens.access}`;
         socketRef.current = new WebSocket(url);
 
         socketRef.current.onopen = () => console.log('WebSocket connected');
@@ -57,10 +57,9 @@ const Game = () => {
     const handleWebSocketMessage = useCallback((data) => {
         if (data.state) setBoard(data.state);
         if (data.final_winner) setFinalWinner(data.final_winner);
-        if (data.reconnect_countdown !== undefined)
-        {
-                setShowReconnectModal(true);
-                setReconnectTimer(data.reconnect_countdown);
+        if (data.reconnect_countdown !== undefined) {
+            setShowReconnectModal(true);
+            setReconnectTimer(data.reconnect_countdown);
         }
         if (data.start_countdown_value !== undefined) {
             setStartCountdownValue(data.start_countdown_value);

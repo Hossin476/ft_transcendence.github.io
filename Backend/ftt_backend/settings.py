@@ -47,8 +47,9 @@ INSTALLED_APPS = [
     "corsheaders",
     'users',
     'tictactoe',
+    'chat',
     'pingpong',
-    'tournament'
+    'tournament',
 
 ]
 

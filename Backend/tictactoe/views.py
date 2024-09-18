@@ -6,21 +6,11 @@ from rest_framework.response import Response
 from rest_framework import status
 from tictactoe.models import OnlineGameModel
 from .serializers import CustomUserSerializer
+from .local_game.models import LocalGameModel
 
 
 @api_view(['GET'])
 def get_user_data(req, game_id):
-    """
-    Retrieve the user data for the players involved in a specific game.
-
-    Args:
-        req: The HTTP request object.
-        game_id (int): The ID of the game from which to retrieve player data.
-
-    Returns:
-        Response: A JSON response containing the serialized data of player1 and player2,
-        or an error message if the game does not exist.
-    """
     try:
         game = OnlineGameModel.objects.get(id=game_id)
     except OnlineGameModel.DoesNotExist:
@@ -35,17 +25,6 @@ def get_user_data(req, game_id):
 
 @api_view(['GET'])
 def get_winner_data(request, game_id):
-    """
-    Retrieve the winner and loser data for a specific game.
-
-    Args:
-        request: The HTTP request object.
-        game_id (int): The ID of the game from which to retrieve winner and loser data.
-
-    Returns:
-        Response: A JSON response containing the serialized data of the winner and the loser,
-        or an error message if the game or winner does not exist.
-    """
     try:
         game = OnlineGameModel.objects.get(id=game_id)
         if game:
@@ -61,3 +40,37 @@ def get_winner_data(request, game_id):
             }, status=status.HTTP_200_OK)
     except OnlineGameModel.DoesNotExist:
         return Response({'error': 'Game not found'}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['GET'])
+def offline_user_data(req, game_id):
+    try:
+        game = LocalGameModel.objects.get(id=game_id)
+    except LocalGameModel.DoesNotExist:
+        return Response({'error': 'Game not found'}, status=404)
+
+    player1 = game.player1
+    player2 = game.player2
+
+    return Response({'player1': player1, 'player2': player2})
+
+@api_view(['GET'])
+def offline_winner_data(request, game_id):
+    try:
+        game = LocalGameModel.objects.get(id=game_id)
+        return Response({
+            "winner": game.final_winner
+            }, status=status.HTTP_200_OK)
+    except LocalGameModel.DoesNotExist:
+        return Response({'error': 'Game not found'}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['POST'])
+def create_local_game(request):
+    try:
+        player1 = request.data.get('player1')
+        player2 = request.data.get('player2')
+        creator = request.user
+        game = LocalGameModel.objects.create(creator=creator, player1=player1, player2=player2)
+
+        return Response({'game_id': game.id}, status=status.HTTP_201_CREATED)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

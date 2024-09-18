@@ -26,8 +26,10 @@ urlpatterns = [
     path('', include('tictactoe.urls')),
     path('notification/', include('notifications.urls')),
     path('pingpong/', include('pingpong.urls')),
-    path('tournament/',include('tournament.urls'))
+    path('tournament/',include('tournament.urls')),
+    path('chat/', include('chat.urls'))
+
     # path('', include('pingpong.urls')),
-]
+] 
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

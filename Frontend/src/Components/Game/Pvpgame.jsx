@@ -16,7 +16,8 @@ import 'ldrs/dotPulse';
 import { useNavigate } from 'react-router';
 import Challenge from '../Challenge/Challenge';
 import { useAuth } from '../../context/AuthContext';
-
+import { RiWifiOffLine } from "react-icons/ri";
+import { IoWifiSharp } from "react-icons/io5";
 
 function Header({ title}) {
 
@@ -42,7 +43,7 @@ function Header({ title}) {
 
 function Mycard() {
   return (
-    <div className="player-card">
+    <div className="player-card h-[90%] xsm:w-[50%] lg:w-[25%]">
       <img src={mypic} alt="Avatar" className="avatar-ping" />
       <div className="player-info">
         <h2>KIRAZIZI</h2>
@@ -54,7 +55,7 @@ function Mycard() {
 
 function Wait_card() {
   return (
-    <div className="add-player-card">
+    <div className="add-player-card h-[90%]xsm:w-[50%] lg:w-[25%]">
       <img src={avatar} alt="Avatar" className="anonymous" />
       <div className="add-player-info">
         <h2>WAITING</h2>
@@ -66,7 +67,7 @@ function Wait_card() {
 
 function Vsplayer_card({player}) {
   return (
-    <div className="player-card">
+    <div className="player-card h-[90%] xsm:w-[50%] lg:w-[25%]">
       <img src={vs_avatar} alt="Avatar" className="avatar-ping" />
       <div className="player-info">
         <h2>{player.username}</h2>
@@ -88,7 +89,7 @@ function Matchmaking_button({onClick}) {
 
 function Add_card() {
   return (
-    <div className="add-player-card">
+    <div className="add-player-card h-[90%] xsm:w-[50%] lg:w-[25%]">
       <img src={avatar} alt="Avatar" className="anonymous" />
       <p className="add-player-info">No_Name</p>
     </div>
@@ -113,6 +114,110 @@ function Started_button({onClick}) {
   );
 
 }
+function LocalButton({onClick}) {
+  return (
+    <div className="start-button_div">
+      <div className="empty_start"></div>
+      <button onClick={onClick} className="started-button">STARTed</button>
+    </div>
+  );
+
+}
+
+function LocalPvp({player,setPlayers}) {
+
+  const [edit,setEdit] = useState(true)
+  const [name,setName] = useState('')
+  const [error,setEror] = useState(false)
+  let regex = new RegExp("^[a-z][a-zA-Z0-9]*$")
+
+  const handleInpute =(e)=> {
+      setName(()=>e.target.value)
+      if (e.target.value.length > 10 || !regex.test(e.target.value))
+          setEror(()=>true)
+      else
+        setEror(()=>false)
+  }
+  const handleClick = ()=> {
+    if (name.length > 10 || !regex.test(name))
+        setEror(()=>true)
+    else
+      {
+        setEror(()=>false)
+        setEdit((prevEdit)=>!prevEdit)
+        setPlayers((prevState)=>{
+           return {...prevState, [player]:name}
+          })
+          console.log("DATA RAH DKHLAT")
+      }
+  }
+  return (
+    <div className="player-card h-[90%] xsm:w-[50%] lg:w-[25%]">
+      <img src={mypic} alt="Avatar" className="avatar-ping" />
+      <div className="player-info items-center flex flex-col">
+        {
+          edit ? <input className='bg-secondaryColor p-2 outline-none rounded border border-forthColor' type="text" value={name} onChange={handleInpute} /> :<h2>{name}</h2>
+        }
+        {
+          error ? <p className='text-red-500'>invalid name please a valid name</p> : ''
+        }
+        <button disabled={error ? true : false} onClick={handleClick} className="p-2 w-24 mt-4 border rounded border-forthColor">
+          {
+            edit ? 'Done' : 'Edit'
+          }
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function OnlinePvp({isstarted,counter,isstart}) {
+  return (
+    <>
+      <Mycard />
+      { counter && 
+          <div>
+            <h3>match will start in </h3>
+            <p className="text-center text-2xl">{counter}</p>
+          </div>
+      }
+      {
+          isstarted ? (
+            <Vsplayer_card player={pvpUser} />
+          ) : (
+            isstart ? <Wait_card /> : <Add_card />
+          )
+      }
+    </>
+  )
+}
+
+const fetchData = async (gameType,players,tokens)=> {
+
+  let url = ''
+
+  if(gameType === 'P')
+    url = 'http://localhost:8000/pingpong/game/pingpong/offline/craete'
+  else
+    url = 'http://localhost:8000/game/tictactoe/offline/create_local_game'
+  const response = await fetch(url,{
+    method:"POST",
+    headers:{
+      Authorization: 'JWT ' + tokens.access,
+      "content-Type": "application/json"
+    },
+    body:JSON.stringify({
+        player1: players.player1,
+        player2: players.player2
+    })
+  })
+  const data = await response.json()
+  console.log("the data after fetch is ", data)
+
+  if(response.ok)
+      return data
+  return null
+}
 
 function PvpGame({ title}) {
 
@@ -120,10 +225,14 @@ function PvpGame({ title}) {
   const [isstarted, setStarted] = React.useState(false);
   const [pvpUser,setPvpUser] = useState()
   const [counter,setCounter] = useState(null)
-  const nav = useNavigate()
+  const [mode,setMode] = useState(true)
   const locations = useLocation()
-  const {socket,socketMessage, username} = useAuth()
-
+  const navigate = useNavigate()
+  const {socket,socketMessage, tokens} = useAuth()
+  const [players, setPlayers] = useState({
+    player1:'',
+    player2:''
+  })
   function startGame() {
     let gameType = title === "PING PONG" ? "P" : "T"
     setStart(true);
@@ -149,7 +258,19 @@ function PvpGame({ title}) {
     }
   }
 
+  async function creatLocalGame() {
 
+    let gameType = title === "PING PONG" ? "P" : "T"
+
+    console.log("the players are ", players)
+    if(players.player1 === '' || players.player1 === '')
+        return
+    let type = gameType === "P" ? 'pingpong' : 'tictactoe'
+    const data = await fetchData(gameType,players,tokens)
+    console.log("the data is ", data)
+    if(data)
+      navigate(`/game/${type}/pvpgame/match`, { state: { gameid: data.game_id, isonline:false } })
+  }
 
   useEffect(() => {
     
@@ -180,30 +301,30 @@ function PvpGame({ title}) {
     <div className='bg-primaryColor w-full flex items-center justify-between px-7 relative h-[100%]'>
             <div className="h-[100%] flex  justify-center flex-col items-center xsm:w-[90%] lg:w-[80%] ">
                 <div className='holder'>
-                  <div className="ping-pong-container">
+                  <div className="ping-pong-container xsm:h-[50rem] bg-secondaryColor">
                     <Header title={title}/>
-                    <div className="player-cards">
-                      <Mycard />
-                     { counter && 
-                        <div>
-                          <h3>match will start in </h3>
-                          <p className="text-center text-2xl">{counter}</p>
+                    <div className=" w-full h-[90%] ">
+                        <div className=" flex gap-10 justify-center items-center mt-12">
+                            <div onClick={()=>setMode(()=>false)} className={`flex gap-2 p-2 items-center ${mode ===false ? 'bg-[#412e55] rounded-full border border-forthColor' : ''}`}>
+                                <RiWifiOffLine />
+                                <p>offline</p>
+                            </div>
+                            <div onClick={()=>setMode(()=>true)} className={`flex gap-2 p-2 items-center ${mode === true ? 'bg-[#412e55] rounded-full border border-forthColor' : ''}`}>
+                                <IoWifiSharp />
+                                <p>online</p>
+                            </div>
                         </div>
-                      }
-                      {
-                        isstarted ? (
-                          <Vsplayer_card player={pvpUser} />
-                        ) : (
-                          isstart ? <Wait_card /> : <Add_card />
-                        )
-                      }
+                        <div className="flex w-full items-center px-4 justify-evenly gap-12 h-[90%]">
+                          {
+                            !mode ? <> <LocalPvp player={"player1"} setPlayers={setPlayers} /> <LocalPvp player={"player2"} setPlayers={setPlayers} /></> : <OnlinePvp isstart={isstart} counter={counter} isstarted={isstarted}/>}
+                        </div>
                     </div>
                       {
-                        isstarted ? (
+                       mode === true ? isstarted ? (
                           <Started_button />
                         ) : (
                           isstart ? <Matchmaking_button onClick={stopGame} /> : <Start_button onClick={startGame} />
-                        )
+                        ) :  <LocalButton onClick={creatLocalGame}/>
                       }
                   </div>
                 </div>

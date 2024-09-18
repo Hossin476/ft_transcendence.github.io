@@ -18,6 +18,7 @@ import NotificationModal from "./Components/Notifications/NotificationModal";
 import Tour from "./Pages/tour";
 import { GameProvider } from "./context/gameContext";
 import TournamentProvider from "./context/TournamentContext";
+import { ChatProvider } from "./context/ChatContext";
 // import './server.js'
 function App() {
   return (
@@ -33,7 +34,7 @@ function App() {
               <Route path="managefriends" element={<ManageFriends />} />
               <Route path="settings" element={<Settings />} />
               <Route path="leaderboard" element={<Leaderboard />} />
-              <Route path="chat" element={<ChatPage />} />
+              <Route path="chat" element={<ChatProvider><ChatPage /></ChatProvider>} />
               <Route path="game">
                 <Route index element={<Game />} />
                 <Route path="tictactoe">

@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 
 
 
-function UserInvite({user, tour_id}) {
+function UserInvite({user, tour_id, removeuser, key }) {
     const { socket } = useAuth()
 
     function send_tour_invite() {
@@ -17,6 +17,7 @@ function UserInvite({user, tour_id}) {
                 }
             })
             socket.send(message);
+            removeuser(key)
         }
     }
 

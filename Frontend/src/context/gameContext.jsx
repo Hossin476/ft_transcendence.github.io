@@ -1,4 +1,4 @@
-import { createContext, useEffect, useRef } from "react"
+import { createContext, useEffect, useRef, useState } from "react"
 import { useLocation } from 'react-router-dom';
 
 const GameContext = createContext()
@@ -12,6 +12,7 @@ export  const GameProvider = ({children})=>{
     const score2 = useRef(null)
     const beforeStart = useRef(null)
     const waitingStatus = useRef(null)
+    const [gameid , setGameid] = useState()
     useEffect(()=>{
 
     },[location])
@@ -20,7 +21,9 @@ export  const GameProvider = ({children})=>{
         beforeStart:beforeStart,
         score2: score2,
         waiting: waiting,
-        waitingStatus: waitingStatus
+        waitingStatus: waitingStatus,
+        setGameid:setGameid,
+        gameid:gameid
     }
 
     return <GameContext.Provider value={contextData}>

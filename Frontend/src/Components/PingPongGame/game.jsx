@@ -48,6 +48,8 @@ function Game(props)
         MyPaddleRef.current.position.x = paddle_one_position.x;
         OtherPaddleRef.current.position.x = paddle_two_position.x;
         if (location.state.isonline == true){
+          score1.current.innerText = '0' + hold[username];
+          score2.current.innerText = '0' + hold['other'];
         }else{
           score1.current.innerText = '0' + hold['score2'];
           score2.current.innerText = '0' + hold['score1'];

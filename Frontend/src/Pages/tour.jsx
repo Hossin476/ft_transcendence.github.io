@@ -83,7 +83,7 @@ const DisplayUser = ({ tournament }) => {
 const Tour = () => {
    // const texture = useLoader(TextureLoader, "copper.jpg");
    const location = useLocation()
-   
+   const  {setTournamentSocket } = useTournament() 
    const { socket, user, tokens, username } = useAuth();
    const [tournament, setTournament] = useState(location.state.item)
    const status = location.state.status
@@ -97,7 +97,8 @@ const Tour = () => {
       setInvite(true)
    }
    const fetch_matches = async () => {
-      const response = await fetch(`http://localhost:8000/tournament/${tournament.id}`, {
+      const url = `http://localhost:8000/tournament/${location.state.status === 'online' ? '' : 'offline/'}${tournament.id}`
+      const response = await fetch(url, {
          headers: { Authorization: "JWT " + tokens.access }
       })
       if (!response.ok){
@@ -111,10 +112,12 @@ const Tour = () => {
 
    useEffect(() => {
       fetch_matches();
-      let ws = new WebSocket(`ws://localhost:8000/ws/tournament/${tournament.id}/?token=${tokens.access}`);
+      const wsurl = `ws://localhost:8000/ws/tournament/${location.state.status === 'online' ? '' : 'offline/'}${tournament.id}`
+      let ws = new WebSocket(`${wsurl}/?token=${tokens.access}`);
       ws.onopen = () => {
          console.log("tournament socket connected");
          setTourSocket(ws);
+         setTournamentSocket(ws)
       };
 
       ws.onclose = () => {
@@ -152,7 +155,7 @@ const Tour = () => {
    }
    console.log("youuu dog here is ur data",status)
    return (
-      tournament && <div className="h-[100%] w-[100%] flex flex-col relative gap-5">
+      tournament && <div className="h-[100%] w-[100%] flex flex-col relative gap-5 justify-center items-center">
          <div className=" h-[70%] relative xsm:w-[99%] md:w-[70%]  max-w-[1300px] md:h-[70%] rounded-[20px] flex justify-center items-center text-white flex-col bg-secondaryColor border-[2px] border-forthColor">
              <Canvas >
                <ambientLight intensity={0.7} rotation={[Math.PI / 2, 0, 0]} />
@@ -164,28 +167,32 @@ const Tour = () => {
             </Canvas>
          </div>
          <div className="h-[calc(100%-80%)] xsm:w-[99%] md:w-[70%]  max-w-[1300px] gap-2 rounded-[20px] flex-col flex text-white bg-secondaryColor border-[2px] border-forthColor justify-between font-inter">
-               {/* <TournamentForm /> */}
-            <div className="flex justify-center w-[100%]  min-w-[150px] ">
-               <p className="font-Valorax">PLAYER IN TOURNAMENT</p>
-            </div>
-            <div className=" flex justify-end gap-4 mx-10">
-               {tournament.creator && tournament.creator.username == username && tournament.is_full && !tournament.is_start && <button className="border-[2px] border-forthColor rounded-[5px]" onClick={handleStartTour}>START TOURNAMENT</button>}
-               {!tournament.is_start && < GiExitDoor fontSize={30}  onClick={handleExit}/>}
-            </div>
-            <div className="flex  w-[100%] h-[70%]  flex-wrap ">
-               {tournament.players  && tournament.players.map((item, index) =>
-                  <div key={index} className="flex items-center  w-[23%] h-[33%] gap-3 border-[2px] border-forthColor m-1  min-w-[150px] rounded-[20px]">
-                     <img src="./silver.jpg" className="rounded-full w-[52px] h-[52px]" />
-                     <div className="flex flex-col">
-                        <p>{item.username}</p>
-                        <p className="text-[10px] font-inter">RANK {item.rank}</p>
-                     </div>
+            {location.state.status != 'online' ? <TournamentForm /> :(
+               <>
+                  <div className="flex justify-center w-[100%]  min-w-[150px] ">
+                     <p className="font-Valorax">PLAYER IN TOURNAMENT</p>
                   </div>
-               )}
-               {tournament.creator &&  !tournament.is_full && tournament.creator.username == username && <div className="flex items-center justify-center w-[23%] h-[33%] gap-3 border-[2px] border-forthColor m-1  min-w-[150px] rounded-[20px]">
-                  <IoMdPersonAdd size={30} style={{'cursor' : "pointer"}} onClick={render_invite}/>
-               </div>}
-            </div>
+                  <div className=" flex justify-end gap-4 mx-10">
+                     {tournament.creator && tournament.creator.username == username && tournament.is_full && !tournament.is_start && <button className="border-[2px] border-forthColor rounded-[5px]" onClick={handleStartTour}>START TOURNAMENT</button>}
+                     {!tournament.is_start && < GiExitDoor fontSize={30}  onClick={handleExit}/>}
+                  </div>
+                  <div className="flex  w-[100%] h-[70%]  flex-wrap ">
+                     {tournament.players  && tournament.players.map((item, index) =>
+                        <div key={index} className="flex items-center  w-[23%] h-[33%] gap-3 border-[2px] border-forthColor m-1  min-w-[150px] rounded-[20px]">
+                           <img src="./silver.jpg" className="rounded-full w-[52px] h-[52px]" />
+                           <div className="flex flex-col">
+                              <p>{item.username}</p>
+                              <p className="text-[10px] font-inter">RANK {item.rank}</p>
+                           </div>
+                        </div>
+                     )}
+                     {tournament.creator &&  !tournament.is_full && tournament.creator.username == username && <div className="flex items-center justify-center w-[23%] h-[33%] gap-3 border-[2px] border-forthColor m-1  min-w-[150px] rounded-[20px]">
+                        <IoMdPersonAdd size={30} style={{'cursor' : "pointer"}} onClick={render_invite}/>
+                     </div>}
+                  </div>
+               </>
+            )
+               }
          </div>
          {invite && <InviteModal setInvite={setInvite} tour_id={tournament.id} />}
       </div>

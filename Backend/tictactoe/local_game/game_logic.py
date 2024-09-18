@@ -17,20 +17,12 @@ class TicTacToeLocal:
 
     def __init__(self):
         # Initializes the Tic Tac Toe game.
-        self.reset_board()
+        self.reset_game()
         self.score_x = 0
         self.score_o = 0
-        self.countdown_value = 120
+        self.countdown_value = 10
         self.max_score = 5
         self.final_winner = None
-
-    def reset_board(self):
-        # Resets the Tic Tac Toe board to its initial state.
-        self.board = [None] * 9
-        self.x_is_next = True
-        self.winner = None
-        self.winner_line = None
-        self.game_over = False
 
     def make_move(self, index):
         """
@@ -97,6 +89,10 @@ class TicTacToeLocal:
                 self.final_winner = 'O'
             self.game_over = True
 
-    async def reset_game(self):
+    def reset_game(self):
         # Resets the Tic Tac Toe game to its initial state.
-        self.reset_board()
+        self.board = [None] * 9
+        self.x_is_next = True
+        self.winner = None
+        self.winner_line = None
+        self.game_over = False

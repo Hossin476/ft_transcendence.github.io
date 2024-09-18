@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function NavBar() {
 
-    const { socket, global_socket, socketMessage } = useAuth()
+    const { socket, global_socket, socketMessage, createSocket } = useAuth()
     const [showNotifications, setShowNotifications] = useState(false);
     const nav = useNavigate();
 
@@ -34,6 +34,7 @@ export default function NavBar() {
 
     useEffect(() => {
         global_socket();
+        createSocket();
         console.log("connect again ")
         return () => {
             if (socket)
