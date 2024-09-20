@@ -11,7 +11,6 @@ from .serializers import UserSerializer,MessageSerializer,FriendShipSerializer
 
 @database_sync_to_async
 def set_message(text_data_json):
-    # print(text_data_json)
     send_user = json.loads(text_data_json["senderId"])
     friendship =  Friendship.objects.get(id=text_data_json["friendshipId"])
     _message = Message.objects.create(

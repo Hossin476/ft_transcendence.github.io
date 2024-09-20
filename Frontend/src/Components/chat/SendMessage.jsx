@@ -6,12 +6,20 @@ import { useAuth } from "../../context/AuthContext";
 import ChatContext from "../../context/ChatContext";
 import {debounce} from 'lodash'
 
+
+function updateconversation() {
+
+}
+
+
 const SendMessage = () => {
 
   const [message,setMessages] = useState("")
   const {chatsocket,user} = useAuth()
   const {currantUser, setTyping, typing}  = useContext(ChatContext)
+  // const {conversation} = useContext(ChatContext)
 
+  // console.log(conversation)
   const handleMessage = () => {
     chatsocket && ( message.trim() && chatsocket.send(JSON.stringify({
       "type" : "new_messgaes",
@@ -22,6 +30,7 @@ const SendMessage = () => {
       "sender":user.user_id
     })))
     setMessages((prevMessage)=>prevMessage = "")
+    // updateconversation()
   }
 
   const handleTyping = () => {

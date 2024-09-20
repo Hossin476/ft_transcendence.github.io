@@ -33,11 +33,26 @@ function handleTyping(typing, setTyping, sender) {
     setTyping(prev => ({ ...prev, timer: newTimer }))
 }
 
+function updateconversation(data , conversation, setConversation, ) {
+    const message = data.convo.message
+    conversation.map((convo) => {
+        if (convo.user.id === data.sender || convo.user.id === data.receiver) {
+            convo.last_msg = message
+        }
+    }
+    )
+    conversation.sort((a, b) => {
+        return new Date(b.last_msg.created_at) - new Date(a.last_msg.created_at)
+    })
+    setConversation([...conversation])
+}
+
 const ChatPage = () => {
     const { chatsocket, user } = useAuth()
     const { currantUser, setMessages,setSeen} = useContext(ChatContext)
     const {typing, setTyping} = useContext(ChatContext)
     const {count, setCount} = useContext(ChatContext)
+    const {conversation, setConversation} = useContext(ChatContext)
 
     useEffect(() => {
         if (chatsocket) {
@@ -48,9 +63,10 @@ const ChatPage = () => {
                     setSeen(()=>false)
                     console.log("message", data.event)
                     handleDirectMessaging(data.event, currantUser, user, setMessages)
+                    updateconversation(data.event, conversation, setConversation)
                 }
                 if(type == "message.seen" && user.user_id === reciever) {
-                    console.log("check the seeen ----------")
+                    // console.log("check the seeen ----------")
                     if (data.event.reciever === user.user_id)
                         setSeen(()=>true)
                 }
