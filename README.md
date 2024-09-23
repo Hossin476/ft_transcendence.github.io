@@ -42,11 +42,12 @@
   </tr>
   <tr>
     <td>🐍 Backend</td>
-    <td>
+   <td>
       <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
       <img src="https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white" alt="Django">
       <img src="https://img.shields.io/badge/DRF-092E20?style=for-the-badge&logo=django&logoColor=white" alt="Django REST Framework">
-    </td>
+      <img src="https://img.shields.io/badge/Django_Channels-092E20?style=for-the-badge&logo=django&logoColor=white" alt="Django Channels">
+   </td>
   </tr>
   <tr>
    <td>🎨 Frontend</td>
