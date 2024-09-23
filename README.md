@@ -10,7 +10,7 @@
 3. [Features](#features)
 4. [Setup and Installation](#setup-and-installation)
 5. [Usage](#usage)
-6. [License](#license)
+
 
 ---
 
