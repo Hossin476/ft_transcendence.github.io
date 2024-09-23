@@ -11,7 +11,7 @@ function SecondPlayer({username, rank,profile_image }) {
                 <h1 className="font-inter xsm:text-[2vw] lg:text-lg text-right">{username}</h1>
                 <h4 className="font-inter text-right xsm:text-[1vw] lg:text-[0.7rem]">LEVEL {rank}</h4>
             </div>
-            <img src={'http://localhost' + profile_image} alt='avatar' className='xsm:w-[10vw] lg:w-[4.5rem] lg:h-[4.5rem] xsm:h-[10vw] object-cover rounded-[50%]' />
+            <img src={profile_image} alt='avatar' className='xsm:w-[10vw] lg:w-[4.5rem] lg:h-[4.5rem] xsm:h-[10vw] object-cover rounded-[50%]' />
         </div>
     );
 }

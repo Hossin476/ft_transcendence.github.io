@@ -1,32 +1,47 @@
 import { useTicTacToe } from "../../context/TicTacToeContext";
 import { Progress } from "./progressBar";
 import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { useAuth } from '../../context/AuthContext';
 
 export default function Win({ final_winner }) {
     const [gameData, setGameData] = useState(null);
     const { playerRole } = useTicTacToe();
-    let isWin = final_winner === playerRole;
-    let location = useLocation();
-    let { tokens } = useAuth();
-    let fetch_url;
+    const location = useLocation();
+    const navigate = useNavigate();
+    const { tokens } = useAuth();
+    const isWin = final_winner === playerRole;
     const is_offline = gameData && location.state?.isonline == false;
 
     useEffect(() => {
+        if (!location.state?.gameid) {
+            console.error('Game ID is undefined or null');
+            navigate('/game');
+            return;
+        }
+
         async function fetchData() {
 
-            if (location.state?.isonline == true)
-                fetch_url = `http://${import.meta.env.VITE_BACKEND_URL}/api/winner_data/${location.state?.gameid}`
-            else
-                fetch_url = `http://${import.meta.env.VITE_BACKEND_URL}/api/offline_winner_data/${location.state?.gameid}`
-            const response = await fetch(fetch_url, {
-                headers: {
-                    "Authorization": "JWT " + tokens.access
-                }
-            });
-            const data = await response.json();
-            setGameData(data);
+            const fetch_url = location.state?.isonline === true
+                ? `http://localhost:8000/winner_data/${location.state?.gameid}`
+                : `http://localhost:8000/offline_winner_data/${location.state?.gameid}`
+
+            try {
+                const response = await fetch(fetch_url, {
+                    headers: {
+                        "Authorization": "JWT " + tokens.access
+                    }
+                });
+
+                if (!response.ok)
+                    throw new Error(`HTTP error! status: ${response.status}`);
+
+                const data = await response.json();
+                setGameData(data);
+            } catch (error) {
+                console.error('Fetch failed: ', error);
+            }
+
         }
         fetchData();
     }, [location.state?.gameid, tokens.access]);
@@ -42,11 +57,10 @@ export default function Win({ final_winner }) {
                     <div className={`w-[101%] blurHelp h-[101%] absolute border-green-600 border-[3px] flex flex-col items-center justify-evenly z-10 gap-6 rounded-[20px]`}>
                         <div className="relative flex flex-col justify-center items-center">
                             <p className={`font-Plaguard xsm:text-[10vw] lg:text-9xl text-green-500`}>
-                                {playerData} HAS WON
+                                {gameData.winner} HAS WON
                             </p>
                             <div className="absolute top-10 flex flex-col items-center gap-2 w-[100%]">
                                 <img src='/lshail.jpeg' alt="Player" className="rounded-full xsm:w-[10vw] lg:w-[140px] border-[2px] border-forthColor object-cover" />
-                                <p className="font-inter">{playerData}</p>
                             </div>
                         </div>
                     </div>

@@ -170,7 +170,7 @@ function LocalPvp({player,setPlayers}) {
   )
 }
 
-function OnlinePvp({isstarted,counter,isstart}) {
+function OnlinePvp({isstarted,counter,isstart, pvpUser}) {
   return (
     <>
       <Mycard />
@@ -221,7 +221,7 @@ function PvpGame({ title}) {
 
   const [isstart, setStart] = React.useState(false);
   const [isstarted, setStarted] = React.useState(false);
-  const [pvpUser,setPvpUser] = useState()
+  const [pvpUser,setPvpUser] = useState(null)
   const [counter,setCounter] = useState(null)
   const [mode,setMode] = useState(true)
   const locations = useLocation()
@@ -309,7 +309,8 @@ function PvpGame({ title}) {
                         </div>
                         <div className="flex w-full items-center px-4 justify-evenly gap-12 h-[90%]">
                           {
-                            !mode ? <> <LocalPvp player={"player1"} setPlayers={setPlayers} /> <LocalPvp player={"player2"} setPlayers={setPlayers} /></> : <OnlinePvp isstart={isstart} counter={counter} isstarted={isstarted}/>}
+                            !mode ? <> <LocalPvp player={"player1"} setPlayers={setPlayers} /> <LocalPvp player={"player2"} setPlayers={setPlayers} /></>
+                            : <OnlinePvp isstart={isstart} counter={counter} pvpUser={pvpUser} isstarted={isstarted}/>}
                         </div>
                     </div>
                       {

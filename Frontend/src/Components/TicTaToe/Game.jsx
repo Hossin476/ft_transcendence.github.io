@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, memo, useEffect, useRef, useCallback, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Stage, OrbitControls, Sky, Line } from '@react-three/drei';
 import { Physics, RigidBody } from '@react-three/rapier';
 import { useTicTacToe } from '../../context/TicTacToeContext';
 import { useAuth } from '../../context/AuthContext';
-import { useLocation } from 'react-router';
+import { useLocation,useNavigate } from 'react-router';
 import Win from './Win';
 import StartModal from './StartModal'
 import ReconnectModal from './ReconnectModal'
 
-const WS_ONLINE_URL = `ws://${import.meta.env.VITE_BACKEND_URL}/ws/game/tictactoe`;
-const WS_OFFLINE_URL = `ws://${import.meta.env.VITE_BACKEND_URL}/ws/game/tictactoe/offline`;
+const WS_ONLINE_URL = 'ws://localhost:8000/ws/game/tictactoe';
+const WS_OFFLINE_URL = 'ws://localhost:8000/ws/game/tictactoe/offline';
 
 const GRID_POSITIONS = [
     [-1, 1, 0], [0, 1, 0], [1, 1, 0],
@@ -25,14 +25,20 @@ const Game = () => {
     const [showReconnectModal, setShowReconnectModal] = useState(false);
     const [showStartModal, setShowStartModal] = useState(false);
     const [startCountdownValue, setStartCountdownValue] = useState(null);
-    const [currentTurn, setCurrentTurn] = useState(false);
+    const [currentTurn, setCurrentTurn] = useState(null);
 
     const { setScores, setTimer, setPlayerRole, setReconnectTimer, playerRole } = useTicTacToe();
     const { tokens } = useAuth();
     const location = useLocation();
+    const navigate = useNavigate();
     const socketRef = useRef(null);
     const startModalShownRef = useRef(false);
     const connectWebSocket = useCallback(() => {
+        if (!location.state?.gameid) {
+            console.error('Game ID is undefined or null');
+            navigate('/game');
+            return;
+        }
         const url = `${location.state?.isonline == true ? WS_ONLINE_URL : WS_OFFLINE_URL}/${location.state?.gameid}/?token=${tokens.access}`;
         socketRef.current = new WebSocket(url);
 
@@ -84,7 +90,8 @@ const Game = () => {
     }, [board]);
 
     const TurnIndicator = () => {
-        if (finalWinner || showReconnectModal || showStartModal || winnerLine) return null;
+        if (location.state?.isonline == false || finalWinner || showStartModal || winnerLine || showReconnectModal || startCountdownValue !== 0)
+            return null;
         const isYourTurn = currentTurn === playerRole;
         return (
             <div className={`absolute top-[3%] left-1/2 tranform -translate-x-1/2 p-2 rounded ${isYourTurn ? 'bg-green-500' : 'bg-red-500'} text-white font-bold`}>
@@ -98,7 +105,7 @@ const Game = () => {
             <Canvas dpr={window.devicePixelRatio} camera={{ fov: 75, position: [0, 0, -6] }}>
                 <Sky mieCoefficient={0.001} mieDirectionalG={6} rayleigh={4} sunPosition={[0, 0, 1]} turbidity={8} />
                 <OrbitControls />
-                <React.Suspense fallback={null}>
+                <Suspense fallback={null}>
                     <ambientLight intensity={0.4} />
                     <pointLight position={[10, 10, 10]} />
                     <Stage contactShadow shadows adjustCamera intensity={1} environment="city">
@@ -108,7 +115,7 @@ const Game = () => {
                             {winnerLine && <WinnerLine line={winnerLine} />}
                         </Physics>
                     </Stage>
-                </React.Suspense>
+                </Suspense>
             </Canvas>
             {finalWinner && <Win final_winner={finalWinner} />}
             {showReconnectModal && <ReconnectModal />}
@@ -135,7 +142,7 @@ const GameBoard = () => (
     </>
 );
 
-const GamePieces = React.memo(({ board, handleClick }) => (
+const GamePieces = memo(({ board, handleClick }) => (
     <>
         {GRID_POSITIONS.map((position, index) => (
             <GameCell
@@ -148,7 +155,7 @@ const GamePieces = React.memo(({ board, handleClick }) => (
     </>
 ));
 
-const GameCell = React.memo(({ position, value, onClick }) => (
+const GameCell = memo(({ position, value, onClick }) => (
     value ? (
         value === 'X' ? <MeshX position={position} /> : <MeshO position={position} />
     ) : (

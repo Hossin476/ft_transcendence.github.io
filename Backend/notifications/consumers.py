@@ -50,7 +50,8 @@ def create_game_object(sender, receiver_name, game, invite_id):
         game_obj = OnlineGameModel.objects.create(
             player1=sender, player2=receiver)
         game_obj = OnlineGameModelSerializer(game_obj).data
-    GameNotification.objects.filter(id=invite_id).delete()
+    if invite_id:
+        GameNotification.objects.filter(id=invite_id).delete()
     return game_obj
 
 
@@ -186,7 +187,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     async def handle_pvp_request(self, data):
         game_type = data['gameType']
         print ("game type is : ", game_type)
-        print("array [p]",NotificationConsumer.match_making['P'])
+        print("array [p]",game_type)
         if game_type == 'P':
             NotificationConsumer.match_making['P'].append(self.user)
         elif game_type == 'T':
@@ -202,7 +203,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             NotificationConsumer.match_making[game_type].remove(player1)
             NotificationConsumer.match_making[game_type].remove(player2)
             
-            game_obg = await create_game_object(player1, player2, game_type)
+            game_obg = await create_game_object(player1, player2, game_type, None)
             
             await self.channel_layer.group_send(f'notification_{player1.id}', {
                 'type'          : 'game.player_info',
