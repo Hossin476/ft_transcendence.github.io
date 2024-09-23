@@ -161,3 +161,10 @@
 
 Got ideas? Found a bug? Want to contribute? We're all ears! Check out our [issues page](https://github.com/yourusername/ft_transcendence/issues) and let's make magic happen! ✨
 
+## Problems to Fix
+
+Here are some known issues that need to be addressed:
+
+- [ ] chat section protection when no user selected  
+- [ ] real-time messages counter not working 
+- [ ] long message error
