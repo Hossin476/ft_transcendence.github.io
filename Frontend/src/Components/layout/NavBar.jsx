@@ -23,7 +23,6 @@ export default function NavBar() {
         {
             if (socketMessage.type == 'game.accept'){
                 const gameType = socketMessage.game_type === "T" ? "tictactoe" : "pingpong"
-                console.log(socketMessage.game_type)
                 nav(`/game/${gameType}/pvpgame/match`, { state: { gameid: socketMessage.game_id, isonline:true } });
             }else if (socketMessage.type == 'game.offline'){
                 const gameType = socketMessage.game_type === "T" ? "tictactoe" : "pingpong"
@@ -35,7 +34,6 @@ export default function NavBar() {
     useEffect(() => {
         global_socket();
         createSocket();
-        console.log("connect again ")
         return () => {
             if (socket)
                 socket.close()

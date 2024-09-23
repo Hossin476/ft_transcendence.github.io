@@ -48,7 +48,6 @@ const UserBox = ({ username, position, image }) => {
    )
 }
 const MatchesRound = ({ player1, player2, position1, position2 }) => {
-   console.log(position1, position2)
    return (<>
       <UserBox position={position1} username={player1 ? player1.username : "not yet"} image={player1 ? player1.profile_image : "./user.jpeg"} />
       <UserBox position={position2} username={player2 ? player2.username : "not yet"} image={player2 ? player2.profile_image : "./user.jpeg"} />
@@ -97,7 +96,7 @@ const Tour = () => {
       setInvite(true)
    }
    const fetch_matches = async () => {
-      const url = `http://localhost:8000/tournament/${location.state.status === 'online' ? '' : 'offline/'}${tournament.id}`
+      const url = `http://${import.meta.env.VITE_BACKEND_URL}/api/tournament/${location.state.status === 'online' ? '' : 'offline/'}${tournament.id}`
       const response = await fetch(url, {
          headers: { Authorization: "JWT " + tokens.access }
       })
@@ -112,10 +111,9 @@ const Tour = () => {
 
    useEffect(() => {
       fetch_matches();
-      const wsurl = `ws://localhost:8000/ws/tournament/${location.state.status === 'online' ? '' : 'offline/'}${tournament.id}`
+      const wsurl = `ws://${import.meta.env.VITE_BACKEND_URL}/ws/tournament/${location.state.status === 'online' ? '' : 'offline/'}${tournament.id}`
       let ws = new WebSocket(`${wsurl}/?token=${tokens.access}`);
       ws.onopen = () => {
-         console.log("tournament socket connected");
          setTourSocket(ws);
          setTournamentSocket(ws)
       };
@@ -126,7 +124,6 @@ const Tour = () => {
 
       ws.onmessage = async (e) => {
             const data = await JSON.parse(e.data);
-            console.log("message event:", data);
             if (data['type'] == "deleted_tour") {
                navigate('../');
                return;
@@ -153,7 +150,6 @@ const Tour = () => {
       }))
       navigate('../')
    }
-   console.log("youuu dog here is ur data",status)
    return (
       tournament && <div className="h-[100%] w-[100%] flex flex-col relative gap-5 justify-center items-center">
          <div className=" h-[70%] relative xsm:w-[99%] md:w-[70%]  max-w-[1300px] md:h-[70%] rounded-[20px] flex justify-center items-center text-white flex-col bg-secondaryColor border-[2px] border-forthColor">

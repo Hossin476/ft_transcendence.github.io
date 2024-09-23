@@ -18,7 +18,6 @@ export default function FriendChat({ contacts, handleOnClick, selected }) {
   }
 
   const contactCount = count.find((item) => item.id === contacts.user.id);
-  // console.log(contacts);
   return (
     <>
       <span

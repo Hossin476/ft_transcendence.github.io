@@ -46,11 +46,9 @@ const ChatPage = () => {
                 const { type,reciever, sender } = data.event
                 if (type === "chat.message") {
                     setSeen(()=>false)
-                    console.log("message", data.event)
                     handleDirectMessaging(data.event, currantUser, user, setMessages)
                 }
                 if(type == "message.seen" && user.user_id === reciever) {
-                    console.log("check the seeen ----------")
                     if (data.event.reciever === user.user_id)
                         setSeen(()=>true)
                 }

@@ -3,3 +3,4 @@ database
 /migrations/pycache/
 /migrations/*.pyc
 /migrations/*.py
+.env

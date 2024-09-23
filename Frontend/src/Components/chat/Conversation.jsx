@@ -23,7 +23,7 @@ const Typing_render = () => {
 
 const getMessages = async (chatUser,tokens)=> {
 
-  const respons = await fetch("http://127.0.0.1:8000/chat/messages",{
+  const respons = await fetch(`http://${import.meta.env.VITE_BACKEND_URL}/api/chat/messages`,{
       method:"POST",
       headers :{
               'Content-Type':"application/json",

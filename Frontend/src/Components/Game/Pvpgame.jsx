@@ -148,7 +148,6 @@ function LocalPvp({player,setPlayers}) {
         setPlayers((prevState)=>{
            return {...prevState, [player]:name}
           })
-          console.log("DATA RAH DKHLAT")
       }
   }
   return (
@@ -197,9 +196,9 @@ const fetchData = async (gameType,players,tokens)=> {
   let url = ''
 
   if(gameType === 'P')
-    url = 'http://localhost:8000/pingpong/game/pingpong/offline/craete'
+    url = `http://${import.meta.env.VITE_BACKEND_URL}/api/pingpong/game/pingpong/offline/craete`
   else
-    url = 'http://localhost:8000/game/tictactoe/offline/create_local_game'
+    url = `http://${import.meta.env.VITE_BACKEND_URL}/api/game/tictactoe/offline/create_local_game`
   const response = await fetch(url,{
     method:"POST",
     headers:{
@@ -212,7 +211,6 @@ const fetchData = async (gameType,players,tokens)=> {
     })
   })
   const data = await response.json()
-  console.log("the data after fetch is ", data)
 
   if(response.ok)
       return data
@@ -243,7 +241,6 @@ function PvpGame({ title}) {
       });
       socket.send(message);
     }
-    console.log(locations)
   }
 
   function stopGame() {
@@ -262,12 +259,10 @@ function PvpGame({ title}) {
 
     let gameType = title === "PING PONG" ? "P" : "T"
 
-    console.log("the players are ", players)
     if(players.player1 === '' || players.player1 === '')
         return
     let type = gameType === "P" ? 'pingpong' : 'tictactoe'
     const data = await fetchData(gameType,players,tokens)
-    console.log("the data is ", data)
     if(data)
       navigate(`/game/${type}/pvpgame/match`, { state: { gameid: data.game_id, isonline:false } })
   }
@@ -277,7 +272,6 @@ function PvpGame({ title}) {
     if(socketMessage && socketMessage.type === 'game.counter')
         setCounter(socketMessage.counter)
     if(socketMessage && socketMessage.type === 'game.player_info') {
-      console.log("print event shit",socketMessage.player)
       setStarted(true);
       setPvpUser(socketMessage.player)
     }
@@ -295,7 +289,6 @@ function PvpGame({ title}) {
       }
     }
   },[])
-  console.log("i guess u r here successfully!",title)
   return (
 
     <div className='bg-primaryColor w-full flex items-center justify-between px-7 relative h-[100%]'>

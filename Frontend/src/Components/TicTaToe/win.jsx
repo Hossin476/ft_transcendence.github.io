@@ -17,9 +17,9 @@ export default function Win({ final_winner }) {
         async function fetchData() {
 
             if (location.state?.isonline == true)
-                fetch_url = `http://localhost:8000/winner_data/${location.state?.gameid}`
+                fetch_url = `http://${import.meta.env.VITE_BACKEND_URL}/api/winner_data/${location.state?.gameid}`
             else
-                fetch_url = `http://localhost:8000/offline_winner_data/${location.state?.gameid}`
+                fetch_url = `http://${import.meta.env.VITE_BACKEND_URL}/api/offline_winner_data/${location.state?.gameid}`
             const response = await fetch(fetch_url, {
                 headers: {
                     "Authorization": "JWT " + tokens.access

@@ -7,7 +7,7 @@ import _ from "lodash";
 import { flattenJSON } from "three/src/animation/AnimationUtils";
 
 const getConversations = async (tokens, user) => {
-  const response = await fetch("http://127.0.0.1:8000/chat/conversation", {
+  const response = await fetch(`http://${import.meta.env.VITE_BACKEND_URL}/api/chat/conversation`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

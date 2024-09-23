@@ -20,12 +20,14 @@ import asyncio
 channle_layer = get_channel_layer()
 
 
+
+
 @database_sync_to_async
 def create_game_db(sender, receiver, game):
     receiver_obj = CustomUser.objects.get(username=receiver)
-    GameNotification.objects.create(
+    invite = GameNotification.objects.create(
         sender=sender, receiver=receiver_obj, game=game)
-    return receiver_obj.pk
+    return {"receiver"  :receiver_obj.pk, 'invite_id'   :invite.id}
 
 
 @database_sync_to_async
@@ -38,7 +40,7 @@ def create_friend_db(sender, receiver_id):
 
 
 @database_sync_to_async
-def create_game_object(sender, receiver_name, game):
+def create_game_object(sender, receiver_name, game, invite_id):
     receiver = CustomUser.objects.get(username=receiver_name)
     game_obj = None
     if game == 'P':
@@ -48,13 +50,13 @@ def create_game_object(sender, receiver_name, game):
         game_obj = OnlineGameModel.objects.create(
             player1=sender, player2=receiver)
         game_obj = OnlineGameModelSerializer(game_obj).data
+    GameNotification.objects.filter(id=invite_id).delete()
     return game_obj
 
 
 @database_sync_to_async
-def delete_game_request(id):
-    game_request = GameNotification.objects.get(id=id)
-    game_request.delete()
+def delete_game_request(invite_id):
+    GameNotification.objects.filter(id=invite_id).delete()
 
 
 @database_sync_to_async
@@ -63,7 +65,7 @@ def get_tour_from_db(id, userid):
     user = CustomUser.objects.get(id=userid)
     try:
         InviteTournament.objects.get(tournament=tournament, user=user)
-    except Exception as e:
+    except Exception:
         InviteTournament.objects.create(tournament=tournament, user=user)
     return TournamentSerializer(tournament).data
         
@@ -74,14 +76,14 @@ def accept_reject(tour_id, user, state):
     tournament = Tournament.objects.select_related(
         "creator").prefetch_related('players').get(id=tour_id)
     state_return = {"tour_id": tournament.id, "state": False}
-    if tournament.is_full == False and state == "accept" and user not in tournament.players.all():
+    if not tournament.is_full  and state == "accept" and user not in tournament.players.all():
         tournament.players.add(user)
         count = tournament.players.count()
         if count == 8:
             tournament.is_full = True
             tournament.save()
         state_return["state"] = True
-    intives = InviteTournament.objects.filter(
+    InviteTournament.objects.filter(
         user=user, tournament=tournament).delete()
     return state_return
 
@@ -203,21 +205,21 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             game_obg = await create_game_object(player1, player2, game_type)
             
             await self.channel_layer.group_send(f'notification_{player1.id}', {
-                'type': 'game.player_info',
-                'player': playerSerializers(player2).data,
+                'type'          : 'game.player_info',
+                'player'        : playerSerializers(player2).data,
             })
             await self.channel_layer.group_send(f'notification_{player2.id}', {
-                'type': 'game.player_info',
-                'player': playerSerializers(player1).data,
+                'type'          : 'game.player_info',
+                'player'        : playerSerializers(player1).data,
             })
-            while done == False:
+            while not done:
                 await self.channel_layer.group_send(f'notification_{player1.id}', {
-                    'type': 'game.counter',
-                    'counter': countr,
+                    'type'      : 'game.counter',
+                    'counter'   : countr,
                 })
                 await self.channel_layer.group_send(f'notification_{player2.id}', {
-                    'type': 'game.counter',
-                    'counter': countr,
+                    'type'      : 'game.counter',
+                    'counter'   : countr,
                 })
                 await asyncio.sleep(1)
                 countr -= 1
@@ -225,18 +227,18 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                     done = True
 
             await self.channel_layer.group_send(f'notification_{player1.id}', {
-                'type': 'game.accept',
-                'from': player1.username,
-                'to': player2.username,
-                'game_id': game_obg['id'],
-                'game_type': game_type
+                'type'      : 'game.accept',
+                'from'      : player1.username,
+                'to'        : player2.username,
+                'game_id'   : game_obg['id'],
+                'game_type' : game_type
             })
             await self.channel_layer.group_send(f'notification_{player2.id}', {
-                'type': 'game.accept',
-                'from': player1.username,
-                'to': player2.username,
-                'game_id': game_obg['id'],
-                'game_type': game_type
+                'type'      : 'game.accept',
+                'from'      : player1.username,
+                'to'        : player2.username,
+                'game_id'   : game_obg['id'],
+                'game_type' : game_type
             })
             
     async def handle_cancel_pvp(self, data):
@@ -254,50 +256,56 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         tour = await get_tour_from_db(data['tour_id'], user['id'])
         receiver_id = user['id']
         await self.channel_layer.group_send(f'notification_{receiver_id}', {
-            'type': 'tour_invite',
-            'from': tour["creator"]["username"],
-            'to': user['username'],
-            'tour_id': tour['id']
+            'type'          : 'tour_invite',
+            'from'          : tour["creator"]["username"],
+            'to'            : user['username'],
+            'tour_id'       : tour['id']
         })
 
     async def handle_game_request(self, data):
         game_type = data['game']
-        receiver_id = await create_game_db(self.user, data['receiver'], game_type)
-        await self.channel_layer.group_send(f'notification_{receiver_id}', {
-            'type': 'game_request',
-            'from': self.user.username,
-            'from_img': str(self.user.profile_image.url) if self.user.profile_image else None,
-            'to': data['receiver'],
-            "game_type": game_type
+        info_invite = await create_game_db(self.user, data['receiver'], game_type)
+        await self.channel_layer.group_send(f'notification_{info_invite['receiver']}', {
+            'type'          : 'game_request',
+            'from'          : self.user.username,
+            'from_img'      : str(self.user.profile_image.url) if self.user.profile_image else None,
+            'to'            : data['receiver'],
+            "game_type"     : game_type,
+            "invite_id"     : info_invite['invite_id']
         })
+        asyncio.create_task(self.check_expired(info_invite['invite_id']))
+
+    async def check_expired(self,invite_id):
+        await asyncio.sleep(30)
+        await delete_game_request(invite_id) 
 
     async def handle_friend_request(self, data):
         obj = await create_friend_db(self.user, data['receiver'])
         await self.channel_layer.group_send(f'notification_{obj.receiver.id}', {
-            'type': 'friend.request',
-            'Friendship_id': FriendshipNotificationSerializer(obj).data
+            'type'          :'friend.request',
+            'Friendship_id' : FriendshipNotificationSerializer(obj).data
         })
 
     async def handle_accept_game(self, data):
         game_type = data['game']
-        game_object = await create_game_object(self.user, data['receiver'], game_type)
+        game_object = await create_game_object(self.user, data['receiver'], game_type, data.get('invite_id'))
         await self.channel_layer.group_send(f'notification_{game_object["player1"]["id"]}', {
-            'type': 'game.accept',
-            'from': game_object["player1"]["username"],
-            'to': game_object["player2"]["username"],
-            'game_id': game_object['id'],
-            'game_type': data['game']
+            'type'          : 'game.accept',
+            'from'          : game_object["player1"]["username"],
+            'to'            : game_object["player2"]["username"],
+            'game_id'       : game_object['id'],
+            'game_type'     : data['game']
         })
         await self.channel_layer.group_send(f'notification_{game_object["player2"]["id"]}', {
-            'type': 'game.accept',
-            'from': game_object["player1"]["username"],
-            'to': game_object["player2"]["username"],
-            'game_id': game_object['id'],
-            'game_type': data['game']
+            'type'          : 'game.accept',
+            'from'          : game_object["player1"]["username"],
+            'to'            : game_object["player2"]["username"],
+            'game_id'       : game_object['id'],
+            'game_type'     : data['game']
         })
 
     async def handle_reject_game(self, data):
-        await delete_game_request(data['id'])
+        await delete_game_request(data['invite_id'])
 
     @database_sync_to_async
     def online_check(self, state, ingame=False, game_type=None):
@@ -327,7 +335,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         for obj in users_list:
             if obj in online_users:
                 user_s = playerSerializers(self.user).data
-                if ingame == True:
+                if ingame:
                     user_s['game_type'] = game_type
                 data_send.append({"receiver": f'notification_{obj.id}', "obj": {
                     'type': "online.state",
@@ -337,8 +345,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 }})
         return data_send
 
-    async def online_state(self, event):
-        await self.send(text_data=json.dumps(event))
 
     async def send_each(self, table):
         if table is None:

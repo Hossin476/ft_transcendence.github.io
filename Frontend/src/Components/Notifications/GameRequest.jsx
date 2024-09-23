@@ -9,7 +9,8 @@ function GameRequest({ t, data, socketMessage, gameType, socket, toast }) {
             const message = JSON.stringify({
                 type: "accept_game",
                 receiver: socketMessage.from,
-                game: gameType
+                game: gameType,
+                invite_id: socketMessage.invite_id
             })
             socket.send(message);
         }
@@ -19,7 +20,7 @@ function GameRequest({ t, data, socketMessage, gameType, socket, toast }) {
         if (socket) {
             const message = JSON.stringify({
                 type: "reject_game",
-                id: "1"
+                invite_id: socketMessage.invite_id
             })
             socket.send(message);
         }
@@ -32,7 +33,7 @@ function GameRequest({ t, data, socketMessage, gameType, socket, toast }) {
                     <div className="flex-shrink-0 pt-0.5">
                         <img
                             className="h-10 w-10 rounded-full"
-                            src={`http://localhost:8000${data.from_img}`}
+                            src={`http://localhost${data.from_img}`}
                             alt=""
                         />
                     </div>

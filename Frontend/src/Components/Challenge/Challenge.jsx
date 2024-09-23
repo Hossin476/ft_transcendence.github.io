@@ -12,13 +12,12 @@ export default function Challenge({ setopen }) {
         setOpen(!open)
     }
     const fetchData = async () => {
-        const response = await fetch('http://localhost:8000/notification/onlinegame/',
+        const response = await fetch(`http://${import.meta.env.VITE_BACKEND_URL}/api/notification/onlinegame/`,
             {
                 headers: {Authorization: "JWT " + tokens.access}
             }
         );
         const data = await response.json();
-        console.log(data)
         setChallengeData(data);
     };
 
@@ -29,7 +28,6 @@ export default function Challenge({ setopen }) {
         if (socketMessage)
             {
                 const data = socketMessage
-                console.log(data)
                 if (data.type == "online.state" && online_ingame){
                     if (data.online == false){
                         const index_lobby = online_ingame.inlobby.findIndex(user => user.username == data.user.username);
@@ -45,7 +43,6 @@ export default function Challenge({ setopen }) {
                     }else if (data.ingame == true){
                             const index_lobby = online_ingame.inlobby.findIndex(user => user.username == data.user.username)
                             const index_game = online_ingame.ingame.findIndex(user => user.username == data.user.username)
-                            console.log([...online_ingame.ingame.slice(index_game,index_game), data.user])
                             setChallengeData((current) => ({ ingame: (index_game != -1 ? [...current.ingame.slice(index_game,index_game), data.user]: [...current.ingame, data.user]),inlobby: (index_lobby != -1 ?current.inlobby.slice(index_lobby, index_lobby) : current.inlobby) }));
                     }
                 }

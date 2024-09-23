@@ -25,9 +25,9 @@ export default function CreateTournament({setTournamentName, tournamentName, set
         }
         let url =  null
         if( status == 'offline')
-            url = "http://localhost:8000/tournament/create/offline/"
+            url = `http://${import.meta.env.VITE_BACKEND_URL}/api/tournament/create/offline/`
         else
-            url = "http://localhost:8000/tournament/create/"
+            url = `http://${import.meta.env.VITE_BACKEND_URL}/api/tournament/create/`
 
         const response = await fetch(url,{
             method :"POST",
@@ -40,7 +40,6 @@ export default function CreateTournament({setTournamentName, tournamentName, set
             })
         })
         const data = await response.json()
-        console.log(data)
         if(response.ok) {
             if(status === "offline"){
                 navigate("./tour", {state:{item:data, status:status}})

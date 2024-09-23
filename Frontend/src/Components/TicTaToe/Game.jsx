@@ -9,8 +9,8 @@ import Win from './Win';
 import StartModal from './StartModal'
 import ReconnectModal from './ReconnectModal'
 
-const WS_ONLINE_URL = 'ws://localhost:8000/ws/game/tictactoe';
-const WS_OFFLINE_URL = 'ws://localhost:8000/ws/game/tictactoe/offline';
+const WS_ONLINE_URL = `ws://${import.meta.env.VITE_BACKEND_URL}/ws/game/tictactoe`;
+const WS_OFFLINE_URL = `ws://${import.meta.env.VITE_BACKEND_URL}/ws/game/tictactoe/offline`;
 
 const GRID_POSITIONS = [
     [-1, 1, 0], [0, 1, 0], [1, 1, 0],
@@ -25,7 +25,7 @@ const Game = () => {
     const [showReconnectModal, setShowReconnectModal] = useState(false);
     const [showStartModal, setShowStartModal] = useState(false);
     const [startCountdownValue, setStartCountdownValue] = useState(null);
-    const [currentTurn, setCurrentTurn] = useState('X');
+    const [currentTurn, setCurrentTurn] = useState(false);
 
     const { setScores, setTimer, setPlayerRole, setReconnectTimer, playerRole } = useTicTacToe();
     const { tokens } = useAuth();
@@ -33,7 +33,7 @@ const Game = () => {
     const socketRef = useRef(null);
     const startModalShownRef = useRef(false);
     const connectWebSocket = useCallback(() => {
-        const url = `${location.state?.isonnline == true ? WS_ONLINE_URL : WS_OFFLINE_URL}/${location.state?.gameid}/?token=${tokens.access}`;
+        const url = `${location.state?.isonline == true ? WS_ONLINE_URL : WS_OFFLINE_URL}/${location.state?.gameid}/?token=${tokens.access}`;
         socketRef.current = new WebSocket(url);
 
         socketRef.current.onopen = () => console.log('WebSocket connected');
@@ -84,7 +84,7 @@ const Game = () => {
     }, [board]);
 
     const TurnIndicator = () => {
-        if (finalWinner) return null;
+        if (finalWinner || showReconnectModal || showStartModal || winnerLine) return null;
         const isYourTurn = currentTurn === playerRole;
         return (
             <div className={`absolute top-[3%] left-1/2 tranform -translate-x-1/2 p-2 rounded ${isYourTurn ? 'bg-green-500' : 'bg-red-500'} text-white font-bold`}>

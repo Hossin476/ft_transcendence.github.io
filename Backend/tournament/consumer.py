@@ -2,12 +2,21 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 import json
 from channels.db import database_sync_to_async
 from notifications.serializers import playerSerializers
-from tournament.models import Tournament, TournamentLocal, PlayerLocal
+from tournament.models import Tournament, TournamentLocal, PlayerLocal, InviteTournament
 from pingpong.models import GameOnline, GameOffline
 from tournament.serializers import TournamentSerializer, TrounamentLocalSerializer
 import asyncio
 import random
 
+
+@database_sync_to_async
+def checkStart(tour_id, user):
+    tournament = Tournament.objects.prefetch_related(
+        'players').select_related('creator').get(id=tour_id)
+    if user != tournament.creator or tournament.players.count() != 8:
+        return False
+    InviteTournament.objects.filter(tournament=tournament).delete()
+    return True
 
 @database_sync_to_async
 def remove_user(tour_id, user):
@@ -83,6 +92,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         print("tour_id", self.tour_id)
         tournament = None
         if data_json["type"] == "start_tournament":
+            if not await  checkStart(self.tour_id, self.user):
+                return
             # set the tournament to start
             # create the matches after shuffle
             # return and array of matches

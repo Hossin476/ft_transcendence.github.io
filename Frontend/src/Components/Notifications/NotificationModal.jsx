@@ -14,7 +14,7 @@ function NotificationModal() {
     {
         async function fetchData()
         {
-            const response = await fetch('http://localhost:8000/notification/', {
+            const response = await fetch(`http://${import.meta.env.VITE_BACKEND_URL}/api/notification/`, {
                 headers: {
                     "Authorization": "JWT " + tokens.access,
                     "content-Type": "application/json"

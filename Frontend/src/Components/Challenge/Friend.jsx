@@ -20,7 +20,6 @@ export default function Friend({ icon = false, gameName, hidden = false, PlayerN
                 game: gameType
             });
             socket.send(message);
-            console.log("send message :", PlayerName)
         } else {
             console.error('WebSocket is not open. Unable to send game request.');
         }
@@ -32,7 +31,7 @@ export default function Friend({ icon = false, gameName, hidden = false, PlayerN
     }
 
     return (<div className={`flex flex-row w-[100%] items-center ${hidden ? 'justify-center' : ''}`}>
-        <img src={"http://localhost:8000" + image} className={`rounded-full lg:w-[52px] lg:h-[52px] object-fit border-[2px] xsm:w-[30px] xsm:h-[30px] ${state ? 'border-green-600' : 'border-red-600'} `} />
+        <img src={"http://localhost" + image} className={`rounded-full lg:w-[52px] lg:h-[52px] object-fit border-[2px] xsm:w-[30px] xsm:h-[30px] ${state ? 'border-green-600' : 'border-red-600'} `} />
         <div className={`ml-3 flex flex-row justify-between  items-center border-solid ${hidden ? "hidden" : ""} lg:flex xsm:w-[160px] lg:w-[260px]`}>
             <div className="max-w-[calc(100%-3rem)]">
                 <h3 className='font-medium text-ellipsis overflow-hidden whitespace-nowrap xsm:text-[10px] lg:text-[15px] xsm:w-[50px] lg:w-[100px] font-inter'>{PlayerName}</h3>

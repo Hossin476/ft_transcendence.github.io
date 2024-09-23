@@ -101,7 +101,7 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
     async def join_room(self):
         if self.user not in self.users_ingame:
             self.users_ingame.append(self.user)
-            await self.update_cache()
+            self.update_cache()
 
         await self.send_game_state_notification(True)
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
@@ -125,7 +125,7 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
         if self.user in self.users_ingame:
             self.users_ingame.remove(self.user)
         self.room.remove_player(self.user)
-        await self.update_cache()
+        self.update_cache()
         await self.send_game_state_notification(False)
 
         await self.handle_player_disconnection()
@@ -243,8 +243,8 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
                     winner.save()
             self.game_record.save()
 
-    @database_sync_to_async
-    def update_cache(self):
+
+    async def update_cache(self):
         cache.set('users_tictactoe', self.users_ingame)
 
     async def send_game_state_notification(self, ingame):
