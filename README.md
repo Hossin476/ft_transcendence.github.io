@@ -145,8 +145,18 @@
    git clone https://github.com/yourusername/ft_transcendence.git
    cd ft_transcendence
    ```
+2. Set up your environment variables: Create a .env file in the root directory and add the following variables:
+   ```
+   # Frontend variables
+      BACKEND_URL=<your_backend_url>
 
-2. Fire up the engines:
+   # Backend variables
+      SECRET_KEY=<your_secret_key>
+      DEBUG=<true_or_false>
+      CORS_ALLOWED_ORIGINS=<comma_separated_list_of_allowed_origins>
+      ALLOWED_HOSTS=<comma_separated_list_of_allowed_hosts>
+   ```
+3. Fire up the engines:
    ```bash
    make
    ```
