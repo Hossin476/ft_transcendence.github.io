@@ -92,7 +92,6 @@
     </td>
     <td>
       <ul>
-        <li>🤖 Challenge our unbeatable AI</li>
         <li>👥 Face off against friends</li>
         <li>🧠 Multiple difficulty levels</li>
       </ul>
@@ -108,13 +107,11 @@
   <tr>
     <td align="center"><h3>⚡</h3></td>
     <td align="center"><h3>🟢</h3></td>
-    <td align="center"><h3>🏠</h3></td>
     <td align="center"><h3>✉️</h3></td>
   </tr>
   <tr>
     <td align="center">Lightning-fast<br>real-time messaging</td>
     <td align="center">See who's online<br>and ready to play</td>
-    <td align="center">Join themed<br>chat rooms</td>
     <td align="center">Slide into DMs<br>with private messaging</td>
   </tr>
 </table>
@@ -127,13 +124,11 @@
   <tr>
     <td align="center"><h3>👤</h3></td>
     <td align="center"><h3>📜</h3></td>
-    <td align="center"><h3>🏅</h3></td>
     <td align="center"><h3>👥</h3></td>
   </tr>
   <tr>
     <td align="center">Personalized<br>user profiles</td>
     <td align="center">Detailed game<br>history & stats</td>
-    <td align="center">Unlock epic<br>achievements</td>
     <td align="center">Manage your<br>friend network</td>
   </tr>
 </table>
@@ -159,22 +154,7 @@
 
 ---
 
-## 📚 Dive Deeper
-
-For the curious minds, we've got a treasure trove of information in the `docs/` directory. Explore API endpoints, game mechanics, and more!
-
----
-
 ## 🤝 Join the ft_transcendence Family
 
 Got ideas? Found a bug? Want to contribute? We're all ears! Check out our [issues page](https://github.com/yourusername/ft_transcendence/issues) and let's make magic happen! ✨
 
----
-
-<p align="center">
-  <img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="License: MIT">
-</p>
-
-<p align="center">
-  <i>Crafted with ❤️ by the ft_transcendence team</i>
-</p>
