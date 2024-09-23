@@ -165,6 +165,6 @@ Got ideas? Found a bug? Want to contribute? We're all ears! Check out our [issue
 
 Here are some known issues that need to be addressed:
 
-- [ ] chat section protection when no user selected  
-- [ ] real-time messages counter not working 
-- [ ] long message error
+- [x] chat section protection when no user selected  
+- [x] real-time messages counter not working 
+- [x] long message error
