@@ -161,10 +161,11 @@
 
 Got ideas? Found a bug? Want to contribute? We're all ears! Check out our [issues page](https://github.com/yourusername/ft_transcendence/issues) and let's make magic happen! ✨
 
-## Problems to Fix
+## Known Issues and Improvements
 
-Here are some known issues that need to be addressed:
+The following issues have been identified in the current implementation and are on the roadmap for future development:
 
-- [x] chat section protection when no user selected  
-- [x] real-time messages counter not working 
-- [x] long message error
+- [ ] **Chat Section Protection:** Currently, the chat section does not handle scenarios where no user is selected. This needs to be addressed to prevent potential errors or unexpected behavior.
+- [ ] **Real-Time Message Counter:** The real-time message counter is not functioning as expected. This feature needs to be debugged and fixed to ensure accurate message counts.
+- [ ] **Long Message Handling:** An error occurs when a message exceeds a certain length. The application should be updated to either support longer messages or provide a clear error message when the limit is exceeded.
+
