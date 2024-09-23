@@ -161,9 +161,9 @@
    make
    ```
 
-3. 🌐 Open your favorite browser and navigate to `http://localhost:8000`
+4. 🌐 Open your favorite browser and navigate to `http://localhost:8000`
 
-4. 🎉 Enjoy the awesomeness!
+5. 🎉 Enjoy the awesomeness!
 
 ---
 
