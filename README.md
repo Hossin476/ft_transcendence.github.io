@@ -146,3 +146,35 @@
    ```bash
    git clone https://github.com/yourusername/ft_transcendence.git
    cd ft_transcendence
+   ```
+
+2. Fire up the engines:
+   ```bash
+   make
+   ```
+
+3. 🌐 Open your favorite browser and navigate to `http://localhost:8000`
+
+4. 🎉 Enjoy the awesomeness!
+
+---
+
+## 📚 Dive Deeper
+
+For the curious minds, we've got a treasure trove of information in the `docs/` directory. Explore API endpoints, game mechanics, and more!
+
+---
+
+## 🤝 Join the ft_transcendence Family
+
+Got ideas? Found a bug? Want to contribute? We're all ears! Check out our [issues page](https://github.com/yourusername/ft_transcendence/issues) and let's make magic happen! ✨
+
+---
+
+<p align="center">
+  <img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="License: MIT">
+</p>
+
+<p align="center">
+  <i>Crafted with ❤️ by the ft_transcendence team</i>
+</p>
