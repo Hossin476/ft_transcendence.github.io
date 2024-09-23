@@ -58,4 +58,5 @@ To get started, clone the repository and follow the steps below:
 1. **Clone the Repository:**
    ```bash
    git clone https://github.com/yourusername/ft_transcendence.git
-   cd ft_transcendence
+   cd ft_transcendence 
+   ```
