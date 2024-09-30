@@ -90,4 +90,5 @@ class TicTacToe:
             self.final_winner = 'O'
         else:
             self.final_winner = None  # It's a draw
+            self.draw = True
         self.game_over = True

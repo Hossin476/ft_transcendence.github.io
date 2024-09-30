@@ -5,7 +5,7 @@ import Timer from './Timer';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
-const BASE_URL = 'http://localhost:8000';
+const BASE_URL = 'http://localhost:8000/api';
 
 function Score() {
     const [users, setUsers] = useState({ player1: null, player2: null });

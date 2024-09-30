@@ -6,11 +6,11 @@ from django.utils import timezone
 
 
 class CustomUser(AbstractUser):
-<<<<<<< HEAD
     username = models.CharField(max_length=255, unique=True, blank=False, null=False, default='default_username')
     date_joined = models.DateTimeField(auto_now_add=True)
     is_online = models.BooleanField(default=False)
     is_ingame = models.BooleanField(default=False)
+    game_type = models.CharField(max_length=255, blank=True, null=True, default=None)
     rank = models.IntegerField(default=1, validators=[MinValueValidator(1)])
     xp = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(100)])
     wins_p = models.IntegerField(default=0)
@@ -18,19 +18,6 @@ class CustomUser(AbstractUser):
     wins_t = models.IntegerField(default=0)
     loses_t = models.IntegerField(default=0)
     last_time = models.DateTimeField(default=timezone.now)
-=======
-    username        = models.CharField(max_length=255, unique=True, blank=False, null=False, default='default_username')
-    date_joined     = models.DateTimeField(auto_now_add=True)
-    is_online       = models.BooleanField(default=False)
-    is_ingame       = models.BooleanField(default=False)
-    game_type        = models.CharField(max_length=255, null=True, default=None)
-    rank            = models.IntegerField(default=1, validators=[MinValueValidator(1)])
-    xp              = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(100)])
-    wins            = models.IntegerField(default=0)
-    loses           = models.IntegerField(default=0)
-    draws           = models.IntegerField(default=0)
-    last_time       = models.DateTimeField(default=timezone.now)
->>>>>>> 153aa05297be6d1d828159d1c5ca906e65f569bb
     # 2FA
     key             = models.CharField(max_length=255, null=True, default=None)
     # profile image 

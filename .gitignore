@@ -1,5 +1,6 @@
 database
 **/__pycache__/
+**/__pycache__/*.pyc
 **/migrations/
 **/migrations/__pycache__/
 **/migrations/*.pyc

@@ -62,7 +62,7 @@ def onlineFriends(request):
     users_list = list(set(users_list))
     data = {'users': []}
     data['users'] = playerSerializers(users_list, many=True).data
-    print("Online Users : ", data)
+    # print("Online Users : ", data)
     return Response(data)
 
 

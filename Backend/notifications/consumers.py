@@ -129,7 +129,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         data = json.loads(text_data)
-        print(data)
+        # print(data)
         types = data['type']
         if types == 'game_request':
             await self.handle_game_request(data)
@@ -176,22 +176,22 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         await accept_reject(data["id"], self.user, "reject")
 
     async def handle_tour_accept(self, data):
-        print(data)
+        # print(data)
         state = await accept_reject(data["id"], self.user, "accept")
         await self.channel_layer.group_send(f'notification_{self.user.id}', {
             'type': "tour_accept",
             "message": "you have been added to  this tournament" if state["state"] else "this tournament is full",
             "response": "accepted" if state["state"] else "rejected"
         })
-        print("tournament id : ", f'tour_{state["tour_id"]}')
+        # print("tournament id : ", f'tour_{state["tour_id"]}')
         await channle_layer.group_send(f'tour_{state["tour_id"]}', {
             'type': "state.change",
         })
     
     async def handle_pvp_request(self, data):
         game_type = data['gameType']
-        print ("game type is : ", game_type)
-        print("array [p]",game_type)
+        # print ("game type is : ", game_type)
+        # print("array [p]",game_type)
         if game_type == 'P':
             NotificationConsumer.match_making['P'].append(self.user)
         elif game_type == 'T':
@@ -340,7 +340,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                     'type': "online.state",
                     'user': user_s,
                 }})
-        print("data send to  font :",data_send)
+        # print("data send to  font :",data_send)
         return data_send
 
 

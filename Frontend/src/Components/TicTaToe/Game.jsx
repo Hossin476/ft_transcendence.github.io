@@ -10,8 +10,8 @@ import StartModal from './StartModal'
 import ReconnectModal from './ReconnectModal'
 import Draw from './Draw';
 
-const WS_ONLINE_URL =  'ws://localhost:8000/ws/game/tictactoe';
-const WS_OFFLINE_URL =  'ws://localhost:8000/ws/game/tictactoe/offline';
+const WS_ONLINE_URL = 'ws://localhost:8000/ws/game/tictactoe';
+const WS_OFFLINE_URL = 'ws://localhost:8000/ws/game/tictactoe/offline';
 
 const GRID_POSITIONS = [
     [-1, 1, 0], [0, 1, 0], [1, 1, 0],
@@ -66,15 +66,13 @@ const Game = () => {
     }, [connectWebSocket]);
 
     const handleWebSocketMessage = useCallback((data) => {
-        console.log(data)
 
         if (data.state) setBoard(data.state);
         if (data.final_winner) setFinalWinner(data.final_winner);
         if (data.draw !== undefined) setDraw(data.draw);
         if (data.reconnect_countdown === undefined || data.reconnect_countdown === 0)
             setShowReconnectModal(false);
-        else
-        {
+        else {
             setShowReconnectModal(true);
             setReconnectTimer(data.reconnect_countdown);
         }
@@ -101,8 +99,8 @@ const Game = () => {
     }, [board]);
 
     const TurnIndicator = () => {
-        if (isOnline === false || finalWinner || showStartModal || winnerLine || showReconnectModal)
-                return null;
+        if (isOnline === false || finalWinner || showStartModal || winnerLine || showReconnectModal || draw)
+            return null;
         const isYourTurn = currentTurn === playerRole;
         return (
             <div className={`absolute top-[3%] left-1/2 tranform -translate-x-1/2 p-2 rounded ${isYourTurn ? 'bg-green-500' : 'bg-red-500'} text-white font-bold`}>

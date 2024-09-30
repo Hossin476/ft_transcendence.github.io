@@ -12,7 +12,7 @@ export default function Leaderboard() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch(`http://localhost:8000/notification/leaderboard/?game=${activeGame}`, {
+        const response = await fetch(`http://localhost:8000/api/notification/leaderboard/?game=${activeGame}`, {
           headers: {
             "Authorization": "JWT " + tokens.access,
             "Content-Type": "application/json"

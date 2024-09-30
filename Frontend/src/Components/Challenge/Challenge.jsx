@@ -57,7 +57,7 @@ export default function Challenge({ setopen }) {
             </div>
             <div className='flex  flex-col w-[100%] xsm:gap-2 lg:gap-4 h-[100%] '>
                 <div className='  flex flex-col overflow-auto items-center  lg:gap-4 xsm:gap-2'>
-                    {online_ingame && online_ingame.users.map((item, index) => <Friend icon={!item.is_ingame} hidden={open} PlayerName={item.username} key={index} image={item.profile_image} gameName={item.game_type} />)}
+                    {online_ingame && online_ingame.users?.map((item, index) => <Friend icon={!item.is_ingame} hidden={open} PlayerName={item.username} key={index} image={item.profile_image} gameName={item.game_type} />)}
                 </div>
             </div>
         </div>

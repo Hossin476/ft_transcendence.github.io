@@ -10,17 +10,9 @@ function NotificationModal() {
     const [notifications, setNotifications] = useState([]);
     const { tokens, socketMessage } = useAuth()
 
-<<<<<<< HEAD
     useEffect(() => {
         async function fetchData() {
-            const response = await fetch('http://localhost:8000/notification/', {
-=======
-    useEffect(()=>
-    {
-        async function fetchData()
-        {
-            const response = await fetch(`http://${import.meta.env.VITE_BACKEND_URL}/api/notification/`, {
->>>>>>> 153aa05297be6d1d828159d1c5ca906e65f569bb
+            const response = await fetch('http://localhost:8000/api/notification/', {
                 headers: {
                     "Authorization": "JWT " + tokens.access,
                     "content-Type": "application/json"

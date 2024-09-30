@@ -7,8 +7,10 @@ from django.core.cache import cache
 from .game_logic import TicTacToe
 from .models import OnlineGameModel
 from users.models import CustomUser
+from django.db import IntegrityError, transaction
 
 channel_layer = get_channel_layer()
+
 
 class Room:
     def __init__(self):
@@ -22,20 +24,27 @@ class Room:
             "reconnect": 10,
             "start": 15
         }
+        self.lock = asyncio.Lock()
 
-    def add_player(self, player):
-        for role, assigned_player in self.players.items():
-            if assigned_player is None:
-                self.players[role] = player
-                return role
+    async def add_player(self, player):
+        async with self.lock:
+            if player not in self.players.values():
+                for role, assigned_player in self.players.items():
+                    if assigned_player is None:
+                        self.players[role] = player
+                        return role
+                raise Exception("Game is full")
+            else:
+                raise Exception("Player is already in the game")
         return None
 
-    def remove_player(self, player):
-        for role, assigned_player in self.players.items():
-            if assigned_player == player:
-                self.players[role] = None
-                return role
-        return None
+    async def remove_player(self, player):
+        async with self.lock:
+            for role, assigned_player in self.players.items():
+                if assigned_player == player:
+                    self.players[role] = None
+                    return role
+            return None
 
     def are_both_players_present(self):
         return all(self.players.values())
@@ -43,21 +52,23 @@ class Room:
     def are_both_players_absent(self):
         return all(player is None for player in self.players.values())
 
-    def start_task(self, task_name, coroutine):
-        if self.tasks[task_name]:
-            self.tasks[task_name].cancel()
-        self.tasks[task_name] = asyncio.create_task(coroutine)
+    async def start_task(self, task_name, coroutine):
+        async with self.lock:
+            if self.tasks[task_name]:
+                self.tasks[task_name].cancel()
+            self.tasks[task_name] = asyncio.create_task(coroutine)
 
-    def cancel_task(self, task_name):
-        if self.tasks[task_name]:
-            self.tasks[task_name].cancel()
-            self.tasks[task_name] = None
+    async def cancel_task(self, task_name):
+        async with self.lock:
+            if self.tasks[task_name]:
+                self.tasks[task_name].cancel()
+                self.tasks[task_name] = None
 
 
 class TicTacToeConsumer(AsyncWebsocketConsumer):
     rooms = {}
     games = {}
-    users_ingame = []
+    users_ingame = set()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -75,63 +86,84 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
             return
 
         self.user = self.scope.get('user')
-        self.game_id = self.scope['url_route']['kwargs']['game_id']
+        if not self.user or not self.user.is_authenticated:
+            await self.close()
+            return
 
-        await self.initialize_game_and_room()
-        await self.accept()
-        await self.send_game_update()
-        await self.handle_player_connection()
+        self.game_id = self.scope['url_route']['kwargs'].get('game_id')
+        if not self.game_id:
+            await self.close()
+            return
+
+        try:
+            await self.initialize_game_and_room()
+            await self.accept()
+            await self.send_game_update()
+            await self.handle_player_connection()
+        except Exception as e:
+            await self.close()
+            return
 
     async def initialize_game_and_room(self):
-        self.room = self.rooms.get(self.game_id)
-        self.game = self.games.get(self.game_id)
+        async with asyncio.Lock():
+            self.room = self.rooms.get(self.game_id)
+            self.game = self.games.get(self.game_id)
 
-        if not self.room:
-            self.room = Room()
-            self.rooms[self.game_id] = self.room
+            if not self.room:
+                self.room = Room()
+                self.rooms[self.game_id] = self.room
 
-        if not self.game:
-            self.game = TicTacToe()
-            self.games[self.game_id] = self.game
+            if not self.game:
+                self.game = TicTacToe()
+                self.games[self.game_id] = self.game
 
-        self.room_group_name = f"game_{self.game_id}"
-        self.player_role = self.room.add_player(self.user)
+            self.room_group_name = f"game_{self.game_id}"
+            self.player_role = await self.room.add_player(self.user)
 
-        await self.send_game_state_notification(True)
-        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+            if self.player_role is None:
+                raise ValueError("Room is full")
 
-        self.game_record = await self.get_game_record()
+            await self.send_game_state_notification(True)
+            await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+
+            self.game_record = await self.get_game_record()
 
     async def handle_player_connection(self):
         if self.room.are_both_players_present() and not self.game.start:
-            self.room.start_task('start_countdown', self.start_countdown())
+            await self.room.start_task('start_countdown', self.start_countdown())
 
         if self.room.tasks['reconnect_countdown'] and not self.game.game_over and self.game.final_winner is None:
-            self.room.cancel_task('reconnect_countdown')
+            await self.room.cancel_task('reconnect_countdown')
+            if self.game.winner is not None:
+                asyncio.create_task(self.reset_game())
+
 
         if self.game.start and self.room.tasks['game_countdown'] is None:
-            self.room.start_task('game_countdown', self.game_countdown())
+            await self.room.start_task('game_countdown', self.game_countdown())
 
     async def disconnect(self, close_code):
-        if self.scope.get('error'):
+        if not self.user or not self.game_id:
             return
 
-        self.room.remove_player(self.user)
-        await self.send_game_state_notification(False)
-
-        await self.handle_player_disconnection()
-        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        try:
+            await self.room.remove_player(self.user)
+            await self.send_game_state_notification(False)
+            await self.handle_player_disconnection()
+            await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        except Exception as e:
+            pass
 
     async def handle_player_disconnection(self):
         if not self.room.are_both_players_present() and not self.game.game_over and self.game.start and self.game.final_winner is None:
-            self.room.start_task('reconnect_countdown', self.disconnect_countdown())
-        self.room.cancel_task('game_countdown')
+            await self.room.start_task('reconnect_countdown', self.disconnect_countdown())
+        await self.room.cancel_task('game_countdown')
 
         if self.room.are_both_players_absent():
-            if self.game_id in self.rooms:
-                del self.rooms[self.game_id]
-            if self.game_id in self.games:
-                del self.games[self.game_id]
+            async with asyncio.Lock():
+                if self.game_id in self.rooms:
+                    del self.rooms[self.game_id]
+                if self.game_id in self.games:
+                    del self.games[self.game_id]
 
     async def receive(self, text_data):
         try:
@@ -144,8 +176,7 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
                 if move_made:
                     await self.send_game_update()
                     await self.update_record()
-                    # ! fix the board being reset in case of reconnection
-                    if self.game.winner is not None and not self.room.are_both_players_absent():
+                    if self.game.winner is not None:
                         asyncio.create_task(self.reset_game())
         except json.JSONDecodeError:
             await self.send_error("Invalid JSON format")
@@ -170,7 +201,7 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
                 await asyncio.sleep(1)
                 self.room.countdown_values['start'] -= 1
                 await self.send_start_update()
-            self.room.start_task('game_countdown', self.game_countdown())
+            await self.room.start_task('game_countdown', self.game_countdown())
             self.game.start = True
         except asyncio.CancelledError:
             pass
@@ -186,9 +217,10 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
             pass
 
     async def reset_game(self):
-        await asyncio.sleep(5)
-        self.game.reset_game()
-        await self.send_game_update(reset=True)
+        await asyncio.sleep(3)
+        if not self.room.tasks['reconnect_countdown']:
+            self.game.reset_game()
+            await self.send_game_update(reset=True)
 
     async def send_game_update(self, reset=False):
         await self.channel_layer.group_send(self.room_group_name, {
@@ -218,29 +250,37 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
             'player_role': self.player_role
         }))
 
-    async def get_game_record(self):
-        return await database_sync_to_async(OnlineGameModel.objects.get)(id=self.game_id)
+    @database_sync_to_async
+    def get_game_record(self):
+        try:
+            return OnlineGameModel.objects.get(id=self.game_id)
+        except OnlineGameModel.DoesNotExist:
+            return None
 
-    async def update_record(self):
-        if self.game_record and self.game_record.winner:
+    @database_sync_to_async
+    def update_record(self):
+        if not self.game_record or self.game_record.winner:
             return
-        if self.game_record:
-            self.game_record.score_x = self.game.x_score
-            self.game_record.score_o = self.game.o_score
-            if self.game.final_winner and not self.game_record.winner:
-                winner = await database_sync_to_async(self.room.players.get)(self.game.final_winner)
-                loser_role = 'O' if self.game.final_winner == 'X' else 'X'
-                loser = await database_sync_to_async(self.room.players.get)(loser_role)
-                if winner:
-                    self.game_record.winner = winner
-                    winner.xp += 30
-                    winner.rank = winner.xp / 100
-                    winner.wins_t += 1
-                    await database_sync_to_async(winner.save)()
-                if loser:
-                    loser.loses_t += 1
-                    await database_sync_to_async(loser.save)()
-            await database_sync_to_async(self.game_record.save)()
+        try:
+            with transaction.atomic():
+                self.game_record.score_x = self.game.x_score
+                self.game_record.score_o = self.game.o_score
+                if self.game.final_winner and not self.game_record.winner:
+                    winner = self.room.players.get(self.game.final_winner)
+                    loser_role = 'O' if self.game.final_winner == 'X' else 'X'
+                    loser = self.room.players.get(loser_role)
+                    if winner:
+                        self.game_record.winner = winner
+                        winner.xp += 30
+                        winner.rank = winner.xp / 100
+                        winner.wins_t += 1
+                        winner.save()
+                    if loser:
+                        loser.loses_t += 1
+                        loser.save()
+                self.game_record.save()
+        except IntegrityError:
+            pass
 
     async def send_game_state_notification(self, ingame):
         await channel_layer.group_send(f'notification_{self.user.id}', {
@@ -284,13 +324,10 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
     async def handle_game_end(self):
         if self.game.countdown_value == 0 or self.game.game_over:
             self.game.check_game_over()
-            if self.game.final_winner is None:
-                self.game.draw = True
-            self.game.game_over = True
             await self.update_record()
             await self.send_game_update()
-            self.room.cancel_task('game_countdown')
-            self.room.cancel_task('reconnect_countdown')
+            await self.room.cancel_task('game_countdown')
+            await self.room.cancel_task('reconnect_countdown')
 
     async def send_error(self, message):
         await self.send(text_data=json.dumps({
