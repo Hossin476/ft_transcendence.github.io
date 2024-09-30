@@ -32,7 +32,7 @@ export default function Friend({img, friendName , currentAction, online})
         <div className="flex justify-between my-2 center">
             <div className="flex xsm:gap-0 xl:gap-4 center">
                 <div className=" xsm:w-6 xsm:h-6 w-8 h-8 xl:w-16 xl:h-16 rounded-full border relative ">
-                    <img className="rounded-full xsm:w-6 xsm:h-6 w-8 h-8 xl:w-16 xl:h-16 object-cover " src={'http://localhost:8000'+img} alt="" />
+                    <img className="rounded-full xsm:w-6 xsm:h-6 w-8 h-8 xl:w-16 xl:h-16 object-cover " src={'http://localhost'+img} alt="" />
                     <span className={` w-4 h-4 xl:w-6 xl:h-6 -right-2 top-0 rounded-full  absolute`}>{online ?<Lottie options={{...defaultOptions, animationData:onlineIcon}} /> : <Lottie  options={{...defaultOptions, animationData:offlineIcon}} />}</span>
                 </div>
                 <div className=" xsm:hidden xl:block self-center">

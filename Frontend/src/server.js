@@ -61,7 +61,6 @@ createServer({
     this.post("/tournament", (schema, request) => {
       let attrs = JSON.parse(request.requestBody);
       tournament.push(attrs);
-      console.log(tournament)
       return tournament;
     });
   },

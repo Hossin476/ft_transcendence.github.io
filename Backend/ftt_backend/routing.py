@@ -3,6 +3,7 @@ from notifications.consumers import NotificationConsumer
 from pingpong.consumers import GameConsumer , LocalGameConsumer
 from tictactoe.consumers import TicTacToeConsumer
 from tournament.consumer import TournamentConsumer, Tournamentlocal
+from chat.consumers import ChatConsumer
 from tictactoe.local_game.consumers import TicTacToeLocalConsumer
 from chat.consumers import ChatConsumer
 

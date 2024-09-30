@@ -24,20 +24,17 @@ function Game(props)
   useEffect(() => {
   let wsUrl = null 
   if (location.state.isonline == true)
-      wsUrl = `ws://localhost:8000/ws/game/pingpong/${location.state.gameid}/?token=${tokens.access}`;
+      wsUrl = `ws://${import.meta.env.VITE_BACKEND_URL}/ws/game/pingpong/${location.state.gameid}/?token=${tokens.access}`;
   else
-      wsUrl = `ws://localhost:8000/ws/game/pingpong/offline/${location.state.gameid}/?token=${tokens.access}`;
-  console.log("websocket url :",wsUrl)
+      wsUrl = `ws://${import.meta.env.VITE_BACKEND_URL}/ws/game/pingpong/offline/${location.state.gameid}/?token=${tokens.access}`;
   const ws = new WebSocket(wsUrl);
   ws.onopen = () => {
-    console.log("message: connection between the client and the server started");
     setsocket(ws);
   }
   props.handleWin(false, false, location.state.gameid);
   ws.onmessage = async (msg) => {
     const hold = await JSON.parse(msg.data);
     const { type, ball_position, paddle_one_position, paddle_two_position, winner, iswaiting, status, currentSecond, message} = hold;
-    console.log("game data : ",hold)
     switch (type) {
       case 'game.start':
         setStart(() => true);
@@ -66,10 +63,7 @@ function Game(props)
         }
         break;
       case 'before.start':
-        console.log(beforeStart)
-        console.log(props)
         if (props.beforeStartState == false){
-          console.log("change state to  true")
           props.handleBefore(true)
         }
         if(beforeStart.current)
@@ -81,7 +75,6 @@ function Game(props)
   }
 
   const handleClick = (e) => {
-    console.log(e);
     if (e.code === 'KeyP') {
       ws.send(JSON.stringify({ "type": "pause", 'username': username }));
     } else if (e.code === 'Space' && start == false) {

@@ -15,7 +15,6 @@ export default function CreateTournament({title}) {
             const responce = await fetch('/api/tournament')
             const  data = await responce.json()
             setTournaments(data)
-            console.log(data)
         }
         fechData()
     },[])

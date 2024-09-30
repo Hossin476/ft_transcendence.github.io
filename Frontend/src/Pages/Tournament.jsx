@@ -7,14 +7,13 @@ import TournamentProvider from '../context/TournamentContext';
 
 
 const getTours = async (userId, tokens) => {
-    const response = await fetch(`http://127.0.0.1:8000/tournament/tourlist/${userId}`, {
+    const response = await fetch(`http://${import.meta.env.VITE_BACKEND_URL}/api/tournament/tourlist/${userId}`, {
         method: 'GET',
         headers: {
             Authorization: 'JWT ' + tokens.access
         }
     })
     const data = await response.json()
-    console.log("hala", data)
     if (response.ok)
         return data
     return null
@@ -41,7 +40,6 @@ export default function Chat() {
         if (socket && socketMessage) {
             const { type, response } = socketMessage
             if (type === "tour_accept" && response === "accepted") {
-                console.log("check the chain ask the dog if he want sure he want ")
                 fetchTours();
             }
         }

@@ -4,3 +4,4 @@ database
 **/migrations/__pycache__/
 **/migrations/*.pyc
 **/migrations/*.py
+.env

@@ -21,8 +21,7 @@ export default function NavBar() {
     useEffect(() => {
         if (socketMessage) {
             if (socketMessage.type == 'game.accept') {
-                const gameType = socketMessage.game_type === "T" ? "tictactoe" : "pingpong"
-                console.log(socketMessage.game_type)
+                const gameType = socketMessage.game_type === "T" ? "tictactoe" : "pingpong";
                 nav(`/game/${gameType}/pvpgame/match`, { state: { gameid: socketMessage.game_id, isonline: true } });
             } else if (socketMessage.type == 'game.offline') {
                 const gameType = socketMessage.game_type === "T" ? "tictactoe" : "pingpong"
@@ -34,7 +33,6 @@ export default function NavBar() {
     useEffect(() => {
         global_socket();
         createSocket();
-        console.log("connect again ")
         return () => {
             if (socket)
                 socket.close()
@@ -68,7 +66,7 @@ export default function NavBar() {
                     <img className="w-full rounded-full" src={img} alt="Profile" />
                 </li>
             </ul>
-            <NotificationHandler/>
+            <NotificationHandler />
         </div>
     )
 }

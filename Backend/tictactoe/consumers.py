@@ -33,7 +33,6 @@ class Room:
     def remove_player(self, player):
         for role, assigned_player in self.players.items():
             if assigned_player == player:
-                print("-----herrrre-------")
                 self.players[role] = None
                 return role
         return None
@@ -118,8 +117,6 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
             return
 
         self.room.remove_player(self.user)
-        for player in self.room.players:
-            print("the player is ", player)
         await self.send_game_state_notification(False)
 
         await self.handle_player_disconnection()
@@ -149,7 +146,6 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
                     await self.update_record()
                     # ! fix the board being reset in case of reconnection
                     if self.game.winner is not None and not self.room.are_both_players_absent():
-                        print("-----called-----")
                         asyncio.create_task(self.reset_game())
         except json.JSONDecodeError:
             await self.send_error("Invalid JSON format")

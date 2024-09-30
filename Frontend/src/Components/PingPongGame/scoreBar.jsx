@@ -17,14 +17,13 @@ function ScoreBar({gameid})
     const fetch_game = async ()=>{
         let url = null
         if (location.state.isonline == true)
-            url = `http://localhost:8000/pingpong/game/pingpong/${gameid}/`
+            url = `http://${import.meta.env.VITE_BACKEND_URL}/api/pingpong/game/pingpong/${gameid}/`
         else
-            url = `http://localhost:8000/pingpong/game/pingpong/offline/${gameid}/`
+            url = `http://${import.meta.env.VITE_BACKEND_URL}/api/pingpong/game/pingpong/offline/${gameid}/`
         const response = await fetch(url,{
             headers: {Authorization : "JWT " + tokens.access}
         })
         const data = await response.json()
-        console.log("data winner  : ", data)
         setPlayers(data)
     }
     useEffect(()=>{
@@ -34,15 +33,14 @@ function ScoreBar({gameid})
       }
       fetch_game()
   },[gameid])
-  console.log(players)
 
     return <>
       {players && (location.state.isonline == true ?(
 
         <div className=" flex  px-5 mt-5 w-[100%] justify-center items-center  max-w-[1024px] xsm:gap-2 lg:gap-9 ">
-          <FirstPlayer name={players.player1.username} level={players.player1.rank} image={`http://localhost:8000${players.player1.profile_image}`} ref={score1}/>
+          <FirstPlayer name={players.player1.username} level={players.player1.rank} image={`http://localhost${players.player1.profile_image}`} ref={score1}/>
           <Timer game_id={gameid}/>
-          <SecondPlayer name={players.player2.username} level={players.player2.rank} image={`http://localhost:8000${players.player2.profile_image}`} ref={score2}/>
+          <SecondPlayer name={players.player2.username} level={players.player2.rank} image={`http://localhost${players.player2.profile_image}`} ref={score2}/>
         </div>
       ):(
         <div className=" flex  px-5 mt-5 w-[100%] justify-center items-center  max-w-[1024px] xsm:gap-2 lg:gap-9 ">

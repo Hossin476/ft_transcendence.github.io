@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import *
-from users.models import Friendship ,CustomUser
+from users.models import Friendship, CustomUser
 
 
 class playerSerializers(serializers.ModelSerializer):
@@ -17,7 +17,11 @@ class playerSerializers(serializers.ModelSerializer):
             'loses_p',
             'wins_t',
             'loses_t',
+            'is_online',
+            'is_ingame',
+            'game_type'
         ]
+
 
 class TourInvitesSerializers(serializers.ModelSerializer):
     class Meta:
@@ -34,6 +38,7 @@ class GameNotificationSerializers(serializers.ModelSerializer):
     sender = playerSerializers()
     isgame = serializers.BooleanField(default=True)
     game_type = serializers.SerializerMethodField()
+
     class Meta:
         model = GameNotification
         fields = [
@@ -42,12 +47,15 @@ class GameNotificationSerializers(serializers.ModelSerializer):
             'game_type',
             'isgame',
         ]
+
     def get_game_type(self, obj):
         return obj.get_game_display()
+
 
 class FriendshipNotificationSerializer(serializers.ModelSerializer):
     sender = playerSerializers()
     isgame = serializers.BooleanField(default=False)
+
     class Meta:
         model = FriendshipNotification
         fields = [
@@ -56,5 +64,3 @@ class FriendshipNotificationSerializer(serializers.ModelSerializer):
             'isgame',
             'created_at',
         ]
-
-
