@@ -1,10 +1,12 @@
 class TicTacToe:
-    def __init__(self, max_score=5, countdown_value=20):
+    def __init__(self):
         # Initialize the tictactoe class
-        self.max_score = max_score
-        self.countdown_value = countdown_value
+        self.max_score = 5
+        self.countdown_value = 40
         self.x_score = 0
         self.o_score = 0
+        self.draw = False
+        self.start = False
         self.reset_game()
 
     def reset_game(self):
@@ -73,16 +75,12 @@ class TicTacToe:
     def check_game_over(self):
         # Check if the game is over based on scores or countdown
         if self.x_score >= self.max_score:
-            self._end_game('X')
+            self.final_winner = 'X'
         elif self.o_score >= self.max_score:
-            self._end_game('O')
+            self.final_winner = 'O'
         elif self.countdown_value <= 0:
             self._check_final_winner()
 
-    def _end_game(self, winner):
-        # End the game with a final winner
-        self.final_winner = winner
-        self.game_over = True
 
     def _check_final_winner(self):
         # Determine the final winner based on scores

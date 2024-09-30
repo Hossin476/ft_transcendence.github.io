@@ -14,20 +14,19 @@ function NotificationHandler() {
 
     useEffect(() => {
         if (socketMessage) {
-            const data = socketMessage
-            if (data.type === 'game_request') {
+            if (socketMessage.type === 'game_request') {
                 toast.custom((t) => (
-                    <GameRequest t={t} toast={toast} data={data} socketMessage={socketMessage} gameType={gameType} socket={socket} />
+                    <GameRequest t={t} toast={toast} socketMessage={socketMessage} gameType={gameType} socket={socket} />
                 ))
             }
-            if (data.type === 'tour_invite') {
+            if (socketMessage.type === 'tour_invite') {
                 toast.custom((t) => (
-                    <TournamentInvitation t={t} toast={toast} data={data} socket={socket} />
+                    <TournamentInvitation t={t} toast={toast} socketMessage={socketMessage} socket={socket} />
                 ))
             }
-            if (data.type == 'tour_accept') {
+            if (socketMessage.type == 'tour_accept') {
                 toast.custom((t) => (
-                    <TourResponseNotification toast={toast} t={t} data={data} />
+                    <TourResponseNotification toast={toast} t={t} socketMessage={socketMessage} />
                 ))
             }
         }

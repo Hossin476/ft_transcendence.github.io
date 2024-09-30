@@ -9,9 +9,11 @@ from itertools import chain
 from operator import attrgetter
 from django.core.cache import cache
 from tournament.models import Tournament, InviteTournament
+from django.http import JsonResponse
+from pingpong.models import GameOnline
+from tictactoe.models import OnlineGameModel
 
 # Create your views here.
-
 
 class NotifitationView(APIView):
     def get(self, request):
@@ -154,3 +156,37 @@ def TournamentInvites(request, tour_id):
     except Exception as e:
         print("Error : ", e)
     return Response(friends_data)
+
+
+@api_view(['GET'])
+def get_Leaderboard(request):
+    game = request.GET.get('game', None)
+    if game is None:
+        return JsonResponse({'error': 'Missing game parameter'}, status=400)
+    try:
+        users = CustomUser.objects.all()
+        if game == 'Tic Tac Toe':
+            leaderboard_list = [{
+                'username': user.username,
+                'wins': user.wins_t,
+                'loses': user.loses_t,
+                'profile_image': str(user.profile_image.url) if user.profile_image else None,
+                'win_rate': (user.wins_t * 100) // (user.wins_t + user.loses_t) if (user.wins_t + user.loses_t) != 0 else 0           
+                } for user in users]
+        elif game == 'Ping Pong':
+            leaderboard_list = [{
+                'username': user.username,
+                'wins': user.wins_p,
+                'loses': user.loses_p,
+                'profile_image': str(user.profile_image.url) if user.profile_image else None,
+                'win_rate': (user.wins_p * 100) // (user.wins_p + user.loses_p) if (user.wins_p + user.loses_p) != 0 else 0
+            } for user in users]
+        else:
+            return JsonResponse({'error': 'Invalid game parameter'}, status=400) 
+        leaderboard_list = sorted(leaderboard_list, key=lambda x: (x['wins'], x['win_rate']), reverse=True)
+        for rank, user in enumerate(leaderboard_list, start=1):
+            user['rank'] = rank
+        return JsonResponse(leaderboard_list, safe=False)
+    
+    except CustomUser.DoesNotExist:
+        return JsonResponse({'error': 'User does not exist'}, status=404)

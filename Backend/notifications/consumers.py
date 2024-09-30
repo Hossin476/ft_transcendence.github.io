@@ -262,17 +262,19 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     async def handle_game_request(self, data):
         game_type = data['game']
-        receiver_id = await create_game_db(self.user, data['receiver'], game_type)
+        receiver = data.get('receiver')
+        receiver_id = await create_game_db(self.user, receiver, game_type)
         await self.channel_layer.group_send(f'notification_{receiver_id}', {
             'type': 'game_request',
             'from': self.user.username,
             'from_img': str(self.user.profile_image.url) if self.user.profile_image else None,
-            'to': data['receiver'],
+            'to': receiver,
             "game_type": game_type
         })
 
     async def handle_friend_request(self, data):
-        obj = await create_friend_db(self.user, data['receiver'])
+        receiver = data.get('receiver')
+        obj = await create_friend_db(self.user, receiver)
         await self.channel_layer.group_send(f'notification_{obj.receiver.id}', {
             'type': 'friend.request',
             'Friendship_id': FriendshipNotificationSerializer(obj).data

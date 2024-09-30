@@ -18,19 +18,18 @@ export default function NavBar() {
     const toggleNotifications = () => {
         setShowNotifications(!showNotifications);
     };
-    useEffect(()=>{
-        if (socketMessage)
-        {
-            if (socketMessage.type == 'game.accept'){
+    useEffect(() => {
+        if (socketMessage) {
+            if (socketMessage.type == 'game.accept') {
                 const gameType = socketMessage.game_type === "T" ? "tictactoe" : "pingpong"
                 console.log(socketMessage.game_type)
-                nav(`/game/${gameType}/pvpgame/match`, { state: { gameid: socketMessage.game_id, isonline:true } });
-            }else if (socketMessage.type == 'game.offline'){
+                nav(`/game/${gameType}/pvpgame/match`, { state: { gameid: socketMessage.game_id, isonline: true } });
+            } else if (socketMessage.type == 'game.offline') {
                 const gameType = socketMessage.game_type === "T" ? "tictactoe" : "pingpong"
-                nav(`/game/${gameType}/pvpgame/match`, { state: { gameid: socketMessage.game_id, isonline:false } });
+                nav(`/game/${gameType}/pvpgame/match`, { state: { gameid: socketMessage.game_id, isonline: false } });
             }
         }
-    },[socketMessage])
+    }, [socketMessage])
 
     useEffect(() => {
         global_socket();
@@ -48,12 +47,11 @@ export default function NavBar() {
                 <h1 className="xsm:text-lg text-2xl font-normal">PONGY</h1>
             </div>
             <ul className="flex xsm:pr-4 xsm:gap-4 sm:gap-16 items-center">
-                <li className="relative">
+                <li>
                     <IoNotifications
                         className="xsm:text-xl sm:text-4xl cursor-pointer"
                         onClick={toggleNotifications}
                     />
-                    <span className="xsm:w-3 xsm:h-3 sm:w-4 sm:h-4 text-xs top-0 right-0 flex items-center justify-center p-1 font-thin bg-red-500 rounded-full absolute">1</span>
                     {showNotifications && (
                         <div className="absolute left-1/2 transform -translate-x-1/2 mt-4 z-[70]">
                             <NotificationModal />

@@ -17,12 +17,14 @@ class TicTacToeLocal:
 
     def __init__(self):
         # Initializes the Tic Tac Toe game.
-        self.reset_game()
         self.score_x = 0
         self.score_o = 0
-        self.countdown_value = 10
+        self.countdown_value = 15
         self.max_score = 5
         self.final_winner = None
+        self.draw = False
+        self.start = False
+        self.reset_game()
 
     def make_move(self, index):
         """

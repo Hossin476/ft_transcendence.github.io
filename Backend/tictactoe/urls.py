@@ -8,4 +8,5 @@ urlpatterns = [
     path('offline_winner_data/<game_id>/', offline_winner_data),
     path('offline_user_data/<game_id>/', offline_user_data),
     path('game/tictactoe/offline/create_local_game', create_local_game),
+    # path('leaderboard/', get_Leaderboard)
 ]

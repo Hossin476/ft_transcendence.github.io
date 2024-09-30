@@ -3,15 +3,7 @@ import { useTicTacToe } from '../../context/TicTacToeContext';
 
 const ReconnectModal = () => {
 
-    const formatTime = (time) => {
-        const getSeconds = `0${time % 60}`.slice(-2);
-        const minutes = Math.floor(time / 60);
-        const getMinutes = `0${minutes % 60}`.slice(-2);
-
-        return `${getMinutes}:${getSeconds}`;
-    };
-
-    const { reconnect_timer } = useTicTacToe();
+    const { reconnect_timer, formatTime } = useTicTacToe();
 
     return (
         <div className={`w-[101%] blurHelp h-[101%] absolute border-[3px] flex flex-col items-center justify-evenly z-10 gap-6 rounded-[20px] bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 shadow-lg`}>

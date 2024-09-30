@@ -26,7 +26,6 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="login" element={<LoginPage />} />
-          <Route path="notification" element={<NotificationModal/>} />
           <Route element={<PrivateRoute />}>
             <Route element={<LayoutOne />}>
               <Route index element={<Dashboard />} />

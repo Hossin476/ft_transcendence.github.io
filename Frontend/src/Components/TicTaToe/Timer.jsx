@@ -1,16 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { useTicTacToe } from '../../context/TicTacToeContext';
 
 function Timer() {
-    const formatTime = (time) => {
-        const getSeconds = `0${time % 60}`.slice(-2);
-        const minutes = Math.floor(time / 60);
-        const getMinutes = `0${minutes % 60}`.slice(-2);
 
-        return `${getMinutes}:${getSeconds}`;
-    };
-
-    const {timer} = useTicTacToe();
+    const {timer, formatTime} = useTicTacToe();
 
     return (
         <div className=" flex flex-col items-center justify-center border-2 max-w-48 border-white rounded-lg flex-grow">

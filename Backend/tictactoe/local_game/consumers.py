@@ -18,14 +18,13 @@ class TicTacToeLocalConsumer(AsyncWebsocketConsumer):
         self.start_countdown_task = None
         self.game_countdown_task = None
         self.start_countdown_value = 10
-        self.start = False
 
     async def connect(self):
         self.game_id = self.scope['url_route']['kwargs']['game_id']
         await self.initialize_game()
         await self.accept()
         await self.send_game_update()
-        if not self.start:
+        if not self.game.start:
             self.start_countdown_task = asyncio.create_task(self.start_countdown())
 
     async def disconnect(self, close_code):
@@ -54,7 +53,7 @@ class TicTacToeLocalConsumer(AsyncWebsocketConsumer):
             action = data.get('action')
             index = data.get('index')
 
-            if action == 'move' and not self.game.game_over and self.start:
+            if action == 'move' and not self.game.game_over and self.game.start:
                 move_made = self.game.make_move(index)
                 if move_made:
                     self.current_player = 'O' if self.current_player == 'X' else 'X'
@@ -73,7 +72,8 @@ class TicTacToeLocalConsumer(AsyncWebsocketConsumer):
             'score_x': self.game.score_x,
             'score_o': self.game.score_o,
             'countdown': self.game.countdown_value,
-            'current_turn': self.current_player
+            'current_turn': self.current_player,
+            'draw': self.game.draw
         }))
     
     async def send_start_countdown_update(self):
@@ -110,7 +110,7 @@ class TicTacToeLocalConsumer(AsyncWebsocketConsumer):
                 await asyncio.sleep(1)
                 self.start_countdown_value -= 1
             await self.save_game_start()
-            self.start = True
+            self.game.start = True
             self.game_countdown_task = asyncio.create_task(self.game_countdown())
         except asyncio.CancelledError:
             await self.send_error(f"An error occurred: {str(e)}")
@@ -129,6 +129,8 @@ class TicTacToeLocalConsumer(AsyncWebsocketConsumer):
                 await self.send_game_update()
             if self.game.countdown_value == 0 or self.game.game_over:
                 self.game.check_game_over()
+                if self.game.final_winner == None:
+                    self.game.draw = True
                 await self.send_game_update()
                 await self.save_game_result()
         except asyncio.CancelledError:

@@ -13,9 +13,10 @@ class playerSerializers(serializers.ModelSerializer):
             'last_time',
             'rank',
             'xp',
-            'wins',
-            'loses',
-            'draws',
+            'wins_p',
+            'loses_p',
+            'wins_t',
+            'loses_t',
         ]
 
 class TourInvitesSerializers(serializers.ModelSerializer):

@@ -1,16 +1,17 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, memo, useEffect, useRef, useCallback, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Stage, OrbitControls, Sky, Line } from '@react-three/drei';
 import { Physics, RigidBody } from '@react-three/rapier';
 import { useTicTacToe } from '../../context/TicTacToeContext';
 import { useAuth } from '../../context/AuthContext';
-import { useLocation } from 'react-router';
-import Win from './Win';
+import { useLocation, useNavigate } from 'react-router';
+import Win from './win';
 import StartModal from './StartModal'
 import ReconnectModal from './ReconnectModal'
+import Draw from './Draw';
 
-const WS_ONLINE_URL = 'ws://localhost:8000/ws/game/tictactoe';
-const WS_OFFLINE_URL = 'ws://localhost:8000/ws/game/tictactoe/offline';
+const WS_ONLINE_URL =  'ws://localhost:8000/ws/game/tictactoe';
+const WS_OFFLINE_URL =  'ws://localhost:8000/ws/game/tictactoe/offline';
 
 const GRID_POSITIONS = [
     [-1, 1, 0], [0, 1, 0], [1, 1, 0],
@@ -25,26 +26,36 @@ const Game = () => {
     const [showReconnectModal, setShowReconnectModal] = useState(false);
     const [showStartModal, setShowStartModal] = useState(false);
     const [startCountdownValue, setStartCountdownValue] = useState(null);
-    const [currentTurn, setCurrentTurn] = useState('X');
+    const [currentTurn, setCurrentTurn] = useState(null);
+    const [draw, setDraw] = useState(false);
 
     const { setScores, setTimer, setPlayerRole, setReconnectTimer, playerRole } = useTicTacToe();
     const { tokens } = useAuth();
     const location = useLocation();
+    const navigate = useNavigate();
     const socketRef = useRef(null);
     const startModalShownRef = useRef(false);
-    const connectWebSocket = useCallback(() => {
-        const url = `${location.state?.isonnline == true ? WS_ONLINE_URL : WS_OFFLINE_URL}/${location.state?.gameid}/?token=${tokens.access}`;
-        socketRef.current = new WebSocket(url);
+    const gameId = location.state?.gameid;
+    const isOnline = location.state?.isonline;
 
+    const connectWebSocket = useCallback(() => {
+        if (!gameId) {
+            console.error('Game ID is undefined or null');
+            navigate('/game');
+            return;
+        }
+
+        const url = `${isOnline == true ? WS_ONLINE_URL : WS_OFFLINE_URL}/${gameId}/?token=${tokens?.access}`;
+
+        socketRef.current = new WebSocket(url);
         socketRef.current.onopen = () => console.log('WebSocket connected');
         socketRef.current.onerror = (error) => console.error('WebSocket error: ', error);
         socketRef.current.onclose = () => console.log('WebSocket disconnected');
-
         socketRef.current.onmessage = (event) => {
             const data = JSON.parse(event.data);
             handleWebSocketMessage(data);
         };
-    }, [location.state?.gameid, tokens.access]);
+    }, [gameId, tokens?.access]);
 
     useEffect(() => {
         connectWebSocket();
@@ -55,9 +66,15 @@ const Game = () => {
     }, [connectWebSocket]);
 
     const handleWebSocketMessage = useCallback((data) => {
+        console.log(data)
+
         if (data.state) setBoard(data.state);
         if (data.final_winner) setFinalWinner(data.final_winner);
-        if (data.reconnect_countdown !== undefined) {
+        if (data.draw !== undefined) setDraw(data.draw);
+        if (data.reconnect_countdown === undefined || data.reconnect_countdown === 0)
+            setShowReconnectModal(false);
+        else
+        {
             setShowReconnectModal(true);
             setReconnectTimer(data.reconnect_countdown);
         }
@@ -76,7 +93,7 @@ const Game = () => {
         if (data.winner_line) setWinnerLine(data.winner_line.map(index => GRID_POSITIONS[index]));
         else setWinnerLine(false);
 
-    }, [setScores, setTimer, setPlayerRole, setReconnectTimer]);
+    }, [setScores, setTimer, setPlayerRole, setReconnectTimer, setCurrentTurn]);
 
     const handleCellClick = useCallback((index) => {
         if (!board[index] && socketRef.current?.readyState === WebSocket.OPEN)
@@ -84,7 +101,8 @@ const Game = () => {
     }, [board]);
 
     const TurnIndicator = () => {
-        if (finalWinner) return null;
+        if (isOnline === false || finalWinner || showStartModal || winnerLine || showReconnectModal)
+                return null;
         const isYourTurn = currentTurn === playerRole;
         return (
             <div className={`absolute top-[3%] left-1/2 tranform -translate-x-1/2 p-2 rounded ${isYourTurn ? 'bg-green-500' : 'bg-red-500'} text-white font-bold`}>
@@ -98,7 +116,7 @@ const Game = () => {
             <Canvas dpr={window.devicePixelRatio} camera={{ fov: 75, position: [0, 0, -6] }}>
                 <Sky mieCoefficient={0.001} mieDirectionalG={6} rayleigh={4} sunPosition={[0, 0, 1]} turbidity={8} />
                 <OrbitControls />
-                <React.Suspense fallback={null}>
+                <Suspense fallback={null}>
                     <ambientLight intensity={0.4} />
                     <pointLight position={[10, 10, 10]} />
                     <Stage contactShadow shadows adjustCamera intensity={1} environment="city">
@@ -108,7 +126,7 @@ const Game = () => {
                             {winnerLine && <WinnerLine line={winnerLine} />}
                         </Physics>
                     </Stage>
-                </React.Suspense>
+                </Suspense>
             </Canvas>
             {finalWinner && <Win final_winner={finalWinner} />}
             {showReconnectModal && <ReconnectModal />}
@@ -119,6 +137,7 @@ const Game = () => {
                 />
             )}
             <TurnIndicator currentTurn={currentTurn} playerRole={playerRole} finalWinner={finalWinner} />
+            {draw && <Draw />}
         </div>
     );
 };
@@ -135,7 +154,7 @@ const GameBoard = () => (
     </>
 );
 
-const GamePieces = React.memo(({ board, handleClick }) => (
+const GamePieces = memo(({ board, handleClick }) => (
     <>
         {GRID_POSITIONS.map((position, index) => (
             <GameCell
@@ -148,7 +167,7 @@ const GamePieces = React.memo(({ board, handleClick }) => (
     </>
 ));
 
-const GameCell = React.memo(({ position, value, onClick }) => (
+const GameCell = memo(({ position, value, onClick }) => (
     value ? (
         value === 'X' ? <MeshX position={position} /> : <MeshO position={position} />
     ) : (

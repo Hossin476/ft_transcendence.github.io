@@ -5,7 +5,7 @@ import moment from 'moment';
 
 function FriendNotification({ notification }) {
 
-    const { socket, username } = useAuth();
+    const { socket } = useAuth();
 
     function accept_friendship() {
         if (socket) {

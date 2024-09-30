@@ -2,9 +2,9 @@ import React from 'react'
 import { TbTournament } from "react-icons/tb";
 
 
-function TourResponseNotification({ t, data }) {
-    const msg = data.message;
-    const response = data.response;
+function TourResponseNotification({ t, socketMessage }) {
+    const msg = socketMessage.message;
+    const response = socketMessage.response;
 
     const bgColor = response === "accepted" ? 'bg-green-200' : 'bg-red-200';
     const textColor = response === "accepted" ? 'text-green-900' : 'text-red-900';
@@ -22,4 +22,4 @@ function TourResponseNotification({ t, data }) {
     )
 }
 
-export default TourResponseNotification
+export default TourResponseNotification;

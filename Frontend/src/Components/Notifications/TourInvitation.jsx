@@ -1,7 +1,6 @@
 import React from 'react'
-import { useAuth } from '../../context/AuthContext'
 
-function TournamentInvitation({ t, data, socket, toast }) {
+function TournamentInvitation({ t, socketMessage, socket, toast }) {
 
     function handle_accept_tour(tour_id) {
         if (socket) {
@@ -29,7 +28,7 @@ function TournamentInvitation({ t, data, socket, toast }) {
                 <div className="flex items-start">
                     <div className="ml-3 flex-1">
                         <p className="mt-1 text-sm text-gray-900">
-                            {data.from} has invited you to a Tournament. Do you accept?
+                            {socketMessage.from} has invited you to a Tournament. Do you accept?
                         </p>
                     </div>
                 </div>
@@ -37,7 +36,7 @@ function TournamentInvitation({ t, data, socket, toast }) {
             <div className="flex border-l border-gray-200">
                 <button
                     onClick={() => {
-                        handle_accept_tour(data.tour_id);
+                        handle_accept_tour(socketMessage.tour_id);
                         toast.dismiss(t.id);
                     }}
                     className="w-full border border-transparent rounded-none rounded-r-lg p-3 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -46,7 +45,7 @@ function TournamentInvitation({ t, data, socket, toast }) {
                 </button>
                 <button
                     onClick={() => {
-                        handle_reject_tour(data.tour_id);
+                        handle_reject_tour(socketMessage.tour_id);
                         toast.dismiss(t.id);
                     }}
                     className="w-full border border-transparent rounded-none rounded-r-lg p-3 flex items-center justify-center text-sm font-medium text-red-600 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-red-500"

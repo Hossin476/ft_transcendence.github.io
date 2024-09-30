@@ -1,8 +1,6 @@
 import React from 'react'
-import { useLocation } from "react-router"
-import { useAuth } from '../../context/AuthContext'
 
-function GameRequest({ t, data, socketMessage, gameType, socket, toast }) {
+function GameRequest({ t, socketMessage, gameType, socket, toast }) {
 
     function handle_accept_game() {
         if (socket) {
@@ -32,13 +30,13 @@ function GameRequest({ t, data, socketMessage, gameType, socket, toast }) {
                     <div className="flex-shrink-0 pt-0.5">
                         <img
                             className="h-10 w-10 rounded-full"
-                            src={`http://localhost:8000${data.from_img}`}
+                            src={`http://localhost:8000${socketMessage.from_img}`}
                             alt=""
                         />
                     </div>
                     <div className="ml-3 flex-1">
                         <p className="mt-1 text-sm text-gray-900">
-                            {data.from} has challenged you to a {data.game_type === "T" ? "TicTacToe" : "PingPong"} game. Do you accept?
+                            {socketMessage.from} has challenged you to a {socketMessage.game_type === "T" ? "TicTacToe" : "PingPong"} game. Do you accept?
                         </p>
                     </div>
                 </div>
@@ -67,4 +65,4 @@ function GameRequest({ t, data, socketMessage, gameType, socket, toast }) {
     )
 }
 
-export default GameRequest
+export default GameRequest;
