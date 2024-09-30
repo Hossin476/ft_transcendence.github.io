@@ -11,6 +11,11 @@ import sys
 
 
 channle_layer = get_channel_layer()
+@database_sync_to_async
+def change_game_state(user, state):
+    user.is_ingame = state
+    user.game_type = 'ping pong' if state else None
+    user.save()
 
 @database_sync_to_async
 def getPlayers(match):
@@ -70,6 +75,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         })
 
         await self.accept()
+        await change_game_state(self.user, True)
 
         await self.channel_layer.group_add(self.game_group_id, self.channel_name)
         if self.game_group_id not in GameConsumer.game_room:
@@ -137,6 +143,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard(self.game_group_id, self.channel_name)
         GameConsumer.user_in_Game_pingpong.remove(self.user)
         cache.set("users_pingpong", GameConsumer.user_in_Game_pingpong)
+        await change_game_state(self.user, False)
         await channle_layer.group_send(f'notification_{self.user.id}', {
             'type': 'game.state',
             'game_type': None,

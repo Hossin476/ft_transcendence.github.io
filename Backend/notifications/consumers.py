@@ -21,7 +21,10 @@ channle_layer = get_channel_layer()
 
 
 
-
+@database_sync_to_async
+def change_online_state(user, state):
+    user.is_online = state
+    user.save()
 @database_sync_to_async
 def create_game_db(sender, receiver, game):
     receiver_obj = CustomUser.objects.get(username=receiver)
@@ -110,6 +113,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         NotificationConsumer.connected_users.append(self.user)
         await self.channel_layer.group_add(self.group_name, self.channel_name)
         cache.set("connected_users", NotificationConsumer.connected_users)
+        await change_online_state(self.user, True)
         table = await self.online_check(True)
         await self.send_each(table)
         await self.accept()
@@ -117,9 +121,9 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         if 'error' in self.scope:
             return
+        await change_online_state(self.user, False)
         table = await self.online_check(False)
         await self.send_each(table)
-        NotificationConsumer.connected_users.remove(self.user)
         cache.set("connected_users", NotificationConsumer.connected_users)
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
@@ -309,41 +313,33 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         await delete_game_request(data['invite_id'])
 
     @database_sync_to_async
-    def online_check(self, state, ingame=False, game_type=None):
-        current_online_users = [*NotificationConsumer.connected_users]
-        current_online_users.remove(self.user)
+    def online_check(self, state, ingame=False, game_type=None, user=None):
         friends = Friendship.objects.select_related('from_user', 'to_user')\
-            .filter(Q(request='A'))
+        .filter(Q(from_user=self.user) | Q(to_user=self.user), request='A')
         users_list = []
         if state is False:
+            NotificationConsumer.connected_users.remove(self.user)
+            if self.user in NotificationConsumer.connected_users:
+                return []
             self.user.last_time = timezone.now()
+            self.user.is_online = False
+            self.user.is_ingame = False
+            self.user.game_type = None
             self.user.save()
         for obj in friends:
-            if self.user != obj.from_user:
+            if self.user != obj.from_user and obj.from_user.is_online:
                 users_list.append(obj.from_user)
-            elif self.user != obj.to_user:
+            elif self.user != obj.to_user and obj.to_user.is_online:
                 users_list.append(obj.to_user)
-        connected_users = cache.get('connected_users')
-        if connected_users is not None and self.user in connected_users:
-            connected_users.remove(self.user)
-        if connected_users is None:
-            connected_users = []
-        online_users = []
-        for obj in users_list:
-            if obj in connected_users:
-                online_users.append(obj)
         data_send = []
+        user_new =  CustomUser.objects.get(username=self.user.username)
+        user_s = playerSerializers(user_new).data
         for obj in users_list:
-            if obj in online_users:
-                user_s = playerSerializers(self.user).data
-                if ingame:
-                    user_s['game_type'] = game_type
                 data_send.append({"receiver": f'notification_{obj.id}', "obj": {
                     'type': "online.state",
                     'user': user_s,
-                    'online': state,
-                    'ingame': ingame,
                 }})
+        print("data send to  font :",data_send)
         return data_send
 
 
@@ -355,7 +351,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     async def game_state(self, event):
         table = []
-        table = await self.online_check(True, event['ingame'], event['game_type'])
+        table = await self.online_check(True, event['ingame'], event['game_type'], self.user)
         await self.send_each(table)
 
     async def event_tournament(self, event):

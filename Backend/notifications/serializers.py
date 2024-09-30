@@ -16,6 +16,9 @@ class playerSerializers(serializers.ModelSerializer):
             'wins',
             'loses',
             'draws',
+            'is_online',
+            'is_ingame',
+            'game_type'
         ]
 
 class TourInvitesSerializers(serializers.ModelSerializer):

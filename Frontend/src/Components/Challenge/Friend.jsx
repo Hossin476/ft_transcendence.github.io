@@ -30,14 +30,14 @@ export default function Friend({ icon = false, gameName, hidden = false, PlayerN
         }, 4000);
     }
 
-    return (<div className={`flex flex-row w-[100%] items-center ${hidden ? 'justify-center' : ''}`}>
-        <img src={"http://localhost" + image} className={`rounded-full lg:w-[52px] lg:h-[52px] object-fit border-[2px] xsm:w-[30px] xsm:h-[30px] ${state ? 'border-green-600' : 'border-red-600'} `} />
-        <div className={`ml-3 flex flex-row justify-between  items-center border-solid ${hidden ? "hidden" : ""} lg:flex xsm:w-[160px] lg:w-[260px]`}>
-            <div className="max-w-[calc(100%-3rem)]">
-                <h3 className='font-medium text-ellipsis overflow-hidden whitespace-nowrap xsm:text-[10px] lg:text-[15px] xsm:w-[50px] lg:w-[100px] font-inter'>{PlayerName}</h3>
-                <p className='text-xs opacity-70 text-ellipsis overflow-hidden whitespace-nowrap font-inter xsm:text-[6px]  lg:text-[10px]'>{state ? "in lobby" : 'palying ' + gameName}</p>
+    return (<div className={`flex flex-row w-[90%] h-[80px] items-center ${hidden ? 'justify-center' : ''}  gap-2`}>
+        <img src={"http://localhost" + image} className={`rounded-full w-[52px] h-[52px] object-fit border-[2px]  ${state ? 'border-green-600' : 'border-red-600'} `} />
+        <div className={` items-center justify-between border-solid lg:flex xsm:${hidden ? "hidden" : "flex"} w-[90%]`}>
+            <div >
+                <h3 className='font-medium text-ellipsis overflow-hidden whitespace-nowrap  text-[24px] font-inter'>{PlayerName}</h3>
+                <p className='text-xs opacity-70 text-ellipsis overflow-hidden whitespace-nowrap font-inter text-[12px]'>{state ? "in lobby" : 'palying ' + gameName}</p>
             </div>
-            {state && (!WaitRequest ? <button onClick={notify}><img src="/png.png" className="w-[19px] h-[19px]" /> </button> : <l-hourglass size="19" bg-opacity="0.1" speed="1.75" color="white" ></l-hourglass>)}
+            {state && (!WaitRequest ? <button onClick={notify}><img src="/png.png" className="w-[30px] h-[30px]" /> </button> : <l-hourglass size="19" bg-opacity="0.1" speed="1.75" color="white" ></l-hourglass>)}
         </div>
     </div>)
 }

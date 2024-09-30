@@ -3,10 +3,12 @@ import Friend from "./Friend";
 import { IoIosArrowUp } from "react-icons/io";
 import { useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { LiaBattleNet } from "react-icons/lia";
+import { FaChevronRight } from "react-icons/fa";
 
 export default function Challenge({ setopen }) {
     const [open, setOpen] = useState(true)
-    const [online_ingame, setChallengeData] = useState(null)
+    const [online_ingame, setChallengeData] = useState(null);
     const {tokens, socket, socketMessage} = useAuth();
     const handleOpen = () => {
         setOpen(!open)
@@ -18,6 +20,7 @@ export default function Challenge({ setopen }) {
             }
         );
         const data = await response.json();
+        console.log(data)
         setChallengeData(data);
     };
 
@@ -29,46 +32,32 @@ export default function Challenge({ setopen }) {
             {
                 const data = socketMessage
                 if (data.type == "online.state" && online_ingame){
-                    if (data.online == false){
-                        const index_lobby = online_ingame.inlobby.findIndex(user => user.username == data.user.username);
-                        const index_game = online_ingame.ingame.findIndex(user => user.username == data.user.username);
-                        setChallengeData((current)=>({inlobby: (index_lobby != -1 ? current.inlobby.slice(index_lobby,index_lobby): current.inlobby)
-                            , ingame:(index_game != -1 ? current.ingame.slice(index_game,index_game) : current.ingame)}))
-                        return
-                    }
-                    else if (data.ingame == false){
-                            const index_game = online_ingame.ingame.findIndex(user => user.username == data.user.username)
-                            const index_lobby = online_ingame.inlobby.findIndex(user => user.username == data.user.username)
-                            setChallengeData((current) => ({ inlobby: (index_lobby != -1 ? [...current.inlobby.slice(index_lobby,index_game), data.user] : [...current.inlobby, data.user]),ingame: (index_game != -1 ? current.ingame.slice(index_game,index_game) : current.ingame ) }));
-                    }else if (data.ingame == true){
-                            const index_lobby = online_ingame.inlobby.findIndex(user => user.username == data.user.username)
-                            const index_game = online_ingame.ingame.findIndex(user => user.username == data.user.username)
-                            setChallengeData((current) => ({ ingame: (index_game != -1 ? [...current.ingame.slice(index_game,index_game), data.user]: [...current.ingame, data.user]),inlobby: (index_lobby != -1 ?current.inlobby.slice(index_lobby, index_lobby) : current.inlobby) }));
-                    }
+                    const finindex = online_ingame.users.findIndex(item => item.id == data.user.id)
+                    if (finindex != -1){
+                        if (data.user.is_online == false)
+                            online_ingame.users.splice(finindex, 1)
+                        else
+                            online_ingame.users[finindex] = data.user
+                        setChallengeData({users: online_ingame.users})
+                    }else
+                        setChallengeData({users: [...online_ingame.users, data.user]})
                 }
+                console.log("new friend change state : ",data)
             }
 
     },[socketMessage])
     return (
-        <div className='bg-secondaryColor  flex-col xsm:h-[70%] lg:h-[80%] text-white items-center rounded-[40px] justify-evenly  right-2  flex  xsm:absolute lg:relative'>
-
-            <h1 className='font-bold lg:text-xl xsm:text-[8px] sm:text-[10px]'> CHALLENGE</h1>
-            <div className='flex  flex-col w-[93%] xsm:gap-2 lg:gap-4 h-[40%]'>
-                <h2 className=' font-medium opacity-90 lg:text-xl xsm:text-[8px] sm:text-[10px]'>in lobby</h2>
-                <div className='  flex flex-col overflow-auto items-center  lg:gap-4 xsm:gap-2'>
-                    {online_ingame && online_ingame.inlobby.map((item, index) => <Friend icon={true} hidden={open} PlayerName={item.username} key={index} image={item.profile_image} />)}
+        <div className={`bg-secondaryColor  flex-col xsm:h-[90%] lg:h-[90%] text-white lg:px-2 right-2 min-w-[60px] flex  xsm:absolute lg:relative space-y-7 xsm:${!open ? 'w-full' : 'w-[1%]'} lg:w-[35%]`}>
+            <div className='flex  gap-2 justify-center items-center py-6  '>
+                <FaChevronRight className={`${open? "rotate-180": "rotate-0"} lg:hidden rounded-full`} onClick={()=>setOpen((current)=> !current)}/>
+                <div className={`w-[80%]  lg:flex gap-2 justify-center xsm:${open ? "hidden": 'flex'}`} >
+                    <LiaBattleNet className={`font-bold text-3xl `}/>
+                    <h1 className={`font-bold text-xl lg:block `}> CHALLENGE</h1>
                 </div>
             </div>
-            <div className="flex w-[90%]  items-center justify-center">
-                <button className={` ${open ? 'rotate-[-90deg]' : 'rotate-[90deg]'} bg-secondaryColor   rounded-full xsm:block lg:hidden  cursor-pointer hover:opacity-70`} onClick={handleOpen}>
-                    <IoIosArrowUp/>
-                </button>
-                <div className="w-[80%]  h-[2px] required bg-gray-400 flex" />
-            </div>
-            <div className='flex  flex-col w-[93%] xsm:gap-2 lg:gap-4 h-[40%]'>
-                <h2 className='text-xl font-medium opacity-90 lg:text-xl xsm:text-[8px] sm:text-[10px]'>In game</h2>
-                <div className=' flex flex-col overflow-auto lg:gap-4 xsm:gap-2 '>
-                {online_ingame && online_ingame.ingame.map((item, index) => <Friend icon={false} hidden={open} PlayerName={item.username} key={index} image={item.profile_image} gameName={item.game_type} />)}
+            <div className='flex  flex-col w-[100%] xsm:gap-2 lg:gap-4 h-[100%] '>
+                <div className='  flex flex-col overflow-auto items-center  lg:gap-4 xsm:gap-2'>
+                    {online_ingame && online_ingame.users.map((item, index) => <Friend icon={!item.is_ingame} hidden={open} PlayerName={item.username} key={index} image={item.profile_image} gameName={item.game_type} />)}
                 </div>
             </div>
         </div>
