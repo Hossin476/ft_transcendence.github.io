@@ -137,7 +137,6 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
             if self.game.winner is not None:
                 asyncio.create_task(self.reset_game())
 
-
         if self.game.start and self.room.tasks['game_countdown'] is None:
             await self.room.start_task('game_countdown', self.game_countdown())
 
@@ -312,22 +311,24 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
         }))
 
     async def handle_reconnect_timeout(self):
-        if self.room.countdown_values['reconnect'] == 0 and self.game.final_winner is None and not self.game.game_over:
-            other_player_role = 'O' if self.player_role == 'X' else 'X'
-            other_player = self.room.players.get(other_player_role)
-            if other_player:
-                self.game.final_winner = other_player_role
-                self.game.game_over = True
-                await self.update_record()
-                await self.send_game_update()
+        async with asyncio.Lock():
+            if self.room.countdown_values['reconnect'] == 0 and self.game.final_winner is None and not self.game.game_over:
+                other_player_role = 'O' if self.player_role == 'X' else 'X'
+                other_player = self.room.players.get(other_player_role)
+                if other_player:
+                    self.game.final_winner = other_player_role
+                    self.game.game_over = True
+                    await self.update_record()
+                    await self.send_game_update()
 
     async def handle_game_end(self):
-        if self.game.countdown_value == 0 or self.game.game_over:
-            self.game.check_game_over()
-            await self.update_record()
-            await self.send_game_update()
-            await self.room.cancel_task('game_countdown')
-            await self.room.cancel_task('reconnect_countdown')
+        async with asyncio.Lock():
+            if self.game.countdown_value == 0 or self.game.game_over:
+                self.game.check_game_over()
+                await self.update_record()
+                await self.send_game_update()
+                await self.room.cancel_task('game_countdown')
+                await self.room.cancel_task('reconnect_countdown')
 
     async def send_error(self, message):
         await self.send(text_data=json.dumps({

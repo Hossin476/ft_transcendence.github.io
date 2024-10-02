@@ -6,8 +6,9 @@ import { Outlet } from "react-router"
 export default function LayoutOne(){
     return (
         <>
-            <div className="flex h-screen overflow-hidden flex-row">
-            <Toaster
+            <div className="flex h-screen bg-primaryColor flex justify-center w-full  flex-row">
+            <div className="w-full  h-screen flex-col flex max-w-[1700px]">
+                <Toaster
                 position="top-right"
                 reverseOrder={false}
                 toastOptions={{
@@ -19,18 +20,17 @@ export default function LayoutOne(){
                     },
                 }}
             />
-                    <div className="w-28  bg-primaryColor  xsm:hidden lg:block text-white ">
-                       <SideBar />
+                    <div className=" text-white xsm:h-12 sm:h-28 ">
+                        <NavBar/>
                     </div>
-                    <div className="flex-auto bg-primaryColor   h-full ">
-                        <div className="   text-white xsm:h-12 sm:h-28 ">
-                            <NavBar/>
-                        </div>
-                        <div className="flex main-wrapper relative" >
+                    <div className=" flex flex-1 main-wrapper overflow-hidden h-full ">
+                        <SideBar />
+                        <div className="flex flex-1  " >
                                 <Outlet/>
                             <BottomBar/>
                         </div>
                     </div>
+                </div>
             </div>
         </>
     )    

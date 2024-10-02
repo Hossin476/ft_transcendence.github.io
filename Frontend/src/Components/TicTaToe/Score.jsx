@@ -5,8 +5,6 @@ import Timer from './Timer';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
-const BASE_URL = 'http://localhost:8000/api';
-
 function Score() {
     const [users, setUsers] = useState({ player1: null, player2: null });
 
@@ -16,6 +14,7 @@ function Score() {
 
     const isOffline = location.state?.isonline === false;
     const gameId = location.state?.gameid;
+    const BASE_URL = 'http://localhost:8000/api';
 
     const fetchData = useCallback(async () => {
         if (!gameId)
@@ -59,7 +58,7 @@ function Score() {
 
         const profileImage = isOffline ? '/user.jpeg' : `${BASE_URL}${playerData.profile_image || ''}`;
         const username = typeof playerData === 'object' ? playerData.username : playerData;
-        const rank = isOffline ? '' : (playerData.rank || '');
+        const rank = isOffline ? '' : (playerData.rank || 1);
 
         return (
             <PlayerComponent

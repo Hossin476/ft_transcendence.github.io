@@ -2,7 +2,7 @@ import React from 'react'
 import { Medal, Crown } from 'lucide-react'
 import { FaMedal } from "react-icons/fa6";
 
-function Card({ children, className = '' }) {
+function Card({ children, className }) {
     return (
         <div className={`rounded-lg border bg-card text-card-foreground shadow-sm ${className}`}>
             {children}
@@ -24,7 +24,6 @@ function Leaders({ leaderboardData }) {
                         <p className="text-sm">Win Rate: {player.win_rate}%</p>
                     </div>
                     {index === 0 ? <Crown className="ml-auto h-8 w-8" /> : index === 1 ? <Medal className="ml-auto h-8 w-8" /> : <FaMedal className="ml-auto h-8 w-8" />}
-                    
                 </Card>
             ))}
         </div>

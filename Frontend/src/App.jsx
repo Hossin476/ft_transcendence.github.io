@@ -19,6 +19,7 @@ import Tour from "./Pages/tour";
 import { GameProvider } from "./context/gameContext";
 import TournamentProvider from "./context/TournamentContext";
 import { ChatProvider } from "./context/ChatContext";
+import Dash from "./Pages/dash";
 // import './server.js'
 function App() {
   return (
@@ -28,8 +29,8 @@ function App() {
           <Route path="login" element={<LoginPage />} />
           <Route element={<PrivateRoute />}>
             <Route element={<LayoutOne />}>
-              <Route index element={<Dashboard />} />
-              <Route path="dashboard" element={<Dashboard />} />
+              <Route index element={<Dash />} />
+              <Route path="dashboard" element={<Dash />} />
               <Route path="managefriends" element={<ManageFriends />} />
               <Route path="settings" element={<Settings />} />
               <Route path="leaderboard" element={<Leaderboard />} />

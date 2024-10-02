@@ -114,10 +114,15 @@ function Started_button({onClick}) {
   );
 
 }
-function LocalButton({onClick}) {
+function LocalButton({onClick,players}){
+
+  let error = false
+  if(players.player1 === '' || players.player1 === '')
+      error = true
   return (
     <div className="start-button_div">
       <div className="empty_start"></div>
+      {error ? <p className="text-red-500"> press done first</p> :''} 
       <button onClick={onClick} className="started-button">STARTed</button>
     </div>
   );
@@ -148,6 +153,7 @@ function LocalPvp({player,setPlayers}) {
         setPlayers((prevState)=>{
            return {...prevState, [player]:name}
           })
+          console.log("DATA RAH DKHLAT")
       }
   }
   return (
@@ -155,7 +161,7 @@ function LocalPvp({player,setPlayers}) {
       <img src={mypic} alt="Avatar" className="avatar-ping" />
       <div className="player-info items-center flex flex-col">
         {
-          edit ? <input className='bg-secondaryColor p-2 outline-none rounded border border-forthColor' type="text" value={name} onChange={handleInpute} /> :<h2>{name}</h2>
+          edit ? <input className='bg-secondaryColor p-2 outline-none rounded border border-forthColor' type="text" value={ name} onChange={handleInpute} /> :<h2>{name}</h2>
         }
         {
           error ? <p className='text-red-500'>invalid name please a valid name</p> : ''
@@ -170,7 +176,7 @@ function LocalPvp({player,setPlayers}) {
   )
 }
 
-function OnlinePvp({isstarted,counter,isstart, pvpUser}) {
+function OnlinePvp({isstarted,counter,isstart}) {
   return (
     <>
       <Mycard />
@@ -196,9 +202,9 @@ const fetchData = async (gameType,players,tokens)=> {
   let url = ''
 
   if(gameType === 'P')
-    url = `http://${import.meta.env.VITE_BACKEND_URL}/api/pingpong/game/pingpong/offline/craete`
+    url = 'http://localhost:8000/pingpong/game/pingpong/offline/craete'
   else
-    url = `http://${import.meta.env.VITE_BACKEND_URL}/api/game/tictactoe/offline/create_local_game`
+    url = 'http://localhost:8000/game/tictactoe/offline/create_local_game'
   const response = await fetch(url,{
     method:"POST",
     headers:{
@@ -211,6 +217,7 @@ const fetchData = async (gameType,players,tokens)=> {
     })
   })
   const data = await response.json()
+  console.log("the data after fetch is ", data)
 
   if(response.ok)
       return data
@@ -221,7 +228,7 @@ function PvpGame({ title}) {
 
   const [isstart, setStart] = React.useState(false);
   const [isstarted, setStarted] = React.useState(false);
-  const [pvpUser,setPvpUser] = useState(null)
+  const [pvpUser,setPvpUser] = useState()
   const [counter,setCounter] = useState(null)
   const [mode,setMode] = useState(true)
   const locations = useLocation()
@@ -241,6 +248,7 @@ function PvpGame({ title}) {
       });
       socket.send(message);
     }
+    console.log(locations)
   }
 
   function stopGame() {
@@ -259,10 +267,12 @@ function PvpGame({ title}) {
 
     let gameType = title === "PING PONG" ? "P" : "T"
 
+    console.log("the players are ", players)
     if(players.player1 === '' || players.player1 === '')
         return
     let type = gameType === "P" ? 'pingpong' : 'tictactoe'
     const data = await fetchData(gameType,players,tokens)
+    console.log("the data is ", data)
     if(data)
       navigate(`/game/${type}/pvpgame/match`, { state: { gameid: data.game_id, isonline:false } })
   }
@@ -272,6 +282,7 @@ function PvpGame({ title}) {
     if(socketMessage && socketMessage.type === 'game.counter')
         setCounter(socketMessage.counter)
     if(socketMessage && socketMessage.type === 'game.player_info') {
+      console.log("print event shit",socketMessage.player)
       setStarted(true);
       setPvpUser(socketMessage.player)
     }
@@ -289,6 +300,7 @@ function PvpGame({ title}) {
       }
     }
   },[])
+  console.log("i guess u r here successfully!",title)
   return (
 
     <div className='bg-primaryColor w-full flex items-center justify-between px-7 relative h-[100%]'>
@@ -309,8 +321,7 @@ function PvpGame({ title}) {
                         </div>
                         <div className="flex w-full items-center px-4 justify-evenly gap-12 h-[90%]">
                           {
-                            !mode ? <> <LocalPvp player={"player1"} setPlayers={setPlayers} /> <LocalPvp player={"player2"} setPlayers={setPlayers} /></>
-                            : <OnlinePvp isstart={isstart} counter={counter} pvpUser={pvpUser} isstarted={isstarted}/>}
+                            !mode ? <> <LocalPvp player={"player1"} setPlayers={setPlayers} /> <LocalPvp player={"player2"} setPlayers={setPlayers} /></> : <OnlinePvp isstart={isstart} counter={counter} isstarted={isstarted}/>}
                         </div>
                     </div>
                       {
@@ -318,7 +329,7 @@ function PvpGame({ title}) {
                           <Started_button />
                         ) : (
                           isstart ? <Matchmaking_button onClick={stopGame} /> : <Start_button onClick={startGame} />
-                        ) :  <LocalButton onClick={creatLocalGame}/>
+                        ) :  <LocalButton players = {players} onClick={creatLocalGame}/>
                       }
                   </div>
                 </div>

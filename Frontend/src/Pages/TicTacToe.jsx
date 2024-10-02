@@ -8,7 +8,7 @@ import { TicTacToeProvider } from '../context/TicTacToeContext';
 const TicTacToe = () => {
 
     return (
-        <div className="container_tournament bg-primaryColor w-full h-full flex flex-col items-center ">
+        <div className="bg-primaryColor w-full h-full flex flex-col items-center ">
             <TicTacToeProvider>
                 <Header />
                 <div className="flex justify-evenly items-center w-11/12 h-full relative">

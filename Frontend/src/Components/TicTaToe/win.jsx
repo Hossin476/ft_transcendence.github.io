@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTicTacToe } from "../../context/TicTacToeContext";
 import { useAuth } from '../../context/AuthContext';
@@ -16,36 +16,39 @@ const Win = ({ final_winner }) => {
     const gameId = location.state?.gameid;
     const BASE_URL = 'http://localhost:8000/api';
 
+    const fetchGameData = useCallback(async () => {
+        if (!gameId) 
+            return;
+
+        const fetchUrl = `${BASE_URL}/${isOffline ? 'offline_winner_data' : 'winner_data'}/${gameId}`;
+
+        try {
+            const response = await fetch(fetchUrl, {
+                headers: {
+                    "Authorization": `JWT ${tokens.access}`,
+                    "Content-Type": "application/json"
+                }
+            });
+
+            if (!response.ok)
+                throw new Error(`HTTP error! status: ${response.status}`);
+
+            const data = await response.json();
+            setGameData(data);
+        } catch (error) {
+            console.error('Fetch failed: ', error);
+        }
+    }, [gameId, isOffline, tokens.access])
+
     useEffect(() => {
-        const fetchGameData = async () => {
-            if (!gameId) {
-                console.error('Game ID is undefined or null');
-                navigate('/game');
-                return;
-            }
-
-            const fetchUrl = `${BASE_URL}/${isOffline ? 'offline_winner_data' : 'winner_data'}/${gameId}`;
-
-            try {
-                const response = await fetch(fetchUrl, {
-                    headers: {
-                        "Authorization": `JWT ${tokens.access}`,
-                        "Content-Type": "application/json"
-                    }
-                });
-
-                if (!response.ok)
-                    throw new Error(`HTTP error! status: ${response.status}`);
-
-                const data = await response.json();
-                setGameData(data);
-            } catch (error) {
-                console.error('Fetch failed: ', error);
-            }
-        };
+        if (!gameId) {
+            console.error('Game ID is undefined or null');
+            navigate('/game');
+            return;
+        }
 
         fetchGameData();
-    }, [gameId, tokens.access, navigate, isOffline]);
+    }, [gameId, tokens.access, navigate, isOffline, fetchGameData]);
 
     if (!gameData) return null;
 

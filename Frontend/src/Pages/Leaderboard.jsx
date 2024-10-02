@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import Leaders from '../Components/Leaderboard/Leaders'
 import { useAuth } from '../context/AuthContext'
 import FullLeaderboard from '../Components/Leaderboard/FullLeaderboard'
@@ -8,29 +8,32 @@ export default function Leaderboard() {
   const [activeGame, setActiveGame] = useState('Tic Tac Toe')
   const [leaderboardData, setLeaderboardData] = useState([])
   const { tokens } = useAuth();
+  const BASE_URL = 'http://localhost:8000/api/notification/leaderboard';
+
+  const fetchData = useCallback(async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/?game=${activeGame}`, {
+        headers: {
+          "Authorization": "JWT " + tokens.access,
+          "Content-Type": "application/json"
+        }
+      });
+
+      if (!response.ok)
+        throw new Error(`HTTP error! status: ${response.status}`);
+
+      const data = await response.json();
+      setLeaderboardData(data);
+
+    } catch (error) {
+      console.error('Fetch failed: ', error);
+    }
+  }, [activeGame, tokens.access])
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch(`http://localhost:8000/api/notification/leaderboard/?game=${activeGame}`, {
-          headers: {
-            "Authorization": "JWT " + tokens.access,
-            "Content-Type": "application/json"
-          }
-        });
 
-        if (!response.ok)
-          throw new Error(`HTTP error! status: ${response.status}`);
-
-        const data = await response.json();
-        setLeaderboardData(data);
-
-      } catch (error) {
-        console.error('Fetch failed: ', error);
-      }
-    }
     fetchData();
-  }, [activeGame, tokens?.access])
+  }, [activeGame, tokens?.access,fetchData])
 
   return (
     <div className="bg-primaryColor w-full grid grid-rows-1 justify-items-center items-center">
