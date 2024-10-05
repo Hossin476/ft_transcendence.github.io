@@ -86,8 +86,8 @@ export default function PlayerCharts() {
                 }}
                 >
                 <CartesianGrid strokeDasharray="2 2" />
-                <XAxis dataKey="name" />
-                <YAxis />
+                {/* <XAxis dataKey="name" />
+                <YAxis /> */}
                 <Tooltip />
                 <Legend />
                 <Bar dataKey="pv" stackId="b" fill="#3F2D44" />

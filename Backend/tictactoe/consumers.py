@@ -141,7 +141,7 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
             await self.room.start_task('game_countdown', self.game_countdown())
 
     async def disconnect(self, close_code):
-        if not self.user or not self.game_id:
+        if not self.user or not self.game_id or self.scope.get('error'):
             return
 
         try:

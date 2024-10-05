@@ -51,7 +51,7 @@ function Score() {
         }
 
         fetchData();
-    }, [gameId, fetchData, navigate]);
+    }, [fetchData, navigate]);
 
     const renderPlayer = (playerData, PlayerComponent) => {
         if (!playerData) return null;

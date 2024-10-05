@@ -33,7 +33,7 @@ export default function Leaderboard() {
   useEffect(() => {
 
     fetchData();
-  }, [activeGame, tokens?.access,fetchData])
+  }, [fetchData])
 
   return (
     <div className="bg-primaryColor w-full grid grid-rows-1 justify-items-center items-center">
