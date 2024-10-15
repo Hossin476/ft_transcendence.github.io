@@ -6,12 +6,6 @@ import { useAuth } from "../../context/AuthContext";
 import ChatContext from "../../context/ChatContext";
 import {debounce} from 'lodash'
 
-
-function updateconversation() {
-
-}
-
-
 const SendMessage = () => {
 
   const [message,setMessages] = useState("")
@@ -53,9 +47,14 @@ const SendMessage = () => {
     setMessages(e.target.value)
     handleTyping()
     if (e.key === "Enter") {
-      setTyping({typing:false , timer:null})
+      // const NewTimer = setTimeout(() => {
+      //   setTyping({ typing: false, timer: null, sender: user.user_id })
+      // }, 0)
+      // setTyping(prev => ({ ...prev, timer: NewTimer }))
+      // console.log("typing", typing);
       handleMessage()
       handlecount()
+
     }
   }
 

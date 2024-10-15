@@ -2,6 +2,7 @@ import FriendsBar from "../Components/Dashboard/FriendsBar"
 import Acheivements from "../Components/Dashboard/Acheivements"
 import ProfileInfo from "../Components/Dashboard/ProfileInfo"
 import MatchHistory from "../Components/Dashboard/MatchHistory"
+
 export default function Dashboard() {
     return (
         <div className="text-white flex    flex-1">

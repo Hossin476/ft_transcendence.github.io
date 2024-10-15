@@ -12,6 +12,7 @@ export const ChatProvider = ({children})=> {
     const [seen ,setSeen] = useState()
     const [typing,setTyping] = useState(false)
     const [count, setCount] = useState([])
+
     let values = {
         currantUser:currantUser,
         conversation:conversation,

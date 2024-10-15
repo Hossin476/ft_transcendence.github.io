@@ -96,6 +96,7 @@ export default function ChatList() {
   }, [search, conversation]);
 
   return useMemo(() => {
+    // console.log("conv", conversation);0
     return (
       <div
         className={`xsm:${
@@ -115,7 +116,7 @@ export default function ChatList() {
           </div>
         </div>
         <h3 className="hidden lg:block text-xl text-white mt-5 ml-7">
-          Last chats
+          { search ? "Contacts" : "Last chats" }
         </h3>
         <section className="h-5/6 text-white mt-10 lg:mt-5">
           <div className="text-xs h-5/6 block items-center overflow-y-scroll">
@@ -139,5 +140,5 @@ export default function ChatList() {
         </section>
       </div>
     );
-  }, [filterchats, selectedChat, currantUser]);
+  }, [filterchats, selectedChat, currantUser, conversation]);
 }

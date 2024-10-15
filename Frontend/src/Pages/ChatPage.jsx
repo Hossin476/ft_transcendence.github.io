@@ -9,14 +9,13 @@ import ChatContext, { ChatProvider } from '../context/ChatContext';
 
 function handleDirectMessaging({ convo, sender, receiver }, currentContact, user, setMessages) {
     const { message, friendship } = convo
-    const { user:chatUser } = currentContact
+    const { user:chatUser } = currentContact || {}
     const result = (sender == user.user_id && receiver == chatUser.id)
-    const resultTwo = (sender == chatUser.id && receiver == user.user_id)
+    const resultTwo = (sender == chatUser?.id && receiver == user?.user_id)
 
     if (result || resultTwo) {
         setMessages((prevMessages) => [...prevMessages, message])
     }
-
 }
 
 function handleTyping(typing, setTyping, sender) {
@@ -59,9 +58,9 @@ const ChatPage = () => {
             (chatsocket.onmessage = (e) => {
                 const data = JSON.parse(e.data)
                 const { type,reciever, sender } = data.event
+                // console.log("data", data)
                 if (type === "chat.message") {
                     setSeen(()=>false)
-                    console.log("message", data.event)
                     handleDirectMessaging(data.event, currantUser, user, setMessages)
                     updateconversation(data.event, conversation, setConversation)
                 }

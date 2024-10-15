@@ -17,6 +17,7 @@ import { AuthProvider } from "./context/AuthContext";
 import PrivateRoute from "./utils/privateRoute";
 import NotificationModal from "./Components/Notifications/NotificationModal";
 import { ChatProvider } from "./context/ChatContext";
+import Profile from "./Pages/Profile";
 // import './server.js'
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="managefriends" element={<ManageFriends />} />
               <Route path="settings" element={<Settings />} />
+              <Route path="profile" element={<Profile />} />
               <Route path="leaderboard" element={<Leaderboard />} />
               <Route path="chats" element={<Chat />}/>
               <Route path="chat" element={<ChatProvider><ChatPage /></ChatProvider> } />
