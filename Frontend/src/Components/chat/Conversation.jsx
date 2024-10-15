@@ -101,7 +101,13 @@ const Conversation = () => {
               <div className={`w-fit rounded-xl  ${conv.sendId === user.user_id ? 'self-end bg-linkColor  border-forthColor' : 'self-start bg-gray-400  border-linkColor'} border-[2px]  relative`}>
                 <div 
                     className={` pt-2 w-fit  px-5 p-2 flex items-center `}>
-                    <p className="text-gray-600">{conv.content}</p>
+                    <p className="text-gray-600 whitespace-pre-wrap break-words ">
+                      {
+                        conv.content.includes(' ')
+                        ? conv.content.match(/\S+(\s+\S+){0,20}/g)?.join('\n')
+                        : conv.content.match(/.{1,60}/g)?.join('\n')
+                      }
+                      </p>
                 </div>
                 <p style={{fontSize: '10px'}} className={`absolute right-2  opacity-60`}>{getFormatedDate(conv.created_at)}</p>
               </div>

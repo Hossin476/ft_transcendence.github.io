@@ -40,7 +40,9 @@ export default function FriendChat({ contacts, handleOnClick, selected }) {
           <div>
             <p className="text-base">{contacts.user.username}</p>
             <p className="text-sm font-thin opacity-70">
-              {contacts.last_msg.content}
+              {
+                (contacts.last_msg.content.length > 30) ? contacts.last_msg.content.slice(0, 30) + "..." : contacts.last_msg.content
+              }
             </p>
           </div>
         </div>
