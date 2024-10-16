@@ -264,7 +264,6 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
         if not self.game_record or self.game_record.winner:
             return
         try:
-            with transaction.atomic():
                 self.game_record.score_x = self.game.x_score
                 self.game_record.score_o = self.game.o_score
                 if self.game.final_winner and not self.game_record.winner:
@@ -281,8 +280,8 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
                         loser.loses_t += 1
                         loser.save()
                 self.game_record.save()
-        except IntegrityError:
-            pass
+        except Exception as e:
+            self.send_error(f"An error occurred! ")
 
     async def send_game_state_notification(self, ingame):
         await channel_layer.group_send(f'notification_{self.user.id}', {

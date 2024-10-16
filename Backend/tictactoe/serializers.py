@@ -1,6 +1,6 @@
 from .models import OnlineGameModel
 from rest_framework import serializers
-from users.serializers import  AppUserSerializer
+from users.serializers import  AppUserSerializer, MatchUserSerializer
 from users.models import CustomUser
 
 

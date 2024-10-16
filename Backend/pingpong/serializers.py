@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from .models import GameOnline, GameOffline
 from notifications.serializers import playerSerializers
+from users.serializers import MatchUserSerializer
+
 class  GameOnlineSerializer(serializers.ModelSerializer):
     player1     = playerSerializers()
     player2     = playerSerializers()

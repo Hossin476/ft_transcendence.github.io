@@ -20,7 +20,6 @@ const styles = {
 }
 
 export default function Statistics({user}) {
-    const progress = 20; // 75%
     const circumference = 2 * Math.PI * 45;
     const dashOffset = circumference - (user.win_rate / 100 * circumference);
     return (
