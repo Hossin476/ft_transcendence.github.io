@@ -101,32 +101,32 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
             await self.send_game_update()
             await self.handle_player_connection()
         except Exception as e:
+            await self.send_error(f"An error occurred: {str(e)}")
             await self.close()
             return
 
     async def initialize_game_and_room(self):
-        async with asyncio.Lock():
-            self.room = self.rooms.get(self.game_id)
-            self.game = self.games.get(self.game_id)
+        self.room = self.rooms.get(self.game_id)
+        self.game = self.games.get(self.game_id)
 
-            if not self.room:
-                self.room = Room()
-                self.rooms[self.game_id] = self.room
+        if not self.room:
+            self.room = Room()
+            self.rooms[self.game_id] = self.room
 
-            if not self.game:
-                self.game = TicTacToe()
-                self.games[self.game_id] = self.game
+        if not self.game:
+            self.game = TicTacToe()
+            self.games[self.game_id] = self.game
 
-            self.room_group_name = f"game_{self.game_id}"
-            self.player_role = await self.room.add_player(self.user)
+        self.room_group_name = f"game_{self.game_id}"
+        self.player_role = await self.room.add_player(self.user)
 
-            if self.player_role is None:
-                raise ValueError("Room is full")
+        if self.player_role is None:
+            raise ValueError("Room is full")
 
-            await self.send_game_state_notification(True)
-            await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+        await self.send_game_state_notification(True)
+        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
 
-            self.game_record = await self.get_game_record()
+        self.game_record = await self.get_game_record()
 
     async def handle_player_connection(self):
         if self.room.are_both_players_present() and not self.game.start:
@@ -150,7 +150,7 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
             await self.handle_player_disconnection()
             await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
         except Exception as e:
-            pass
+            await self.send_error(f"An error occurred: {str(e)}")
 
     async def handle_player_disconnection(self):
         if not self.room.are_both_players_present() and not self.game.game_over and self.game.start and self.game.final_winner is None:
@@ -191,7 +191,7 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
                 await self.send_reconnect_update()
             await self.handle_reconnect_timeout()
         except asyncio.CancelledError:
-            pass
+            await self.send_error(f"An error occurred! ")
 
     async def start_countdown(self):
         try:
@@ -203,7 +203,7 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
             await self.room.start_task('game_countdown', self.game_countdown())
             self.game.start = True
         except asyncio.CancelledError:
-            pass
+            await self.send_error(f"An error occurred! ")
 
     async def game_countdown(self):
         try:
@@ -213,13 +213,16 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
                 self.game.countdown_value -= 1
             await self.handle_game_end()
         except asyncio.CancelledError:
-            pass
+            await self.send_error(f"An error occurred! ")
 
     async def reset_game(self):
-        await asyncio.sleep(3)
-        if not self.room.tasks['reconnect_countdown']:
-            self.game.reset_game()
-            await self.send_game_update(reset=True)
+        try:
+            await asyncio.sleep(3)
+            if not self.room.tasks['reconnect_countdown']:
+                self.game.reset_game()
+                await self.send_game_update(reset=True)
+        except asyncio.CancelledError:
+            await self.send_error(f"An error occurred! ")
 
     async def send_game_update(self, reset=False):
         await self.channel_layer.group_send(self.room_group_name, {

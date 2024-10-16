@@ -13,6 +13,7 @@ function ReconnectNotification() {
       })
       socket.send(message);
     }
+    setShow(false);
   }
 
   return show ? (
