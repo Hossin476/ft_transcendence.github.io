@@ -1,5 +1,6 @@
 import {BarChart,Bar,ResponsiveContainer,CartesianGrid,XAxis,YAxis,Tooltip,Legend} from 'recharts'
-
+import {useEffect, useState} from 'react'
+import { useAuth } from '../../context/AuthContext';
 
 const data = [
     {
@@ -70,14 +71,40 @@ const data = [
     },
   ];
 
+
+const getChartData = async (tokens)=> {
+   const response = await fetch("http://localhost/api/users/chart_data/",{
+    method:"GET",
+    headers: {
+      'Authorization' : "JWT " + tokens.access,
+      "Content-Type" : "application/json"
+    }
+   })
+   let data = await response.json()
+   if(response.ok)
+      return data
+    return null
+}
+
 export default function PlayerCharts() {
+
+  const {tokens} = useAuth()
+  const [chartData,setChatData] = useState(null)
+    useEffect(()=>{
+      const fetchData = async()=>{
+        let data = await getChartData(tokens)
+        setChatData(()=>data)
+      }
+      fetchData()
+    },[])
+    console.log(chartData)
     return (
         <div className="block w-full mb-4 md:mt-4 h-[30%] bg-secondaryColor rounded">
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                 width={500}
                 height={500}
-                data={data}
+                data={chartData}
                 margin={{
                     top: 20,
                     right: 30,
@@ -85,13 +112,13 @@ export default function PlayerCharts() {
                     bottom: 5,
                 }}
                 >
-                <CartesianGrid strokeDasharray="2 2" />
-                {/* <XAxis dataKey="name" />
-                <YAxis /> */}
+                {/* <CartesianGrid strokeDasharray="2 2" /> */}
+                <XAxis dataKey="date" />
+                <YAxis dataKey="total_games" />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="pv" stackId="b" fill="#3F2D44" />
-                <Bar dataKey="uv" stackId="b" fill="#C77DFF" />
+                <Bar dataKey="total_games"  fill="#3F2D44" />
+                <Bar dataKey="total_wins"  fill="#C77DFF" />
                 </BarChart>
             </ResponsiveContainer>
         </div>

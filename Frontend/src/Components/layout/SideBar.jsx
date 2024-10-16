@@ -19,7 +19,7 @@ export default function SideBar()
 
     }
     return (
-        <div className="xsm:hidden lg:flex   lg:flex-col justify-between h-screen pb-8 items-center">
+        <div className="xsm:hidden lg:flex px-2 rounded bg-secondaryColor lg:flex-col justify-between pb-2 my-2   items-center">
             <div className=" py-12 h-28">
                 <h1 className="text-2xl font-normal ">PONGY</h1>
             </div>

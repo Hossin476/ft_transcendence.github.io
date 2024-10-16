@@ -238,6 +238,7 @@ function PvpGame({ title}) {
     player1:'',
     player2:''
   })
+  const gameType = title === "PING PONG" ? "P" : "T"
   function startGame() {
     let gameType = title === "PING PONG" ? "P" : "T"
     setStart(true);
@@ -265,7 +266,7 @@ function PvpGame({ title}) {
 
   async function creatLocalGame() {
 
-    let gameType = title === "PING PONG" ? "P" : "T"
+  const gameType = title === "PING PONG" ? "P" : "T"
 
     console.log("the players are ", players)
     if(players.player1 === '' || players.player1 === '')
@@ -334,7 +335,7 @@ function PvpGame({ title}) {
                   </div>
                 </div>
             </div>
-            <Challenge/>
+            <Challenge gameType={gameType}/>
         </div>
   );
 };

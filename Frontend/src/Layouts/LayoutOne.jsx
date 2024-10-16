@@ -23,9 +23,9 @@ export default function LayoutOne(){
                     <div className=" text-white xsm:h-12 sm:h-28 ">
                         <NavBar/>
                     </div>
-                    <div className=" flex flex-1 main-wrapper overflow-hidden h-full ">
+                    <div className=" flex flex-1 main-wrapper  h-full ">
                         <SideBar />
-                        <div className="flex flex-1  " >
+                        <div className="flex flex-1" >
                                 <Outlet/>
                             <BottomBar/>
                         </div>

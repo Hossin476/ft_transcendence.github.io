@@ -29,6 +29,7 @@ urlpatterns = [
         path('pingpong/', include('pingpong.urls')),
         path('tournament/',include('tournament.urls')),
         path('chat/', include('chat.urls')),
+        path('users/', include('users.urls')),
     ])),
 ]
 

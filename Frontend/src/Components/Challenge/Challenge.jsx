@@ -6,7 +6,7 @@ import { useAuth } from "../../context/AuthContext";
 import { LiaBattleNet } from "react-icons/lia";
 import { FaChevronRight } from "react-icons/fa";
 
-export default function Challenge({ setopen }) {
+export default function Challenge({ setopen, gameType }) {
     const [open, setOpen] = useState(true)
     const [online_ingame, setChallengeData] = useState(null);
     const {tokens, socket, socketMessage} = useAuth();
@@ -57,7 +57,7 @@ export default function Challenge({ setopen }) {
             </div>
             <div className='flex  flex-col w-[100%] xsm:gap-2 lg:gap-4 h-[100%] '>
                 <div className='  flex flex-col overflow-auto items-center  lg:gap-4 xsm:gap-2'>
-                    {online_ingame && online_ingame.users?.map((item, index) => <Friend icon={!item.is_ingame} hidden={open} PlayerName={item.username} key={index} image={item.profile_image} gameName={item.game_type} />)}
+                    {online_ingame && online_ingame.users?.map((item, index) => <Friend gameType={gameType} icon={!item.is_ingame} hidden={open} PlayerName={item.username} key={index} image={item.profile_image} gameName={item.game_type} />)}
                 </div>
             </div>
         </div>

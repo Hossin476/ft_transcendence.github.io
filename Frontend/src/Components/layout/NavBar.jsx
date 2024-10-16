@@ -40,7 +40,7 @@ export default function NavBar() {
     }, []);
 
     return (
-        <div className="xsm:py-4 flex xsm:h-full items-center justify-between lg:justify-end relative">
+        <div className="xsm:py-4 flex bg-secondaryColor rounded xsm:h-full items-center justify-between lg:justify-end relative">
             <div className="lg:hidden sm:pl-12 xsm:pl-4">
                 <h1 className="xsm:text-lg text-2xl font-normal">PONGY</h1>
             </div>

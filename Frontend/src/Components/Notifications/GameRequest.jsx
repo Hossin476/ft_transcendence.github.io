@@ -1,13 +1,13 @@
 import React from 'react'
 
-function GameRequest({ t, socketMessage, gameType, socket, toast }) {
+function GameRequest({ t, socketMessage, socket, toast }) {
 
     function handle_accept_game() {
         if (socket) {
             const message = JSON.stringify({
                 type: "accept_game",
                 receiver: socketMessage.from,
-                game: gameType,
+                game: socketMessage.game_type,
                 invite_id: socketMessage.invite_id
             })
             socket.send(message);

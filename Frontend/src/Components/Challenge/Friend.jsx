@@ -1,16 +1,14 @@
 import toast from 'react-hot-toast'
 import 'react-toastify/dist/ReactToastify.css';
-
 import 'ldrs/hourglass'
-import { useEffect, useState } from 'react';
+import {  useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { useLocation } from 'react-router'
 
-export default function Friend({ icon = false, gameName, hidden = false, PlayerName, image }) {
+export default function Friend({ gameType, icon = false, gameName, hidden = false, PlayerName, image }) {
     const [WaitRequest, setwaitRequest] = useState(false)
     const [state, setState] = useState(icon)
     const { socket } = useAuth();
-    const gameType = location.pathname.split('/')[2] === "tictactoe" ? 'T' : 'P';
+
     const notify = () => {
         if (socket && socket.readyState === WebSocket.OPEN) {
 

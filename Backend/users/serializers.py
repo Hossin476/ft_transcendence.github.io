@@ -11,3 +11,8 @@ class AppUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['id', 'username', 'email', 'date_joined']
+        
+class MatchUserSerializer (serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'username', 'profile_image',]
