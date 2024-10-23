@@ -41,15 +41,32 @@ class Friendship(models.Model):
         ('B', "BLOCKED"),
         ('A', "ACTIVE")
     ]
+    BLOCK_STATE = [
+        ('F', "from_user"),
+        ('T', "to_user"),
+        ('N', "None")
+    ]
     request         = models.CharField(max_length=1, choices=REQUEST_STATE, default='P')
     active          = models.CharField(max_length=1, choices=ACTIVE_STATE, default='A')
+    block_user      = models.CharField(max_length = 1, choices=BLOCK_STATE, default='N')
     from_user       = models.ForeignKey(
         CustomUser,
-        related_name='from_user',
-        on_delete=models.CASCADE
+        related_name    ='from_user',
+        on_delete       =models.CASCADE
     )
     to_user         = models.ForeignKey(
         CustomUser,
         related_name    ='to_user',
         on_delete       =models.CASCADE
     )
+    
+
+class Block(models.Model):
+    BLOCK_STATE = [
+        ("F", "from_user"),
+        ("T", "to_user"),
+        ("N", "None")
+    ]
+    blocker     = models.ForeignKey(CustomUser, on_delete=models.CASCADE,related_name='blocker')
+    blocked     = models.ForeignKey(CustomUser, on_delete=models.CASCADE,related_name='blocked')
+    Block_user  = models.CharField(max_length=1, choices=Friendship.BLOCK_STATE, default='N')

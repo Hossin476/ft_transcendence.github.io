@@ -15,7 +15,6 @@ const Typing_render = () => {
             loop
             autoplay
             style={{width: '100%', height: '100%'}}
-            // duration={1000}     
           />
         </div>
     )
@@ -23,7 +22,7 @@ const Typing_render = () => {
 
 const getMessages = async (chatUser,tokens)=> {
 
-  const respons = await fetch(`http://${import.meta.env.VITE_BACKEND_URL}/api/chat/messages`,{
+  const respons = await fetch(" http://localhost/api/chat/messages",{
       method:"POST",
       headers :{
               'Content-Type':"application/json",
@@ -55,10 +54,8 @@ function getFormatedDate(messageTime) {
 const Conversation = () => {
 
   const {user,tokens,chatsocket} = useAuth()
-  const {currantUser,messages,setMessages,seen,setSeen, typing} = useContext(ChatContext)
+  const {currantUser,messages,setMessages,seen,setSeen, typing,setBlocker,blocker} = useContext(ChatContext)
   const elementRef = useRef(null)
-
-
   
   useEffect(()=> {
     const fetchMessages = async ()=> {
@@ -76,7 +73,6 @@ const Conversation = () => {
   }, [currantUser])
 
   useEffect(()=> {
-    let _message
     let lasts;
 
     if (messages && messages.length > 0) {
@@ -88,7 +84,8 @@ const Conversation = () => {
         JSON.stringify({
           type: "seen_message",
           msg_id: lasts.id,
-          reciever: lasts.sendId === user.user_id ? user.user_id : currantUser.user.id,
+          reciever: currantUser.user.id,
+          friendship: currantUser.id
         })
       )
     }
@@ -100,11 +97,13 @@ const Conversation = () => {
     return (
       <div  className="flex-1 overflow-y-scroll flex flex-col space-y-4 px-4  text-gray-600">
         {messages && messages.map((conv, index) => (
-            <div key={`${index}`} className="w-full  flex flex-col mt-4">
-              <div className={` rounded-xl  ${conv.sendId === user.user_id ? 'self-end bg-linkColor border-forthColor' : 'self-start bg-gray-400 border-linkColor'} border-[2px] w-fit max-w-[50%]  relative`}>
+            <div key={`${index}`} className="w-full   flex flex-col mt-4">
+              <div className={`w-fit rounded-xl  ${conv.sendId === user.user_id ? 'self-end bg-linkColor  border-forthColor' : 'self-start bg-gray-400  border-linkColor'} max-w-[50%]  border-[2px]  relative`}>
                 <div 
-                    className={` pt-2   px-5 p-2 flex items-center `}>
-                    <p className="text-gray-600">{conv.content}</p>
+                    className={` pt-2 w-fit  px-5 p-2 flex items-center `}>
+                    <p className="text-gray-600 break-all text-wrap ">
+                        {conv.content}
+                      </p>
                 </div>
                 <p style={{fontSize: '10px'}} className={`absolute right-2  opacity-60`}>{getFormatedDate(conv.created_at)}</p>
               </div>
@@ -121,7 +120,7 @@ const Conversation = () => {
       </div>
     );
   }
-  ,[messages,currantUser,seen, typing])
+  ,[messages,currantUser,seen, typing,blocker])
 }
 
 export default Conversation;

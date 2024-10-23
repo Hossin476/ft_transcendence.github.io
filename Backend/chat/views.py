@@ -67,7 +67,6 @@ class conversations(generics.ListCreateAPIView):
                     users["user"] = users["from_user"]
                 del users["from_user"]
                 del users["to_user"]
-                print(serialize_convo.data)
             return Response(serialize_convo.data, status.HTTP_200_OK)
        
 

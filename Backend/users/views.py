@@ -14,6 +14,9 @@ from calendar import monthrange
 from django.utils import timezone
 from django.db.models import Q, Count
 from itertools import chain
+from django.http import JsonResponse
+import os
+import requests
 class AppUserViewSet(CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
     queryset = CustomUser.objects.all()
     serilizer_class = AppUserSerializer
@@ -99,3 +102,31 @@ def get_monthly_data(request):
             "total_wins": total_wins
         })
     return Response(chart_data)
+
+url_redirct= "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-e31a7ef548bc4cb598ec33035254d51a9df4790880f1ce4f859655334dc31143&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2Fapi%2Fusers%2Foauth2%2Fintra%2F&response_type=code"
+
+def intra_login(request):
+    pass
+@api_view(['GET'])
+def intra_redirect(request):
+    client_id = os.environ.get('UID')
+    client_secret = os.environ.get('INTRA_SECRET')
+    code = request.GET.get('code')
+    user = {'msg':"Hello", 'code':code}
+    intra_redirect = os.environ.get('INTRA_URL')
+    print("hello nigroooos",client_id, client_secret, code)
+    data = {
+        "client_id": client_id,
+        "cliet_secret": client_secret,
+        "grant_type": "authorization_code",
+        "code": code,
+        "redirect_uri": intra_redirect,
+        "scope": "public"
+    }
+    headers = {
+        "Content-Type": "application/x-www-form-urlencoded",
+    }
+    response = requests.post("https://api.intra.42.fr/oauth/token", data=data, headers=headers)
+    credentiales = response.json()
+    print(credentiales)
+    return Response(user)

@@ -7,7 +7,7 @@ import _ from "lodash";
 import { flattenJSON } from "three/src/animation/AnimationUtils";
 
 const getConversations = async (tokens, user) => {
-  const response = await fetch(`http://${import.meta.env.VITE_BACKEND_URL}/api/chat/conversation`, {
+  const response = await fetch("http://localhost/api/chat/conversation", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -38,7 +38,7 @@ const getConversations = async (tokens, user) => {
 };
 
 export default function ChatList() {
-  const { setCurrentUser, conversation, setConversation, currantUser } =
+  const { setCurrentUser, conversation, setConversation, currantUser,setBlocker } =
     useContext(ChatContext);
   const { messages, setMessages } = useContext(ChatContext);
   const { user, tokens } = useAuth();
@@ -60,6 +60,7 @@ export default function ChatList() {
 
   const handleClick = (contact) => {
     setSelectedChat(() => contact.id);
+    setBlocker(()=>contact.blocker)
     setCurrentUser(contact);
     setTo_0(contact);
   };
@@ -96,6 +97,7 @@ export default function ChatList() {
   }, [search, conversation]);
 
   return useMemo(() => {
+    // console.log("conv", conversation);0
     return (
       <div
         className={`xsm:${
@@ -115,7 +117,7 @@ export default function ChatList() {
           </div>
         </div>
         <h3 className="hidden lg:block text-xl text-white mt-5 ml-7">
-          Last chats
+          { search ? "Contacts" : "Last chats" }
         </h3>
         <section className="h-5/6 text-white mt-10 lg:mt-5">
           <div className="text-xs h-5/6 block items-center overflow-y-scroll">
@@ -139,5 +141,5 @@ export default function ChatList() {
         </section>
       </div>
     );
-  }, [filterchats, selectedChat, currantUser]);
+  }, [filterchats, selectedChat, currantUser, conversation]);
 }
