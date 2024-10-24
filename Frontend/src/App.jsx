@@ -19,6 +19,8 @@ import NotificationModal from "./Components/Notifications/NotificationModal";
 import { ChatProvider } from "./context/ChatContext";
 import Profile from "./Pages/Profile";
 // import './server.js'
+import "./utils/i18n";
+
 function App() {
   return (
     <BrowserRouter>

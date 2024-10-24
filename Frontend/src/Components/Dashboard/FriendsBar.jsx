@@ -1,11 +1,15 @@
 import { AiOutlineUserAdd } from "react-icons/ai";
 import Friend from "./Friend";
+import { useTranslation } from "react-i18next";
+
 export default function FriendsBar() {
+
+    const { t } = useTranslation();
     return (
         <div className="bg-secondaryColor rounded-3xl  xsm:w-12 sm:w-16 xl:w-4/5   h-2/5 xl:h-full xl:p-5">
-            <h3 className=" xsm:hidden xl:block text-center text-2xl">Friends</h3>
+            <h3 className=" xsm:hidden xl:block text-center text-2xl">{t('Friends')}</h3>
                 <div className=" xsm:hidden  xl:flex xl:px-4 xl:pt-4 xl:justify-between xl:center">
-                    <p className="text-2xl">Online</p>
+                    <p className="text-2xl">{t('Online')}</p>
                     <a  className="text-xl  self-center" href=""><AiOutlineUserAdd /></a>
                 </div>
             <div className=" xsm:1/5 xsm:h-1/3 sm:h-2/5 pt-4 xsm:px-1 xl:px-4">
