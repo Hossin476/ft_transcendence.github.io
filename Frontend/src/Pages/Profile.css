@@ -1,6 +1,6 @@
 .holder_all {
-    display: flex;
-    /* flex-direction: column; */
+    /* display: flex; */
+    flex-direction: column;
     align-items: center;
     position: fixed;
     top: 50%;
