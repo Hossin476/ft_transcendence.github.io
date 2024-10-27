@@ -1,12 +1,21 @@
 import React from "react";
-import "./Profile.css";
-import FriendsBar from "../Components/Dashboard/FriendsBar";
-import MatchHistory from "../Components/Dashboard/MatchHistory";
 import { RiFileCopy2Line } from "react-icons/ri";
-import imgProfle from "/public/avatar/sbzizal.jpeg";
+import imgProfile from "/public/avatar/sbzizal.jpeg";
 import imgBanner from "/public/cover.jpg";
+import imgYns from "/public/lshail.jpeg";
+import { MdBlock } from "react-icons/md";
+import { BsChatDotsFill } from "react-icons/bs";
+import { IoPersonAdd } from "react-icons/io5";
+import { IoPersonRemove } from "react-icons/io5";
+import { CgUnblock } from "react-icons/cg";
+import { AiOutlineUserAdd } from "react-icons/ai";
+// import Friend from "../Components/Dashboard/Friend";
 
 function Profile_info() {
+
+  const [IsFriend, setIsFriend] = React.useState(false);
+  const [IsBlocked, setIsBlocked] = React.useState(false);
+
   return (
     <div className="bg-secondaryColor flex flex-col rounded-3xl md:h-96 xsm:h-96 gap-4 overflow-hidden">
       {/* Banner Section with Overlapping Profile */}
@@ -26,7 +35,7 @@ function Profile_info() {
           </div>
           <div className="rounded-full border-thirdColor border-[8px] overflow-hidden relative z-20 xsm:w-16 xsm:h-16 md:w-28 md:h-28 lg:w-32 lg:h-32">
             <img
-              src={imgProfle}
+              src={imgProfile}
               alt="Profile"
               className="w-full h-full object-cover"
             />
@@ -79,31 +88,30 @@ function Profile_info() {
         </div>
         {/* Add friend and Message buttons */}
         <div className="flex flex-col gap-2">
-            <button className="bg-gray-800 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-gray-700 transition-colors xsm:text-sm md:text-base">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
-              </svg>
-              Add friend
+            <button 
+              onClick={() => setIsFriend(!IsFriend)}
+              className={IsFriend ? "bg-red-500 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-red-400 transition-colors xsm:text-sm md:text-base w-36"
+              : "bg-gray-800 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-gray-700 transition-colors xsm:text-sm md:text-base w-36"}>
+              {IsFriend ? <IoPersonRemove/> : <IoPersonAdd/>}
+              <span className="text-[0.9em]">
+                {IsFriend ? "Unfriend" : "Add friend"}
+              </span>
             </button>
-            <button className="bg-gray-800 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-gray-700 transition-colors xsm:text-sm md:text-base">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
-                  clipRule="evenodd"
-                />
-              </svg>
+            <button className="bg-gray-800 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-gray-700 transition-colors xsm:text-sm md:text-base w-36">
+            <BsChatDotsFill />
+            <span className="text-[0.9em]">
               Message
+            </span>
+            </button>
+            <button 
+            onClick={() => setIsBlocked(!IsBlocked)}
+            className={IsBlocked ? "bg-gray-800 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-gray-700 transition-colors xsm:text-sm md:text-base w-36"
+             : "bg-red-500 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-red-400 transition-colors xsm:text-sm md:text-base w-36"}>
+            {/* className="bg-gray-800 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-gray-700 transition-colors xsm:text-sm md:text-base w-36"> */}
+            {IsBlocked ? <CgUnblock className="h-5 w-5"/> : <MdBlock className="h-5 w-5"/>}
+            <span className="text-[0.9em]">
+              {IsBlocked ? "Unblock" : "Block"}
+            </span>
             </button>
           </div>
       </div>
@@ -111,33 +119,143 @@ function Profile_info() {
   );
 }
 
+function Match_victory() {
+  return (
+    <div className=" xsm:h-24 sm:h-36 flex xsm:px-2 sm:px-3  rounded-xl my-4 items-center xsm:gap-x-2 sm:gap-x-8 justify-between w-full bg-MatchVictory opacity-90 bg-green-800">
+        <hr  className=" xsm:h-12 sm:h-24 w-2 rounded-2xl  bg-green-400"/>
+        <div className="flex justify-between xsm:gap-x-4 grow xsm:px-0.5 items-center sm:flex-1 ">
+            <div className="flex flex-col items-center">
+                <div className="xsm:h-8 xsm:w-8 sm:h-20 sm:w-20 ">
+                    <img
+                    src={imgProfile}
+                    alt="profile"
+                    className="w-full h-full object-cover rounded-full"
+                    />
+                </div>
+                <h3 className="xsm:text-xs sm:text-lg">KIRAZIZI</h3>
+            </div>
+            <div className="flex flex-col sm:gap-y-2">
+                <h2 className=" xsm:text-xs sm:text-lg font-light  text-MatchText">VICTORY</h2>
+                <p className="xsm:text-xs sm:text-md">08 - 05</p>
+                <h2 className="xsm:text-xs sm:text-lg font-light text-MatchText">PING PONG</h2>
+            </div>
+            <div className="flex flex-col items-center">
+                <div className="xsm:h-8 xsm:w-8 sm:h-20 sm:w-20">
+                <img
+                    src={imgYns}
+                    alt="profile"
+                    className="w-full h-full object-cover rounded-full"
+                />
+                </div>
+                <h3 className="xsm:text-xs sm:text-lg">KIRAZIZI</h3>
+            </div>
+        </div>
+    </div>
+  );
+}
+
+function Match_defeat() {
+  return (
+    <div className=" xsm:h-24 sm:h-36 flex xsm:px-2 sm:px-3  rounded-xl my-4 items-center xsm:gap-x-2 sm:gap-x-8 justify-between w-full bg-MatchVictory opacity-90 bg-red-800">
+        <hr  className=" xsm:h-12 sm:h-24 w-2 rounded-2xl  bg-red-400"/>
+        <div className="flex justify-between xsm:gap-x-4 grow xsm:px-0.5 items-center sm:flex-1 ">
+            <div className="flex flex-col items-center">
+                <div className="xsm:h-8 xsm:w-8 sm:h-20 sm:w-20">
+                    <img
+                    src={imgProfile}
+                    alt="profile"
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                </div>
+                <h3 className="xsm:text-xs sm:text-lg">KIRAZIZI</h3>
+            </div>
+            <div className="flex flex-col sm:gap-y-2">
+                <h2 className=" xsm:text-xs sm:text-lg font-light  text-MatchText">DEFEAT</h2>
+                <p className="xsm:text-xs sm:text-md">08 - 05</p>
+                <h2 className="xsm:text-xs sm:text-lg font-light text-MatchText">PING PONG</h2>
+            </div>
+            <div className="flex flex-col items-center">
+                <div className="xsm:h-8 xsm:w-8 sm:h-20 sm:w-20">
+                    <img
+                    src={imgYns}
+                    alt="profile"
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                </div>
+                <h3 className="xsm:text-xs sm:text-lg">KIRAZIZI</h3>
+            </div>
+        </div>
+    </div>
+  );
+}
+
 function Profile_history() {
   return (
-    <>
-      <div className="profile_history"></div>
-    </>
+    <div className="bg-secondaryColor text-center p-6  rounded-3xl grow">
+        <h2 className="text-4xl font-semibold mb-8">Match History</h2>
+        <div className="h-5/6 overflow-scroll ">
+            <Match_victory/>
+            <Match_victory/>
+            <Match_defeat/>
+            <Match_defeat/>
+            <Match_victory/>
+
+        </div>
+    </div>
+  );
+}
+
+function Friend() {
+  return (
+    <div  className="flex justify-between my-2 center">
+        <div className="flex xsm:gap-0 xl:gap-4 center">
+            <div className=" xsm:w-6 xsm:h-6 w-8 h-8 xl:w-16 xl:h-16 rounded-full border relative ">
+                <img className="w-full rounded-full " src={imgYns} alt="" />
+                <span className=" w-2 h-2 xl:w-4 xl:h-4 right-0 top-0 rounded-full bg-green-500 absolute"></span>
+            </div>
+            <div className=" xsm:hidden xl:block self-center">
+                <p className="text-xl">solahfaat</p>
+                <p className="text-xs font-thin">level 3</p>
+            </div>
+        </div>
+        <div className=" xsm:hidden xl:block self-center text-xl">
+           <AiOutlineUserAdd />
+        </div>
+    </div>
   );
 }
 
 function Profile_friends() {
-  return (
-    <>
-      <div className="profile_friends"></div>
-    </>
-  );
+    return (
+        <div className="bg-secondaryColor rounded-3xl xsm:w-12 sm:w-16 xl:w-4/5 h-2/5 xl:h-full xl:p-5">
+            <h3 className=" xsm:hidden xl:block text-center text-2xl">Friends</h3>
+            <hr className="w-4/5 center mx-auto my-4 xl:my-8"/>
+            <div className=" xsm:1/5 xsm:h-1/3 sm:h-2/5 pt-4 xsm:px-1 xl:px-4">
+                <div className="h-full xsm:flex xsm:flex-col xl:block xsm:items-center overflow-y-scroll">
+                    <Friend />
+                    <Friend />
+                    <Friend />
+                    <Friend />
+                    <Friend />
+                    <Friend />
+                </div>
+            </div>
+
+        </div>
+    );
 }
 
 function Profile() {
   return (
     <div className="text-white flex flex-1">
-      <div className="flex flex-col flex-1  lg:pb-8 md:pl-12  gap-y-4 gap-x-16 xsm:p-2 ">
+      <div className="flex flex-col flex-1  lg:pb-8 md:pl-12  gap-y-4 gap-x-16 xsm:p-`2 ">
         <Profile_info />
         <div className="flex lg:flex-1  xsm:h-1/2 md:h-3/5 lg:h-2/4 gap-x-8 ">
-          <MatchHistory />
+          <Profile_history />
         </div>
       </div>
       <div className="xsm:w-16 lg:w-74 xl:w-96  sm:w-28 md:w-32  xsm:items-end   py-8 flex xsm:flex-col  xsm:pr-2  xl:flex-row xl:justify-end sm:pr-4 xl:items-center  2xl:w-96 fade-in">
-        <FriendsBar />
+        <Profile_friends />
       </div>
     </div>
   );
