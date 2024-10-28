@@ -4,7 +4,6 @@ import { useEffect, useState, useContext, useMemo } from "react";
 import { useAuth } from "../../context/AuthContext";
 import ChatContext from "../../context/ChatContext";
 import _ from "lodash";
-import { flattenJSON } from "three/src/animation/AnimationUtils";
 
 const getConversations = async (tokens, user) => {
   const response = await fetch("http://localhost/api/chat/conversation", {
@@ -41,7 +40,7 @@ export default function ChatList() {
   const { setCurrentUser, conversation, setConversation, currantUser,setBlocker } =
     useContext(ChatContext);
   const { messages, setMessages } = useContext(ChatContext);
-  const { user, tokens } = useAuth();
+  const { user, tokens,socketMessage } = useAuth();
   const [selectedChat, setSelectedChat] = useState(-1);
   const [search, setSearch] = useState("");
   const { count, setCount } = useContext(ChatContext);
@@ -59,12 +58,16 @@ export default function ChatList() {
   };
 
   const handleClick = (contact) => {
-    setSelectedChat(() => contact.id);
+     setSelectedChat(() => contact.id);
     setBlocker(()=>contact.blocker)
     setCurrentUser(contact);
     setTo_0(contact);
   };
 
+  useEffect(()=> {
+    if (conversation && currantUser)
+     setSelectedChat(()=>currantUser.id)
+  },[conversation,currantUser])
   useEffect(() => {
     const fetchConversation = async () => {
       const data = await getConversations(tokens, user);
@@ -72,6 +75,25 @@ export default function ChatList() {
     };
     fetchConversation();
   }, []);
+
+  useEffect(()=>{ 
+    if (socketMessage)
+        {
+            const data = socketMessage
+            console.log("ahya hadxi ga3ma khdam: ",data.user)
+            if (data.type == "online.state" && conversation){
+              const finindex = conversation.findIndex(item => item.id == data.user.id)
+              if (finindex != -1){
+                    console.log("check this shit",conversation)
+                    conversation[finindex].user.is_online = data.user.is_online
+                    setConversation(()=>conversation)   
+                }
+            }
+            console.log("new friend change state : ",data)
+        }
+
+},[socketMessage])
+
 
   const handelSearch = (e) => {
     setSearch(e.target.value);
@@ -97,7 +119,7 @@ export default function ChatList() {
   }, [search, conversation]);
 
   return useMemo(() => {
-    // console.log("conv", conversation);0
+    console.log("conv", conversation)
     return (
       <div
         className={`xsm:${

@@ -8,6 +8,7 @@ from django.utils import timezone
 class CustomUser(AbstractUser):
     username = models.CharField(max_length=255, unique=True, blank=False, null=False, default='default_username')
     date_joined = models.DateTimeField(auto_now_add=True)
+    email = models.EmailField(max_length=255, unique=True)
     is_online = models.BooleanField(default=False)
     is_ingame = models.BooleanField(default=False)
     game_type = models.CharField(max_length=255, blank=True, null=True, default=None)
@@ -25,7 +26,7 @@ class CustomUser(AbstractUser):
     cover_image     = models.ImageField(upload_to='images/cover/', null=True)
 
     USERNAME_FIELD  = "username"
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['email']
 
     def __str__(self):
         return self.username

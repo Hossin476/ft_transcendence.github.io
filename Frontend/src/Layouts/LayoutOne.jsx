@@ -25,7 +25,7 @@ export default function LayoutOne(){
                     </div>
                     <div className=" flex flex-1 main-wrapper  h-full ">
                         <SideBar />
-                        <div className="flex flex-1" >
+                        <div className="flex flex-col flex-1" >
                                 <Outlet/>
                             <BottomBar/>
                         </div>

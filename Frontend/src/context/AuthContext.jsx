@@ -17,6 +17,7 @@ export const AuthProvider = ({ children }) => {
     const [socketMessage, setSocketMessage] = useState(null)
 
     const login = async (data) => {
+        console.log(data)
         localStorage.setItem('tokens', JSON.stringify(data.tokens))
         setTokens(data.tokens)
         setUser(jwtDecode(data.tokens.access))
@@ -24,6 +25,8 @@ export const AuthProvider = ({ children }) => {
 
     const logout = () => {
         localStorage.removeItem('tokens');
+        if(socket)
+            socket.send(JSON.stringify({"type": "log_out"}))
         setUser(null)
         setTokens(null)
     }

@@ -1,5 +1,6 @@
 import React, { useContext, useEffect,useState } from 'react';
 import ChatList from '../Components/chat/ChatList';
+import {useLocation} from 'react-router-dom'
 // import ChatList from '../Components/chat/ChatList';
 import ChatField from '../Components/chat/ChatField';
 import ChatProfileBrief from '../Components/chat/ChatProfileBrief';
@@ -44,13 +45,15 @@ function updateconversation(data , conversation, setConversation, ) {
 }
 
 const ChatPage = () => {
+
+    const location = useLocation()
     const { chatsocket, user } = useAuth()
     const { currantUser, setMessages,setSeen,setBlocker,setCurrentUser} = useContext(ChatContext)
     const {typing, setTyping} = useContext(ChatContext)
     const {count, setCount} = useContext(ChatContext)
+    const {navigatedUser} = location.state || {}
     const {conversation, setConversation} = useContext(ChatContext)
     /* filter the contacts and update the state of contact  */
-
     const manageBlock = (data,currentUser)=> {
 
         const {blocker} = data.event
@@ -62,10 +65,14 @@ const ChatPage = () => {
             setCurrentUser(()=>null)
         }
     }
-    
-             
-    
-
+    useEffect(()=> {
+        console.log("heloooo this is the navigated user:",navigatedUser)
+        console.log("conversations", conversation)
+        if(conversation && navigatedUser) {
+            const contact = conversation.find(item=> item.user.username === navigatedUser)
+            setCurrentUser(()=>contact)
+        }
+    },[conversation])
     useEffect(() => {
         if (chatsocket) {
             (chatsocket.onmessage = (e) => {

@@ -57,6 +57,7 @@ const Conversation = () => {
   const {currantUser,messages,setMessages,seen,setSeen, typing,setBlocker,blocker} = useContext(ChatContext)
   const elementRef = useRef(null)
   
+
   useEffect(()=> {
     const fetchMessages = async ()=> {
       const data = await getMessages(currantUser,tokens)

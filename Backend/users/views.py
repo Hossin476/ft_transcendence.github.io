@@ -1,9 +1,11 @@
 from rest_framework.mixins import CreateModelMixin, DestroyModelMixin, RetrieveModelMixin, UpdateModelMixin
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes,authentication_classes
 from .models import *
+from rest_framework.permissions import AllowAny
 from .serializers import *
+from rest_framework_simplejwt.tokens import RefreshToken
 from notifications.serializers import playerSerializers
 from tictactoe.models import OnlineGameModel
 from pingpong.models import GameOnline
@@ -16,7 +18,10 @@ from django.db.models import Q, Count
 from itertools import chain
 from django.http import JsonResponse
 import os
+import secrets
+import string
 import requests
+import json
 class AppUserViewSet(CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
     queryset = CustomUser.objects.all()
     serilizer_class = AppUserSerializer
@@ -103,30 +108,79 @@ def get_monthly_data(request):
         })
     return Response(chart_data)
 
-url_redirct= "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-e31a7ef548bc4cb598ec33035254d51a9df4790880f1ce4f859655334dc31143&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2Fapi%2Fusers%2Foauth2%2Fintra%2F&response_type=code"
 
 def intra_login(request):
     pass
-@api_view(['GET'])
+
+
+def generate_random_string(username,length):
+    characters = string.ascii_letters + string.digits
+    rendom_string = ''.join(secrets.choice(characters) for i in range(length))
+    resulted_string = username + rendom_string
+    return resulted_string
+
+
+def get_image_path(username,link):
+    
+    get_pic = requests.get(link)
+    
+    if get_pic.status_code == 200:
+        path = f"media/images/profile/{username}.jpg"
+        with open(path, 'wb') as file:
+            file.write(get_pic.content)
+        return path
+    return None
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+@authentication_classes([])
 def intra_redirect(request):
+
     client_id = os.environ.get('UID')
     client_secret = os.environ.get('INTRA_SECRET')
-    code = request.GET.get('code')
-    user = {'msg':"Hello", 'code':code}
+    print(request.body)
+    body = request.data
+    print(body)
     intra_redirect = os.environ.get('INTRA_URL')
-    print("hello nigroooos",client_id, client_secret, code)
+    code = body['code']
+
     data = {
         "client_id": client_id,
-        "cliet_secret": client_secret,
+        "client_secret": client_secret,
         "grant_type": "authorization_code",
         "code": code,
         "redirect_uri": intra_redirect,
         "scope": "public"
     }
+    
     headers = {
         "Content-Type": "application/x-www-form-urlencoded",
     }
     response = requests.post("https://api.intra.42.fr/oauth/token", data=data, headers=headers)
     credentiales = response.json()
-    print(credentiales)
-    return Response(user)
+    base_url = " https://api.intra.42.fr/v2/me"
+    response_user = requests.get("https://api.intra.42.fr/v2/me", headers={"Authorization": "Bearer " + credentiales['access_token']})
+    user = response_user.json()
+    
+    if CustomUser.objects.filter(email=user['email']).exists():
+        print("he checked here and want to return the token")
+        user = CustomUser.objects.get(email=user['email'])
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            'refresh': str(refresh),
+            'access':str(refresh.access_token)
+        })
+    else:
+        user_name = user['login']
+        if CustomUser.objects.filter(username=user['login']).exists():
+            username = generate_random_string(user_name, 5)
+        profile_pic = get_image_path(user_name, user['image']['link'])
+        user_instance = CustomUser.objects.create_user(
+            username=user['login'],
+            email=user['email'],
+            password=generate_random_string(user_name, 15)
+        )
+        return Response({
+            'refresh': str(refresh),
+            'access':str(refresh.access_token)
+        })

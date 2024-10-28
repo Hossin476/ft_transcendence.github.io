@@ -149,6 +149,8 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             asyncio.create_task(self.handle_pvp_request(data)) 
         elif types == 'cancel_pvp':
             await self.handle_cancel_pvp(data)
+        elif types == 'log_out':
+            await self.disconnect(1000)
 
 
     async def game_request(self, event):

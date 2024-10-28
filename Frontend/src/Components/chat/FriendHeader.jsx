@@ -14,10 +14,10 @@ const FriendHeader = () => {
               <HiMiniArrowUturnLeft onClick={()=>setCurrentUser(()=>null)} className="xsm:block md:hidden text-lg text-black" />
               <div className="relative xsm:h-12 xsm:w-12 md:h-20 md:w-20 rounded-full bg-blue-300">
                   <div className="xsm:h-12 xsm:w-12 md:h-20 md:w-20 bg-indigo-500 rounded-full "></div>
-                  <div className="xsm:h-2 xsm:w-2 md:h-4 md:w-4 bg-green-500 right-0 top-2 rounded-full absolute"></div>
+                  <div className={`xsm:h-2 xsm:w-2 md:h-4 md:w-4 ${currantUser.user.is_online ? "bg-green-500" : "bg-red-500"} right-0 top-2 rounded-full absolute`}></div>
               </div>
               <div>
-                  <h1 className=" md:text-2xl xs:text-sm text-gray-700 font-bold uppercase">{currantUser && currantUser.user.username}</h1>
+                  <h1 className=" md:text-2xl xs:text-sm text-gray-700 font-bold uppercase">{currantUser.user.username}</h1>
                   <p className="xsm:text-xs   text-gray-500"> Active Now</p>
               </div>
             </div>
