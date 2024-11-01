@@ -82,13 +82,14 @@ class GameLogic:
             match.winner = match.player1
         elif match.score2 == 7:
             match.winner = match.player2
+            # match.winner.
         if match.winner is not None : 
             match.winner.xp =  match.winner.xp + 30
             match.winner.rank =  match.winner.xp / 100
             match.winner.save()
             match.is_game_end = True
             print('match winner : ',  match.winner.xp, file=sys.stderr)
-            match.save()
+        match.save()
 
     @database_sync_to_async
     def update_winner_score__offline(self, matchId, scoreNumber):

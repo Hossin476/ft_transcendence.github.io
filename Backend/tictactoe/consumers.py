@@ -7,7 +7,6 @@ from django.core.cache import cache
 from .game_logic import TicTacToe
 from .models import OnlineGameModel
 from users.models import CustomUser
-from django.db import IntegrityError, transaction
 
 channel_layer = get_channel_layer()
 
