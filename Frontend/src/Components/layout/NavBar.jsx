@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function NavBar() {
 
-    const { socket, global_socket, socketMessage, createSocket } = useAuth()
+    const { socket, global_socket, socketMessage, createSocket,user } = useAuth()
     const [showNotifications, setShowNotifications] = useState(false);
     const nav = useNavigate();
 
@@ -38,11 +38,11 @@ export default function NavBar() {
                 socket.close()
         };
     }, []);
-
+    console.log(user)
     return (
-        <div className="xsm:py-4 flex bg-secondaryColor rounded xsm:h-full items-center justify-between lg:justify-end relative">
-            <div className="lg:hidden sm:pl-12 xsm:pl-4">
-                <h1 className="xsm:text-lg text-2xl font-normal">PONGY</h1>
+        <div className="xsm:py-4 flex bg-secondaryColor rounded xsm:h-full items-center justify-between justify-end relative">
+            <div className=" xsm:pl-4">
+                <h1 className="xsm:text-lg  text-2xl font-normal">PONGY</h1>
             </div>
             <ul className="flex xsm:pr-4 xsm:gap-4 sm:gap-16 items-center">
                 <li>
@@ -61,7 +61,7 @@ export default function NavBar() {
                         <LiaCoinsSolid />
                     </span>
                 </li>
-                <li className="text-2xl font-thin xsm:hidden lg:block">YKHOURBA</li>
+                <li className="text-2xl font-thin xsm:hidden lg:block">{user.username}</li>
                 <li className="xsm:w-8 xsm:h-8 sm:w-16 sm:h-16 border-2 rounded-full">
                     <img className="w-full rounded-full" src={img} alt="Profile" />
                 </li>

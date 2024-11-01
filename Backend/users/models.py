@@ -8,6 +8,7 @@ from django.utils import timezone
 class CustomUser(AbstractUser):
     username = models.CharField(max_length=255, unique=True, blank=False, null=False, default='default_username')
     date_joined = models.DateTimeField(auto_now_add=True)
+    email = models.EmailField(max_length=255, unique=True)
     is_online = models.BooleanField(default=False)
     is_ingame = models.BooleanField(default=False)
     game_type = models.CharField(max_length=255, blank=True, null=True, default=None)
@@ -25,7 +26,7 @@ class CustomUser(AbstractUser):
     cover_image     = models.ImageField(upload_to='images/cover/', null=True)
 
     USERNAME_FIELD  = "username"
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['email']
 
     def __str__(self):
         return self.username
@@ -41,15 +42,32 @@ class Friendship(models.Model):
         ('B', "BLOCKED"),
         ('A', "ACTIVE")
     ]
+    BLOCK_STATE = [
+        ('F', "from_user"),
+        ('T', "to_user"),
+        ('N', "None")
+    ]
     request         = models.CharField(max_length=1, choices=REQUEST_STATE, default='P')
     active          = models.CharField(max_length=1, choices=ACTIVE_STATE, default='A')
+    block_user      = models.CharField(max_length = 1, choices=BLOCK_STATE, default='N')
     from_user       = models.ForeignKey(
         CustomUser,
-        related_name='from_user',
-        on_delete=models.CASCADE
+        related_name    ='from_user',
+        on_delete       =models.CASCADE
     )
     to_user         = models.ForeignKey(
         CustomUser,
         related_name    ='to_user',
         on_delete       =models.CASCADE
     )
+    
+
+class Block(models.Model):
+    BLOCK_STATE = [
+        ("F", "from_user"),
+        ("T", "to_user"),
+        ("N", "None")
+    ]
+    blocker     = models.ForeignKey(CustomUser, on_delete=models.CASCADE,related_name='blocker')
+    blocked     = models.ForeignKey(CustomUser, on_delete=models.CASCADE,related_name='blocked')
+    Block_user  = models.CharField(max_length=1, choices=Friendship.BLOCK_STATE, default='N')

@@ -6,6 +6,7 @@ services:
       - "5173:5173"
     environment:
       - VITE_BACKEND_URL=${BACKEND_URL}
+      - VITE_URI_INTRA=${INTRA_URI_REDIRECT}
     volumes:
       - ./Frontend/src:/usr/src/app/src
       - ./Frontend/dist:/usr/src/app/dist
@@ -19,6 +20,10 @@ services:
       - DEBUG=${DEBUG}
       - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
       - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - UID=${UID}
+      - INTRA_SECRET=${INTRA_SECRET}
+      - INTRA_URI_REDIRECT=${INTRA_URI_REDIRECT}
+      - INTRA_URL=${INTRA_URL}
     build: ./Backend
     volumes:
       - ./Backend:/usr/src/app

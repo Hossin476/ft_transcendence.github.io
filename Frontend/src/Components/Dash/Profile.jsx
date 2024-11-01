@@ -2,8 +2,9 @@ import imgProfle from "/public/ykhourba.jpeg"
 import { RiFileCopy2Line } from "react-icons/ri";
 
 export default function Profile({user}) {
-    console.log(user)
-    const xp = 100 -  user.xp
+    console.log(user.xp)
+    const xp = 100 -  user.xp 
+    console.log("this is the fucking xp", xp)
     return(
 
         <div className=" md:w-[60%] xsm:h-[10em] lg:h-auto flex items-center  sm:gap-x-2 lg:gap-x-4 ">

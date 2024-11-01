@@ -1,6 +1,26 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import {useNavigate } from 'react-router';
+import {useNavigate} from 'react-router';
+import { useSearchParams } from 'react-router-dom';
+
+
+const handleIntraLogin = async (code,login,navigate)=> {
+    const res = await fetch(`http://${import.meta.env.VITE_BACKEND_URL}/api/users/oauth2/intra/`,{
+        method:"POST",
+        headers: {
+            'Content-Type':'application/json'
+        },
+        body: JSON.stringify({code:code})
+    })
+    let data = await res.json()
+    console.log(data)
+    if(res.ok) {
+        login({tokens:data })
+        navigate('/')
+    } else {
+        console.log("error with response")
+    }
+}
 
 const LoginPage = () => {
     const [username, setUsername] = useState('');
@@ -8,9 +28,12 @@ const LoginPage = () => {
 
     const {login} = useAuth();
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams()
+    const code = searchParams.get("code") || null
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         const response = await fetch(`http://${import.meta.env.VITE_BACKEND_URL}/api/auth/jwt/create`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -19,12 +42,28 @@ const LoginPage = () => {
 
         if (response.ok) {
             const tokens = await response.json();
+            console.log(tokens)
             login({tokens });
             navigate('/');
         } else {
             console.log("error with response")
         }
     };
+
+    useEffect(()=> {
+        console.log("yes it's here ")
+        console.log("this is the error :",code)
+        if(code)
+            handleIntraLogin(code,login,navigate)
+    },[code])
+    const handle42 = (e)=> {
+        e.preventDefault()
+        const redirectUrl = import.meta.env.VITE_URI_INTRA
+
+        console.log("this is the shit: ",redirectUrl)
+        window.location.href = redirectUrl
+    }
+
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -62,6 +101,9 @@ const LoginPage = () => {
                                 value={password} 
                                 onChange={(e) => setPassword(e.target.value)}
                             />
+                        </div>
+                        <div className='flex justify-center'>
+                            <button  onClick={handle42} className='text-white border rounded border-black bg-black py-2 px-4 w-full'>42 Login</button>
                         </div>
                     </div>
                     <div className=" flex justify-center">

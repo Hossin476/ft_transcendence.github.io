@@ -36,7 +36,7 @@ export default function Leaderboard() {
   }, [fetchData])
 
   return (
-    <div className="bg-primaryColor w-full grid grid-rows-1 justify-items-center items-center">
+    <div className="bg-primaryColor w-full grid h-[100%] grid-rows-1 justify-items-center items-center">
       <div className="flex items-center justify-center w-11/12 h-full ">
         <div className='border border-forthColor overflow-auto lg:w-11/12 md:w-full sm:w-full bg-gray-800 text-white p-6 w-full text-white flex flex-col h-5/6 bg-secondaryColor rounded-3xl'>
           <h1 className="text-4xl font-bold text-center font-Plaguard">LEADERBOARD</h1>
