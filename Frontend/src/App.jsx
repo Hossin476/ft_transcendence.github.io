@@ -20,6 +20,8 @@ import { GameProvider } from "./context/gameContext";
 import TournamentProvider from "./context/TournamentContext";
 import { ChatProvider } from "./context/ChatContext";
 import Dash from "./Pages/dash";
+import { Signup, Login, ForgetPassword, VerifyEmail, Profile, ResetPassword, MailSent } from "./Components/Authentication";
+
 // import './server.js'
 function App() {
   return (
@@ -27,6 +29,13 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="login" element={<LoginPage />} />
+          <Route path="/loogin" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/forgot-password" element={<ForgetPassword />} />
+          <Route path="/password-reset-confirm/:uid/:token" element={<ResetPassword />} />
+          <Route path="/otp/verify" element={<VerifyEmail />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/mail-sent" element={<MailSent />} />
           <Route element={<PrivateRoute />}>
             <Route element={<LayoutOne />}>
               <Route index element={<Dash />} />

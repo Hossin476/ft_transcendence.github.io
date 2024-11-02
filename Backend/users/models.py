@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.utils import timezone
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 
@@ -9,6 +10,7 @@ class CustomUser(AbstractUser):
     username = models.CharField(max_length=255, unique=True, blank=False, null=False, default='default_username')
     date_joined = models.DateTimeField(auto_now_add=True)
     email = models.EmailField(max_length=255, unique=True)
+    is_verified = models.BooleanField(default=False)
     is_online = models.BooleanField(default=False)
     is_ingame = models.BooleanField(default=False)
     game_type = models.CharField(max_length=255, blank=True, null=True, default=None)
@@ -30,6 +32,22 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.username
+    
+    
+    def tokens(self):
+        refresh = RefreshToken.for_user(self)
+        return ({
+            'access': str(refresh.access_token),
+            'refresh': str(refresh)
+        })
+
+
+class OneTimePassword(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    code = models.CharField(max_length=6, unique=True)
+
+    def __str__(self):
+        return f"{self.user.username}--passcode"
 
 
 class Friendship(models.Model):

@@ -22,6 +22,16 @@ import secrets
 import string
 import requests
 import json
+from rest_framework.generics import GenericAPIView
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from .utils import send_otp_email
+from .models import *
+from .serializers import *
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import smart_str, DjangoUnicodeDecodeError
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+
 class AppUserViewSet(CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
     queryset = CustomUser.objects.all()
     serilizer_class = AppUserSerializer
@@ -184,3 +194,122 @@ def intra_redirect(request):
             'refresh': str(refresh),
             'access':str(refresh.access_token)
         })
+
+
+class UserRegistrationView(GenericAPIView):
+    serializer_class = UserRegisterSerializer
+    permission_classes = [AllowAny]
+    
+    def post(self, request):
+        user_data = request.data
+        serializer = self.serializer_class(data=user_data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            user = serializer.data
+            send_otp_email(user['email'])
+            return Response({
+                    'data': user,
+                    'message': f'hello, thank you for joining us , a verification code was sent to your email'
+                }, status=status.HTTP_201_CREATED
+            )
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class EmailVerificationView(GenericAPIView):
+    
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        otpcode = request.data.get('otp')
+        try:
+            user_code_object = OneTimePassword.objects.get(code=otpcode)
+            user = user_code_object.user
+            if not user.is_verified:
+                user.is_verified = True
+                user.save()
+                return Response(
+                    {'message': 'Email Verified successfully !'},
+                    status=status.HTTP_200_OK
+                )
+            return Response({
+                'message': 'unvalid token or user already verified !'
+            }, status=status.HTTP_204_NO_CONTENT)
+        except OneTimePassword.DoesNotExist:
+            return Response({
+                'message': 'unvalid token or user already verified !'
+            }, status=status.HTTP_401_UNAUTHORIZED)
+        
+class UserLoginView(GenericAPIView):
+    serializer_class = UserLoginSerializer
+    permission_classes = [AllowAny]
+
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data, context={'request':request})
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class UserProfileView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
+
+
+    def get(self, request):
+        return Response({
+            'YOU CAN SEE THIS . YOU HAVE YOUR TOKENS !'
+        }, status=status.HTTP_200_OK)
+
+class UserPasswordResetView(GenericAPIView):
+    serializer_class = PasswordResetSerializer
+    permission_classes = [AllowAny]
+
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        return Response({
+            'message': 'a link has been sent to your mail to reset your password'
+        }, status=status.HTTP_200_OK)
+
+class PasswordResetConfirmationView(GenericAPIView):
+    def get(self, request, uidb64, token):
+        try:
+            user_id =smart_str(urlsafe_base64_decode(uidb64))
+            user = CustomUser.objects.get(id=user_id)
+            if not PasswordResetTokenGenerator().check_token(user, token):
+                return Response({
+                    'message': 'token is not valid or expired !'
+                }, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({
+                'success': True,
+                'message': 'credentials are valid',
+                'uidb64': uidb64,
+                'token': token
+            }, status=status.HTTP_200_OK)
+        except DjangoUnicodeDecodeError:
+            return Response({
+                'message': 'token is not valid or expired !'
+            }, status=status.HTTP_401_UNAUTHORIZED)
+
+class SetNewPasswordView(GenericAPIView):
+    serializer_class = SetNewPasswordSerializer
+
+    def patch(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response({
+            'message': 'password reset successfully !'
+        }, status=status.HTTP_200_OK)
+
+class UserLogoutView(GenericAPIView):
+    serializer_class = UserLogoutSerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({
+            'message': 'logout successfull !'
+        }, status=status.HTTP_200_OK)
+    

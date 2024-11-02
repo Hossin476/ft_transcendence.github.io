@@ -22,8 +22,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include([
-        path('auth/', include('djoser.urls')),
-        path('auth/', include('djoser.urls.jwt')),
+        path('auth/', include('users.urls')),
         path('', include('tictactoe.urls')),
         path('notification/', include('notifications.urls')),
         path('pingpong/', include('pingpong.urls')),
