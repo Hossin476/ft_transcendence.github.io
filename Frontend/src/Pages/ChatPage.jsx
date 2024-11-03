@@ -65,6 +65,7 @@ const ChatPage = () => {
             setCurrentUser(()=>null)
         }
     }
+
     useEffect(()=> {
         console.log("heloooo this is the navigated user:",navigatedUser)
         console.log("conversations", conversation)
@@ -73,6 +74,7 @@ const ChatPage = () => {
             setCurrentUser(()=>contact)
         }
     },[conversation])
+
     useEffect(() => {
         if (chatsocket) {
             (chatsocket.onmessage = (e) => {

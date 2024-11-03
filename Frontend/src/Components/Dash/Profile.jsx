@@ -1,7 +1,9 @@
 import imgProfle from "/public/ykhourba.jpeg"
 import { RiFileCopy2Line } from "react-icons/ri";
+import { useTranslation } from "react-i18next";
 
 export default function Profile({user}) {
+    const {t} = useTranslation()
     console.log(user.xp)
     const xp = 100 -  user.xp 
     console.log("this is the fucking xp", xp)
@@ -21,11 +23,11 @@ export default function Profile({user}) {
             </div>
             <div className=" ">
                 <div className="flex justify-between xsm:text-xs mb-1">
-                    <p>{xp}XP TO GO</p>
-                    <p>LEVEL 3</p>
+                    <p>{xp}XP {t('TO GO')}</p>
+                    <p>{t('LEVEL')} 3</p>
                 </div>
-                <div className="w-full h-4 bg-gray-100 rounded-full">
-                    <div className={`w-[${user.xp}%] h-4 bg-forthColor rounded-full`}></div>
+                <div className="w-full h-2 bg-gray-100 rounded-full">
+                    <div className={`w-[${user.xp}%] h-2 bg-forthColor rounded-full`}></div>
                 </div>
             </div>
         </div>

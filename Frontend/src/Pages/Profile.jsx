@@ -47,8 +47,8 @@ function Profile() {
   } ,[user_id])
 
   return (
-    <div className="w-full  flex justify-center xsm:pl-2 xsm:py-2 xsm:gap-2  sm:pl-4  sm:gap-4 ">
-      <div className="flex flex-col flex-1  md:pl-12  gap-y-4 gap-x-16 xsm:p-`2 ">
+    <div className="h-screen w-full flex justify-center xsm:pl-2 xsm:py-2 xsm:gap-2  sm:pl-4  sm:gap-4 ">
+      <div className="flex flex-col flex-1  md:pl-12  gap-y-4 gap-x-16 xsm:p-`2">
         {
           <Profile_info userid={profileData} />
         }

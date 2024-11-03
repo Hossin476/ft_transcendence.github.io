@@ -26,7 +26,7 @@ const VerifyEmail = () => {
     console.log(data);
     if (res.status === 200){
       toast.success("Email verified successfully");
-      navigate("/loogin");
+      navigate("/login");
     }
     else {
       setErrorMessage(data.message);

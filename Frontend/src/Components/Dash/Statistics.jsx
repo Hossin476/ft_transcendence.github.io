@@ -1,4 +1,5 @@
-
+import React from 'react'
+import { useTranslation } from 'react-i18next'
 
 const styles = {
     progress:{
@@ -20,23 +21,24 @@ const styles = {
 }
 
 export default function Statistics({user}) {
+    const {t} = useTranslation()
     const circumference = 2 * Math.PI * 45;
     const dashOffset = circumference - (user.win_rate / 100 * circumference);
     return (
        <div className="md:w-[40%] p-2 ">
-            <h1 className="text-2xl font-bold mb-2 h-[2rem] text-center">STATISTICS</h1>
+            <h1 className="text-2xl font-bold mb-2 h-[2rem] text-center">{t('STATISTICS')}</h1>
             <div className="w-full h-[calc(100%-2rem)] flex justify-between items-center ">
                 <div className="w-1/2">
                     <div className="my-2 flex items-center justify-between w-full">
-                        <p>total wins</p>
+                        <p>{t('total wins')}</p>
                         <p>{user.total_wins}</p>
                     </div>                                        
                     <div className="my-2 flex items-center justify-between w-full">
-                        <p>total losses</p>
+                        <p>{t('total losses')}</p>
                         <p>{user.total_loses}</p>
                     </div>                                        
                     <div className="my-2 flex items-center justify-between w-full">
-                        <p>total games</p>
+                        <p>{t('total games')}</p>
                         <p>{user.total_games}</p>
                     </div>                                        
                 </div>
@@ -48,7 +50,7 @@ export default function Statistics({user}) {
                             <text  style={styles.perc} x="50" y="50" textAnchor="middle" dominantBaseline="central">{user.win_rate}%</text>
                         </svg>
                     </div>
-                    <p>Winrate</p>
+                    <p>{t('Winrate')}</p>
                 </div>
             </div>
         </div>

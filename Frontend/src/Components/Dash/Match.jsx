@@ -1,7 +1,7 @@
 import { useAuth } from "../../context/AuthContext"
 import imgProfle from "/public/ykhourba.jpeg"
 import {useState,useEffect} from 'react'
-
+import { useTranslation } from "react-i18next";
 
 export default function Match({match}) {
     {/*
@@ -14,6 +14,7 @@ export default function Match({match}) {
         text-win:#d1c875
 
 */}
+    const { t } = useTranslation();
     const {user} = useAuth()
     const [bgColor,setBgColor] = useState(null)
     const [textColor,setTextColor] = useState(null)
@@ -37,7 +38,7 @@ export default function Match({match}) {
             </div>
             <div className="xsm:text-[10px]  sm:text-lg flex flex-col items-center">
                     <p style={{color:textColor}} >
-                        {match.winner ? (match.winner.id === user.user_id ? "VICTORY" :"DEFEAT") : 'DRAW'}
+                        {match.winner ? (match.winner.id === user.user_id ? t("VICTORY") : t("DEFEAT")) : t("DRAW")}
                     </p>
                     <p>{match.score1} - {match.score2}</p>
                     <p className="text-[#d1c875] uppercase">{match.game_type}</p>

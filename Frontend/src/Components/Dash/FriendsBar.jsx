@@ -2,9 +2,10 @@ import { IoMdPersonAdd } from "react-icons/io";
 import Friend from "./Friend";
 import { useAuth } from "../../context/AuthContext";
 import { useEffect,useState } from "react";
-
+import { useTranslation } from "react-i18next";
 
 export default function FriendsBar() {
+    const { t } = useTranslation();
     const [online_ingame, setChallengeData] = useState(null);
     const {tokens, socketMessage} = useAuth();
     const fetchData = async () => {
@@ -40,12 +41,14 @@ export default function FriendsBar() {
     return (
         <div className=" xsm:w-12 lg:w-74 xl:w-80  sm:w-28 md:w-32  lg:px-4 bg-secondaryColor rounded">
             <div className="flex h-[5rem]  xsm:justify-center items-center xl:justify-between">
-                <h1 className="xsm:text-xsm  xsm:hidden xl:block sm:text-xl sm:self-center">Friends</h1>
+                <h1 className="xsm:text-xsm  xsm:hidden xl:block sm:text-xl sm:self-center">{t('Friends')}</h1>
                 <IoMdPersonAdd className="text-xl  sm:self-center" />
             </div>
             <div className=" h-[calc(100%-5rem)] sm:items-center lg:items-stretch gap-y-4 flex flex-col overflow-scroll">
                 {
-                    online_ingame && online_ingame.users.map((item,index)=> <Friend  key={index} name = {item.username}  status = {item.is_ingame} online = {item.is_online}/>)
+                    online_ingame && online_ingame.users.map((item,index)=> <Friend  
+                    key={index} name = {item.username}  status = {item.is_ingame} online = {item.is_online} user_id = {item.id}
+                    />)
                 }
             </div>
         </div>
