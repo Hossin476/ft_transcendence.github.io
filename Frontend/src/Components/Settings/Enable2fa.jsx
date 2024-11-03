@@ -1,5 +1,8 @@
 import { CgCopy } from "react-icons/cg";
 import qrcode from '../../../public/avatar/qrcode.png';
+import {useTranslation} from 'react-i18next';
+import { useState } from 'react';
+import LanguageSwitcher from './LanguageSwitcher';
 
 import './Disable2fa.css';
 import './Enable2fa.css';

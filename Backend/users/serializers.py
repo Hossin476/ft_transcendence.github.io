@@ -3,6 +3,7 @@ from .models import *
 from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken,TokenError
+from rest_framework.exceptions import AuthenticationFailed
 
 
 class UserCreateSerializer(BaseUserCreateSerializer):
@@ -47,12 +48,12 @@ class UserLoginSerializer(serializers.ModelSerializer):
     
     username = serializers.CharField(max_length=255)
     password = serializers.CharField(max_length=68, write_only=True)
-    access_token = serializers.CharField(max_length=255, read_only=True)
-    refresh_token = serializers.CharField(max_length=255, read_only=True)
+    access = serializers.CharField(max_length=255, read_only=True)
+    refresh = serializers.CharField(max_length=255, read_only=True)
 
     class Meta:
         model = CustomUser
-        fields = ['username', 'password', 'access_token', 'refresh_token']
+        fields = ['username', 'password', 'access', 'refresh']
     
     def validate(self, attrs):
         username = attrs.get('username')
@@ -67,8 +68,8 @@ class UserLoginSerializer(serializers.ModelSerializer):
         return {
             'username': user.username,
             'email': user.email,
-            'access_token': str(user_tokens.get('access')),
-            'refresh_token': str(user_tokens.get('refresh'))
+            'access': str(user_tokens.get('access')),
+            'refresh': str(user_tokens.get('refresh'))
         }
 
 class PasswordResetSerializer(serializers.Serializer):

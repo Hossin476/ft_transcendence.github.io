@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import toast from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom';
 
 const VerifyEmail = () => {
@@ -24,14 +24,29 @@ const VerifyEmail = () => {
     })
     const data = await res.json();
     console.log(data);
-    if (res.status === 200)
+    if (res.status === 200){
+      toast.success("Email verified successfully");
       navigate("/loogin");
+    }
     else {
       setErrorMessage(data.message);
       toast.error(data.message);}
   }
 
   return (
+    <>
+          <Toaster
+            position="top-right"
+            reverseOrder={false}
+            toastOptions={{
+                className: '',
+                duration: 5000,
+                style: {
+                    background: 'white',
+                    color: '#000',
+                },
+            }}
+        />
     <div className="bg-secondaryColor min-h-screen flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg shadow-2xl shadow-thirdColor w-full max-w-md">
         <h2 className="text-2xl font-bold text-black mb-6">Verify Email</h2>
@@ -59,6 +74,8 @@ const VerifyEmail = () => {
         </form>
       </div>
     </div>
+    </>
+
   );
 };
 

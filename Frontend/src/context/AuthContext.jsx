@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useRef, useEffect } from 'react';
 import axios from 'axios'
 import { jwtDecode } from 'jwt-decode'
+import axiosInstance from '../utils/axiosInstance';
 
 const AuthContext = createContext()
 
@@ -23,17 +24,35 @@ export const AuthProvider = ({ children }) => {
         setUser(jwtDecode(data.tokens.access))
     }
 
-    const logout = () => {
-        localStorage.removeItem('tokens');
-        if(socket)
-            socket.send(JSON.stringify({"type": "log_out"}))
-        setUser(null)
-        setTokens(null)
-    }
+    const logout = async () => {
+
+        try {
+            const res = await fetch(`/api/auth/logout/`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "JWT " + tokens.access
+                    },
+                    body: JSON.stringify({ "refresh_token": tokens.refresh })
+                }
+            )
+            if (res.ok) {
+                if (socket)
+                    socket.send(JSON.stringify({ "type": "log_out" }))
+                localStorage.removeItem('tokens');
+                setUser(null)
+                setTokens(null)
+            }
+        }
+        catch (error) {
+            console.error('Error logging out:', error)
+        }
+    };
 
     const global_socket = () => {
         const ws = new WebSocket(`ws://${import.meta.env.VITE_BACKEND_URL}/ws/notifications/?token=${tokens.access}`)
-        
+
         ws.onopen = () => {
             setSocket(ws);
             console.log('WebSocket connected');
@@ -62,22 +81,22 @@ export const AuthProvider = ({ children }) => {
             setSocket(null);
             setTimeout(global_socket, 5000)
         };
-        ws.onmessage  = (e) =>{
+        ws.onmessage = (e) => {
             const data = JSON.parse(e.data);
             setSocketMessage(data)
         }
     }
 
-    const createSocket = ()=> {
+    const createSocket = () => {
         let ws = new WebSocket(`ws://${import.meta.env.VITE_BACKEND_URL}/ws/chat/?token=${tokens.access}`)
-         ws.onopen = (e)=> {
-             setChatSocket(()=>ws)
-             console.log("socket opened")
-         }
-         ws.onclose = (e)=> {
-             console.log("socket closed")
-         }
-     }
+        ws.onopen = (e) => {
+            setChatSocket(() => ws)
+            console.log("socket opened")
+        }
+        ws.onclose = (e) => {
+            console.log("socket closed")
+        }
+    }
 
     let value = {
         login,
@@ -87,9 +106,9 @@ export const AuthProvider = ({ children }) => {
         socket: socket,
         username: username,
         global_socket,
-        socketMessage : socketMessage,
+        socketMessage: socketMessage,
         createSocket,
-        chatsocket:chatsocket,
+        chatsocket: chatsocket,
     }
 
     return (

@@ -3,6 +3,7 @@ import AnimationE from '../Components/Settings/AnimationE';
 import AnimationD from '../Components/Settings/AnimationD';
 import Mid_Nav_disable from '../Components/Settings/Disable2fa';
 import Mid_Nav_enable from '../Components/Settings/Enable2fa';
+import LanguageSwitcher from '../Components/Settings/LanguageSwitcher';
 
 
 import '../Components/Settings/Disable2fa.css';
@@ -167,7 +168,8 @@ function Two2fa(){
   return (
     <div className="holder-container">
       <div className='settings-tittle'>
-          <Tittle />
+      <Tittle />
+      <LanguageSwitcher />
       </div>
       <div className="settings-container">
           <Header/>

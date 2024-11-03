@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.decorators import api_view, permission_classes,authentication_classes
 from .models import *
-from rest_framework.permissions import AllowAny
 from .serializers import *
+from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from notifications.serializers import playerSerializers
 from tictactoe.models import OnlineGameModel
@@ -26,8 +26,6 @@ from rest_framework.generics import GenericAPIView
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from .utils import send_otp_email
-from .models import *
-from .serializers import *
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import smart_str, DjangoUnicodeDecodeError
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -35,6 +33,53 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 class AppUserViewSet(CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
     queryset = CustomUser.objects.all()
     serilizer_class = AppUserSerializer
+
+
+@api_view(['GET'])
+def get_profile(request, user_id):
+    user = CustomUser.objects.get(id=user_id)
+    serialized_user = playerSerializers(user)
+    user_list = serialized_user.data
+    new_list = {}
+    new_list['id'] = user_list['id']
+    new_list['username'] = user_list['username']
+    new_list['profile_image'] = user_list['profile_image']
+    new_list['background_image'] = user_list['profile_image']
+    new_list['rank'] = user_list['rank']
+    new_list['xp'] = user_list['xp']
+    return Response(new_list)
+
+@api_view(['GET'])
+def get_profile_match(request, user_id):
+    user = CustomUser.objects.get(id=user_id)   
+    pong_matches = GameOnline.objects.filter(
+        Q(player1=user) | Q(player2=user)).order_by('-last_update')
+    tictactoe_matches = OnlineGameModel.objects.filter(
+        Q(player1=user) | Q(player2=user)).order_by('-game_end')
+    
+    ping_serialzer = MatchGameOnlineSerializer(pong_matches, many=True).data
+    tictactoe_serializer = MatchGameOnlineModelSerializer(tictactoe_matches, many=True).data
+    
+    profile_matches = list(chain(ping_serialzer + tictactoe_serializer))
+    return Response(profile_matches)
+
+@api_view(['GET'])
+def get_profile_friends(request, user_id):
+    user = CustomUser.objects.get(id=user_id)
+    friends = Friendship.objects.filter(
+        Q(from_user=user) | Q(to_user=user),
+        request='A',
+        # active='A',
+        # block_user='N'
+    )
+    friends_list = []
+    for friend in friends:
+        if friend.from_user == user:
+            friends_list.append(friend.to_user)
+        else:
+            friends_list.append(friend.from_user)
+    serialized_friends = playerSerializers(friends_list, many=True)
+    return Response(serialized_friends.data)
 
 @api_view(['GET'])
 def get_user_info(request):
@@ -201,19 +246,31 @@ class UserRegistrationView(GenericAPIView):
     permission_classes = [AllowAny]
     
     def post(self, request):
-        user_data = request.data
-        serializer = self.serializer_class(data=user_data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            user = serializer.data
-            send_otp_email(user['email'])
+        try:
+            user_data = request.data
+            serializer = self.serializer_class(data=user_data)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                user = serializer.data
+                send_otp_email(user['email'])
+                return Response({
+                        'data': user,
+                        'message': f'hello, thank you for joining us, a verification code was sent to your email'
+                    }, status=status.HTTP_201_CREATED
+                )
+        except Exception as e:
+            error_string = str(e)
+            if 'username' in error_string:
+                return Response({
+                    'message': 'username already exists !'
+                }, status=status.HTTP_400_BAD_REQUEST)
+            elif 'email' in error_string:
+                return Response({
+                    'message': 'email already in use !'
+                }, status=status.HTTP_400_BAD_REQUEST)
             return Response({
-                    'data': user,
-                    'message': f'hello, thank you for joining us , a verification code was sent to your email'
-                }, status=status.HTTP_201_CREATED
-            )
-        
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                'message': 'something went wrong !'
+            }, status=status.HTTP_400_BAD_REQUEST)
 
 class EmailVerificationView(GenericAPIView):
     
@@ -247,6 +304,7 @@ class UserLoginView(GenericAPIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data, context={'request':request})
         serializer.is_valid(raise_exception=True)
+        print(serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 class UserProfileView(GenericAPIView):
@@ -312,4 +370,3 @@ class UserLogoutView(GenericAPIView):
         return Response({
             'message': 'logout successfull !'
         }, status=status.HTTP_200_OK)
-    
