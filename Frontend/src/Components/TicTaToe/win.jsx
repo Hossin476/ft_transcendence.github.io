@@ -14,7 +14,7 @@ const Win = ({ final_winner }) => {
     const isWin = final_winner === playerRole;
     const isOffline = location.state?.isonline === false;
     const gameId = location.state?.gameid;
-    const BASE_URL = 'http://localhost:8000/api';
+    const BASE_URL = '/api';
 
     const fetchGameData = useCallback(async () => {
         if (!gameId) 

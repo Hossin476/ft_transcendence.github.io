@@ -202,9 +202,9 @@ const fetchData = async (gameType,players,tokens)=> {
   let url = ''
 
   if(gameType === 'P')
-    url = 'http://localhost:8000/pingpong/game/pingpong/offline/craete'
+    url = '/api/pingpong/game/pingpong/offline/create'
   else
-    url = 'http://localhost:8000/game/tictactoe/offline/create_local_game'
+    url = '/api/game/tictactoe/offline/create_local_game'
   const response = await fetch(url,{
     method:"POST",
     headers:{

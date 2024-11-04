@@ -31,7 +31,7 @@ function GameRequest({ t, socketMessage, socket, toast }) {
                     <div className="flex-shrink-0 pt-0.5">
                         <img
                             className="h-10 w-10 rounded-full"
-                            src={`http://localhost:8000${socketMessage.from_img}`}
+                            src={`${socketMessage.from_img}`}
                             alt=""
                         />
                     </div>

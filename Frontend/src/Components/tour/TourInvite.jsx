@@ -3,7 +3,7 @@ import TourInvites from "./TourInvites"
 import { useAuth } from '../../context/AuthContext'
 
 const getTourInvites = async (userId,tokens)=> {
-    const response = await fetch(`http://${import.meta.env.VITE_BACKEND_URL}/api/tournament/invites/`, {
+    const response = await fetch(`/api/tournament/invites/`, {
         method:"GET",
         headers: {
             "Authorization" : "JWT " + tokens.access

@@ -8,7 +8,7 @@ export default function FriendsBar() {
     let { tokens, socketMessage } = useAuth()
     useEffect(() => {
         const fetch_friends = async () => {
-            const response = await fetch(`http://${import.meta.env.VITE_BACKEND_URL}/api/notification/online/`, {
+            const response = await fetch(`/api/notification/online/`, {
                 headers: { Authorization: "JWT " + tokens.access }
             })
             const data = await response.json()

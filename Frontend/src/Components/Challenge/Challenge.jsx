@@ -14,7 +14,7 @@ export default function Challenge({ setopen, gameType }) {
         setOpen(!open)
     }
     const fetchData = async () => {
-        const response = await fetch(`http://${import.meta.env.VITE_BACKEND_URL}/api/notification/onlinegame/`,
+        const response = await fetch(`/api/notification/onlinegame/`,
             {
                 headers: {Authorization: "JWT " + tokens.access}
             }

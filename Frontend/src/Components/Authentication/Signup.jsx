@@ -29,7 +29,7 @@ const Signup = () => {
       else if (password.length < 8)
         setErrorMessage("password must be at least 8 characters long !")
       else {
-        const res = await fetch(`http://${import.meta.env.VITE_BACKEND_URL}/api/auth/register/`, {
+        const res = await fetch(`/api/auth/register/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"

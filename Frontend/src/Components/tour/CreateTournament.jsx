@@ -25,9 +25,9 @@ export default function CreateTournament({setTournamentName, tournamentName, set
         }
         let url =  null
         if( status == 'offline')
-            url = `http://${import.meta.env.VITE_BACKEND_URL}/api/tournament/create/offline/`
+            url = `/api/tournament/create/offline/`
         else
-            url = `http://${import.meta.env.VITE_BACKEND_URL}/api/tournament/create/`
+            url = `/api/tournament/create/`
 
         const response = await fetch(url,{
             method :"POST",

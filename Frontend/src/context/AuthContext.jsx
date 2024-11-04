@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }) => {
         ws.onopen = () => {
             setSocket(ws);
             console.log('WebSocket connected');
-            axios.get(`http://${import.meta.env.VITE_BACKEND_URL}/api/auth/users/me/`,
+            axios.get(`/api/auth/users/me/`,
                 {
                     headers: {
                         "Authorization": "JWT " + tokens.access

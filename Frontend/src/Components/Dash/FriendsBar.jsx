@@ -9,7 +9,7 @@ export default function FriendsBar() {
     const [online_ingame, setChallengeData] = useState(null);
     const {tokens, socketMessage} = useAuth();
     const fetchData = async () => {
-        const response = await fetch(`http://${import.meta.env.VITE_BACKEND_URL}/api/notification/online/`,
+        const response = await fetch(`/api/notification/online/`,
             {
                 headers: {Authorization: "JWT " + tokens.access}
             }

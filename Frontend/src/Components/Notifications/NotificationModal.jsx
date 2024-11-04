@@ -12,7 +12,7 @@ function NotificationModal() {
 
     const fetchData = useCallback(async () => {
         try {
-            const response = await fetch('http://localhost:8000/api/notification/', {
+            const response = await fetch('/api/notification/', {
                 headers: {
                     "Authorization": "JWT " + tokens.access,
                     "content-Type": "application/json"

@@ -15,7 +15,7 @@ const VerifyEmail = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await fetch("http://localhost:8000/api/auth/verify-email/", {
+    const res = await fetch("/api/auth/verify-email/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

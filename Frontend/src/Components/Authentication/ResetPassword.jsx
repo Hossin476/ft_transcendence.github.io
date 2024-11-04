@@ -33,7 +33,7 @@ const ResetPassword = () => {
 			setErrorMessage("both fields are required !")
 			return
 		}
-		const response = await fetch('http://localhost:8000/api/auth/set-new-password/',{
+		const response = await fetch('/api/auth/set-new-password/',{
 			method: 'PATCH',
 			headers: {
 				'Content-Type': 'application/json'

@@ -7,7 +7,7 @@ import TournamentProvider from '../context/TournamentContext';
 
 
 const getTours = async (userId, tokens) => {
-    const response = await fetch(`http://${import.meta.env.VITE_BACKEND_URL}/api/tournament/tourlist/${userId}`, {
+    const response = await fetch(`/api/tournament/tourlist/${userId}`, {
         method: 'GET',
         headers: {
             Authorization: 'JWT ' + tokens.access

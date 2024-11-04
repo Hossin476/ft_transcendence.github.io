@@ -16,7 +16,7 @@ function Leaders({ leaderboardData }) {
             {leaderboardData.slice(0, 3).map((player, index) => (
                 <Card key={player.username} className={`flex items-center p-4 ${index === 0 ? "bg-yellow-400" : index === 1 ? "bg-gray-400" : "bg-yellow-900"}`}>
                     <div className={`relative flex h-10  w-10 shrink-0 overflow-hidden rounded-full`}>
-                        <img className="h-full w-full object-cover " src={'http://localhost:8000' + player.profile_image} alt={player.username || ''} />
+                        <img className="h-full w-full object-cover " src={'' + player.profile_image} alt={player.username || ''} />
                     </div>
                     <div className='ml-3'>
                         <p className="font-semibold text-xl">{player.username}</p>

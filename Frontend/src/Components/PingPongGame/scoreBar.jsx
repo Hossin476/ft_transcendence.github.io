@@ -17,9 +17,9 @@ function ScoreBar({gameid})
     const fetch_game = async ()=>{
         let url = null
         if (location.state.isonline == true)
-            url = `http://${import.meta.env.VITE_BACKEND_URL}/api/pingpong/game/pingpong/${gameid}/`
+            url = `/api/pingpong/game/pingpong/${gameid}/`
         else
-            url = `http://${import.meta.env.VITE_BACKEND_URL}/api/pingpong/game/pingpong/offline/${gameid}/`
+            url = `/api/pingpong/game/pingpong/offline/${gameid}/`
         const response = await fetch(url,{
             headers: {Authorization : "JWT " + tokens.access}
         })

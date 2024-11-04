@@ -47,9 +47,9 @@ export default function Win({iswin, game_id})
         const fetch_game = async ()=>{
             let url = null
             if (location.state.isonline == true)
-                url = `http://${import.meta.env.VITE_BACKEND_URL}/api/pingpong/game/pingpong/${game_id}/`
+                url = `/api/pingpong/game/pingpong/${game_id}/`
             else
-                url = `http://${import.meta.env.VITE_BACKEND_URL}/api/pingpong/game/pingpong/offline/${game_id}/`
+                url = `/api/pingpong/game/pingpong/offline/${game_id}/`
             const response = await fetch(url,{
                 headers: {Authorization : "JWT " + tokens.access}
             })

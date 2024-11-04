@@ -96,7 +96,7 @@ const Tour = () => {
       setInvite(true)
    }
    const fetch_matches = async () => {
-      const url = `http://${import.meta.env.VITE_BACKEND_URL}/api/tournament/${location.state.status === 'online' ? '' : 'offline/'}${tournament.id}`
+      const url = `/api/tournament/${location.state.status === 'online' ? '' : 'offline/'}${tournament.id}`
       const response = await fetch(url, {
          headers: { Authorization: "JWT " + tokens.access }
       })

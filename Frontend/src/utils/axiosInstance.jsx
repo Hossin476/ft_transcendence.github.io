@@ -2,7 +2,7 @@ import axios from 'axios'
 import { jwtDecode } from 'jwt-decode'
 import moment from 'moment'
 
-const baseURL = "http://localhost:8000/api"
+const baseURL = "/api"
 
 const tokens = localStorage.getItem('tokens')
 const refresh_token = tokens ? JSON.parse(tokens).refresh : null

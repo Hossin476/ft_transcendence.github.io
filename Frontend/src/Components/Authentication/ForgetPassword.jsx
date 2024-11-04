@@ -19,7 +19,7 @@ const ForgetPassword = () => {
 			return
 		}
 		else{
-			const res = await fetch("http://localhost:8000/api/auth/password-reset/", {
+			const res = await fetch("/api/auth/password-reset/", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json"

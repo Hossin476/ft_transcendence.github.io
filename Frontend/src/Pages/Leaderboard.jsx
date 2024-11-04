@@ -8,7 +8,7 @@ export default function Leaderboard() {
   const [activeGame, setActiveGame] = useState('Tic Tac Toe')
   const [leaderboardData, setLeaderboardData] = useState([])
   const { tokens } = useAuth();
-  const BASE_URL = 'http://localhost:8000/api/notification/leaderboard';
+  const BASE_URL = '/api/notification/leaderboard';
 
   const fetchData = useCallback(async () => {
     try {

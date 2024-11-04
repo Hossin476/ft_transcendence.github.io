@@ -13,7 +13,7 @@ function InviteModal({ setInvite, tour_id }) {
 
     useEffect(() => {
         async function fetchData() {
-            const response = await fetch(`http://${import.meta.env.VITE_BACKEND_URL}/api/notification/tourinvites/${tour_id}`, {
+            const response = await fetch(`/api/notification/tourinvites/${tour_id}`, {
                 headers: {
                     "Authorization": "JWT " + tokens.access,
                     "content-Type": "application/json"
