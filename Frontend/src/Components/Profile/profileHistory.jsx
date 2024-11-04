@@ -130,7 +130,7 @@ function Match_draw({ match }) {
 
 async function getAllMatches(tokens, userId) {
   const response = await fetch(
-    `http://localhost/api/users/profile/match/${userId}`,
+    `/api/users/profile/match/${userId}`,
     {
       method: "GET",
       headers: {

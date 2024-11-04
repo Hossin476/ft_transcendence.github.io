@@ -4,7 +4,7 @@ import {useEffect,useState} from "react"
 import { useTranslation } from "react-i18next";
 
 const getAllMatches = async(tokens)=> {
-    const response = await fetch("http://localhost/api/users/all_matches/", {
+    const response = await fetch("/api/users/all_matches/", {
         method:"GET",
         headers: {
             "Authorization" : "JWT " + tokens.access,

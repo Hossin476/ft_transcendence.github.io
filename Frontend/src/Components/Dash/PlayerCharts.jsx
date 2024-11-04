@@ -73,7 +73,7 @@ const data = [
 
 
 const getChartData = async (tokens)=> {
-   const response = await fetch("http://localhost/api/users/chart_data/",{
+   const response = await fetch("/api/users/chart_data/",{
     method:"GET",
     headers: {
       'Authorization' : "JWT " + tokens.access,

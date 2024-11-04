@@ -6,7 +6,7 @@ import {useEffect,useState} from 'react'
 
 const  getUserData= async (tokens)=> {
 
-    const response = await fetch("http://localhost/api/users/user_info/",{
+    const response = await fetch("/api/users/user_info/",{
         method : "GET",
         headers:{
             "Authorization": "JWT " + tokens.access,

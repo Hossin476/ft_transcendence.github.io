@@ -6,7 +6,7 @@ import ChatContext from "../../context/ChatContext";
 import _ from "lodash";
 
 const getConversations = async (tokens, user) => {
-  const response = await fetch("http://localhost/api/chat/conversation", {
+  const response = await fetch("/api/chat/conversation", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

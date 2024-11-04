@@ -36,7 +36,7 @@ function Friend({ friend }) {
 }
 
 async function getProfileData(tokens, userId){
-    const response = await fetch(`http://localhost/api/users/profile/friends/${userId}/`,{
+    const response = await fetch(`/api/users/profile/friends/${userId}/`,{
         method : "GET",
         headers:{
             "Authorization": "JWT " + tokens.access,

@@ -7,7 +7,7 @@ import Profile_friends from "../Components/Profile/profileFriends";
 import { useParams } from "react-router-dom";
 
 async function getProfileData(tokens, userId){
-  const response = await fetch(`http://localhost/api/users/profile/${userId}/`,{
+  const response = await fetch(`/api/users/profile/${userId}/`,{
     method : "GET",
     headers:{
         "Authorization": "JWT " + tokens.access,

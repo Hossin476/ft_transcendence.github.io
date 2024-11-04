@@ -70,7 +70,7 @@ export default function Win({iswin, game_id})
                 <div className="relative flex flex-col justify-center items-center">
                     <p className={`font-Plaguard xsm:text-[10vw] lg:text-9xl  ${iswin ?'text-green-500': 'text-red-600'} `}>{iswin? 'YOU WIN' : 'YOU LOSE'}</p>
                     {userGame && <div className="absolute  top-10 flex flex-col  items-center gap-2 w-[100%] ">
-                        <img src={`http://localhost${userGame.profile_image}`} className="rounded-full xsm:w-[10vw] lg:w-[140px] xsm:h-[10vw] lg:h-[140px] border-[2px] border-forthColor object-cover" />
+                        <img src={`http://         ${userGame.profile_image}`} className="rounded-full xsm:w-[10vw] lg:w-[140px] xsm:h-[10vw] lg:h-[140px] border-[2px] border-forthColor object-cover" />
                         <p className="font-inter">{userGame.username}</p>
                         <p className="w-[100%] text-right">{iswin ? '+30XP': '+0XP'}</p>
                         <div className="w-[90%] font-inter text-xs bg-secondaryColor xsm:p-2  lg:p-3  flex flex-col justify-center items-center rounded-full border-[1px] ">
