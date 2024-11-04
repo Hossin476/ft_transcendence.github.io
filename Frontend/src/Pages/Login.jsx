@@ -30,7 +30,7 @@ const Login = () => {
         }
         else {
             setIsLoading(true)
-            const res = await fetch("http://0.0.0.0:8000/api/auth/login/", {
+            const res = await fetch("/api/auth/login/", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

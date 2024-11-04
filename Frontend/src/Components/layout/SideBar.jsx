@@ -15,7 +15,7 @@ export default function SideBar()
     const navigate = useNavigate()
     const handleLogout = ()=>{
         logout()
-        navigate('/loogin');
+        navigate('/login');
 
     }
     return (

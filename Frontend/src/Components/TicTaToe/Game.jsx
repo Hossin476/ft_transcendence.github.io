@@ -10,8 +10,8 @@ import StartModal from './StartModal'
 import ReconnectModal from './ReconnectModal'
 import Draw from './Draw';
 
-const WS_ONLINE_URL = 'ws://localhost:8000/ws/game/tictactoe';
-const WS_OFFLINE_URL = 'ws://localhost:8000/ws/game/tictactoe/offline';
+const WS_ONLINE_URL = `wss://${window.location.host}/ws/game/tictactoe`;
+const WS_OFFLINE_URL = `wss://${window.location.host}/ws/game/tictactoe/offline`;
 
 const GRID_POSITIONS = [
     [-1, 1, 0], [0, 1, 0], [1, 1, 0],

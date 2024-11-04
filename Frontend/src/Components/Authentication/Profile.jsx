@@ -11,7 +11,7 @@ const Profile = () => {
 
   useEffect(() => {
     if (!jwt_access || !user ) {
-      navigate('/loogin')
+      navigate('/login')
     }else{
       getSomeData()
     }
@@ -25,7 +25,7 @@ const Profile = () => {
           localStorage.removeItem('user')
           localStorage.removeItem('access')
           localStorage.removeItem('refresh')
-          navigate('/loogin');
+          navigate('/login');
         }
     }
     catch (error){

@@ -42,7 +42,7 @@ const ResetPassword = () => {
 		})
 		const res = await response.json()
 		if (response.status === 200){
-			navigate('/loogin')
+			navigate('/login')
 			toast.success(response.message)
 		}
 	}

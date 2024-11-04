@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     const global_socket = () => {
-        const ws = new WebSocket(`ws://${import.meta.env.VITE_BACKEND_URL}/ws/notifications/?token=${tokens.access}`)
+        const ws = new WebSocket(`wss://${window.location.host}/ws/notifications/?token=${tokens.access}`)
 
         ws.onopen = () => {
             setSocket(ws);
@@ -88,7 +88,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     const createSocket = () => {
-        let ws = new WebSocket(`ws://${import.meta.env.VITE_BACKEND_URL}/ws/chat/?token=${tokens.access}`)
+        let ws = new WebSocket(`wss://${window.location.host}/ws/chat/?token=${tokens.access}`)
         ws.onopen = (e) => {
             setChatSocket(() => ws)
             console.log("socket opened")

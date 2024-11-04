@@ -111,7 +111,7 @@ const Tour = () => {
 
    useEffect(() => {
       fetch_matches();
-      const wsurl = `ws://${import.meta.env.VITE_BACKEND_URL}/ws/tournament/${location.state.status === 'online' ? '' : 'offline/'}${tournament.id}`
+      const wsurl = `wss://${window.location.host}/ws/tournament/${location.state.status === 'online' ? '' : 'offline/'}${tournament.id}`
       let ws = new WebSocket(`${wsurl}/?token=${tokens.access}`);
       ws.onopen = () => {
          setTourSocket(ws);

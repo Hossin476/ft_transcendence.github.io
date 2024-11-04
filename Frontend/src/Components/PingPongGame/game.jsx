@@ -24,9 +24,9 @@ function Game(props)
   useEffect(() => {
   let wsUrl = null 
   if (location.state.isonline == true)
-      wsUrl = `ws://${import.meta.env.VITE_BACKEND_URL}/ws/game/pingpong/${location.state.gameid}/?token=${tokens.access}`;
+      wsUrl = `wss://${window.location.host}/ws/game/pingpong/${location.state.gameid}/?token=${tokens.access}`;
   else
-      wsUrl = `ws://${import.meta.env.VITE_BACKEND_URL}/ws/game/pingpong/offline/${location.state.gameid}/?token=${tokens.access}`;
+      wsUrl = `wss://${window.location.host}/ws/game/pingpong/offline/${location.state.gameid}/?token=${tokens.access}`;
   const ws = new WebSocket(wsUrl);
   ws.onopen = () => {
     setsocket(ws);
