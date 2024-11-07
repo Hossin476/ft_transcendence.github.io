@@ -330,6 +330,7 @@ class UserPasswordResetView(GenericAPIView):
         }, status=status.HTTP_200_OK)
 
 class PasswordResetConfirmationView(GenericAPIView):
+    permission_classes = [AllowAny]
     def get(self, request, uidb64, token):
         try:
             user_id =smart_str(urlsafe_base64_decode(uidb64))
@@ -351,6 +352,7 @@ class PasswordResetConfirmationView(GenericAPIView):
 
 class SetNewPasswordView(GenericAPIView):
     serializer_class = SetNewPasswordSerializer
+    permission_classes = [AllowAny]
 
     def patch(self, request):
         serializer = self.serializer_class(data=request.data)

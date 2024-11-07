@@ -134,88 +134,8 @@ function LocalButton({onClick,players}){
   );
 
 }
-function LocalButton({onClick,players}){
 
-  let error = false
-  if(players.player1 === '' || players.player1 === '')
-      error = true
-  return (
-    <div className="start-button_div">
-      <div className="empty_start"></div>
-      {error ? <p className="text-red-500"> press done first</p> :''} 
-      <button onClick={onClick} className="started-button">STARTed</button>
-    </div>
-  );
 
-}
-
-function LocalPvp({player,setPlayers}) {
-
-  const [edit,setEdit] = useState(true)
-  const [name,setName] = useState('')
-  const [error,setEror] = useState(false)
-  let regex = new RegExp("^[a-z][a-zA-Z0-9]*$")
-
-  const handleInpute =(e)=> {
-      setName(()=>e.target.value)
-      if (e.target.value.length > 10 || !regex.test(e.target.value))
-          setEror(()=>true)
-      else
-        setEror(()=>false)
-  }
-  const handleClick = ()=> {
-    if (name.length > 10 || !regex.test(name))
-        setEror(()=>true)
-    else
-      {
-        setEror(()=>false)
-        setEdit((prevEdit)=>!prevEdit)
-        setPlayers((prevState)=>{
-           return {...prevState, [player]:name}
-          })
-          console.log("DATA RAH DKHLAT")
-      }
-  }
-  return (
-    <div className="player-card h-[90%] xsm:w-[50%] lg:w-[25%]">
-      <img src={mypic} alt="Avatar" className="avatar-ping" />
-      <div className="player-info items-center flex flex-col">
-        {
-          edit ? <input className='bg-secondaryColor p-2 outline-none rounded border border-forthColor' type="text" value={ name} onChange={handleInpute} /> :<h2>{name}</h2>
-        }
-        {
-          error ? <p className='text-red-500'>invalid name please a valid name</p> : ''
-        }
-        <button disabled={error ? true : false} onClick={handleClick} className="p-2 w-24 mt-4 border rounded border-forthColor">
-          {
-            edit ? 'Done' : 'Edit'
-          }
-        </button>
-      </div>
-    </div>
-  )
-}
-
-function OnlinePvp({isstarted,counter,isstart}) {
-  return (
-    <>
-      <Mycard />
-      { counter && 
-          <div>
-            <h3>match will start in </h3>
-            <p className="text-center text-2xl">{counter}</p>
-          </div>
-      }
-      {
-          isstarted ? (
-            <Vsplayer_card player={pvpUser} />
-          ) : (
-            isstart ? <Wait_card /> : <Add_card />
-          )
-      }
-    </>
-  )
-}
 
 const fetchData = async (gameType,players,tokens)=> {
 

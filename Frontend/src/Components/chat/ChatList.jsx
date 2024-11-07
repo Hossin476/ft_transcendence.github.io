@@ -4,6 +4,7 @@ import { useEffect, useState, useContext, useMemo } from "react";
 import { useAuth } from "../../context/AuthContext";
 import ChatContext from "../../context/ChatContext";
 import _ from "lodash";
+import { useTranslation } from "react-i18next";
 
 const getConversations = async (tokens, user) => {
   const response = await fetch("/api/chat/conversation", {
