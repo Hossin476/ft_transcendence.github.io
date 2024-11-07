@@ -32,11 +32,22 @@ function FrenchFlag() {
   );
 }
 
+function MoroccanFlag() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="24" height="16">
+      <rect width="900" height="600" fill="#c1272d"/>
+      <path d="M450 191.459l-70.534 217.082 184.661-134.164H335.873l184.661 134.164z" fill="none" stroke="#006233" strokeWidth="36"/>
+    </svg>
+  );
+}
+
 export default function LanguageSwitcher() {
   const [language, setLanguage] = useState('en');
 
   const toggleLanguage = () => {
-    const newLanguage = language === 'en' ? 'fr' : 'en';
+    const languages = ['en', 'fr', 'ar'];
+    const currentIndex = languages.indexOf(language);
+    const newLanguage = languages[(currentIndex + 1) % languages.length];
     setLanguage(newLanguage);
     i18n.changeLanguage(newLanguage);
     localStorage.setItem('pongLanguage', newLanguage);
@@ -44,17 +55,42 @@ export default function LanguageSwitcher() {
 
   useEffect(() => {
     const savedLanguage = localStorage.getItem('pongLanguage');
-    if (savedLanguage) {
+    if (savedLanguage && ['en', 'fr', 'ar'].includes(savedLanguage)) {
       setLanguage(savedLanguage);
       i18n.changeLanguage(savedLanguage);
     }
   }, []);
 
+  const getFlag = () => {
+    switch (language) {
+      case 'en':
+        return <EnglishFlag />;
+      case 'fr':
+        return <FrenchFlag />;
+      case 'ar':
+        return <MoroccanFlag />;
+      default:
+        return <EnglishFlag />;
+    }
+  };
+
+  const getLanguageName = () => {
+    switch (language) {
+      case 'en':
+        return 'English';
+      case 'fr':
+        return 'Français';
+      case 'ar':
+        return 'العربية';
+      default:
+        return 'English';
+    }
+  };
+
   return (
     <button
       onClick={toggleLanguage}
-      className="w-32 h-10 relative overflow-hidden border border-gray-300 rounded-md bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-      aria-label={`Switch to ${language === 'en' ? 'French' : 'English'}`}
+      className="w-32 h-10 relative overflow-hidden rounded-md bg-secondaryColor"
     >
       <AnimatePresence mode="wait">
         <motion.div
@@ -65,9 +101,9 @@ export default function LanguageSwitcher() {
           transition={{ duration: 0.2 }}
           className="flex items-center justify-center gap-2 absolute inset-0"
         >
-          {language === 'en' ? <EnglishFlag /> : <FrenchFlag />}
-          <span className="text-sm font-medium text-gray-900">
-            {language === 'en' ? 'English' : 'Français'}
+          {getFlag()}
+          <span className="text-sm font-medium">
+            {getLanguageName()}
           </span>
         </motion.div>
       </AnimatePresence>

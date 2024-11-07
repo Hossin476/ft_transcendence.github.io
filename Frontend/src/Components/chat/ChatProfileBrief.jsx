@@ -2,6 +2,7 @@ import React, { useContext, useMemo } from "react";
 import ChatContext from "../../context/ChatContext";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const FriendHero = () => {
   const { currantUser } = useContext(ChatContext);
@@ -34,10 +35,11 @@ const FriendHero = () => {
   );
 };
 const GameInvite = () => {
+  const { t } = useTranslation();
   return (
     <div className="flex flex-col justify-center items-center mt-10">
       <p className="text-white self-start ml-12 lg:text-2xl font-bold">
-        Invite To Play
+        {t("Invite To Play")}
       </p>
       <hr className="w-5/6  bg-white my-1 h-px border-0" />
       <div className="m-5 flex justify-center">
@@ -64,6 +66,7 @@ const ManageFriendShip = ({user_id}) => {
   const { currantUser } = useContext(ChatContext);
   const { chatsocket, user } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleFriendClick = () => {
     navigate(`/profile/${user_id}`);
@@ -85,7 +88,7 @@ const ManageFriendShip = ({user_id}) => {
   return (
     <div className="flex flex-col justify-center  items-center mt-2">
       <p className="text-white self-start ml-12 font-bold lg:text-2xl">
-        General
+        {t("General")}
       </p>
       <hr className="w-5/6 bg-white my-1 h-px border-0" />
       <div className="m-5 flex justify-center">
@@ -95,14 +98,14 @@ const ManageFriendShip = ({user_id}) => {
             type="button"
             className="rounded-full  py-2 w-32 px-2 border border-1 border-white bg-white bg-opacity-40 lg:text-lg text-white"
           >
-            view profile
+            {t("view profile")}
           </button>
           <button
             onClick={() => handlBlock()}
             type="button"
             className="rounded-full w-32 py-2 px-8 border border-1 border-white bg-white bg-opacity-40 lg:text-lg text-white"
           >
-            Block
+            {t("Block")}
           </button>
         </div>
       </div>

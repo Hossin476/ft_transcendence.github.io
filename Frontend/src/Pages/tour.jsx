@@ -18,6 +18,7 @@ import InviteModal from "../Components/Tournament/InviteModal";
 import { useTournament } from "../context/TournamentContext";
 import { useNavigate } from 'react-router';
 import TournamentForm from "../Components/tour/TournamentForm";
+import { useTranslation } from "react-i18next";
 // const Model = () => {
 //   const gltf = useLoader(GLTFLoader, './golden_trophy.glb');
 
@@ -89,6 +90,7 @@ const Tour = () => {
    const [invite, setInvite] = useState(false)
    const [tour_socker, setTourSocket] = useState(null)
    const navigate = useNavigate();
+   const { t } = useTranslation();
 
    
 
@@ -166,7 +168,7 @@ const Tour = () => {
             {location.state.status != 'online' ? <TournamentForm /> :(
                <>
                   <div className="flex justify-center w-[100%]  min-w-[150px] ">
-                     <p className="font-Valorax">PLAYER IN TOURNAMENT</p>
+                     <p className="font-Valorax">{t("PLAYER IN TOURNAMENT")}</p>
                   </div>
                   <div className=" flex justify-end gap-4 mx-10">
                      {tournament.creator && tournament.creator.username == username && tournament.is_full && !tournament.is_start && <button className="border-[2px] border-forthColor rounded-[5px]" onClick={handleStartTour}>START TOURNAMENT</button>}

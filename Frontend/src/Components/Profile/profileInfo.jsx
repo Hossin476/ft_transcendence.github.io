@@ -9,13 +9,15 @@ import imgBanner from "/public/cover.jpg";
 import imgProfile from "/public/avatar/sbzizal.jpeg";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 function Profile_info({ userid }) {
   const [IsFriend, setIsFriend] = React.useState(false);
   const [IsBlocked, setIsBlocked] = React.useState(false);
   const { user } = useAuth();
-
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
 
   const handleChatRedirect = ()=> {
     navigate("/chat",{
@@ -40,7 +42,7 @@ function Profile_info({ userid }) {
         {/* Profile Picture - Positioned to overlap */}
         <div className="absolute -bottom-16 left-6 xsm:w-20 xsm:h-20 md:w-32 md:h-32 lg:w-36 lg:h-36 xl:h-40 xl:w-40 flex items-center justify-center">
           <div className="xsm:text-xs sm:left-1/4 -bottom-2 xsm:w-16 text-center p-1 absolute z-50 bg-gray-300 xsm:rounded-3xl md:rounded-3xl border-black border-2 text-black">
-            LEVEL {userid?.xp / 100}
+            {t("LEVEL")} {userid?.xp / 100}
           </div>
           <div className="rounded-full border-thirdColor border-[8px] overflow-hidden relative z-20 xsm:w-16 xsm:h-16 md:w-28 md:h-28 lg:w-32 lg:h-32">
             <img
@@ -77,7 +79,7 @@ function Profile_info({ userid }) {
                 </span>
               </h2>
               <p className="md:text-xs lg:text-xl xsm:text-xs xl:text-2xl font-semibold">
-                season 3
+                {t("season")} 1
               </p>
             </div>
           </div>
@@ -90,10 +92,10 @@ function Profile_info({ userid }) {
               ></div>
             </div>
             <span className="absolute xsm:bottom-3 md:bottom-5 left-2 text-sm xsm:text-xs">
-              {100 - userid?.xp} XP TO GO
+              {100 - userid?.xp} XP {t("TO GO")}
             </span>
             <span className="absolute text-sm right-3 xsm:bottom-3 md:bottom-5 xsm:text-xs">
-              LEVEL 3
+              {t("LEVEL")} 3
             </span>
           </div>
         </div>
@@ -116,7 +118,7 @@ function Profile_info({ userid }) {
               </button>
               <button onClick={handleChatRedirect} className="bg-gray-800 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-gray-700 transition-colors xsm:text-sm md:text-base w-36">
                 <BsChatDotsFill />
-                <span className="text-[0.9em]">Message</span>
+                <span className="text-[0.9em]">{t("Message")}</span>
               </button>
               <button
                 onClick={() => setIsBlocked(!IsBlocked)}
@@ -132,7 +134,7 @@ function Profile_info({ userid }) {
                   <MdBlock className="h-5 w-5" />
                 )}
                 <span className="text-[0.9em]">
-                  {IsBlocked ? "Unblock" : "Block"}
+                  {IsBlocked ? t("Unblock") : t("Block")}
                 </span>
               </button>
             </div>

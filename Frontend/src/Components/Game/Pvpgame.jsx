@@ -18,6 +18,7 @@ import Challenge from '../Challenge/Challenge';
 import { useAuth } from '../../context/AuthContext';
 import { RiWifiOffLine } from "react-icons/ri";
 import { IoWifiSharp } from "react-icons/io5";
+import { useTranslation } from 'react-i18next';
 
 function Header({ title}) {
 
@@ -42,23 +43,25 @@ function Header({ title}) {
 }
 
 function Mycard() {
+  const { t } = useTranslation();
   return (
     <div className="player-card h-[90%] xsm:w-[50%] lg:w-[25%]">
       <img src={mypic} alt="Avatar" className="avatar-ping" />
       <div className="player-info">
         <h2>KIRAZIZI</h2>
-        <p>LEVEL 2</p>
+        <p>{t("LEVEL")} 2</p>
       </div>
     </div>
   );
 }
 
 function Wait_card() {
+  const { t } = useTranslation();
   return (
     <div className="add-player-card h-[90%]xsm:w-[50%] lg:w-[25%]">
       <img src={avatar} alt="Avatar" className="anonymous" />
       <div className="add-player-info">
-        <h2>WAITING</h2>
+        <h2>{t("WAITING")}</h2>
         <l-dot-pulse size="30" speed="1.3" color="white"></l-dot-pulse>
       </div>
     </div>
@@ -78,38 +81,55 @@ function Vsplayer_card({player}) {
 }
 
 function Matchmaking_button({onClick}) {
-
+  const { t } = useTranslation();
   return (
     <div className="matchmaking">
-      <p>MATCHMAKING ...</p>
-      <button onClick={onClick} className="cancel-button">CANCEL</button>
+      <p>{t("MATCHMAKING")} ...</p>
+      <button onClick={onClick} className="cancel-button">{t("CANCEL")}</button>
     </div>
   );
 }
 
 function Add_card() {
+  const { t } = useTranslation();
   return (
     <div className="add-player-card h-[90%] xsm:w-[50%] lg:w-[25%]">
       <img src={avatar} alt="Avatar" className="anonymous" />
-      <p className="add-player-info">No_Name</p>
+      <p className="add-player-info">{t("No_Name")}</p>
     </div>
   );
 }
 
 function Start_button({onClick}) {
+  const { t } = useTranslation();
   return (
     <div className="start-button_div">
       <div className="empty_start"></div>
-      <button onClick={onClick} className="start-button">START</button>
+      <button onClick={onClick} className="start-button">{t("START")}</button>
     </div>
   );
 }
 
 function Started_button({onClick}) {
+  const { t } = useTranslation();
   return (
     <div className="start-button_div">
       <div className="empty_start"></div>
-      <button onClick={onClick} className="started-button">STARTED</button>
+      <button onClick={onClick} className="started-button">{t(STARTED)}</button>
+    </div>
+  );
+
+}
+function LocalButton({onClick,players}){
+  const { t } = useTranslation();
+  let error = false
+  if(players.player1 === '' || players.player1 === '')
+      error = true
+  return (
+    <div className="start-button_div">
+      <div className="empty_start"></div>
+      {error ? <p className="text-red-500"> {t("press done first")}t</p> :''} 
+      <button onClick={onClick} className="started-button">{t("STARTED")}</button>
     </div>
   );
 
@@ -224,6 +244,75 @@ const fetchData = async (gameType,players,tokens)=> {
   return null
 }
 
+function LocalPvp({player,setPlayers}) {
+
+  const [edit,setEdit] = useState(true)
+  const [name,setName] = useState('')
+  const [error,setEror] = useState(false)
+  let regex = new RegExp("^[a-z][a-zA-Z0-9]*$")
+  const { t } = useTranslation();
+
+  const handleInpute =(e)=> {
+      setName(()=>e.target.value)
+      if (e.target.value.length > 10 || !regex.test(e.target.value))
+          setEror(()=>true)
+      else
+        setEror(()=>false)
+  }
+  const handleClick = ()=> {
+    if (name.length > 10 || !regex.test(name))
+        setEror(()=>true)
+    else
+      {
+        setEror(()=>false)
+        setEdit((prevEdit)=>!prevEdit)
+        setPlayers((prevState)=>{
+           return {...prevState, [player]:name}
+          })
+          console.log("DATA RAH DKHLAT")
+      }
+  }
+  return (
+    <div className="player-card h-[90%] xsm:w-[50%] lg:w-[25%]">
+      <img src={mypic} alt="Avatar" className="avatar-ping" />
+      <div className="player-info items-center flex flex-col">
+        {
+          edit ? <input className='bg-secondaryColor p-2 outline-none rounded border border-forthColor' type="text" value={ name} onChange={handleInpute} /> :<h2>{name}</h2>
+        }
+        {
+          error ? <p className='text-red-500'>{t("invalid name")}</p> : ''
+        }
+        <button disabled={error ? true : false} onClick={handleClick} className="p-2 w-24 mt-4 border rounded border-forthColor">
+          {
+            edit ? t("Done") : t("Edit")
+          }
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function OnlinePvp({isstarted,counter,isstart}) {
+  return (
+    <>
+      <Mycard />
+      { counter && 
+          <div>
+            <h3>match will start in </h3>
+            <p className="text-center text-2xl">{counter}</p>
+          </div>
+      }
+      {
+          isstarted ? (
+            <Vsplayer_card player={pvpUser} />
+          ) : (
+            isstart ? <Wait_card /> : <Add_card />
+          )
+      }
+    </>
+  )
+}
+
 function PvpGame({ title}) {
 
   const [isstart, setStart] = React.useState(false);
@@ -234,6 +323,7 @@ function PvpGame({ title}) {
   const locations = useLocation()
   const navigate = useNavigate()
   const {socket,socketMessage, tokens} = useAuth()
+  const { t } = useTranslation();
   const [players, setPlayers] = useState({
     player1:'',
     player2:''
@@ -313,11 +403,11 @@ function PvpGame({ title}) {
                         <div className=" flex gap-10 justify-center items-center mt-12">
                             <div onClick={()=>setMode(()=>false)} className={`flex gap-2 p-2 items-center ${mode ===false ? 'bg-[#412e55] rounded-full border border-forthColor' : ''}`}>
                                 <RiWifiOffLine />
-                                <p>offline</p>
+                                <p>{t("offline")}</p>
                             </div>
                             <div onClick={()=>setMode(()=>true)} className={`flex gap-2 p-2 items-center ${mode === true ? 'bg-[#412e55] rounded-full border border-forthColor' : ''}`}>
                                 <IoWifiSharp />
-                                <p>online</p>
+                                <p>{t("online")}</p>
                             </div>
                         </div>
                         <div className="flex w-full items-center px-4 justify-evenly gap-12 h-[90%]">

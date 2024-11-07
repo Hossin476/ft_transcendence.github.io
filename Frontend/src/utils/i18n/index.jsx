@@ -2,6 +2,7 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import enLang from "./lang/en.json";
 import frLang from "./lang/fr.json";
+import arLang from "./lang/ar.json";
 
 // the translations
 // (tip move them in a JSON file and import them,
@@ -12,6 +13,9 @@ const resources = {
   },
   fr: {
     translation: frLang,
+  },
+  ar: {
+    translation: arLang,
   }
 };
 
@@ -20,7 +24,7 @@ i18n
   .init({
     resources,
     fallbackLng: "en",
-    lng: "fr",
+    lng: "en",
     interpolation: {
       escapeValue: false // react already safes from xss
     }

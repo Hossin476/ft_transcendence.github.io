@@ -2,10 +2,12 @@ import { useState } from "react";
 import ModelCreate from "./model.Create";
 import Tournament from "./tournament";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function CreateTournament({title}) {
     const [ismodel, setIsmodel] = useState(false)
     const [tournaments, setTournaments] = useState([])
+    const {t} = useTranslation()
     const addNewTournament= (value)=>{
         const newArray = [...tournaments,value]
         setTournaments(newArray)
@@ -22,11 +24,11 @@ export default function CreateTournament({title}) {
     return (<div className='border  border-forthColor lg:w-[90%]  xsm:w-[90%]  text-white flex flex-col items-center h-[65%] justify-evenly bg-linkBgColor py-3 rounded-[20px]'>
         <div className='flex flex-col items-center'>
             <h1 className='font-Valorax text-[5vw] drop-shadow-2xl text-border xsm:text-[30px] lg:text-[50px] text-border' style={{ textShadow: `2px 2px 4px #BC9FD1` }}>{title}</h1>
-            <h3 className='font-Valorax  xsm:text-[20px] lg:text-[30px]'>TOURNAMENT</h3>
+            <h3 className='font-Valorax  xsm:text-[20px] lg:text-[30px]'>{t("TOURNAMENT")}</h3>
         </div>
         <div className='flex  flex-col  w-[80%] h-[65%] gap-4'>
             <div className='flex justify-between px-4 w-[100%] xsm:text-[1.5vw] lg:text-[15px]'>
-                <h2 className='font-bold '>TOURNAMENT LIST</h2>
+                <h2 className='font-bold '>{t("TOURNAMENT LIST")}</h2>
                 <button className="font-bold hover:opacity-75" onClick={()=>setIsmodel(true)}>CREATE NEW</button>
             </div>
             <div className='h-[1px] w-[100%] bg-white' />

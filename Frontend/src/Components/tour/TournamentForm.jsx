@@ -1,8 +1,10 @@
 import { useState } from "react"
 import { useTournament } from "../../context/TournamentContext";
+import { useTranslation } from "react-i18next";
 
 export default function TournamentForm() {
    const {socket} = useTournament()
+   const { t } = useTranslation()
     const [form,setForm] = useState({
         player1:'',
         player2:'',
@@ -59,46 +61,46 @@ export default function TournamentForm() {
     <div className="w-[90%] h-[100%]  self-center p-1 ">
         <div className="flex h-[30%]  my-1 justify-between">
            <div className=" flex  mx-4 gap-1 relative flex-col w-1/2">
-              <label>player1</label>
+              <label>{t("player")}1</label>
               <input onChange={handleInpute} className={`border  ${errors.player1 ? 'border-red-500' :'border-forthColor'}  rounded p-1 outline-none`} name="player1" value={ form.player1} type="text" />
               {
-                  errors.player1 ==='error' ? <span className="bottom-0 text-red-500 text-xs">this field should be an alphanumirc and max 10 chars</span>
-                  : errors.player1 === "duplicate" ? <span className="bottom-0 text-red-500 text-xs">this name is already taken</span>
-                  : errors.player1 === 'empty' ? <span className="bottom-0 text-red-500 text-xs">this field is empty</span>:''
+                  errors.player1 ==='error' ? <span className="bottom-0 text-red-500 text-xs">{t("max 10 chars")}</span>
+                  : errors.player1 === "duplicate" ? <span className="bottom-0 text-red-500 text-xs">{t("this name is already taken")}</span>
+                  : errors.player1 === 'empty' ? <span className="bottom-0 text-red-500 text-xs">{t("this field is empty")}</span>:''
               }
            </div>
            <div className="flex  mx-4 gap-1 flex-col relative w-1/2">
-              <label>player2</label>
+              <label>{t("player")}2</label>
               <input onChange={handleInpute} className={`border  ${errors.player2 ? 'border-red-500' :'border-forthColor'}  rounded p-1 outline-none`} name="player2" value={form.player2} type="text" />
               {
-                  errors.player2 ==='error' ? <span className="bottom-0 text-red-500 text-xs">this field should be an alphanumirc and max 10 chars</span>
-                  : errors.player2 === "duplicate" ? <span className="bottom-0 text-red-500 text-xs">this name is already taken</span>
-                  : errors.player2 === 'empty' ? <span className="bottom-0 text-red-500 text-xs">this field is empty</span>:''
+                  errors.player2 ==='error' ? <span className="bottom-0 text-red-500 text-xs">{t("max 10 chars")}</span>
+                  : errors.player2 === "duplicate" ? <span className="bottom-0 text-red-500 text-xs">{t("this name is already taken")}</span>
+                  : errors.player2 === 'empty' ? <span className="bottom-0 text-red-500 text-xs">{t("this field is empty")}</span>:''
               }
            </div>
         </div>
         <div className="flex h-[30%] my-2 justify-between">
            <div className="flex  mx-4 gap-1 relative flex-col w-1/2">
-              <label>player3</label>
+              <label>{t("player")}3</label>
               <input onChange={handleInpute} className={`border  ${errors.player3  ? 'border-red-500' :'border-forthColor'}  rounded p-1 outline-none`} name="player3" value={form.player3} type="text" />
               {
-                  errors.player3 ==='error' ? <span className="bottom-0 text-red-500 text-xs">this field should be an alphanumirc and max 10 chars</span>
-                  : errors.player3 === "duplicate" ? <span className="bottom-0 text-red-500 text-xs">this name is already taken</span>
-                  : errors.player3 === 'empty' ? <span className="bottom-0 text-red-500 text-xs">this field is empty</span>:''
+                  errors.player3 ==='error' ? <span className="bottom-0 text-red-500 text-xs">{t("max 10 chars")}</span>
+                  : errors.player3 === "duplicate" ? <span className="bottom-0 text-red-500 text-xs">{t("this name is already taken")}</span>
+                  : errors.player3 === 'empty' ? <span className="bottom-0 text-red-500 text-xs">{t("this field is empty")}</span>:''
               }
            </div>
            <div className="flex  mx-4 gap-1 relative flex-col w-1/2">
-              <label>player4</label>
+              <label>{t("player")}4</label>
               <input onChange={handleInpute} className={`border  ${errors.player4 ? 'border-red-500' :'border-forthColor'}  rounded p-1 outline-none`} name="player4" value={form.player4} type="text" />
               {
-                  errors.player4 ==='error' ? <span className="bottom-0 text-red-500 text-xs">this field should be an alphanumirc and max 10 chars</span>
-                  : errors.player4 === "duplicate" ? <span className="bottom-0 text-red-500 text-xs">this name is already taken</span>
-                  : errors.player4 === 'empty' ? <span className="bottom-0 text-red-500 text-xs">this field is empty</span>:''
+                  errors.player4 ==='error' ? <span className="bottom-0 text-red-500 text-xs">{t("max 10 chars")}</span>
+                  : errors.player4 === "duplicate" ? <span className="bottom-0 text-red-500 text-xs">{t("this name is already taken")}</span>
+                  : errors.player4 === 'empty' ? <span className="bottom-0 text-red-500 text-xs">{t("this field is empty")}</span>:''
               }
            </div>
         </div>
         <div className="flex justify-center w-full">
-           <button onClick={handleForm} className="border-2 mt-4 border border-forthColor  p-2 rounded">start tournament</button>
+           <button onClick={handleForm} className="border-2 mt-4 border border-forthColor  p-2 rounded">{t("start tournament")}</button>
         </div>
     </div>
     )

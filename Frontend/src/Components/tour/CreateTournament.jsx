@@ -3,6 +3,7 @@ import { RiWifiOffLine } from "react-icons/ri"
 import { IoWifiOutline } from "react-icons/io5";
 import { useState } from 'react';
 import {useNavigate} from 'react-router-dom'
+import { useTranslation } from 'react-i18next';
 
 export default function CreateTournament({setTournamentName, tournamentName, setTours}) {
     
@@ -10,6 +11,7 @@ export default function CreateTournament({setTournamentName, tournamentName, set
     const [status,setStatus] = useState("")
     const [error,setError] = useState("")
     const navigate = useNavigate()
+    const { t } = useTranslation();
     
     const handleStatus = (state)=> {
         setStatus(()=>state)
@@ -60,12 +62,12 @@ export default function CreateTournament({setTournamentName, tournamentName, set
                 <input className="h-[2.5rem] w-[80%] rounded-lg outline-none  focus:border-transparent pl-2" type="text" placeholder="create your tournament" name="tournament" onChange={(e)=>setTournamentName(e.target.value)} value = {tournamentName}/>
                 <RiWifiOffLine className={`${status === "offline" ? "border-2  border-thirdColor w-6 h-6 rounded p-1" : "" }`} onClick={()=>handleStatus("offline")} />
                 <IoWifiOutline className={`${status === "online" ? "border-2  border-thirdColor w-6 h-6 rounded p-1" : "" }`} onClick={()=>handleStatus("online")}/>
-                <button onClick={()=>creatTournament()} className="xsm:text-xs xsm:ml-[10px] xsm:p-[2px] md:p-2  bg-secondaryColor  border-[1px] border-thirdColor rounded-md font-bold rounded ">Create Tournament</button>
+                <button onClick={()=>creatTournament()} className="xsm:text-xs xsm:ml-[10px] xsm:p-[2px] md:p-2  bg-secondaryColor  border-[1px] border-thirdColor rounded-md font-bold rounded ">{t("Create Tournament")}</button>
                 {
-                    error === "mode" ? <div  className={`absolute ${error ? handelFading() : "" } right-0 top-[-2rem] translate-y-[-1rem] animate-spin `}>please select the tournament mode</div> : ""
+                    error === "mode" ? <div  className={`absolute ${error ? handelFading() : "" } right-0 top-[-2rem] translate-y-[-1rem] animate-spin `}>{t("please select the tournament mode")}</div> : ""
                 }
                 {
-                    error === "emptyName" ? <div  className={`absolute ${error ? handelFading() : "" } right-0 top-[-2rem] translate-y-[-1rem] animate-spin `}>please insert a valid name</div> : ""
+                    error === "emptyName" ? <div  className={`absolute ${error ? handelFading() : "" } right-0 top-[-2rem] translate-y-[-1rem] animate-spin `}>{t("please insert a valid name")}</div> : ""
                 }
             </div>
         </div>

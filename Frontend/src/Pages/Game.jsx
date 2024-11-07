@@ -3,10 +3,12 @@ import Pingpic from '../../public/avatar/PingPong.png';
 import TicPic from '../../public/avatar/TicTacToe.png';
 import { useNavigate } from "react-router-dom";
 import Challenge from '../Components/Challenge/Challenge';
+import { useTranslation } from 'react-i18next';
 
 function PingPong() {
 
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     function navigateToTournament() {
         navigate('/game/pingpong/tournament');
@@ -24,8 +26,8 @@ function PingPong() {
                 <div className="text-section">
                     <h1>PING PONG</h1>
                     <div className='ping-buttons'>
-                        <button onClick={navigateToTournament} className="tournament-button" >TOURNAMENT</button>
-                        <button  onClick={navigateToPvp} className="pvp-button">PVP</button>
+                        <button onClick={navigateToTournament} className="tournament-button" >{t("TOURNAMENT")}</button>
+                        <button  onClick={navigateToPvp} className="pvp-button">{t("PVP")}</button>
                     </div>
                 </div>
             </div>
@@ -35,6 +37,7 @@ function PingPong() {
 
 function TicTacToe() {
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     function navigateToTournament() {
         navigate('/game/tictactoe/tournament');
@@ -52,8 +55,8 @@ function TicTacToe() {
                 <div className="text-section2">
                     <h1>TIC TAC TOE</h1>
                     <div className='tic-buttons'>
-                        <button onClick={navigateToTournament} className="tournament-button2" >TOURNAMENT</button>
-                        <button onClick={navigateToPvp} className="pvp-button2">PVP</button>
+                        <button onClick={navigateToTournament} className="tournament-button2" >{t("TOURNAMENT")}</button>
+                        <button onClick={navigateToPvp} className="pvp-button2">{t("PVP")}</button>
                     </div>
                 </div>
             </div>

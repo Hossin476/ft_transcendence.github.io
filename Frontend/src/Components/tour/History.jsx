@@ -1,7 +1,8 @@
 import {useNavigate} from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 export default function History({item}) {
-
+    const {t} = useTranslation()
     const navigate = useNavigate()
     const handleNavigation = ()=> {
         navigate("./tour",{
@@ -20,7 +21,7 @@ export default function History({item}) {
             </div>
             <div className="flex">
                 <p className={` ${item.is_start ? 'text-green-500' : ""} ${item.is_end ? 'text-red-500' : ""} text-yellow-500`}>{
-                    item.is_start === true ? "live" : (item.is_end ? "finished" : "pending")
+                    item.is_start === true ? t("live") : (item.is_end ? t("finished") : t("pending"))
                 }</p>
             </div>
         </div>

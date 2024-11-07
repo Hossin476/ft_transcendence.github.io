@@ -44,6 +44,7 @@ export default function ChatList() {
   const [selectedChat, setSelectedChat] = useState(-1);
   const [search, setSearch] = useState("");
   const { count, setCount } = useContext(ChatContext);
+  const { t } = useTranslation();
 
   const setTo_0 = (contact) => {
     contact.count = 0;
@@ -124,13 +125,13 @@ export default function ChatList() {
       <div
         className={`xsm:${
           currantUser ? "hidden" : "block"
-        } h-[90%] md:block bg-secondaryColor rounded-3xl xsm:w-full md:w-[18rem] xl:w-[24rem]  `}
+        } h-[90%] md:block bg-secondaryColor rounded-3xl xsm:w-full md:w-[18rem] xl:w-[24rem]`}
       >
         <div className="mt-10 flex center justify-center relative">
           <div className="relative w-5/6 mx-5">
             <input
-              className="bg-white bg-opacity-20 w-full placeholder:italic placeholder:text-slate-400 palceholder:font-thin text-white rounded-full py-2 pl-10 pr-3"
-              placeholder="Search..."
+              className="bg-white bg-opacity-20 w-full placeholder:text-slate-400 palceholder:font-thin text-white rounded-full py-2 pl-10 pr-3"
+              placeholder={t("Search")}
               type="text"
               name="search"
               onChange={debounce_searchig}
@@ -139,7 +140,7 @@ export default function ChatList() {
           </div>
         </div>
         <h3 className="hidden lg:block text-xl text-white mt-5 ml-7">
-          { search ? "Contacts" : "Last chats" }
+          { search ? t("Contacts") : t("Last chats" )}
         </h3>
         <section className="h-5/6 text-white mt-10 lg:mt-5">
           <div className="text-xs h-5/6 block items-center overflow-y-scroll">
@@ -156,12 +157,12 @@ export default function ChatList() {
               })
             ) : (
               <p className="text-white text-center bg-red-500 p-5 rounded shadow-md max-w-sm mx-auto">
-                No chats or contacts found
+                {t("No chats")}
               </p>
             )}
           </div>
         </section>
       </div>
     );
-  }, [filterchats, selectedChat, currantUser, conversation]);
+  }, [filterchats, selectedChat, currantUser, conversation, search, t]);
 }

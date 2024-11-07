@@ -6,6 +6,7 @@ import ChatField from '../Components/chat/ChatField';
 import ChatProfileBrief from '../Components/chat/ChatProfileBrief';
 import { useAuth } from '../context/AuthContext';
 import ChatContext, { ChatProvider } from '../context/ChatContext';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 
 function handleDirectMessaging({convo}, currentContact, setMessages) {
@@ -116,8 +117,15 @@ const ChatPage = () => {
                     <ChatField />
                     <ChatProfileBrief />
                 </>:
-                <div className={`xsm:${currantUser ? 'flex' : 'hidden'} h-[90%] md:flex  items-center justify-center  flex-1   h-[90%] bg-gray-300  sm:px-4 xl:px-8 rounded-3xl`}>
-                    <h2 className='text-black text-4xl font-bold'>your legendary chats are here</h2>
+                <div className={`xsm:${currantUser ? 'flex' : 'hidden'} h-[90%] md:flex  items-center justify-center flex-1 h-[90%] bg-secondaryColor  sm:px-4 xl:px-8 rounded-3xl`}>
+                        <div className = "w-[100%]">
+                            <DotLottieReact className="w-full"
+                                src="https://lottie.host/8f87b14d-6455-4905-b9f9-487381b36012/WxT65lnrr0.json"
+                                style={{width: '60vw', height: '60vw'}}
+                                loop
+                                autoplay
+                            />
+                        </div>
                 </div>
             }
         </div>

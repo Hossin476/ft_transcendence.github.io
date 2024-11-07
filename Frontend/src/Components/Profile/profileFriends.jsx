@@ -4,9 +4,10 @@ import imgYns from "/public/lshail.jpeg";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 function Friend({ friend }) {
-
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const handleFriendClick = () => {
         navigate(`/profile/${friend.id}`);
@@ -25,7 +26,7 @@ function Friend({ friend }) {
         </div>
         <div className="xsm:hidden xl:block">
           <h1 className="font-semibold">{friend.username} </h1>
-          <p className="font-thin">Level {friend.xp / 100}</p>
+          <p className="font-thin">{t("LEVEL")} {friend.xp / 100}</p>
         </div>
       </div>
       <div className="xsm:hidden xl:block">
@@ -51,6 +52,7 @@ async function getProfileData(tokens, userId){
 }
 
 function Profile_friends({ user }) {
+    const { t } = useTranslation();
     const { tokens, } = useAuth();
     const [friends, setFriends] = useState(null);
 
@@ -66,7 +68,7 @@ function Profile_friends({ user }) {
     return (
         <div className=" xsm:w-12 lg:w-74 xl:w-80 sm:w-28 md:w-32 lg:px-4 bg-secondaryColor rounded-3xl ">
         <div className="flex h-[5rem] xsm:justify-center items-center lg:justify-between">
-            <h1 className="xsm:text-xsm  sm:text-xl sm:self-center">Friends</h1>
+            <h1 className="xsm:text-xsm  sm:text-xl sm:self-center">{t("Friends")}</h1>
             {/* <IoMdPersonAdd className="text-xl xsm:hidden lg:block" /> */}
         </div>
         <div className=" h-[calc(100%-5rem)] sm:items-center lg:items-stretch gap-y-4 flex flex-col overflow-scroll">

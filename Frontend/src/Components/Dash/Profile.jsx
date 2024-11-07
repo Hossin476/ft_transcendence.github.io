@@ -14,7 +14,7 @@ export default function Profile({user}) {
             <div className="h-[80%] w-[80%] overflow-hidden flex items-center justify-center  border-2 border-forthColor rounded-full">
                 <img className="w-full h-full object-fill" src={imgProfle} alt="" />
             </div>
-            <p className="text-xs absolute -bottom-2  bg-gray-300 text-black p-1 border border-black sm:text-sm lg:text-lg  rounded-2xl">LEVEL 2</p>
+            <p className="text-xs absolute -bottom-2  bg-gray-300 text-black p-1 border border-black sm:text-sm lg:text-lg  rounded-2xl">{t("LEVEL")} 2</p>
         </div>
         <div className="xsm:ml-2 sm:ml-0 w-[calc(100%-30%)] h-[50%] flex  flex-col justify-between">
             <div className="xsm:mb-2 sm:mb-4">

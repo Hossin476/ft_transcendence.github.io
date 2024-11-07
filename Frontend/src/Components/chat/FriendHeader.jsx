@@ -2,10 +2,12 @@
 import React,{useContext, useMemo} from 'react'
 import ChatContext from "../../context/ChatContext";
 import { HiMiniArrowUturnLeft } from "react-icons/hi2";
+import { useTranslation } from "react-i18next";
 
 const FriendHeader = () => {
 
   const {currantUser,setCurrentUser} = useContext(ChatContext)
+  const {t} = useTranslation()
 
   return useMemo(()=> {
     return (
@@ -18,13 +20,13 @@ const FriendHeader = () => {
               </div>
               <div>
                   <h1 className=" md:text-2xl xs:text-sm text-gray-700 font-bold uppercase">{currantUser.user.username}</h1>
-                  <p className="xsm:text-xs   text-gray-500"> Active Now</p>
+                  <p className="xsm:text-xs   text-gray-500"> {t("Active Now")}</p>
               </div>
             </div>
             <hr className="mt-5 border border-gray-400 bg-gray-500"></hr>
       </div>
     )
-  },[currantUser])
+  },[currantUser, t])
 }
 
 export default FriendHeader

@@ -1,8 +1,9 @@
 import { BsChatText } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function Friend({name,status,online,user_id}) {
-
+    const { t } = useTranslation();
     const navigate = useNavigate()
     console.log("Friend", user_id)
 
@@ -26,7 +27,7 @@ export default function Friend({name,status,online,user_id}) {
                 </div>
                 <div className="xsm:hidden xl:block">
                     <h1 className="font-semibold">{name}</h1>
-                    <p className="font-thin">{status ? "In Game":"Lobby"}</p>
+                    <p className="font-thin">{status ? t("In Game"):t("Lobby")}</p>
                 </div>
             </div>
             <div className='xsm:hidden xl:block'>
