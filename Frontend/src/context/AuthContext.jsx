@@ -43,6 +43,7 @@ export const AuthProvider = ({ children }) => {
                 localStorage.removeItem('tokens');
                 setUser(null)
                 setTokens(null)
+                setUserName(null)
             }
         }
         catch (error) {
@@ -56,17 +57,7 @@ export const AuthProvider = ({ children }) => {
         ws.onopen = () => {
             setSocket(ws);
             console.log('WebSocket connected');
-            axios.get(`/api/auth/users/me/`,
-                {
-                    headers: {
-                        "Authorization": "JWT " + tokens.access
-                    }
-                }
-            ).then((data) => {
-                setUserName(data.data.username)
-            }).catch((error) => {
-                console.log("error ", error.message)
-            })
+            setUserName(data.tokens?.username)
         };
 
         ws.onerror = (error) => {
