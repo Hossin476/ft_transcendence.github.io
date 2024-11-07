@@ -2,13 +2,16 @@ import '../Components/Game/Game.css'
 import Pingpic from '../../public/avatar/PingPong.png';
 import TicPic from '../../public/avatar/TicTacToe.png';
 import { useNavigate } from "react-router-dom";
+import Challenge from '../Components/Challenge/Challenge';
+import { useTranslation } from 'react-i18next';
 
 function PingPong() {
 
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     function navigateToTournament() {
-        navigate('/game/tournament');
+        navigate('/game/pingpong/tournament');
     }
     function navigateToPvp() {
         navigate('/game/pingpong/pvpgame');
@@ -23,8 +26,8 @@ function PingPong() {
                 <div className="text-section">
                     <h1>PING PONG</h1>
                     <div className='ping-buttons'>
-                        <button onClick={navigateToTournament} className="tournament-button" >TOURNAMENT</button>
-                        <button onClick={navigateToPvp} className="pvp-button">PVP</button>
+                        <button onClick={navigateToTournament} className="tournament-button" >{t("TOURNAMENT")}</button>
+                        <button  onClick={navigateToPvp} className="pvp-button">{t("PVP")}</button>
                     </div>
                 </div>
             </div>
@@ -34,9 +37,10 @@ function PingPong() {
 
 function TicTacToe() {
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     function navigateToTournament() {
-        navigate('/game/tournament');
+        navigate('/game/tictactoe/tournament');
     }
     function navigateToPvp() {
         navigate('/game/tictactoe/pvpgame');
@@ -51,8 +55,8 @@ function TicTacToe() {
                 <div className="text-section2">
                     <h1>TIC TAC TOE</h1>
                     <div className='tic-buttons'>
-                        <button onClick={navigateToTournament} className="tournament-button2" >TOURNAMENT</button>
-                        <button onClick={navigateToPvp} className="pvp-button2">PVP</button>
+                        <button onClick={navigateToTournament} className="tournament-button2" >{t("TOURNAMENT")}</button>
+                        <button onClick={navigateToPvp} className="pvp-button2">{t("PVP")}</button>
                     </div>
                 </div>
             </div>
@@ -62,9 +66,11 @@ function TicTacToe() {
 
 function Game() {
     return (
-        <div className="game-container">
-            <PingPong />
-            <TicTacToe />        
+        <div className='bg-primaryColor w-full flex flex-row items-center justify-center px-7 relative h-[100%] fade-in '>
+            <div className="game-container flex  justify-center  flex-col items-center xsm:w-[90%] w-[80%] max-w-[1700px] min-h-[800px]">
+                <PingPong />
+                <TicTacToe />        
+            </div>
         </div>
     );
 }

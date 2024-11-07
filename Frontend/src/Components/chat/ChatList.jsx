@@ -4,10 +4,10 @@ import { useEffect, useState, useContext, useMemo } from "react";
 import { useAuth } from "../../context/AuthContext";
 import ChatContext from "../../context/ChatContext";
 import _ from "lodash";
-import { flattenJSON } from "three/src/animation/AnimationUtils";
+import { useTranslation } from "react-i18next";
 
 const getConversations = async (tokens, user) => {
-  const response = await fetch("http://127.0.0.1:8000/chat/conversation", {
+  const response = await fetch("http://localhost/api/chat/conversation", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -38,13 +38,14 @@ const getConversations = async (tokens, user) => {
 };
 
 export default function ChatList() {
-  const { setCurrentUser, conversation, setConversation, currantUser } =
+  const { setCurrentUser, conversation, setConversation, currantUser,setBlocker } =
     useContext(ChatContext);
   const { messages, setMessages } = useContext(ChatContext);
-  const { user, tokens } = useAuth();
+  const { user, tokens,socketMessage } = useAuth();
   const [selectedChat, setSelectedChat] = useState(-1);
   const [search, setSearch] = useState("");
   const { count, setCount } = useContext(ChatContext);
+  const { t } = useTranslation();
 
   const setTo_0 = (contact) => {
     contact.count = 0;
@@ -59,11 +60,16 @@ export default function ChatList() {
   };
 
   const handleClick = (contact) => {
-    setSelectedChat(() => contact.id);
+     setSelectedChat(() => contact.id);
+    setBlocker(()=>contact.blocker)
     setCurrentUser(contact);
     setTo_0(contact);
   };
 
+  useEffect(()=> {
+    if (conversation && currantUser)
+     setSelectedChat(()=>currantUser.id)
+  },[conversation,currantUser])
   useEffect(() => {
     const fetchConversation = async () => {
       const data = await getConversations(tokens, user);
@@ -71,6 +77,25 @@ export default function ChatList() {
     };
     fetchConversation();
   }, []);
+
+  useEffect(()=>{ 
+    if (socketMessage)
+        {
+            const data = socketMessage
+            console.log("ahya hadxi ga3ma khdam: ",data.user)
+            if (data.type == "online.state" && conversation){
+              const finindex = conversation.findIndex(item => item.id == data.user.id)
+              if (finindex != -1){
+                    console.log("check this shit",conversation)
+                    conversation[finindex].user.is_online = data.user.is_online
+                    setConversation(()=>conversation)   
+                }
+            }
+            console.log("new friend change state : ",data)
+        }
+
+},[socketMessage])
+
 
   const handelSearch = (e) => {
     setSearch(e.target.value);
@@ -96,18 +121,18 @@ export default function ChatList() {
   }, [search, conversation]);
 
   return useMemo(() => {
-    // console.log("conv", conversation);0
+    console.log("conv", conversation)
     return (
       <div
         className={`xsm:${
           currantUser ? "hidden" : "block"
-        } h-[90%] md:block bg-secondaryColor rounded-3xl xsm:w-full md:w-[18rem] xl:w-[24rem]  `}
+        } h-[90%] md:block bg-secondaryColor rounded-3xl xsm:w-full md:w-[18rem] xl:w-[24rem]`}
       >
         <div className="mt-10 flex center justify-center relative">
           <div className="relative w-5/6 mx-5">
             <input
-              className="bg-white bg-opacity-20 w-full placeholder:italic placeholder:text-slate-400 palceholder:font-thin text-white rounded-full py-2 pl-10 pr-3"
-              placeholder="Search..."
+              className="bg-white bg-opacity-20 w-full placeholder:text-slate-400 palceholder:font-thin text-white rounded-full py-2 pl-10 pr-3"
+              placeholder={t("Search")}
               type="text"
               name="search"
               onChange={debounce_searchig}
@@ -116,7 +141,7 @@ export default function ChatList() {
           </div>
         </div>
         <h3 className="hidden lg:block text-xl text-white mt-5 ml-7">
-          { search ? "Contacts" : "Last chats" }
+          { search ? t("Contacts") : t("Last chats" )}
         </h3>
         <section className="h-5/6 text-white mt-10 lg:mt-5">
           <div className="text-xs h-5/6 block items-center overflow-y-scroll">
@@ -133,12 +158,12 @@ export default function ChatList() {
               })
             ) : (
               <p className="text-white text-center bg-red-500 p-5 rounded shadow-md max-w-sm mx-auto">
-                No chats or contacts found
+                {t("No chats")}
               </p>
             )}
           </div>
         </section>
       </div>
     );
-  }, [filterchats, selectedChat, currantUser, conversation]);
+  }, [filterchats, selectedChat, currantUser, conversation, search, t]);
 }

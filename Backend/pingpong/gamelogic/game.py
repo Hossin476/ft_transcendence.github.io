@@ -25,16 +25,16 @@ class GameLogic:
                     mtp = -1
                 if self.ball_movement['z'] >= 2.8:
                     self.score1 += 1
-                    # if self.gameMode == 'online':
-                    #     asyncio.create_task(self.update_winner_score_online(matchId, 1))
-                    # elif self.gameMode == 'offline':
-                    #     asyncio.create_task(self.update_winner_score__offline(matchId, 1))
+                    if self.gameMode == 'online':
+                        asyncio.create_task(self.update_winner_score_online(matchId, 1))
+                    elif self.gameMode == 'offline':
+                        asyncio.create_task(self.update_winner_score__offline(matchId, 1))
                 else:
                     self.score2 += 1
-                    # if self.gameMode == 'online':
-                    #     asyncio.create_task(self.update_winner_score_online(matchId, 2))
-                    # elif self.gameMode == 'offline':
-                    #     asyncio.create_task(self.update_winner_score__offline(matchId,2))
+                    if self.gameMode == 'online':
+                        asyncio.create_task(self.update_winner_score_online(matchId, 2))
+                    elif self.gameMode == 'offline':
+                        asyncio.create_task(self.update_winner_score__offline(matchId,2))
             except Exception as e:
                 print(f"An error occurred: {e}", file=sys.stderr)
             self.ball_movement = {"vx": 0.05, "vz": 0.05 * mtp, "x": 1, "z": 0.1}
@@ -82,22 +82,36 @@ class GameLogic:
             match.winner = match.player1
         elif match.score2 == 7:
             match.winner = match.player2
-        match.is_game_end = True
+            # match.winner.
+        if match.winner is not None : 
+            match.winner.xp =  match.winner.xp + 30
+            match.winner.rank =  match.winner.xp / 100
+            match.winner.save()
+            match.is_game_end = True
+            print('match winner : ',  match.winner.xp, file=sys.stderr)
         match.save()
 
     @database_sync_to_async
     def update_winner_score__offline(self, matchId, scoreNumber):
+        print("game id : ", matchId)
         match = GameOffline.objects.get(id=matchId)
+        print("score 1: ",  match.score1)
+        print("score 2: ",  match.score2)
         if scoreNumber == 1:
             match.score1 = self.score1
         else:
             match.score2 = self.score2
         if match.score1 == 7:
             match.winner = match.player1
+            print("player 1 win")
         elif match.score2 == 7:
             match.winner = match.player2
-        match.is_game_end = True
+            print("player 2 win")
+        if match.winner is not None :
+            print("there is winner ")
+            match.is_game_end = True
         match.save()
+
 
 
     @database_sync_to_async
@@ -111,12 +125,18 @@ class GameLogic:
                 self.score1 = 3
                 self.score2 = 0
                 matchObj.score2 = 0
+                matchObj.winner.xp = matchObj.winner.xp + 30
+                matchObj.winner.rank =  matchObj.winner.xp / 100
+                matchObj.winner.save()
             elif player2_status:
                 matchObj.winner = matchObj.player2
                 matchObj.score1 = 0
                 matchObj.score2 = 3
                 self.score1 = 0
                 self.score2 = 3
+                matchObj.winner.xp = matchObj.winner.xp + 30
+                matchObj.winner.rank =  matchObj.winner.xp / 100
+                matchObj.winner.save()
 
             if player1_status or player2_status:
                 matchObj.is_game_end = True

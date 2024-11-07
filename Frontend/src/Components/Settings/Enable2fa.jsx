@@ -1,5 +1,8 @@
 import { CgCopy } from "react-icons/cg";
 import qrcode from '../../../public/avatar/qrcode.png';
+import {useTranslation} from 'react-i18next';
+import { useState } from 'react';
+import LanguageSwitcher from './LanguageSwitcher';
 
 import './Disable2fa.css';
 import './Enable2fa.css';
@@ -16,6 +19,7 @@ function CircleIcon( {iconText}){
 }
 
 function Mid_Nav_enable(){
+    const { t } = useTranslation();
     return (
         <div className="mid-nav">
         <div className="number1-nav ">
@@ -25,10 +29,7 @@ function Mid_Nav_enable(){
             </div>
             <div className="pp">
                 <p>
-                    Scan the QR code using any authentication 
-                    application on your phone (e.g. Google
-                    Authenticator, Duo Mobile, Authy) or enter 
-                    the following code:
+                    {t("qr_instructions")}
                 </p>
                 <div className="flex gap-3 items-center">
                     <p className="code">Y77CFN2D76BJLBTBKKN3YHNWR</p>
@@ -38,8 +39,10 @@ function Mid_Nav_enable(){
                 <img src={qrcode} alt="QR code" className="lg:w-[116px] lg:h-[116px] xsm:w-[10vw] xsm:h-[10vw]"/>
         </div>
         <div className="number2-nav">
-            <CircleIcon iconText='2'/>
-            <p>Enter the 6 figure confirmation code shown on the app:</p>
+            <div className="icon-left">
+                <CircleIcon iconText='2'/>
+            </div>
+            <p>{t("confirmation_code")}</p>
         </div>
     </div>
     )

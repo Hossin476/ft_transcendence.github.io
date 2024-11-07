@@ -5,12 +5,14 @@ import { MdOutlineAddPhotoAlternate } from "react-icons/md";
 import { useAuth } from "../../context/AuthContext";
 import ChatContext from "../../context/ChatContext";
 import {debounce} from 'lodash'
+import { useTranslation } from "react-i18next";
 
 const SendMessage = () => {
 
   const [message,setMessages] = useState("")
   const {chatsocket,user} = useAuth()
   const {currantUser, setTyping, typing}  = useContext(ChatContext)
+  const {t} = useTranslation()
   // const {conversation} = useContext(ChatContext)
 
   // console.log(conversation)
@@ -71,7 +73,7 @@ const SendMessage = () => {
             onChange={handeInput}
             onKeyPress={handeInput}
             type="text"
-            placeholder="Type your message..."
+            placeholder={t("Type your message")}
             className="w-[90%] text-gray-600 px-4 placeholder-gray-500 bg-transparent  bg-gray-100   py-3 outline-none focus:outline-none"
           />
           <button onClick={handleMessage} className="  xsm:w-8 xsm:h-8  md:w-12 md:h-12 flex items-center rounded-full justify-center bg-gray-400">

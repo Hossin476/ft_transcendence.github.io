@@ -15,39 +15,37 @@ export default function SideBar()
     const navigate = useNavigate()
     const handleLogout = ()=>{
         logout()
-        navigate('/login')
+        navigate('/login');
 
     }
     return (
-        <div className="xsm:hidden lg:flex   lg:flex-col justify-between h-screen pb-8 items-center">
-            <div className=" py-12 h-28">
-                <h1 className="text-2xl font-normal ">PONGY</h1>
-            </div>
-            <div>    
-                <ul className="flex flex-col gap-y-16">
+        <div className="xsm:hidden w-24 lg:flex px-2 rounded bg-secondaryColor justify-center lg:flex-col  pb-2 my-2   items-center">
+
+            <div className="flex-1 flex flex-col justify-center ">    
+                <ul className="flex   flex-col gap-y-16">
                     <li>
                         <NavLink to="dashboard" className={({isActive})=>(isActive ? "text-thirdColor block  rounded-lg p-3 bg-linkBgColor": "p-3 block")}>
-                             <RiDashboardFill className="text-4xl font-normal"/> </NavLink>    
+                            <RiDashboardFill className="text-4xl font-normal"/> </NavLink>    
                     </li>
                     <li  >
                         <NavLink to="chat" className={({isActive})=>(isActive ? "text-thirdColor block  rounded-lg p-3 bg-linkBgColor": "p-3 block")}>
-                               <HiChatAlt2 className="text-4xl font-normal"/> </NavLink>    
+                            <HiChatAlt2 className="text-4xl font-normal"/> </NavLink>    
                     </li>
                     <li  >
                         <NavLink to="game" className={({isActive})=>(isActive ? "text-thirdColor block  rounded-lg p-3 bg-linkBgColor": "p-3 block")}>
-                             <PiPingPongBold className="text-4xl font-normal"/> </NavLink>    
+                            <PiPingPongBold className="text-4xl font-normal"/> </NavLink>    
                     </li>
                     <li  >
                         <NavLink to="leaderboard" className={({isActive})=>(isActive ? "text-thirdColor block  rounded-lg p-3 bg-linkBgColor": "p-3 block")}>
-                             <FaChartSimple className="text-4xl font-normal"/> </NavLink>    
+                            <FaChartSimple className="text-4xl font-normal"/> </NavLink>    
                     </li>
                     <li  >
                         <NavLink to="settings" className={({isActive})=>(isActive ? "text-thirdColor block  rounded-lg p-3 bg-linkBgColor": "p-3 block")}>
-                             <FiSettings className="text-4xl font-normal"/> </NavLink>    
+                            <FiSettings className="text-4xl font-normal"/> </NavLink>    
                     </li>
                 </ul>
             </div>
-            <div >
+            <div className ="">
                 <CiLogout className="text-4xl font-normal" onClick={handleLogout}/>
             </div>
         </div>

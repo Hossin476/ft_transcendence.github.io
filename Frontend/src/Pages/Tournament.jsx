@@ -1,38 +1,57 @@
-import React from 'react';
-import '../tournament.css';
+import { useState, useEffect } from 'react'
+import { useAuth } from '../context/AuthContext'
+import CreateTournament from "../Components/tour/CreateTournament";
+import HistoryAndInvites from "../Components/tour/HistoryAndInvites";
+import Header from "../Components/tour/Header";
+import TournamentProvider from '../context/TournamentContext';
 
-import User from '../Components/Tournament/User';
-import Winner from '../Components/Tournament/Winner';
-import Header from '../Components/Tournament/Header';
-import Challenge from '../Components/Tournament/Challenge';
 
-function Tournament() {
-  return (
-    <div className="container_tournament bg-primaryColor w-full grid grid-rows-1 justify-items-center items-center">
-      <div className="flex justify-center items-center w-11/12 h-full">
-        {/* < Challenge /> */}
-        <div className='border border-forthColor lg:w-11/12 md:w-11/12 w-full text-white flex flex-col items-center h-[70%] bg-linkBgColor rounded-3xl'>
-          <Header />
-          <div className="w-full max-h-[500px] grid items-center justify-items-center h-2/4 tor_cont px-10 my-auto">
-            <div className="first_container w-[40%] max-w-[200px] h-[90%] border  lg:border-8 relative">
-              <User className="h-16 w-16 sm:h-24 sm:w-24 md:h-28 md:w-28 lg:h-32 lg:w-32 bg-linkBgColor top-[-3.5rem] sm:top-[-4.5rem] left-[-3.5rem] sm:left-[-4.5rem] absolute text-center grid place-content-center" />
-              <User className="h-16 w-16 sm:h-24 sm:w-24 md:h-28 md:w-28 lg:h-32 lg:w-32 bg-linkBgColor absolute bottom-[-3.5rem] sm:bottom-[-4.5rem] left-[-3.5rem] sm:left-[-4.5rem] text-center grid place-content-center" />
-              <User className="h-16 w-16 sm:h-24 sm:w-24 md:h-28 md:w-28 lg:h-32 lg:w-32 bg-red-400 absolute top-[50%] translate-y-[-50%] right-[-3.5rem] sm:right-[-3.5rem] text-center grid place-content-center" />
-            </div>
-            <div className="winner_container border-2 border-yellow-400 rounded-3xl w-[100%] max-w-[200px] h-[90%]   relative flex">
-              <Winner className="z-10 " />
-            </div>
-            <div className="second_container w-[40%] max-w-[200px] h-[90%] border  lg:border-8 relative">
-              <User className="h-16 w-16 sm:h-20 sm:w-20 md:h-28 md:w-28 lg:h-32 lg:w-32 bg-linkBgColor absolute right-[-3.5rem] sm:right-[-4.5rem] top-[-3.5rem] sm:top-[-4.5rem] text-center grid place-content-center" />
-              <User className="h-16 w-16 sm:h-24 sm:w-24 md:h-28 md:w-28 lg:h-32 lg:w-32 bg-linkBgColor absolute bottom-[-3.5rem] sm:bottom-[-4.5rem] right-[-3.5rem] sm:right-[-4.5rem] text-center grid place-content-center" />
-              <User className="h-16 w-16 sm:h-20 sm:w-20 md:h-28 md:w-28 lg:h-32 lg:w-32 bg-red-400 absolute top-[50%] left-[-3.5rem] sm:left-[-3.5rem] translate-y-[-50%] text-center grid place-content-center" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+const getTours = async (userId, tokens) => {
+    const response = await fetch(`http://${import.meta.env.VITE_BACKEND_URL}/api/tournament/tourlist/${userId}`, {
+        method: 'GET',
+        headers: {
+            Authorization: 'JWT ' + tokens.access
+        }
+    })
+    const data = await response.json()
+    if (response.ok)
+        return data
+    return null
 }
 
-export default Tournament;
+export default function Chat() {
 
+    const [tours, setTours] = useState(null)
+    const [tournamentName, setTournamentName] = useState("")
+    const { tokens, user, socketMessage, socket } = useAuth()
+
+
+    const fetchTours = async () => {
+        const data = await getTours(user.user_id, tokens)
+        setTours(() => data)
+    }
+
+    useEffect(() => {
+        fetchTours();
+    }, [])
+
+    useEffect(() => {
+
+        if (socket && socketMessage) {
+            const { type, response } = socketMessage
+            if (type === "tour_accept" && response === "accepted") {
+                fetchTours();
+            }
+        }
+    }, [socketMessage])
+
+    return (
+            <div className="flex-1 h-[90%] flex items-center   justify-center">
+                <div className="h-[90%] w-[90%] flex flex-col rounded-lg border-[2px] border-thirdColor bg-secondaryColor  items-center py-20">
+                    <Header />
+                    <CreateTournament setTournamentName={setTournamentName} tournamentName={tournamentName} setTours={setTours} />
+                    <HistoryAndInvites tours={tours} />
+                </div>
+            </div>
+    )
+}

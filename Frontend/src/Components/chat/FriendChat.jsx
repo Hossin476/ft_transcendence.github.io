@@ -18,7 +18,7 @@ export default function FriendChat({ contacts, handleOnClick, selected }) {
   }
 
   const contactCount = count.find((item) => item.id === contacts.user.id);
-  // console.log(contacts);
+  console.log( "here is the contact : ",contacts);
   return (
     <>
       <span
@@ -33,7 +33,7 @@ export default function FriendChat({ contacts, handleOnClick, selected }) {
             <img className="w-full rounded-full" src={img} alt="" />
             <span
               className={`w-4 h-4 right-0 bottom-0 rounded-full ${
-                contacts.id ? "bg-green-500" : "bg-gray-500"
+                contacts.user.is_online ? "bg-green-500" : "bg-red-500"
               } absolute`}
             ></span>
           </div>

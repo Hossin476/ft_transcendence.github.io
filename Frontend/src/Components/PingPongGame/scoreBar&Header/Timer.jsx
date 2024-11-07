@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-function Timer() {
+function Timer({game_id}) {
     const [time, setTime] = useState(0);
 
     useEffect(() => {
@@ -8,8 +8,11 @@ function Timer() {
         interval = setInterval(() => {
             setTime((prevTime) => prevTime + 1);
         }, 1000);
-        return () => clearInterval(interval);
-    }, []);
+        return () => {
+            clearInterval(interval)
+            setTime(0)
+        };
+    }, [game_id]);
 
     const formatTime = (time) => {
         const getSeconds = `0${time % 60}`.slice(-2);

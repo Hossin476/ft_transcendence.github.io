@@ -21,12 +21,15 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('auth/', include('djoser.urls')),
-    path('auth/', include('djoser.urls.jwt')),
-    path('', include('tictactoe.urls')),
-    path('notification/', include('notifications.urls')),
-    path('chat/',include('chat.urls'))
-    # path('', include('pingpong.urls')),
+    path('api/', include([
+        path('auth/', include('users.urls')),
+        path('', include('tictactoe.urls')),
+        path('notification/', include('notifications.urls')),
+        path('pingpong/', include('pingpong.urls')),
+        path('tournament/',include('tournament.urls')),
+        path('chat/', include('chat.urls')),
+        path('users/', include('users.urls')),
+    ])),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

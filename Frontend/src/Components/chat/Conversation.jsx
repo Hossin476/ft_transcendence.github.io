@@ -22,7 +22,7 @@ const Typing_render = () => {
 
 const getMessages = async (chatUser,tokens)=> {
 
-  const respons = await fetch("http://127.0.0.1:8000/chat/messages",{
+  const respons = await fetch(" http://localhost/api/chat/messages",{
       method:"POST",
       headers :{
               'Content-Type':"application/json",
@@ -54,9 +54,10 @@ function getFormatedDate(messageTime) {
 const Conversation = () => {
 
   const {user,tokens,chatsocket} = useAuth()
-  const {currantUser,messages,setMessages,seen,setSeen, typing} = useContext(ChatContext)
+  const {currantUser,messages,setMessages,seen,setSeen, typing,setBlocker,blocker} = useContext(ChatContext)
   const elementRef = useRef(null)
   
+
   useEffect(()=> {
     const fetchMessages = async ()=> {
       const data = await getMessages(currantUser,tokens)
@@ -73,7 +74,6 @@ const Conversation = () => {
   }, [currantUser])
 
   useEffect(()=> {
-    let _message
     let lasts;
 
     if (messages && messages.length > 0) {
@@ -85,7 +85,8 @@ const Conversation = () => {
         JSON.stringify({
           type: "seen_message",
           msg_id: lasts.id,
-          reciever: lasts.sendId === user.user_id ? user.user_id : currantUser.user.id,
+          reciever: currantUser.user.id,
+          friendship: currantUser.id
         })
       )
     }
@@ -97,16 +98,12 @@ const Conversation = () => {
     return (
       <div  className="flex-1 overflow-y-scroll flex flex-col space-y-4 px-4  text-gray-600">
         {messages && messages.map((conv, index) => (
-            <div key={`${index}`} className="w-full  flex flex-col mt-4">
-              <div className={`w-fit rounded-xl  ${conv.sendId === user.user_id ? 'self-end bg-linkColor  border-forthColor' : 'self-start bg-gray-400  border-linkColor'} border-[2px]  relative`}>
+            <div key={`${index}`} className="w-full   flex flex-col mt-4">
+              <div className={`w-fit rounded-xl  ${conv.sendId === user.user_id ? 'self-end bg-linkColor  border-forthColor' : 'self-start bg-gray-400  border-linkColor'} max-w-[50%]  border-[2px]  relative`}>
                 <div 
                     className={` pt-2 w-fit  px-5 p-2 flex items-center `}>
-                    <p className="text-gray-600 whitespace-pre-wrap break-words ">
-                      {
-                        conv.content.includes(' ')
-                        ? conv.content.match(/\S+(\s+\S+){0,20}/g)?.join('\n')
-                        : conv.content.match(/.{1,60}/g)?.join('\n')
-                      }
+                    <p className="text-gray-600 break-all text-wrap ">
+                        {conv.content}
                       </p>
                 </div>
                 <p style={{fontSize: '10px'}} className={`absolute right-2  opacity-60`}>{getFormatedDate(conv.created_at)}</p>
@@ -124,7 +121,7 @@ const Conversation = () => {
       </div>
     );
   }
-  ,[messages,currantUser,seen, typing])
+  ,[messages,currantUser,seen, typing,blocker])
 }
 
 export default Conversation;

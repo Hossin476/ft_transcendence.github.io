@@ -1,40 +1,48 @@
 import { AiOutlineUserAdd } from "react-icons/ai";
 import Friend from "./Friend";
-import { useTranslation } from "react-i18next";
+import { useEffect, useState } from "react";
+import { useAuth } from "../../context/AuthContext";
 
 export default function FriendsBar() {
-
-    // const { t } = useTranslation();
+    const [friends, setFriends] = useState(null)
+    let { tokens, socketMessage } = useAuth()
+    useEffect(() => {
+        const fetch_friends = async () => {
+            const response = await fetch(`http://${import.meta.env.VITE_BACKEND_URL}/api/notification/online/`, {
+                headers: { Authorization: "JWT " + tokens.access }
+            })
+            const data = await response.json()
+            console.log(data)
+            setFriends(data)
+        }
+        fetch_friends()
+    }, [])
+    useEffect(() => {
+        const data = socketMessage
+        if (socketMessage) {
+            const data = socketMessage
+            if (data.type == "online.state" && friends) {
+                const finindex = friends.users.findIndex(item => item.id == data.user.id)
+                if (finindex != -1) {
+                    friends.users[finindex] = data.user
+                    setFriends({ users: friends.users })
+                } else
+                    setFriends({ users: [...friends.users, data.user] })
+            }
+            console.log("new friend change state : ",data)
+            socketMessage = null
+        }
+    }, [socketMessage])
     return (
         <div className="bg-secondaryColor rounded-3xl  xsm:w-12 sm:w-16 xl:w-4/5   h-2/5 xl:h-full xl:p-5">
             <h3 className=" xsm:hidden xl:block text-center text-2xl">Friends</h3>
-                <div className=" xsm:hidden  xl:flex xl:px-4 xl:pt-4 xl:justify-between xl:center">
-                    <p className="text-2xl">Online</p>
-                    <a  className="text-xl  self-center" href=""><AiOutlineUserAdd /></a>
-                </div>
-            <div className=" xsm:1/5 xsm:h-1/3 sm:h-2/5 pt-4 xsm:px-1 xl:px-4">
-                <div className="h-full xsm:flex xsm:flex-col xl:block xsm:items-center overflow-y-scroll">
-                    <Friend />
-                    <Friend />
-                    <Friend />
-                    <Friend />
-                    <Friend />
-                    <Friend />
-                </div>
+            <div className=" xsm:hidden  xl:flex xl:px-4 xl:pt-4 xl:justify-between xl:center">
+                <p className="text-2xl">Online</p>
+                <a className="text-xl  self-center" href=""><AiOutlineUserAdd /></a>
             </div>
-
-            <hr className="w-4/5 center mx-auto my-4 xl:my-8 " />
-
-            <div className=" xl:px-4 xsm:h-1/2 xl:h-2/5 h-1/4  xsm:px-2">
-                <h3 className="xsm:hidden xl:block text-xl"> Offline</h3>
-                <div className="  h-5/6 xsm:flex xsm:flex-col xl:block xsm:items-center overflow-y-scroll ">
-                    <Friend />
-                    <Friend />
-                    <Friend />
-                    <Friend />
-                    <Friend />
-                    <Friend />
-                    <Friend />
+            <div className="  pt-4 xsm:px-1 xl:px-4">
+                <div className="h-full xsm:flex xsm:flex-col xl:block xsm:items-center overflow-y-scroll">
+                    {friends && friends.users.map((item, index) => (<Friend online={item.is_online} img={item.profile_image} key={index} friendName={item.username} currentAction={ (!item.is_online ? item.last_time : (item.is_ingame ? "playing " + item.game_type : "in lobby"))}  />))}
                 </div>
             </div>
         </div>

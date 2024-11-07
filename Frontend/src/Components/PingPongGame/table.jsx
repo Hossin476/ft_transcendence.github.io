@@ -1,4 +1,4 @@
-import { RigidBody } from "@react-three/rapier";
+
 
 export default function Table() {
   return (<>
