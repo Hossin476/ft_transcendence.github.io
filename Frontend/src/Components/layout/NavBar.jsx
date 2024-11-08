@@ -11,7 +11,7 @@ import LanguageSwitcher from "../../Components/Settings/LanguageSwitcher";
 
 export default function NavBar() {
 
-    const { socket, global_socket, socketMessage, createSocket,user } = useAuth()
+    const { socket, global_socket, socketMessage, createSocket,user, username } = useAuth()
     const [showNotifications, setShowNotifications] = useState(false);
     const nav = useNavigate();
 
@@ -39,7 +39,7 @@ export default function NavBar() {
                 socket.close()
         };
     }, []);
-    console.log(user)
+    console.log("user name ", username)
     return (
         <div className="xsm:py-4 flex bg-secondaryColor rounded xsm:h-full items-center justify-between justify-end relative">
             <div className=" xsm:pl-4">

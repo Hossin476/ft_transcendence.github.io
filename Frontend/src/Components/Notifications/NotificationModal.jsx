@@ -1,44 +1,36 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '../../context/AuthContext';
-// import FriendResponseNotification from './FriendResponseNotification';
-// import GameResponseNotification from './GameResponseNotification'
-// import ReconnectNotification from './ReconnectNotification'
-import FriendNotification from './FriendNotification'
+import FriendNotification from './FriendNotification';
 import GameNotification from './GameNotification';
+import FriendResponseNotification from './FriendResponseNotification';
 
 function NotificationModal() {
     const [notifications, setNotifications] = useState([]);
-    const { tokens, socketMessage } = useAuth()
+    const { tokens, socketMessage } = useAuth();
 
     const fetchData = useCallback(async () => {
         try {
             const response = await fetch('/api/notification/', {
                 headers: {
                     "Authorization": "JWT " + tokens.access,
-                    "content-Type": "application/json"
+                    "Content-Type": "application/json"
                 }
-            })
+            });
 
             if (!response.ok)
                 throw new Error(`HTTP error! status: ${response.status}`);
 
-            const data = await response.json()
-            const notifications = data.map(notification => ({
-                ...notification,
-                type: notification.isgame === true ? 'game' : 'friend',
-            }));
-            setNotifications(notifications);
-            console.log("notifications ", notifications)
+            const data = await response.json();
+            setNotifications(data);
+            console.log("notifications ", data);
         } catch (error) {
             console.error('Fetch failed: ', error);
         }
-
-    }, [])
+    }, [tokens.access]);
 
     useEffect(() => {
-
         fetchData();
-    }, [socketMessage, fetchData])
+    }, [socketMessage, fetchData]);
 
     return (
         <div className="bg-white text-gray-800 dark:text-white w-[22rem] md:w-[32rem] xsm:w-[24rem] xsm:h-[40rem] sm:w-[26rem] lg:w-[36rem] h-[50rem] rounded-lg shadow-xl overflow-hidden">
@@ -48,11 +40,16 @@ function NotificationModal() {
                 </h1>
             </div>
             <div className="p-4 space-y-4 overflow-y-auto h-[calc(100%-5rem)]">
-                {notifications.map((notification, index) => (
-                    notification.type === 'friend'
-                        ? <FriendNotification key={index} notification={notification} />
-                        : <GameNotification key={index} notification={notification} />
-                ))}
+                {notifications.map((notification, index) => {
+                    if (notification.type === 'friend') {
+                        return <FriendNotification key={index} notification={notification} />;
+                    } else if (notification.type === 'game') {
+                        return <GameNotification key={index} notification={notification} />;
+                    } else if (notification.type === 'friend_response') {
+                        return <FriendResponseNotification key={index} response={notification.response} />;
+                    }
+                    return null;
+                })}
             </div>
         </div>
     );

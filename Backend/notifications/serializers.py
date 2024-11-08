@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from .models import *
 from users.models import Friendship, CustomUser
+from rest_framework import serializers
+from .models import Friendship
 
 
 class playerSerializers(serializers.ModelSerializer):
@@ -64,3 +66,11 @@ class FriendshipNotificationSerializer(serializers.ModelSerializer):
             'isgame',
             'created_at',
         ]
+
+
+
+
+class FriendshipSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Friendship
+        fields = ['id', 'request', 'active', 'block_user', 'from_user', 'to_user']
