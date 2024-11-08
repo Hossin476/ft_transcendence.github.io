@@ -38,7 +38,6 @@ const Login = () => {
                 body: JSON.stringify(loginData)
             })
             const tokens = await res.json()
-            console.log(tokens)
             setIsLoading(false)
             if (res.status === 200) {
                 login({ tokens })
