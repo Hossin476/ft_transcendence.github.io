@@ -25,6 +25,8 @@ channle_layer = get_channel_layer()
 def change_online_state(user, state):
     user.is_online = state
     user.save()
+
+
 @database_sync_to_async
 def create_game_db(sender, receiver, game):
     receiver_obj = CustomUser.objects.get(username=receiver)
@@ -37,17 +39,14 @@ def create_game_db(sender, receiver, game):
 def create_friend_db(sender, receiver_id):
     try:
         receiver = CustomUser.objects.get(username=receiver_id)
-
         existing_friendship = Friendship.objects.filter(
             from_user=sender,
             to_user=receiver,
             request='P' 
         ).first()
-
         if existing_friendship:
             existing_notification = FriendshipNotification.objects.get(friendship=existing_friendship)
             return existing_notification, receiver.id
-
         friendship = Friendship.objects.create(from_user=sender, to_user=receiver)
         obj = FriendshipNotification.objects.create(
             sender=sender, receiver=receiver, friendship=friendship
@@ -60,40 +59,21 @@ def create_friend_db(sender, receiver_id):
 @database_sync_to_async
 def accept_friend_request(sender, receiver_id):
     try:
-        
         receiver = CustomUser.objects.get(username=receiver_id)
         friendship = Friendship.objects.get(from_user=sender, to_user=receiver)
-        friendship.request = 'A'  # Update request status to 'Accepted'
+        friendship.request = 'A'
         friendship.save()
-        
-        # Optional: Create a notification if needed
-        # obj = FriendshipNotification.objects.create(
-        #     sender=sender,
-        #     receiver=receiver,
-        #     friendship=friendship
-        # )
-        # return obj
     except Friendship.DoesNotExist:
-        # Handle the case where the friendship does not exist
         return None
+
 
 @database_sync_to_async
 def reject_friend_request(sender, receiver_id):
     try:
         receiver = CustomUser.objects.get(username=receiver_id)
         friendship = Friendship.objects.get(from_user=sender, to_user=receiver)
-        
-        # Create the notification before deleting the friendship
-        # obj = FriendshipNotification.objects.create(
-        #     sender=sender,
-        #     receiver=receiver,
-        #     friendship=friendship
-        # )
-        
-        friendship.delete()  # Delete the friendship request
-        # return obj
+        friendship.delete()
     except Friendship.DoesNotExist:
-        # Handle the case where the friendship does not exist
         return None
 
 
