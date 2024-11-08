@@ -53,17 +53,17 @@ def create_friend_db(sender, receiver_id):
         )
         return obj, receiver.id
     except Exception as e:
-        return None, None
+        return None
 
 
 @database_sync_to_async
 def accept_friend_request(sender, receiver_id):
     try:
         receiver = CustomUser.objects.get(username=receiver_id)
-        friendship = Friendship.objects.get(from_user=sender, to_user=receiver)
+        friendship = Friendship.objects.get(from_user=receiver, to_user=sender)
         friendship.request = 'A'
         friendship.save()
-    except Friendship.DoesNotExist:
+    except Exception as e:
         return None
 
 
@@ -71,9 +71,9 @@ def accept_friend_request(sender, receiver_id):
 def reject_friend_request(sender, receiver_id):
     try:
         receiver = CustomUser.objects.get(username=receiver_id)
-        friendship = Friendship.objects.get(from_user=sender, to_user=receiver)
+        friendship = Friendship.objects.get(from_user=receiver, to_user=sender)
         friendship.delete()
-    except Friendship.DoesNotExist:
+    except Exception as e:
         return None
 
 
