@@ -14,11 +14,7 @@ const ForgetPassword = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault()
-		if (!email){
-			setErrorMessage("Please enter your registration email")
-			return
-		}
-		else{
+		if (email){
 			const res = await fetch("/api/auth/password-reset/", {
 				method: "POST",
 				headers: {
@@ -26,10 +22,18 @@ const ForgetPassword = () => {
 				},
 				body: JSON.stringify({ email })
 			})
-			if (res.status === 200){
+			if (res.ok){
 				navigate("/mail-sent")
 			}
-			setEmail("")
+			else if (res.status === 400){
+				console.log(res)
+				const data = await res.json()
+				setErrorMessage(data.error)
+			}
+		}
+		else{
+			setErrorMessage("Please enter your registration email")
+			return
 		}
 	}
 	
