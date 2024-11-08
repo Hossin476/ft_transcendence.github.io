@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }) => {
         ws.onopen = () => {
             setSocket(ws);
             console.log('WebSocket connected');
-            setUserName(data.tokens?.username)
+            setUserName(tokens?.username)
         };
 
         ws.onerror = (error) => {
