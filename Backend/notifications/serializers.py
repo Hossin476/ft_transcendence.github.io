@@ -36,7 +36,7 @@ class TourInvitesSerializers(serializers.ModelSerializer):
         ]
 
 
-class GameNotificationSerializers(serializers.ModelSerializer):
+class GameNotificationSerializer(serializers.ModelSerializer):
     sender = playerSerializers()
     isgame = serializers.BooleanField(default=True)
     game_type = serializers.SerializerMethodField()

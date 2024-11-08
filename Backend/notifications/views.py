@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from django.db.models import Q
 from notifications.models import FriendshipNotification, GameNotification
-from .serializers import FriendshipNotificationSerializer, GameNotificationSerializers, playerSerializers, TourInvitesSerializers, FriendshipSerializer
+from .serializers import FriendshipNotificationSerializer, GameNotificationSerializer, playerSerializers, TourInvitesSerializers, FriendshipSerializer
 from users.models import CustomUser, Friendship
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
