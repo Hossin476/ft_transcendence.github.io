@@ -7,6 +7,7 @@ from .models import Tournament, TournamentLocal
 from .serializers import TournamentSerializer, TournamentInviteSerializer, TrounamentLocalSerializer
 from users.models import CustomUser
 from .models import InviteTournament
+from rest_framework.decorators import api_view
 import json
 # Create your views here.
 
@@ -43,7 +44,13 @@ class TournamentLocalView(APIView):
         serialized_tour =  TrounamentLocalSerializer(tour)
         return Response(serialized_tour.data)
 
-
+@api_view(['GET'])
+def get_all_tournaments(request):
+    user = request.user
+    player = CustomUser.objects.get(id=user.id)
+    tournaments = player.tournament_set.all()
+    serialized_tournaments = TournamentSerializer(tournaments, many=True)
+    return Response(serialized_tournaments.data)
 
 class TournamentListView(APIView):
     def get(self, request, userId):

@@ -17,7 +17,8 @@ export default function Request() {
                 <button className="flex items-center gap-x-2 border border-green-500 p-1 text-green-500 rounded-lg text-sm"> <FaCheck className="xsm:text-xs sm:text-sm" />
                     <span className="xsm:hidden sm:block"> accept</span>
                  </button>
-                <button className="flex items-center gap-x-2 border border-red-500 p-1 text-red-500 rounded-lg text-sm"><GiCancel/>
+                <button className="flex items-center gap-x-2 border border-red-500 p-1 text-red-500 rounded-lg text-sm">
+                    <GiCancel/>
                     <span className="xsm:hidden sm:block"> delete</span>
                 </button>
             </div>

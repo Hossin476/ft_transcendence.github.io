@@ -240,7 +240,6 @@ def intra_redirect(request):
             'access':str(refresh.access_token)
         })
 
-
 class UserRegistrationView(GenericAPIView):
     serializer_class = UserRegisterSerializer
     permission_classes = [AllowAny]

@@ -3,6 +3,7 @@ import Friend from "./Friend";
 import { useAuth } from "../../context/AuthContext";
 import { useEffect,useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 
 export default function FriendsBar() {
     const { t } = useTranslation();
@@ -42,7 +43,7 @@ export default function FriendsBar() {
         <div className=" xsm:w-12 lg:w-74 xl:w-80  sm:w-28 md:w-32  lg:px-4 bg-secondaryColor rounded">
             <div className="flex h-[5rem]  xsm:justify-center items-center xl:justify-between">
                 <h1 className="xsm:text-xsm  xsm:hidden xl:block sm:text-xl sm:self-center">{t('Friends')}</h1>
-                <IoMdPersonAdd className="text-xl  sm:self-center" />
+                <Link to="/managefriends"><IoMdPersonAdd className="text-xl  sm:self-center" /></Link> 
             </div>
             <div className=" h-[calc(100%-5rem)] sm:items-center lg:items-stretch gap-y-4 flex flex-col overflow-scroll">
                 {
