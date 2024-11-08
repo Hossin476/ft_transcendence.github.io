@@ -18,10 +18,10 @@ export const AuthProvider = ({ children }) => {
     const [socketMessage, setSocketMessage] = useState(null)
 
     const login = async (data) => {
-        console.log(data)
         localStorage.setItem('tokens', JSON.stringify(data.tokens))
         setTokens(data.tokens)
         setUser(jwtDecode(data.tokens.access))
+        setUserName(data.tokens?.username);
     }
 
     const logout = async () => {
@@ -52,12 +52,13 @@ export const AuthProvider = ({ children }) => {
     };
 
     const global_socket = () => {
+        console.log("window is ", window.location.host)
         const ws = new WebSocket(`wss://${window.location.host}/ws/notifications/?token=${tokens.access}`)
 
         ws.onopen = () => {
             setSocket(ws);
             console.log('WebSocket connected');
-            setUserName(tokens?.username)
+            setUserName(tokens?.username);
         };
 
         ws.onerror = (error) => {

@@ -33,6 +33,10 @@ const ResetPassword = () => {
 			setErrorMessage("both fields are required !")
 			return
 		}
+		if (newPasswords.password !== newPasswords.confirm_password){
+			setErrorMessage("passwords do not match !")
+			return
+		}
 		const response = await fetch('/api/auth/set-new-password/',{
 			method: 'PATCH',
 			headers: {

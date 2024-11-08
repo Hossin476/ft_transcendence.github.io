@@ -38,8 +38,8 @@ function GameNotification({ notification }) {
                 <img src={"http://localhost" + notification.sender.profile_image} alt="Profile" className="h-full w-full object-cover" />
             </div>
             <div className="flex-grow ml-4">
-                <h3 className="text-black text-lg mt-1 max-w-[15rem] flex-wrap">
-                    {notification.sender.username} has invited you to game
+                <h3 className="text-black text-md mt-1 max-w-[15rem] flex-wrap">
+                    {notification.sender.username} has challenged you to a {notification.game_type} game. Do you accept?
                 </h3>
                 <p className="text-sm text-gray-400 ">{moment(notification.created_at).fromNow()}</p>
             </div>

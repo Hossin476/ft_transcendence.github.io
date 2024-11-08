@@ -11,6 +11,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from .utils import *
+from django.conf import settings
 
 
 class UserCreateSerializer(BaseUserCreateSerializer):
@@ -94,10 +95,13 @@ class PasswordResetSerializer(serializers.Serializer):
             uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
             token = PasswordResetTokenGenerator().make_token(user)
             request = self.context.get('request')
-            site_domain = get_current_site(request).domain
+            if settings.DEBUG:
+                site_domain = 'localhost'
+            else:
+                site_domain = get_current_site(request).domain
             rltv_link = reverse('password-reset-confirm', kwargs={'uidb64': uidb64, 'token': token})
-            absl_link = f"http://{site_domain}{rltv_link}"
-            email_body = f"Hi use the link bellow to reset your password \n {absl_link}"
+            absl_link = f"https://{site_domain}{rltv_link.replace('api/users/', '')}"
+            email_body = f"Hi {user.username}, use the link bellow to reset your password \n {absl_link}"
             data = {
                 'email_body': email_body,
                 'email_subject': 'Reset your Password',
@@ -105,7 +109,8 @@ class PasswordResetSerializer(serializers.Serializer):
             }
             send_password_reset_email(data)
             return user
-
+        else:
+            raise serializers.ValidationError({"error": "User with this email does not exist"})
 
 class SetNewPasswordSerializer(serializers.Serializer):
 

@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from django.db.models import Q
 from notifications.models import FriendshipNotification, GameNotification
-from .serializers import FriendshipNotificationSerializer, GameNotificationSerializers, playerSerializers, TourInvitesSerializers
+from .serializers import FriendshipNotificationSerializer, GameNotificationSerializer, playerSerializers, TourInvitesSerializers, FriendshipSerializer
 from users.models import CustomUser, Friendship
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -15,21 +15,49 @@ from tictactoe.models import OnlineGameModel
 
 # Create your views here.
 
-class NotifitationView(APIView):
+class NotificationView(APIView):
     def get(self, request):
         self.user = request.user
         notification_fr = FriendshipNotification.objects.filter(
             receiver=self.user).order_by('-created_at')
         notification_game = GameNotification.objects.filter(
             receiver=self.user).order_by('-created_at')
+        
+        # Get all accepted and rejected friendships
+        accepted_friendships = Friendship.objects.filter(
+            Q(from_user=self.user) , request='A')
+        
+        # Serialize the friendship notifications
+        accepted_friendship_notifications = [
+            {
+                **FriendshipSerializer(f).data,
+                'receiver_username': f.to_user.username
+            }
+            for f in accepted_friendships
+        ]
+        
+        # Combine and sort notifications
         notification_query = sorted(chain(
             notification_fr, notification_game), key=attrgetter('created_at'), reverse=True)
+        
         result = []
         for obj in notification_query:
             if isinstance(obj, FriendshipNotification):
-                result.append(FriendshipNotificationSerializer(obj).data)
+                data = FriendshipNotificationSerializer(obj).data
+                data['type'] = 'friend'
+                result.append(data)
             elif isinstance(obj, GameNotification):
-                result.append(GameNotificationSerializers(obj).data)
+                data = GameNotificationSerializer(obj).data
+                data['type'] = 'game'
+                result.append(data)
+        
+        # Add serialized friendship notifications to the result
+        for notification in accepted_friendship_notifications:
+            notification['type'] = 'friend_response'
+            notification['response'] = f"{notification['receiver_username']} has accepted your friend request"
+            result.append(notification)
+        
+        print(result)
         return Response(result)
 
 

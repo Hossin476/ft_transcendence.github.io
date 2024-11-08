@@ -25,6 +25,8 @@ channle_layer = get_channel_layer()
 def change_online_state(user, state):
     user.is_online = state
     user.save()
+
+
 @database_sync_to_async
 def create_game_db(sender, receiver, game):
     receiver_obj = CustomUser.objects.get(username=receiver)
@@ -35,11 +37,45 @@ def create_game_db(sender, receiver, game):
 
 @database_sync_to_async
 def create_friend_db(sender, receiver_id):
-    receiver = CustomUser.objects.get(username=receiver_id)
-    friendship = Friendship.objects.create(from_user=sender, to_user=receiver)
-    obj = FriendshipNotification.objects.create(
-        sender=sender, receiver=receiver, friendship=friendship)
-    return obj
+    try:
+        receiver = CustomUser.objects.get(username=receiver_id)
+        existing_friendship = Friendship.objects.filter(
+            from_user=sender,
+            to_user=receiver,
+            request='P' 
+        ).first()
+        if existing_friendship:
+            existing_notification = FriendshipNotification.objects.get(friendship=existing_friendship)
+            return existing_notification, receiver.id
+        friendship = Friendship.objects.create(from_user=sender, to_user=receiver)
+        obj = FriendshipNotification.objects.create(
+            sender=sender, receiver=receiver, friendship=friendship
+        )
+        return obj, receiver.id
+    except Exception as e:
+        return None
+
+
+@database_sync_to_async
+def accept_friend_request(sender, receiver_id):
+    try:
+        receiver = CustomUser.objects.get(username=receiver_id)
+        friendship = Friendship.objects.get(from_user=receiver, to_user=sender)
+        friendship.request = 'A'
+        friendship.save()
+    except Exception as e:
+        return None
+
+
+@database_sync_to_async
+def reject_friend_request(sender, receiver_id):
+    try:
+        receiver = CustomUser.objects.get(username=receiver_id)
+        friendship = Friendship.objects.get(from_user=receiver, to_user=sender)
+        friendship.delete()
+    except Exception as e:
+        return None
+
 
 
 @database_sync_to_async
@@ -135,6 +171,10 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             await self.handle_game_request(data)
         elif types == 'friend_request':
             await self.handle_friend_request(data)
+        elif types == 'friend_accept':
+            await self.handle_friend_accept(data)
+        elif types == 'friend_reject':
+            await self.handle_friend_reject(data)
         elif types == 'accept_game':
             await self.handle_accept_game(data)
         elif types == 'reject_game':
@@ -160,6 +200,12 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps(event))
 
     async def friend_request(self, event):
+        await self.send(text_data=json.dumps(event))
+
+    async def friend_accept(self, event):
+        await self.send(text_data=json.dumps(event))
+
+    async def friend_reject(self, event):
         await self.send(text_data=json.dumps(event))
 
     async def online_state(self, event):
@@ -287,12 +333,26 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         await delete_game_request(invite_id) 
 
     async def handle_friend_request(self, data):
-        receiver = data.get('receiver')
-        obj = await create_friend_db(self.user, receiver)
-        await self.channel_layer.group_send(f'notification_{obj.receiver.id}', {
-            'type'          :'friend.request',
-            'Friendship_id' : FriendshipNotificationSerializer(obj).data
-        })
+        try:
+            receiver = data.get('receiver')
+            obj, receiver_id = await create_friend_db(self.user, receiver)
+            if obj and receiver_id:
+                await self.channel_layer.group_send(
+                    f'notification_{receiver_id}', {
+                        'type': 'friend.request',
+                        'Friendship_id': FriendshipNotificationSerializer(obj).data
+                    }
+                )
+        except Exception as e:
+            print(str(e))
+
+    async def handle_friend_accept(self, data):
+        receiver_id = data.get('receiver')
+        await accept_friend_request(self.user, receiver_id)
+
+    async def handle_friend_reject(self, data):
+        receiver_id = data.get('receiver')
+        await reject_friend_request(self.user, receiver_id)
 
     async def handle_accept_game(self, data):
         game_type = data['game']

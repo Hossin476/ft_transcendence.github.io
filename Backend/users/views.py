@@ -322,11 +322,16 @@ class UserPasswordResetView(GenericAPIView):
 
 
     def post(self, request):
-        serializer = self.serializer_class(data=request.data, context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        return Response({
-            'message': 'a link has been sent to your mail to reset your password'
-        }, status=status.HTTP_200_OK)
+        try:
+            serializer = self.serializer_class(data=request.data, context={'request': request})
+            serializer.is_valid(raise_exception=True)
+            return Response({
+                'message': 'a link has been sent to your mail to reset your password'
+            }, status=status.HTTP_200_OK)
+        except CustomUser.DoesNotExist:
+            return Response({
+                'message': 'user with this email does not exist !'
+            }, status=status.HTTP_404_NOT_FOUND)
 
 class PasswordResetConfirmationView(GenericAPIView):
     permission_classes = [AllowAny]

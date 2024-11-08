@@ -219,7 +219,8 @@ EMAIL_HOST_PASSWORD = 'hfgi fwmi kfkr tscp'
 EMAIL_PORT = '465'
 EMAIL_USE_SSL = True
 
-
+DEBUG = True
+PASSWORD_RESET_TIMEOUT_DAYS = 1
 # Looking to send emails in production? Check out our Email API/SMTP product!
 # EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
 # EMAIL_HOST_USER = 'd9736dcacea0f3'
