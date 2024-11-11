@@ -83,8 +83,7 @@ def get_profile_friends(request, user_id):
 
 @api_view(['GET'])
 def get_user_info(request):
-    
-    user = CustomUser.objects.get(id=request.user.id)
+    user = request.user
     seriaized_user = playerSerializers(user)
     total_wins =  user.wins_p + user.wins_t
     total_loses = user.loses_p + user.loses_t
@@ -96,6 +95,7 @@ def get_user_info(request):
     user_list['total_games'] = total_games
     user_list['win_rate'] = win_rate
     return Response(user_list)
+
 
 @api_view(['GET'])
 def get_all_matches(request):

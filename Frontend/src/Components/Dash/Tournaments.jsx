@@ -8,8 +8,8 @@ const getTournaments = async (tokens)=> {
     const response = await fetch("/api/tournament/tournaments/", {
         method:"GET",
         headers: {
+            "Authorization" : "JWT " + tokens.access,
             'Content-Type':'application/json',
-            'Authorization' : 'JWT' + tokens.access
         }
     })
     let data = await response.json()
