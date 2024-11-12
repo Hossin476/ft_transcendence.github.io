@@ -42,7 +42,7 @@ function Header({ title}) {
   )
 }
 
-function Mycard() {
+function Mycard({image, playerName}) {
   const { t } = useTranslation();
   return (
     <div className="player-card h-[90%] xsm:w-[50%] lg:w-[25%]">

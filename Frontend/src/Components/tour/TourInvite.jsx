@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react'
 import TourInvites from "./TourInvites"
 import { useAuth } from '../../context/AuthContext'
+import { useTranslation } from 'react-i18next';
 
 const getTourInvites = async (userId,tokens)=> {
     const response = await fetch(`/api/tournament/invites/`, {
@@ -19,6 +20,7 @@ export default function TourInvite() {
     const { t } = useTranslation();
     const {user,tokens,socketMessage} = useAuth()
     const [invites,setInvites] = useState([])
+    
 
     const fetchInvites = async()=> {
         const data = await getTourInvites(user.user_id,tokens)

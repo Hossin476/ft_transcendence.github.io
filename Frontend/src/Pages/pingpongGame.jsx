@@ -14,6 +14,7 @@ import React, { Suspense, lazy } from 'react';
 import GameContext, { GameProvider } from "../context/gameContext";
 import GameCounter from "../Components/PingPongGame/gameCounter";
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext'
 
 
 
@@ -54,6 +55,7 @@ function PingPongGame() {
   const location = useLocation()
   const navigate = useNavigate()
   const ref = useRef()
+  const { tokens } = useAuth();
   const currentCamera = useRef(0)
   const cameraPositions = useMemo(()=>[
     {rotation: {x: -Math.PI/2, y: Math.PI, z: -Math.PI/2}, position: {x:0,y:2,z:-2.8}},
@@ -98,6 +100,7 @@ function PingPongGame() {
           headers: {Authorization: "JWT " + tokens.access}
         })
         const data =   await response.json()
+        console.log(data)
         if(data.is_game_end == true)
             navigate('../')
     }
