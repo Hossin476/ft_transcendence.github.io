@@ -101,6 +101,7 @@ export const AuthProvider = ({ children }) => {
         socketMessage: socketMessage,
         createSocket,
         chatsocket: chatsocket,
+        setUser
     }
 
     return (

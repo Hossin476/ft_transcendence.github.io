@@ -48,7 +48,7 @@ export default function FriendsBar() {
             <div className=" h-[calc(100%-5rem)] sm:items-center lg:items-stretch gap-y-4 flex flex-col overflow-scroll">
                 {
                     online_ingame && online_ingame.users.map((item,index)=> <Friend  
-                    key={index} name = {item.username}  status = {item.is_ingame} online = {item.is_online} user_id = {item.id}
+                    key={index} name = {item.username}  status = {item.is_ingame} profile_image={item.profile_image} online = {item.is_online} user_id = {item.id}
                     />)
                 }
             </div>

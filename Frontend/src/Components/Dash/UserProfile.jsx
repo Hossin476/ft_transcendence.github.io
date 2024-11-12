@@ -23,12 +23,15 @@ const  getUserData= async (tokens)=> {
 
 export default function UserProfile() {
 
-    const {tokens} = useAuth()
+    const {tokens,setUser} = useAuth()
     const [userData,setUserData] = useState(null)
     useEffect(()=>{
         const fetchData = async ()=> {
             let data = await getUserData(tokens)
             setUserData(()=>data)
+            setUser(prevUser=>{
+                return {...prevUser,profile_image:data.profile_image}
+            })
         }
         fetchData()
     },[])

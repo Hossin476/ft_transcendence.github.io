@@ -1,9 +1,31 @@
 import React from 'react'
-import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useState,useEffect } from 'react'
+import { useNavigate, Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext';
 
+
+const handleIntraLogin = async (code,login,navigate)=> {
+    const res = await fetch(`/api/users/oauth2/intra/`,{
+        method:"POST",
+        headers: {
+            'Content-Type':'application/json'
+        },
+        body: JSON.stringify({code:code})
+    })
+    let data = await res.json()
+    console.log(data)
+    if(res.ok) {
+        login({tokens:data })
+        navigate('/dashboard')
+    } else {
+        console.log("error with response")
+    }
+}
+
 const Login = () => {
+
+    const [searchParams] = useSearchParams()
+    const code = searchParams.get("code") || null
 
     const navigate = useNavigate()
     const [loginData, setLoginData] = useState({
@@ -19,6 +41,20 @@ const Login = () => {
         setLoginData({ ...loginData, [e.target.name]: e.target.value })
         if (errorMessage !== "")
             setErrorMessage("")
+    }
+
+    useEffect(()=> {
+        console.log("yes it's here ")
+        console.log("this is the error :",code)
+        if(code)
+            handleIntraLogin(code,login,navigate)
+    },[code])
+
+    const handle42 = (e)=> {
+        e.preventDefault()
+        const redirectUrl = import.meta.env.VITE_URI_INTRA
+        console.log("this is the shit: ",redirectUrl)
+        window.location.href = redirectUrl
     }
 
     const handleSubmit = async (e) => {
@@ -57,7 +93,7 @@ const Login = () => {
                     <form onSubmit={handleSubmit}>
                         {isLoading && <p className="text-center text-thirdColor">Loading...</p>}
                         <div className="mt-4 space-y-2" >
-                            <button className="w-full py-2 text-white bg-thirdColor rounded-lg hover:bg-white transition duration-300 hover:text-thirdColor hover:border-2 border-thirdColor">
+                            <button onClick={handle42} className="w-full py-2 text-white bg-thirdColor rounded-lg hover:bg-white transition duration-300 hover:text-thirdColor hover:border-2 border-thirdColor">
                                 Continue with Intra
                             </button>
                         </div>

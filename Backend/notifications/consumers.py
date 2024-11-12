@@ -23,8 +23,12 @@ channle_layer = get_channel_layer()
 
 @database_sync_to_async
 def change_online_state(user, state):
-    user.is_online = state
-    user.save()
+    try:
+        user = CustomUser.objects.get(id=user.id)
+        user.is_online = state
+        user.save()
+    except Exception as e:
+        print(str(e))
 
 
 @database_sync_to_async
@@ -240,11 +244,12 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         game_type = data['gameType']
         # print ("game type is : ", game_type)
         # print("array [p]",game_type)
-        if game_type == 'P':
+        if game_type == 'P' and self.user not in  NotificationConsumer.match_making['P']:
             NotificationConsumer.match_making['P'].append(self.user)
-        elif game_type == 'T':
+        elif game_type == 'T' and self.user not in  NotificationConsumer.match_making['T']:
             NotificationConsumer.match_making['T'].append(self.user)
-        
+        print(NotificationConsumer.match_making['P'])
+
         if len(NotificationConsumer.match_making[game_type]) == 2:
             
             done = False
@@ -377,10 +382,11 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def online_check(self, state, ingame=False, game_type=None, user=None):
+        self.user = CustomUser.objects.get(id=self.user.id)
         friends = Friendship.objects.select_related('from_user', 'to_user')\
         .filter(Q(from_user=self.user) | Q(to_user=self.user), request='A')
         users_list = []
-        if state is False:
+        if state is False and self.user in NotificationConsumer.connected_users:
             NotificationConsumer.connected_users.remove(self.user)
             if self.user in NotificationConsumer.connected_users:
                 return []

@@ -93,6 +93,15 @@ function PingPongGame() {
     setStatus(()=>({win:win, endGame:endGame,game_id:game_id  }))
   }
   useEffect(()=>{
+    const  getGame = async () => {
+        const response  = await fetch(`/api/pingpong/game/pingpong/${location.state.gameid}/`,{
+          headers: {Authorization: "JWT " + tokens.access}
+        })
+        const data =   await response.json()
+        if(data.is_game_end == true)
+            navigate('../')
+    }
+    getGame()
     if(location.state?.gameid == undefined)
       navigate('../')
   },[location.state])

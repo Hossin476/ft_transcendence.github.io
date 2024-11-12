@@ -13,6 +13,7 @@ import sys
 channle_layer = get_channel_layer()
 @database_sync_to_async
 def change_game_state(user, state):
+    user = CustomUser.objects.get(id=user.id)
     user.is_ingame = state
     user.game_type = 'ping pong' if state else None
     user.save()
