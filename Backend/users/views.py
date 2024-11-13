@@ -29,7 +29,7 @@ from .utils import send_otp_email
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import smart_str, DjangoUnicodeDecodeError
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-
+import time
 class AppUserViewSet(CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
     queryset = CustomUser.objects.all()
     serilizer_class = AppUserSerializer
@@ -83,8 +83,7 @@ def get_profile_friends(request, user_id):
 
 @api_view(['GET'])
 def get_user_info(request):
-    
-    user = CustomUser.objects.get(id=request.user.id)
+    user = request.user
     seriaized_user = playerSerializers(user)
     total_wins =  user.wins_p + user.wins_t
     total_loses = user.loses_p + user.loses_t
@@ -96,6 +95,7 @@ def get_user_info(request):
     user_list['total_games'] = total_games
     user_list['win_rate'] = win_rate
     return Response(user_list)
+
 
 @api_view(['GET'])
 def get_all_matches(request):
@@ -183,7 +183,7 @@ def get_image_path(username,link):
         path = f"media/images/profile/{username}.jpg"
         with open(path, 'wb') as file:
             file.write(get_pic.content)
-        return path
+        return f'images/profile/{username}.jpg'
     return None
 
 @api_view(['POST'])
@@ -222,23 +222,32 @@ def intra_redirect(request):
         user = CustomUser.objects.get(email=user['email'])
         refresh = RefreshToken.for_user(user)
         return Response({
+            'username': user.username,
             'refresh': str(refresh),
             'access':str(refresh.access_token)
         })
     else:
-        user_name = user['login']
-        if CustomUser.objects.filter(username=user['login']).exists():
-            username = generate_random_string(user_name, 5)
-        profile_pic = get_image_path(user_name, user['image']['link'])
-        user_instance = CustomUser.objects.create_user(
-            username=user['login'],
-            email=user['email'],
-            password=generate_random_string(user_name, 15)
-        )
-        return Response({
-            'refresh': str(refresh),
-            'access':str(refresh.access_token)
-        })
+            try:
+                user_name = user['login']
+                if CustomUser.objects.filter(username=user['login']).exists():
+                    username = generate_random_string(user_name, 5)
+                profile_pic = get_image_path(user_name, user['image']['link'])
+                user_instance = CustomUser.objects.create_user(
+                    username=user['login'],
+                    email=user['email'],
+                    password=generate_random_string(user_name, 15),
+                    profile_image=profile_pic
+                )
+                user_instance.save()
+                refresh = RefreshToken.for_user(user_instance)
+                time.sleep(1)
+                return Response({
+                    'username': user_instance.username,
+                    'refresh': str(refresh),
+                    'access':str(refresh.access_token)
+                })
+            except Exception as e:
+                print(e)
 
 class UserRegistrationView(GenericAPIView):
     serializer_class = UserRegisterSerializer

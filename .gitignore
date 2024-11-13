@@ -6,3 +6,5 @@ database
 **/migrations/*.pyc
 **/migrations/*.py
 .env
+.vscode
+**/.DS_Store

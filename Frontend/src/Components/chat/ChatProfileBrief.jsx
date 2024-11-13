@@ -3,9 +3,11 @@ import ChatContext from "../../context/ChatContext";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import toast from 'react-hot-toast'
 
 const FriendHero = () => {
   const { currantUser } = useContext(ChatContext);
+
   let friend = {
     profilePicture: "/public/user.jpeg",
     coverPicture: "/public/bg.jpg",
@@ -13,6 +15,8 @@ const FriendHero = () => {
     id: "ID: X83L5LM" + (currantUser && currantUser.user.id),
     alt: "alt",
   };
+
+
   return (
     <div className="h-[40%]">
       <div className=" w-full flex center  justify-center relative">
@@ -35,7 +39,20 @@ const FriendHero = () => {
   );
 };
 const GameInvite = () => {
+
   const { t } = useTranslation();
+  const { currantUser } = useContext(ChatContext);
+  const {socket} = useAuth()
+  const handlInvite = (gameType)=> {
+    if(socket && socket.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify({
+        type: 'game_request',
+        receiver: currantUser.user.username,
+        game: gameType
+      }))
+     }
+     toast.success('Game Request Was successfully sent to ' + currantUser.user.username)
+  }
   return (
     <div className="flex flex-col justify-center items-center mt-10">
       <p className="text-white self-start ml-12 lg:text-2xl font-bold">
@@ -45,6 +62,7 @@ const GameInvite = () => {
       <div className="m-5 flex justify-center">
         <div className="grid grid-cols-2 gap-2 place-items-center">
           <button
+            onClick={()=>handlInvite('P')}
             type="button"
             className="rounded-full p-3 py-2  border border-1 border-white bg-white bg-opacity-40 lg:text-lg text-white"
           >
@@ -52,6 +70,7 @@ const GameInvite = () => {
           </button>
           <button
             type="button"
+            onClick={()=>handlInvite('T')}
             className="rounded-full p-3 py-2 border border-1 border-white bg-white bg-opacity-40 lg:text-lg text-white"
           >
             Tic Tac Toe

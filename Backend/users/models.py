@@ -3,8 +3,13 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.utils import timezone
 from rest_framework_simplejwt.tokens import RefreshToken
+import random
 
+def get_default_profile_image():
+    return f'images/profile/p{random.choice(range(1, 5))}.jpeg'
 
+def get_default_cover_image():
+    return f'images/cover/p{random.choice(range(1, 5))}.jpg'
 
 class CustomUser(AbstractUser):
     username = models.CharField(max_length=255, unique=True, blank=False, null=False, default='default_username')
@@ -24,8 +29,8 @@ class CustomUser(AbstractUser):
     # 2FA
     key             = models.CharField(max_length=255, null=True, default=None)
     # profile image 
-    profile_image   = models.ImageField(upload_to='images/profile/', null=True)
-    cover_image     = models.ImageField(upload_to='images/cover/', null=True)
+    profile_image   = models.ImageField(upload_to='images/profile/',default=get_default_profile_image)
+    cover_image     = models.ImageField(upload_to='images/cover/', default=get_default_cover_image)
 
     USERNAME_FIELD  = "username"
     REQUIRED_FIELDS = ['email']
