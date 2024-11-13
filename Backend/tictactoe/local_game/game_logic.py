@@ -14,7 +14,6 @@ class TicTacToeLocal:
         max_score (int): The maximum score required to win the game.
         final_winner (str or None): Represents the final winner of the game ('X' or 'O').
     """
-
     def __init__(self):
         # Initializes the Tic Tac Toe game.
         self.score_x = 0
@@ -27,15 +26,7 @@ class TicTacToeLocal:
         self.reset_game()
 
     def make_move(self, index):
-        """
-        Makes a move on the Tic Tac Toe board.
-
-        Args:
-            index (int): The index on the board where the player wants to place their mark.
-
-        Returns:
-            bool: True if the move was successful, False otherwise.
-        """
+        # Makes a move on the Tic Tac Toe board and checks for winner or game over each time.
         if self.board[index] is not None or self.winner or self.game_over:
             return False
 
@@ -46,13 +37,12 @@ class TicTacToeLocal:
         return True
 
     def check_winner(self):
-        # Checks if there is a winner on the Tic Tac Toe board.
+        # Checks if there is a winner on the Tic Tac Toe board by checking all winning combinations.
         winning_combinations = [
             [0, 1, 2], [3, 4, 5], [6, 7, 8],
             [0, 3, 6], [1, 4, 7], [2, 5, 8],
             [0, 4, 8], [2, 4, 6],
         ]
-
         for combination in winning_combinations:
             a, b, c = combination
             if self.board[a] and self.board[a] == self.board[b] == self.board[c]:
@@ -65,12 +55,7 @@ class TicTacToeLocal:
             self.winner = 'Draw'
 
     def update_score(self, winner):
-        """
-        Updates the score based on the winner.
-
-        Args:
-            winner (str): The winner of the game ('X' or 'O').
-        """
+        # updates the score for the winner in the round.
         if winner == 'X':
             self.score_x += 1
         elif winner == 'O':

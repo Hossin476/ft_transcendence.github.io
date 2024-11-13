@@ -12,10 +12,11 @@ export const AuthProvider = ({ children }) => {
     let fillToken = localStorage.getItem('tokens') ? JSON.parse(localStorage.getItem('tokens')) : null;
     const [tokens, setTokens] = useState(fillToken);
     const [user, setUser] = useState(tokens ? jwtDecode(tokens.access) : null)
-    const [socket, setSocket] = useState(null)
+    const [socket, setSocket] = useState(null);
     const [username, setUserName] = useState(null);
-    const [chatsocket, setChatSocket] = useState(null)
-    const [socketMessage, setSocketMessage] = useState(null)
+    const [chatsocket, setChatSocket] = useState(null);
+    const [socketMessage, setSocketMessage] = useState(null);
+    const [friendReceiver, setFriendReceiver] = useState(null);
 
     const login = async (data) => {
         localStorage.setItem('tokens', JSON.stringify(data.tokens))
@@ -52,7 +53,6 @@ export const AuthProvider = ({ children }) => {
     };
 
     const global_socket = () => {
-        console.log("window is ", window.location.host)
         const ws = new WebSocket(`wss://${window.location.host}/ws/notifications/?token=${tokens.access}`)
 
         ws.onopen = () => {
@@ -101,6 +101,8 @@ export const AuthProvider = ({ children }) => {
         socketMessage: socketMessage,
         createSocket,
         chatsocket: chatsocket,
+        friendReceiver,
+        setFriendReceiver
     }
 
     return (

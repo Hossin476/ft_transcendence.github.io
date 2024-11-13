@@ -7,28 +7,29 @@ import { IoMdPersonAdd } from "react-icons/io";
 
 function FriendNotification({ notification }) {
 
-    const { socket, socketMessage } = useAuth();
+    const { setFriendReceiver } = useAuth();
 
-    function accept_friendship() {
-        if (socket) {
-            const message = JSON.stringify({
-                "type": "friend_accept",
-                "sender": socketMessage
-            })
-            socket.send(message);
-        }
-    }
+    // function accept_friendship(receiver) {
+    //     if (socket) {
+    //         const message = JSON.stringify({
+    //             "type": "friend_accept",
+    //             "receiver": receiver
+    //         })
+    //         socket.send(message);
+    //     }
+    // }
 
-    function reject_friendship() {
-        if (socket) {
-            const message = JSON.stringify({
-                "type": "friend_reject",
-                "sender": socketMessage
-            })
-            socket.send(message);
-        }
-    }
+    // function reject_friendship(receiver) {
+    //     if (socket) {
+    //         const message = JSON.stringify({
+    //             "type": "friend_reject",
+    //             "receiver": receiver
+    //         })
+    //         socket.send(message);
+    //     }
+    // }
 
+    useEffect(() => { setFriendReceiver(notification.sender?.username) }, []);
 
     return (
         <>
@@ -36,7 +37,7 @@ function FriendNotification({ notification }) {
             <IoMdPersonAdd size={35} className="mr-4 my-auto" />
             <div className="flex-grow my-auto">
                 <h3 className={`text-lg `}>
-                {notification.sender.username} has sent you a friend request
+                {notification.sender?.username} has sent you a friend request
                 </h3>
                 <p className="text-sm text-gray-400 ">{moment(notification.created_at).fromNow()}</p>
             </div>

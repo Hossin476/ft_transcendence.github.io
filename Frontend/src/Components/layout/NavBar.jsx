@@ -15,8 +15,6 @@ export default function NavBar() {
     const [showNotifications, setShowNotifications] = useState(false);
     const nav = useNavigate();
 
-    console.log("hello this is me :",username)
-
     const toggleNotifications = () => {
         setShowNotifications(!showNotifications);
     };
@@ -40,7 +38,6 @@ export default function NavBar() {
                 socket.close()
         };
     }, []);
-    console.log("user name ", username)
     return (
         <div className="xsm:py-4 flex bg-secondaryColor rounded xsm:h-full items-center justify-between justify-end relative">
             <div className=" xsm:pl-4">

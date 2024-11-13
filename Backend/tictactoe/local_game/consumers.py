@@ -43,16 +43,18 @@ class TicTacToeLocalConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def load_game_state(self):
-        game_instance = LocalGameModel.objects.get(id=self.game_id)
-        self.players['X'] = game_instance.player1
-        self.players['O'] = game_instance.player2
+        try:
+            game_instance = LocalGameModel.objects.get(id=self.game_id)
+            self.players['X'] = game_instance.player1
+            self.players['O'] = game_instance.player2
+        except Exception as e:
+            print(f"An error occured: {str(e)}")
 
     async def receive(self, text_data):
         try:
             data = json.loads(text_data)
             action = data.get('action')
             index = data.get('index')
-
             if action == 'move' and not self.game.game_over and self.game.start:
                 move_made = self.game.make_move(index)
                 if move_made:
@@ -69,8 +71,8 @@ class TicTacToeLocalConsumer(AsyncWebsocketConsumer):
             'winner_line': None if reset else self.game.winner_line,
             'winner': None if reset else self.game.winner,
             'final_winner': None if reset else self.game.final_winner,
-            'score_x': self.game.score_x,
-            'score_o': self.game.score_o,
+            'score_x': f'{self.players.get('X')} : {self.game.score_x}',
+            'score_o': f'{self.players.get('O')} : {self.game.score_o}',
             'countdown': self.game.countdown_value,
             'current_turn': self.current_player,
             'draw': self.game.draw
@@ -88,14 +90,17 @@ class TicTacToeLocalConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def save_game_result(self):
-        game_instance = LocalGameModel.objects.get(id=self.game_id)
-        game_instance.final_winner = self.players[self.game.final_winner] if self.game.final_winner else None
-        game_instance.score_x = self.game.score_x
-        game_instance.score_o = self.game.score_o
-        if not game_instance.game_start:
-            game_instance.game_start = timezone.now()
-        game_instance.game_end = timezone.now()
-        game_instance.save()
+        try:
+            game_instance = LocalGameModel.objects.get(id=self.game_id)
+            game_instance.final_winner = self.players[self.game.final_winner] if self.game.final_winner else None
+            game_instance.score_x = self.game.score_x
+            game_instance.score_o = self.game.score_o
+            if not game_instance.game_start:
+                game_instance.game_start = timezone.now()
+            game_instance.game_end = timezone.now()
+            game_instance.save()
+        except Exception as e:
+            print(f"An error occured: {str(e)}")
 
     async def send_error(self, message):
         await self.send(text_data=json.dumps({
@@ -117,9 +122,12 @@ class TicTacToeLocalConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def save_game_start(self):
-        game_instance = LocalGameModel.objects.get(id=self.game_id)
-        game_instance.game_start = timezone.now()
-        game_instance.save()
+        try:
+            game_instance = LocalGameModel.objects.get(id=self.game_id)
+            game_instance.game_start = timezone.now()
+            game_instance.save()
+        except Exception as e:
+            print(f"An error occured: {str(e)}")
 
     async def game_countdown(self):
         try:

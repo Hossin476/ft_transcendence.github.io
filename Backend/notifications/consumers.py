@@ -23,6 +23,7 @@ channle_layer = get_channel_layer()
 
 @database_sync_to_async
 def change_online_state(user, state):
+    user = CustomUser.objects.get(id=user.id)
     user.is_online = state
     user.save()
 
@@ -40,20 +41,20 @@ def create_friend_db(sender, receiver_id):
     try:
         receiver = CustomUser.objects.get(username=receiver_id)
         existing_friendship = Friendship.objects.filter(
-            from_user=sender,
-            to_user=receiver,
-            request='P' 
+            (Q(from_user=sender, to_user=receiver) | Q(from_user=receiver, to_user=sender)) &
+            Q(request__in=['P', 'A'])
         ).first()
         if existing_friendship:
             existing_notification = FriendshipNotification.objects.get(friendship=existing_friendship)
             return existing_notification, receiver.id
-        friendship = Friendship.objects.create(from_user=sender, to_user=receiver)
+        friendship = Friendship.objects.create(from_user=sender, to_user=receiver, request='P')
         obj = FriendshipNotification.objects.create(
             sender=sender, receiver=receiver, friendship=friendship
         )
         return obj, receiver.id
-    except Exception as e:
+    except Exception:
         return None
+
 
 
 @database_sync_to_async
@@ -63,7 +64,7 @@ def accept_friend_request(sender, receiver_id):
         friendship = Friendship.objects.get(from_user=receiver, to_user=sender)
         friendship.request = 'A'
         friendship.save()
-    except Exception as e:
+    except Exception:
         return None
 
 
@@ -73,25 +74,28 @@ def reject_friend_request(sender, receiver_id):
         receiver = CustomUser.objects.get(username=receiver_id)
         friendship = Friendship.objects.get(from_user=receiver, to_user=sender)
         friendship.delete()
-    except Exception as e:
+    except Exception:
         return None
 
 
 
 @database_sync_to_async
 def create_game_object(sender, receiver_name, game, invite_id):
-    receiver = CustomUser.objects.get(username=receiver_name)
-    game_obj = None
-    if game == 'P':
-        game_obj = GameOnline.objects.create(player1=sender, player2=receiver)
-        game_obj = GameOnlineSerializer(game_obj).data
-    elif game == 'T':
-        game_obj = OnlineGameModel.objects.create(
-            player1=sender, player2=receiver)
-        game_obj = OnlineGameModelSerializer(game_obj).data
-    if invite_id:
-        GameNotification.objects.filter(id=invite_id).delete()
-    return game_obj
+    try:
+        receiver = CustomUser.objects.get(username=receiver_name)
+        game_obj = None
+        if game == 'P':
+            game_obj = GameOnline.objects.create(player1=sender, player2=receiver)
+            game_obj = GameOnlineSerializer(game_obj).data
+        elif game == 'T':
+            game_obj = OnlineGameModel.objects.create(
+                player1=sender, player2=receiver)
+            game_obj = OnlineGameModelSerializer(game_obj).data
+        if invite_id:
+            GameNotification.objects.filter(id=invite_id).delete()
+        return game_obj
+    except Exception:
+        return None
 
 
 @database_sync_to_async
@@ -108,7 +112,6 @@ def get_tour_from_db(id, userid):
     except Exception:
         InviteTournament.objects.create(tournament=tournament, user=user)
     return TournamentSerializer(tournament).data
-        
 
 
 @database_sync_to_async
@@ -377,6 +380,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def online_check(self, state, ingame=False, game_type=None, user=None):
+        self.user = CustomUser.objects.get(id=self.user.id)
         friends = Friendship.objects.select_related('from_user', 'to_user')\
         .filter(Q(from_user=self.user) | Q(to_user=self.user), request='A')
         users_list = []

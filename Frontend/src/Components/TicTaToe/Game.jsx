@@ -85,7 +85,12 @@ const Game = () => {
             if (data.start_countdown_value === 0) setShowStartModal(false);
         }
         if (data.current_turn) setCurrentTurn(data.current_turn);
-        if (data.score_x !== undefined && data.score_o !== undefined) setScores({ X: data.score_x, O: data.score_o });
+        if (data.score_x !== undefined && data.score_o !== undefined)
+        {
+            const [usernameX, scoreX] = data.score_x.split(' : ');
+            const [usernameO, scoreO] = data.score_o.split(' : ');
+            setScores({ [usernameX]: parseInt(scoreX, 10), [usernameO]: parseInt(scoreO, 10) });
+        }
         if (data.countdown !== undefined) setTimer(data.countdown);
         if (data.player_role) setPlayerRole(data.player_role);
         if (data.winner_line) setWinnerLine(data.winner_line.map(index => GRID_POSITIONS[index]));
@@ -103,7 +108,7 @@ const Game = () => {
             return null;
         const isYourTurn = currentTurn === playerRole;
         return (
-            <div className={`absolute top-[3%] left-1/2 tranform -translate-x-1/2 p-2 rounded ${isYourTurn ? 'bg-green-500' : 'bg-red-500'} text-white font-bold`}>
+            <div className={`absolute top-1 left-1/2 tranform -translate-x-1/2 p-2 rounded ${isYourTurn ? 'bg-green-500' : 'bg-red-500'} text-white font-bold`}>
                 {isYourTurn ? "It's your turn!" : "Opponent's turn"}
             </div>
         );
