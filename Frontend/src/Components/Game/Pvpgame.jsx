@@ -42,7 +42,7 @@ function Header({ title}) {
   )
 }
 
-function Mycard() {
+function Mycard({image, playerName}) {
   const { t } = useTranslation();
   return (
     <div className="player-card h-[90%] xsm:w-[50%] lg:w-[25%]">
@@ -115,7 +115,7 @@ function Started_button({onClick}) {
   return (
     <div className="start-button_div">
       <div className="empty_start"></div>
-      <button onClick={onClick} className="started-button">{t(STARTED)}</button>
+      <button onClick={onClick} className="started-button">{t('STARTED')}</button>
     </div>
   );
 
@@ -123,13 +123,14 @@ function Started_button({onClick}) {
 function LocalButton({onClick,players}){
   const { t } = useTranslation();
   let error = false
-  if(players.player1 === '' || players.player1 === '')
+  console.log("this is the shit here :",players)
+  if(players.player1 === "" || players.player2 === "")
       error = true
   return (
     <div className="start-button_div">
       <div className="empty_start"></div>
       {error ? <p className="text-red-500"> {t("press done first")}t</p> :''} 
-      <button onClick={onClick} className="started-button">{t("STARTED")}</button>
+      <button onClick={ error ? (e)=>e.preventDefault()  : onClick} className="started-button">{t("STARTED")}</button>
     </div>
   );
 
@@ -193,11 +194,11 @@ function LocalPvp({player,setPlayers}) {
       }
   }
   return (
-    <div className="player-card h-[90%] xsm:w-[50%] lg:w-[25%]">
+    <div className="player-card  h-[90%] xsm:w-[50%]">
       <img src={mypic} alt="Avatar" className="avatar-ping" />
       <div className="player-info items-center flex flex-col">
         {
-          edit ? <input className='bg-secondaryColor p-2 outline-none rounded border border-forthColor' type="text" value={ name} onChange={handleInpute} /> :<h2>{name}</h2>
+          edit ? <input className='bg-secondaryColor w-[95%] p-2 outline-none rounded border border-forthColor' type="text" value={ name} onChange={handleInpute} /> :<h2>{name}</h2>
         }
         {
           error ? <p className='text-red-500'>{t("invalid name")}</p> : ''
@@ -212,7 +213,7 @@ function LocalPvp({player,setPlayers}) {
   )
 }
 
-function OnlinePvp({isstarted,counter,isstart}) {
+function OnlinePvp({isstarted,counter,isstart,pvpUser}) {
   return (
     <>
       <Mycard />
@@ -332,7 +333,7 @@ function PvpGame({ title}) {
                         </div>
                         <div className="flex w-full items-center px-4 justify-evenly gap-12 h-[90%]">
                           {
-                            !mode ? <> <LocalPvp player={"player1"} setPlayers={setPlayers} /> <LocalPvp player={"player2"} setPlayers={setPlayers} /></> : <OnlinePvp isstart={isstart} counter={counter} isstarted={isstarted}/>}
+                            !mode ? <> <LocalPvp player={"player1"} setPlayers={setPlayers} /> <LocalPvp player={"player2"} setPlayers={setPlayers} /></> : <OnlinePvp isstart={isstart} counter={counter} pvpUser={pvpUser} isstarted={isstarted}/>}
                         </div>
                     </div>
                       {

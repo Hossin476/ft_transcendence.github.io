@@ -38,9 +38,9 @@ function ScoreBar({gameid})
       {players && (location.state.isonline == true ?(
 
         <div className=" flex  px-5 mt-5 w-[100%] justify-center items-center  max-w-[1024px] xsm:gap-2 lg:gap-9 ">
-          <FirstPlayer name={players.player1.username} level={players.player1.rank} image={`http://localhost${players.player1.profile_image}`} ref={score1}/>
+          <FirstPlayer name={players.player1.username} level={players.player1.rank} image={`${players.player1.profile_image}`} ref={score1}/>
           <Timer game_id={gameid}/>
-          <SecondPlayer name={players.player2.username} level={players.player2.rank} image={`http://localhost${players.player2.profile_image}`} ref={score2}/>
+          <SecondPlayer name={players.player2.username} level={players.player2.rank} image={`${players.player2.profile_image}`} ref={score2}/>
         </div>
       ):(
         <div className=" flex  px-5 mt-5 w-[100%] justify-center items-center  max-w-[1024px] xsm:gap-2 lg:gap-9 ">

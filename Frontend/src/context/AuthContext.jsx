@@ -12,16 +12,17 @@ export const AuthProvider = ({ children }) => {
     let fillToken = localStorage.getItem('tokens') ? JSON.parse(localStorage.getItem('tokens')) : null;
     const [tokens, setTokens] = useState(fillToken);
     const [user, setUser] = useState(tokens ? jwtDecode(tokens.access) : null)
-    const [socket, setSocket] = useState(null)
+    const [socket, setSocket] = useState(null);
     const [username, setUserName] = useState(null);
-    const [chatsocket, setChatSocket] = useState(null)
-    const [socketMessage, setSocketMessage] = useState(null)
+    const [chatsocket, setChatSocket] = useState(null);
+    const [socketMessage, setSocketMessage] = useState(null);
+    const [friendReceiver, setFriendReceiver] = useState(null);
 
     const login = async (data) => {
-        console.log(data)
         localStorage.setItem('tokens', JSON.stringify(data.tokens))
         setTokens(data.tokens)
         setUser(jwtDecode(data.tokens.access))
+        setUserName(data.tokens?.username);
     }
 
     const logout = async () => {
@@ -57,7 +58,7 @@ export const AuthProvider = ({ children }) => {
         ws.onopen = () => {
             setSocket(ws);
             console.log('WebSocket connected');
-            setUserName(data.tokens?.username)
+            setUserName(tokens?.username);
         };
 
         ws.onerror = (error) => {
@@ -100,6 +101,9 @@ export const AuthProvider = ({ children }) => {
         socketMessage: socketMessage,
         createSocket,
         chatsocket: chatsocket,
+        friendReceiver,
+        setFriendReceiver,
+        setUser
     }
 
     return (

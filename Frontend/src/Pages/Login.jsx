@@ -1,11 +1,34 @@
 import React from 'react'
-import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useState,useEffect } from 'react'
+import { useNavigate, Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext';
+
+
+const handleIntraLogin = async (code,login,navigate)=> {
+    const res = await fetch(`/api/users/oauth2/intra/`,{
+        method:"POST",
+        headers: {
+            'Content-Type':'application/json'
+        },
+        body: JSON.stringify({code:code})
+    })
+    let data = await res.json()
+    console.log(data)
+    if(res.ok) {
+        login({tokens:data })
+        navigate('/dashboard')
+    } else {
+        console.log("error with response")
+    }
+}
 
 const Login = () => {
     const navigate = useNavigate();
     const [loginStep, setLoginStep] = useState('credentials');
+
+    const [searchParams] = useSearchParams()
+    const code = searchParams.get("code") || null
+
     const [loginData, setLoginData] = useState({
         username: "",
         password: ""
@@ -23,6 +46,20 @@ const Login = () => {
 
         if (errorMessage) 
             setErrorMessage("");
+    }
+
+    useEffect(()=> {
+        console.log("yes it's here ")
+        console.log("this is the error :",code)
+        if(code)
+            handleIntraLogin(code,login,navigate)
+    },[code])
+
+    const handle42 = (e)=> {
+        e.preventDefault()
+        const redirectUrl = import.meta.env.VITE_URI_INTRA
+        console.log("this is the shit: ",redirectUrl)
+        window.location.href = redirectUrl
     }
 
     const handleSubmit = async (e) => {

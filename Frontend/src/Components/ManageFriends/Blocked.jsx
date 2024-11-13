@@ -1,8 +1,6 @@
+import { CgUnblock } from "react-icons/cg";
 
-import { LuSwords } from "react-icons/lu";
-import { BsChatText } from "react-icons/bs";
-
-export default function Friendlist() {
+export default function Blocked() {
     return (
         <div className=" w-full border-b-2 border-gray-500  xsm:h-20 sm:h-32 flex items-center xsm:px-2 sm:px-8 justify-between">
             <div className="flex items-center gap-x-4">
@@ -15,8 +13,10 @@ export default function Friendlist() {
                 </div>
             </div>
             <div className="flex  xsm:gap-2 sm:gap-x-4 items-center xsm:text-lg sm:text-4xl">
-                <LuSwords />
-                <BsChatText />
+                <button className="flex items-center gap-x-2 border border-blue-500 p-1 text-red-500 rounded-lg text-sm">
+                    <CgUnblock className="text-blue-500"/>
+                    <span className="xsm:hidden text-blue-500 sm:block"> unblock</span>
+                </button>
             </div>
         </div>
     )

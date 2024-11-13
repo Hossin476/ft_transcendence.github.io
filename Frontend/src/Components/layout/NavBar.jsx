@@ -11,10 +11,9 @@ import LanguageSwitcher from "../../Components/Settings/LanguageSwitcher";
 
 export default function NavBar() {
 
-    const { socket, global_socket, socketMessage, createSocket,user } = useAuth()
+    const { socket, global_socket, socketMessage, createSocket,user, username } = useAuth()
     const [showNotifications, setShowNotifications] = useState(false);
     const nav = useNavigate();
-
 
     const toggleNotifications = () => {
         setShowNotifications(!showNotifications);
@@ -39,7 +38,6 @@ export default function NavBar() {
                 socket.close()
         };
     }, []);
-    console.log(user)
     return (
         <div className="xsm:py-4 flex bg-secondaryColor rounded xsm:h-full items-center justify-between justify-end relative">
             <div className=" xsm:pl-4">
@@ -63,9 +61,9 @@ export default function NavBar() {
                         <LiaCoinsSolid />
                     </span>
                 </li> */}
-                <li className="text-2xl font-thin xsm:hidden lg:block">{user.username}</li>
+                <li className="text-2xl font-thin xsm:hidden lg:block">{username}</li>
                 <li onClick={() => nav(`/profile/${user.id}`)} className="xsm:w-8 xsm:h-8 sm:w-16 sm:h-16 border-2 rounded-full">
-                    <img className="w-full rounded-full" src={img} alt="Profile" />
+                    <img className="w-full rounded-full" src={user.profile_image} alt="Profile" />
                 </li>
             </ul>
             <NotificationHandler />

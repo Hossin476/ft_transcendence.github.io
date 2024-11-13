@@ -137,9 +137,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
                 if match.is_game_end == True or match.is_start == False:
                     matches_state += 1
             await asyncio.sleep(10)
-        print("round is finished")
         tournament.knockout = tournament.knockout/2
-        print("knock out afore", tournament.knockout)
         knockout = int(tournament.knockout)
         await database_sync_to_async(tournament.save)()
         # make the next matches
@@ -148,12 +146,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             match_indx = 6
         else:
             match_indx = int(nbr_matches)
-        print("start", start)
-        print("round", int(start + knockout))
         for i in range(start, int(start + knockout)):
-            print(" match_indx : ", match_indx)
-            print("j = ", j)
-            print("i = ", i)
             player1 = None
             player2 = None
             if match_list[j].winner is not None:
@@ -181,6 +174,13 @@ class TournamentConsumer(AsyncWebsocketConsumer):
                 tour, nbr_matches, nbr_matches + knockout))
             asyncio.create_task(self.match_watcher(
                 tour["id"], nbr_matches, nbr_matches + knockout))
+        else:
+            tournament.is_end = True
+            match_list = await database_sync_to_async(lambda: list(tournament.matches.select_related("player1", "player2", "winner").all()))()
+            tournament.winner = match_list[-1].winner
+            await database_sync_to_async(tournament.save)()
+            
+            
 
     async def countdown(self, tournament, start, nbr_matches):
         await asyncio.sleep(6)
@@ -287,6 +287,5 @@ class Tournamentlocal(AsyncWebsocketConsumer):
             matches[next_match].player1 = matches[current_match].winner
         else:
             matches[next_match].player2 = matches[current_match].winner
-        print("next tour:", next_match)
         await database_sync_to_async(matches[next_match].save)()
         asyncio.create_task(self.matches_watcher(self.tour_id, next_match + int(current_match/2), current_match + 1))

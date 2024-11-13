@@ -5,7 +5,6 @@ from users.models import CustomUser
 class OnlineGameModel(models.Model):
     """
     Model representing an online Tic-Tac-Toe game between two players.
-
     Attributes:
         player1 (ForeignKey): A reference to the first player in the game.
         player2 (ForeignKey): A reference to the second player in the game.

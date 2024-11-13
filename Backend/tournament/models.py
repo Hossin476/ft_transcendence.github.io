@@ -6,6 +6,7 @@ from pingpong.models import GameOnline,GameOffline
 class Tournament(models.Model):
 
     creator         = models.ForeignKey(CustomUser, related_name="admin",on_delete=models.CASCADE)
+    winner          = models.ForeignKey(CustomUser, related_name="winner",on_delete=models.CASCADE, null=True,blank=True)
     players         = models.ManyToManyField(CustomUser)
     matches         = models.ManyToManyField(GameOnline, blank=True)
     created_at      = models.DateTimeField(auto_now_add=True)

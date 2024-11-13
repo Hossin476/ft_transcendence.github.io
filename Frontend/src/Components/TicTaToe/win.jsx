@@ -84,8 +84,8 @@ const Win = ({ final_winner }) => {
     );
 
     return (
-        <div className={`w-[101%] blurHelp h-[101%] absolute ${isOffline ? 'border-green-600' : isWin ? 'border-green-600' : 'border-red-600'} border-[3px] flex flex-col items-center justify-evenly z-10 gap-6 rounded-[20px]`}>
-            <div className="relative flex flex-col justify-center items-center">
+        <div className={`w-[101%] h-[101%] top-0 -mt-1 backdrop-blur-md  absolute ${isOffline ? 'border-green-600' : isWin ? 'border-green-600' : 'border-red-600'} border-[3px] flex flex-col items-center justify-evenly z-10 rounded-[20px]`}>
+            <div className="flex flex-col justify-center items-center">
                 {isOffline ? renderOfflineContent() : renderOnlineContent()}
             </div>
             <div className="flex justify-evenly w-full">

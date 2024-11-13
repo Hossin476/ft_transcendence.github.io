@@ -69,7 +69,7 @@ class TicTacToe:
         self.winner_line = line
         if self.winner == 'X':
             self.x_score += 1
-        else:
+        elif self.winner == 'O':
             self.o_score += 1
 
     def check_game_over(self):
