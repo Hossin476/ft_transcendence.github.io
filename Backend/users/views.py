@@ -14,12 +14,10 @@ from calendar import monthrange
 from django.utils import timezone
 from django.db.models import Q, Count
 from itertools import chain
-from django.http import JsonResponse
 import os
 import secrets
 import string
 import requests
-import json
 from rest_framework.generics import GenericAPIView
 from rest_framework.views import APIView
 from rest_framework import status
@@ -32,8 +30,7 @@ import pyotp
 import qrcode
 import base64
 from io import BytesIO
-from PIL import Image
-
+import time
 
 @api_view(['GET'])
 def get_profile(request, user_id):
