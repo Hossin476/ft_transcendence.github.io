@@ -466,8 +466,27 @@ class Setup2FAView(APIView):
 
     def delete(self, request):
         user = request.user
-        
-        user.two_factor_enabled = False
-        user.key = None
-        user.save()
-        return Response(status = status.HTTP_200_OK)
+        code = request.data.get('code')
+
+        totp = pyotp.TOTP(user.key)
+        if totp.verify(code):
+            user.two_factor_enabled = False
+            user.key = None
+            user.save()
+            return Response(status = status.HTTP_200_OK)
+        return Response({
+            'error': 'Invalid verification code'
+        }, status = status.HTTP_400_BAD_REQUEST)
+
+
+class Check2FAView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        user = CustomUser.objects.get(username = request.data.get('username'))
+
+        return Response({
+            '2FA_Status': user.two_factor_enabled,
+            'key': user.key
+        }, status=status.HTTP_200_OK)
+

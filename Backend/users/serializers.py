@@ -73,7 +73,7 @@ class UserLoginSerializer(serializers.ModelSerializer):
             if not user.is_verified:
                 raise AuthenticationFailed({'error': 'user not verified !'})
             user_tokens = user.tokens()
-            if not user.two_factor_enabled:
+            if user.two_factor_enabled:
                 return {'username': user.username}
             else:
                 print(user.username, user.two_factor_enabled)

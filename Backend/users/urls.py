@@ -25,6 +25,7 @@ urlpatterns = [
     path('set-new-password/', SetNewPasswordView.as_view(), name='set-new-password'),
     path('setup-2fa/', views.Setup2FAView.as_view(), name='setup-2fa'),
     path('verify-2fa/', views.Verify2FAView.as_view(), name='verify-2fa'),
+    path('check-2fa/', views.Check2FAView.as_view(), name='check-2fa'),
 
 
     path('profile/<int:user_id>/', views.get_profile),
