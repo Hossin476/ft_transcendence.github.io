@@ -486,7 +486,7 @@ class Check2FAView(APIView):
         user = CustomUser.objects.get(username = request.data.get('username'))
 
         return Response({
-            '2FA_Status': user.two_factor_enabled,
+            'two_factor_enabled': user.two_factor_enabled,
             'key': user.key
         }, status=status.HTTP_200_OK)
 
