@@ -23,10 +23,9 @@ import { Signup, ForgetPassword, VerifyEmail, ResetPassword, MailSent } from "./
 
 import "./utils/i18n";
 import PrivateRoute from "./utils/privateRoute";
-import NotFoundPage from '../src/Pages/NotFound'
+import NotFoundPage from './Pages/NotFound'
 
 
-// import './server.js'
 function App() {
   return (
     <BrowserRouter>
@@ -41,7 +40,6 @@ function App() {
           <Route element={<PrivateRoute />}>
             <Route element={<LayoutOne />}>
               <Route index element={<Dash />} />
-              <Route path="notfound" element={<NotFoundPage />} />
               <Route path="dashboard" element={<Dash />} />
               <Route path="managefriends" element={<ManageFriends />} />
               <Route path="settings" element={<Settings />} />
@@ -74,6 +72,7 @@ function App() {
                   </Route>
                 </Route>
               </Route>
+              <Route path="*" element={<NotFoundPage />} />
             </Route>
           </Route>
         </Routes>
