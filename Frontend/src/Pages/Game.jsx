@@ -4,11 +4,14 @@ import TicPic from '../../public/avatar/TicTacToe.png';
 import { useNavigate } from "react-router-dom";
 import Challenge from '../Components/Challenge/Challenge';
 import { useTranslation } from 'react-i18next';
+import { useEffect } from 'react';
 
 function PingPong() {
 
     const navigate = useNavigate();
     const { t } = useTranslation();
+
+
 
     function navigateToTournament() {
         navigate('/game/pingpong/tournament');
@@ -65,6 +68,15 @@ function TicTacToe() {
 }
 
 function Game() {
+    // const { i18n } = useTranslation();
+
+    // useEffect(() => {
+    //     const savedLanguage = localStorage.getItem('pongLanguage');
+    //     if (savedLanguage && i18n.language !== savedLanguage) {
+    //         i18n.changeLanguage(savedLanguage);
+    //     }
+    // }, []);
+
     return (
         <div className='bg-primaryColor w-full flex flex-row items-center justify-center px-7 relative h-[100%] fade-in '>
             <div className="game-container flex  justify-center  flex-col items-center xsm:w-[90%] w-[80%] max-w-[1700px] min-h-[800px]">

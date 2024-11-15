@@ -1,7 +1,7 @@
 // src/PingPong.jsx
 import React from 'react';
 import { PiArrowUUpLeftBold } from 'react-icons/pi';
-import { IoIosAddCircleOutline } from "react-icons/io";
+import { MdDashboardCustomize } from "react-icons/md";
 import { useEffect,useState } from 'react';
 
 import './Pvpgame.css';
@@ -37,6 +37,11 @@ function Header({ title}) {
       </div>
       <div className='tittle-div '>
         <h1 className='text-border'>{title}</h1>
+      </div>
+      <div className="pr-6">
+        <button>
+          <MdDashboardCustomize style={{ fontSize: '2rem', color: 'white' }} />
+        </button>
       </div>
     </header>
   )

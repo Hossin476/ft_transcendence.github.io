@@ -176,7 +176,6 @@ function Two2fa() {
     <div className="holder-container">
       <div className="settings-tittle">
         <Tittle />
-        {/* <LanguageSwitcher /> */}
       </div>
       <div className="settings-container">
         <Header />
