@@ -20,6 +20,8 @@ def get_user_data(req, game_id):
         return Response({'player1': player1_data, 'player2': player2_data}, status=status.HTTP_200_OK)
     except OnlineGameModel.DoesNotExist:
         return Response({'error': 'Game not found'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
@@ -39,6 +41,8 @@ def get_winner_data(request, game_id):
             }, status=status.HTTP_200_OK)
     except OnlineGameModel.DoesNotExist:
         return Response({'error': 'Game not found'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 def offline_user_data(req, game_id):
@@ -49,6 +53,8 @@ def offline_user_data(req, game_id):
         return Response({'player1': player1, 'player2': player2}, status.HTTP_200_OK)
     except LocalGameModel.DoesNotExist:
         return Response({'error': 'Game not found'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
@@ -60,6 +66,8 @@ def offline_winner_data(request, game_id):
             }, status=status.HTTP_200_OK)
     except LocalGameModel.DoesNotExist:
         return Response({'error': 'Game not found'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 def create_local_game(request):

@@ -46,7 +46,7 @@ export default function ModelCreate({ setTournaments, setIsmodel }) {
         setTournaments({ mode: value == 1 ? "ONLINE" : "OFFLINE", players: valuePlayers, number: 0, users: players  });
         setIsmodel(false)
     }
-    return (<div className='absolute top-0 bottom-0 left-0 right-0 bg-opacity-60  z-10  flex justify-center items-center blurHelp'>
+    return (<div className='absolute top-0 bottom-0 left-0 right-0 bg-opacity-60  z-10  flex justify-center items-center backdrop-blur-md'>
         <form className='opacity-100 bg-secondaryColor  py-5 px-5 flex flex-col justify-center items-center gap-8 border-2  border-forthColor rounded-lg max-w-[800px] min-w-[320px]'  onSubmit={handleSubmit}>
             <h1 className="font-Valorax xsm:text-lg md:text-xl">CREATE NOW TOURNAMENT</h1>
             <div className='flex  h-[100%] w-[100%] gap-4 items-center flex-wrap justify-center'>

@@ -1,21 +1,18 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext'
 import moment from 'moment';
-import {useLocation} from "react-router"
 
 
 function GameNotification({ notification }) {
-    const location = useLocation();
-    const gameType = location.pathname.split('/')[2] === "ticatctoe" ? 'T' : 'P';
-
-    const { socket} = useAuth();
+    const { socket, socketMessage } = useAuth();
 
     function accept_game() {
         if (socket) {
             const message = JSON.stringify({
                 type: "accept_game",
-                receiver: notification.sender.username,
-                game: gameType
+                receiver: socketMessage.from,
+                game: socketMessage.game_type,
+                invite_id: socketMessage.invite_id
             })
             socket.send(message);
         }
@@ -25,7 +22,7 @@ function GameNotification({ notification }) {
         if (socket) {
             const message = JSON.stringify({
                 type: "reject_game",
-                id: "1"
+                invite_id: socketMessage.invite_id
             })
             socket.send(message);
         }
@@ -35,7 +32,7 @@ function GameNotification({ notification }) {
     return (
         <div className="p-4 bg-gray-100 rounded-lg shadow-lg flex items-start hover:bg-gray-200 transition duration-300">
             <div className="h-12 w-12 rounded-full overflow-hidden flex-shrink-0 my-auto">
-                <img src={"http://localhost" + notification.sender.profile_image} alt="Profile" className="h-full w-full object-cover" />
+                <img src={notification.sender.profile_image} alt="Profile" className="h-full w-full object-cover" />
             </div>
             <div className="flex-grow ml-4">
                 <h3 className="text-black text-md mt-1 max-w-[15rem] flex-wrap">

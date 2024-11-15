@@ -67,7 +67,7 @@ export default function Win({iswin, game_id})
     return (
         <>
             {Game && location && location.state && location.state.isonline == false ? <OfflineWin matchObj={Game}/> : 
-            <div className={`w-[101%] blurHelp h-[101%] absolute ${iswin? 'border-green-600': 'border-red-600'} border-[3px] flex flex-col items-center justify-evenly z-10 gap-6 rounded-[20px]`}>
+            <div className={`w-[101%] backdrop-blur-md h-[101%] absolute ${iswin? 'border-green-600': 'border-red-600'} border-[3px] flex flex-col items-center justify-evenly z-10 gap-6 rounded-[20px]`}>
                 <div className="relative flex flex-col justify-center items-center">
                     <p className={`font-Plaguard xsm:text-[10vw] lg:text-9xl  ${iswin ?'text-green-500': 'text-red-600'} `}>{iswin? 'YOU WIN' : 'YOU LOSE'}</p>
                     {userGame && <div className="absolute  top-10 flex flex-col  items-center gap-2 w-[100%] ">
