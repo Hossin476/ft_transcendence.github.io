@@ -63,6 +63,7 @@ function Profile_friends({ user }) {
         };
         fetchData();
     }, [user]);
+    
     return (
         <div className=" xsm:w-12 lg:w-74 xl:w-80 sm:w-28 md:w-32 lg:px-4 bg-secondaryColor rounded-3xl ">
         <div className="flex h-[5rem] xsm:justify-center items-center lg:justify-between">

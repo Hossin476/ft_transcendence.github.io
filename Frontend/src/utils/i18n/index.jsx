@@ -19,12 +19,14 @@ const resources = {
   }
 };
 
+const savedLanguage = localStorage.getItem("pongLanguage");
+
 i18n
   .use(initReactI18next)
   .init({
     resources,
     fallbackLng: "en",
-    lng: "en",
+    lng: savedLanguage || "en",
     interpolation: {
       escapeValue: false // react already safes from xss
     }
