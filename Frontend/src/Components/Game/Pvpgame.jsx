@@ -20,9 +20,101 @@ import { RiWifiOffLine } from "react-icons/ri";
 import { IoWifiSharp } from "react-icons/io5";
 import { useTranslation } from 'react-i18next';
 
+import { FaCheck } from "react-icons/fa";
+
+function Costumize() {
+
+  const [Paddle, setPaddle] = React.useState("white");
+  const [Ball, setBall] = React.useState("white");
+
+
+  const colorOptions = [
+   "red",
+    "green",
+    "blue",
+    "yellow",
+    "orange",
+    "purple",
+  ]
+
+  return (
+    <div className="grid gap-4 py-4">
+      <div className="bg-[#1C1A27] border border-[#2A2833] rounded-lg p-6">
+        <div className="space-y-6">
+          {/* Paddle Customization */}
+          <div className="space-y-4">
+            <span className="text-white">Paddle Color</span>
+            <div className="flex gap-3 flex-wrap" id="paddle-color">
+              {colorOptions.map((color) => (
+                <button
+                  key={`paddle-${color}`}
+                  className="w-10 h-10 rounded-lg relative"
+                  style={{ backgroundColor: color }}
+                  onClick={() => setPaddle(color)}
+                  aria-label={`Select ${color} for paddle color`}
+                >
+                  {Paddle === color && (
+                    <FaCheck className="absolute inset-0 m-auto text-black" />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Ball Customization */}
+          <div className="space-y-4">
+            <span className="text-white">Ball Color</span>
+            <div className="flex gap-3 flex-wrap" id="ball-color">
+              {colorOptions.map((color) => (
+                <button
+                  key={`ball-${color}`}
+                  className="w-10 h-10 rounded-lg relative"
+                  style={{ backgroundColor: color }}
+                  onClick={() => setBall(color)}
+                  aria-label={`Select ${color} for ball color`}
+                >
+                  {Ball === color && (
+                    <FaCheck className="absolute inset-0 m-auto text-black" />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Preview */}
+          <div className="mt-8">
+            <h3 className="text-white">Preview</h3>
+            <div className="bg-[#13111C] rounded-lg p-6 mt-2">
+              <div className="relative h-40 border border-[#2A2833] rounded">
+                <div
+                  className="absolute left-4 top-1/2 -translate-y-1/2 w-3 h-16 rounded"
+                  style={{ backgroundColor: Paddle }}
+                />
+                <div
+                  className="absolute right-4 top-1/2 -translate-y-1/2 w-3 h-16 rounded"
+                  style={{ backgroundColor: Paddle }}
+                />
+                <div
+                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full"
+                  style={{ backgroundColor: Ball }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function Header({ title}) {
 
   const navigate = useNavigate();
+  const [isPopupOpen, setIsPopupOpen] = React.useState(false);
+
+  function togglePopup() {
+    setIsPopupOpen((prevIsPopupOpen) => !prevIsPopupOpen);
+  }
 
   function navigateToGame() {
     navigate('/game');
@@ -39,10 +131,23 @@ function Header({ title}) {
         <h1 className='text-border'>{title}</h1>
       </div>
       <div className="pr-6">
-        <button>
+        <button onClick={togglePopup}>
           <MdDashboardCustomize style={{ fontSize: '2rem', color: 'white' }} />
         </button>
       </div>
+      {isPopupOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-[#1C1A27] rounded-lg shadow-lg p-6 w-4/5 max-w-lg">
+            <h2 className="text-xl font-bold mb-4">Customize Game</h2>
+            <Costumize />
+            <button
+              onClick={togglePopup}
+              className="w-full mt-4 px-4 py-2 bg-white text-black rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+              Save
+            </button>
+          </div>
+        </div>
+      )}
     </header>
   )
 }
@@ -219,6 +324,7 @@ function LocalPvp({player,setPlayers}) {
 }
 
 function OnlinePvp({isstarted,counter,isstart,pvpUser}) {
+
   return (
     <>
       <Mycard />
