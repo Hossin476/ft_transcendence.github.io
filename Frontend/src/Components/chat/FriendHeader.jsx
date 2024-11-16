@@ -20,7 +20,11 @@ const FriendHeader = () => {
               </div>
               <div>
                   <h1 className=" md:text-2xl xs:text-sm text-gray-700 font-bold uppercase">{currantUser.user.username}</h1>
-                  <p className="xsm:text-xs   text-gray-500"> {t("Active Now")}</p>
+                  {
+                    currantUser.user.is_online
+                    ? <p className="xsm:text-xs text-green-500"> {t("Active Now")}</p>
+                    : <p className="xsm:text-xs text-red-500"> {t("offline")}</p>
+                  }
               </div>
             </div>
             <hr className="mt-5 border border-gray-400 bg-gray-500"></hr>

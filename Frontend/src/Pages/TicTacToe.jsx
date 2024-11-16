@@ -12,7 +12,7 @@ const TicTacToe = () => {
             <TicTacToeProvider>
                 <Header />
                 <div className="flex justify-evenly items-center w-11/12 h-full relative">
-                    <div className="border border-forthColor w-11/12 text-white flex flex-col h-[80%] items-center bg-linkBgColor rounded-3xl">
+                    <div className="border border-forthColor w-11/12 text-white flex flex-col h-[80%] items-center relative  bg-linkBgColor rounded-3xl ">
                         <div className="game_container h-full w-[90%] flex flex-col items-center justify-around">
                             <Score />
                             <hr className='border-white border w-full max-w-[1400px]'></hr>

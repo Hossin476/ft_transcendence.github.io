@@ -18,11 +18,10 @@ function NotificationModal() {
             });
 
             if (!response.ok)
-                throw new Error(`HTTP error! status: ${response.status}`);
+                throw new Error(`HTTP error!  status: ${response.status}`);
 
             const data = await response.json();
             setNotifications(data);
-            console.log("notifications ", data);
         } catch (error) {
             console.error('Fetch failed: ', error);
         }
@@ -41,13 +40,12 @@ function NotificationModal() {
             </div>
             <div className="p-4 space-y-4 overflow-y-auto h-[calc(100%-5rem)]">
                 {notifications.map((notification, index) => {
-                    if (notification.type === 'friend') {
+                    if (notification.type === 'friend')
                         return <FriendNotification key={index} notification={notification} />;
-                    } else if (notification.type === 'game') {
+                    else if (notification.type === 'game')
                         return <GameNotification key={index} notification={notification} />;
-                    } else if (notification.type === 'friend_response') {
+                    else if (notification.type === 'friend_response')
                         return <FriendResponseNotification key={index} response={notification.response} />;
-                    }
                     return null;
                 })}
             </div>

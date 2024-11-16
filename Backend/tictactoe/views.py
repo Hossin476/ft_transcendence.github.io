@@ -13,14 +13,13 @@ from .local_game.models import LocalGameModel
 def get_user_data(req, game_id):
     try:
         game = OnlineGameModel.objects.get(id=game_id)
+        player1 = game.player1
+        player2 = game.player2
+        player1_data = CustomUserSerializer(player1).data
+        player2_data = CustomUserSerializer(player2).data
+        return Response({'player1': player1_data, 'player2': player2_data}, status=status.HTTP_200_OK)
     except OnlineGameModel.DoesNotExist:
-        return Response({'error': 'Game not found'}, status=404)
-
-    player1 = game.player1
-    player2 = game.player2
-    player1_data = CustomUserSerializer(player1).data
-    player2_data = CustomUserSerializer(player2).data
-    return Response({'player1': player1_data, 'player2': player2_data})
+        return Response({'error': 'Game not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(['GET'])
@@ -45,13 +44,12 @@ def get_winner_data(request, game_id):
 def offline_user_data(req, game_id):
     try:
         game = LocalGameModel.objects.get(id=game_id)
+        player1 = game.player1
+        player2 = game.player2
+        return Response({'player1': player1, 'player2': player2}, status.HTTP_200_OK)
     except LocalGameModel.DoesNotExist:
-        return Response({'error': 'Game not found'}, status=404)
+        return Response({'error': 'Game not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    player1 = game.player1
-    player2 = game.player2
-
-    return Response({'player1': player1, 'player2': player2})
 
 @api_view(['GET'])
 def offline_winner_data(request, game_id):
@@ -70,7 +68,6 @@ def create_local_game(request):
         player2 = request.data.get('player2')
         creator = request.user
         game = LocalGameModel.objects.create(creator=creator, player1=player1, player2=player2)
-
         return Response({'game_id': game.id}, status=status.HTTP_201_CREATED)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

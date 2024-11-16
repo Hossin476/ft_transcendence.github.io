@@ -1,10 +1,12 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom';
 
 function Draw() {
+    const navigate = useNavigate();
     return (
-        <div className={`w-[101%] blurHelp h-[101%] absolute border-yellow-600 border-[3px] flex flex-col items-center justify-evenly z-10 gap-6 rounded-[20px]`}>
+        <div className={`w-[101%] h-[101%] top-0 -mt-1 backdrop-blur-md  absolute border-yellow-600 border-[3px] flex flex-col items-center justify-evenly z-10 gap-6 rounded-[20px]`}>
             <div className="relative flex flex-col justify-center items-center">
-                <p className={`font-Plaguard xsm:text-[10vw] lg:text-5xl text-yellow-500`}>
+                <p className={`font-Plaguard xsm:text-[7vw] lg:text-6xl text-yellow-500`}>
                     The Match Is A Draw!
                 </p>
             </div>

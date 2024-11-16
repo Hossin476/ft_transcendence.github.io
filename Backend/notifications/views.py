@@ -17,48 +17,40 @@ from tictactoe.models import OnlineGameModel
 
 class NotificationView(APIView):
     def get(self, request):
-        self.user = request.user
-        notification_fr = FriendshipNotification.objects.filter(
-            receiver=self.user).order_by('-created_at')
-        notification_game = GameNotification.objects.filter(
-            receiver=self.user).order_by('-created_at')
-        
-        # Get all accepted and rejected friendships
-        accepted_friendships = Friendship.objects.filter(
-            Q(from_user=self.user) , request='A')
-        
-        # Serialize the friendship notifications
-        accepted_friendship_notifications = [
-            {
-                **FriendshipSerializer(f).data,
-                'receiver_username': f.to_user.username
-            }
-            for f in accepted_friendships
-        ]
-        
-        # Combine and sort notifications
-        notification_query = sorted(chain(
-            notification_fr, notification_game), key=attrgetter('created_at'), reverse=True)
-        
-        result = []
-        for obj in notification_query:
-            if isinstance(obj, FriendshipNotification):
-                data = FriendshipNotificationSerializer(obj).data
-                data['type'] = 'friend'
-                result.append(data)
-            elif isinstance(obj, GameNotification):
-                data = GameNotificationSerializer(obj).data
-                data['type'] = 'game'
-                result.append(data)
-        
-        # Add serialized friendship notifications to the result
-        for notification in accepted_friendship_notifications:
-            notification['type'] = 'friend_response'
-            notification['response'] = f"{notification['receiver_username']} has accepted your friend request"
-            result.append(notification)
-        
-        print(result)
-        return Response(result)
+        try:
+            self.user = request.user
+            notification_fr = FriendshipNotification.objects.filter(
+                receiver=self.user).order_by('-created_at')
+            notification_game = GameNotification.objects.filter(
+                receiver=self.user).order_by('-created_at')
+            accepted_friendships = Friendship.objects.filter(
+                Q(from_user=self.user) , request='A')
+            accepted_friendship_notifications = [
+                {
+                    **FriendshipSerializer(f).data,
+                    'receiver_username': f.to_user.username
+                }
+                for f in accepted_friendships
+            ]
+            notification_query = sorted(chain(
+                notification_fr, notification_game), key=attrgetter('created_at'), reverse=True)
+            result = []
+            for obj in notification_query:
+                if isinstance(obj, FriendshipNotification):
+                    data = FriendshipNotificationSerializer(obj).data
+                    data['type'] = 'friend'
+                    result.append(data)
+                elif isinstance(obj, GameNotification):
+                    data = GameNotificationSerializer(obj).data
+                    data['type'] = 'game'
+                    result.append(data)
+            for notification in accepted_friendship_notifications:
+                notification['type'] = 'friend_response'
+                notification['response'] = f"{notification['receiver_username']} has accepted your friend request"
+                result.append(notification)
+            return Response(result)
+        except Exception as e:
+            return Response(f"An Error Occured!  {str(e)}")
 
 
 @api_view(['GET'])
@@ -151,6 +143,5 @@ def get_Leaderboard(request):
         for rank, user in enumerate(leaderboard_list, start=1):
             user['rank'] = rank
         return JsonResponse(leaderboard_list, safe=False)
-    
-    except CustomUser.DoesNotExist:
-        return JsonResponse({'error': 'User does not exist'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=404)
