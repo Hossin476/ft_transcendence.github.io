@@ -4,7 +4,7 @@ import { forwardRef } from "react";
   return (
     <mesh position={props.position} ref={ref}>
       <boxGeometry args={[0.5, 0.1, 0.05]} />
-      <meshStandardMaterial color={"purple"} roughness={0.1} metalness={0.7} />
+      <meshStandardMaterial color={localStorage.getItem("Paddle")} roughness={0.1} metalness={0.7} />
     </mesh>
   );
 });

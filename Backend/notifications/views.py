@@ -145,3 +145,25 @@ def get_Leaderboard(request):
         return JsonResponse(leaderboard_list, safe=False, status=status.HTTP_200_OK)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def matchesNotFinishPingPong(request):
+    matchs = GameOnline.objects.filter(Q(player1=request.user) | Q(player2=request.user),is_start=True, is_game_end=False)
+    returnData = {"isMatch": False}
+    if len(matchs) != 0:
+        returnData['isMatch'] = True
+        returnData['id'] = matchs[0].id
+    return Response(returnData)
+
+@api_view(['GET'])
+def matchesNotFinishTictactoe(request):
+    try:
+        matchs = OnlineGameModel.objects.filter(Q(player1=request.user) | Q(player2=request.user), is_end=False)
+        returnData = {"isMatch": False}
+        if matchs is not None and len(matchs) != 0:
+            returnData['isMatch'] = True
+            returnData['id'] = matchs[0].id
+        return Response(returnData)
+    except Exception as e:
+        print(f"error {str(e)}")

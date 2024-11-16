@@ -7,4 +7,6 @@ urlpatterns = [
     path('onlinegame/',views.onlineGame),
     path('tourinvites/<int:tour_id>', views.TournamentInvites),
     path('leaderboard/', views.get_Leaderboard),
+    path('pingpong_unfinished_match/', views.matchesNotFinishPingPong),
+    path('tictactoe_unfinished_match/', views.matchesNotFinishTictactoe),
 ]

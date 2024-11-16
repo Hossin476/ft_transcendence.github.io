@@ -14,7 +14,7 @@ import { useTranslation } from "react-i18next";
 function Profile_info({ userid }) {
   const [IsFriend, setIsFriend] = React.useState(false);
   const [IsBlocked, setIsBlocked] = React.useState(false);
-  const { user } = useAuth();
+  const { user, socket } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
   
@@ -27,6 +27,17 @@ function Profile_info({ userid }) {
             navigatedUser: userid?.username
         }
     })    
+  }
+
+  function request_friendship()
+  {
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      const message = JSON.stringify({
+          "type": "friend_request",
+          "receiver": userid?.username
+      })
+      socket.send(message);
+  }
   }
 
   return (

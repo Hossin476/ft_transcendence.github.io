@@ -1,41 +1,59 @@
 // src/PingPong.jsx
-import React from 'react';
-import { PiArrowUUpLeftBold } from 'react-icons/pi';
-import { MdDashboardCustomize } from "react-icons/md";
-import { useEffect,useState } from 'react';
+import React from "react";
+import { PiArrowUUpLeftBold } from "react-icons/pi";
+import { useEffect, useState } from "react";
+import { MdOutlineSettingsSuggest } from "react-icons/md";
+import { HiX } from "react-icons/hi";
 
-import './Pvpgame.css';
-import './Matchmaking.css';
+import "./Pvpgame.css";
+import "./Matchmaking.css";
 
-import mypic from '/avatar/sbzizal.jpeg';
-import vs_avatar from '/avatar/lshail.jpeg';
-import avatar from '/avatar/anonym.png';
-import {useLocation} from 'react-router-dom'
+import mypic from "/avatar/sbzizal.jpeg";
+import vs_avatar from "/avatar/lshail.jpeg";
+import avatar from "/avatar/anonym.png";
+import { useLocation } from "react-router-dom";
 
-import 'ldrs/dotPulse';
-import { useNavigate } from 'react-router';
-import Challenge from '../Challenge/Challenge';
-import { useAuth } from '../../context/AuthContext';
+import "ldrs/dotPulse";
+import { useNavigate } from "react-router";
+import Challenge from "../Challenge/Challenge";
+import { useAuth } from "../../context/AuthContext";
 import { RiWifiOffLine } from "react-icons/ri";
 import { IoWifiSharp } from "react-icons/io5";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 import { FaCheck } from "react-icons/fa";
 
-function Costumize() {
+function Costumize( {setIsPopupOpen} ) {
+  const [Paddle, setPaddle] = React.useState(
+    localStorage.getItem("Paddle") || "white");
 
-  const [Paddle, setPaddle] = React.useState("white");
-  const [Ball, setBall] = React.useState("white");
-
+  const [Ball, setBall] = React.useState(
+    localStorage.getItem("Ball") || "white");
 
   const colorOptions = [
-   "red",
+    "white",
+    "red",
     "green",
     "blue",
     "yellow",
     "orange",
     "purple",
-  ]
+  ];
+
+  useEffect(() => {
+    const SavedPaddle = localStorage.getItem("Paddle");
+    const SavedBall = localStorage.getItem("Ball");
+
+    if (SavedPaddle) setPaddle(SavedPaddle);
+    if (SavedBall) setBall(SavedBall);
+
+  }, []);
+
+  const saveSettings = () => {
+    localStorage.setItem("Paddle", Paddle);
+    localStorage.setItem("Ball", Ball);
+    setIsPopupOpen(false);
+  };
 
   return (
     <div className="grid gap-4 py-4">
@@ -101,14 +119,20 @@ function Costumize() {
               </div>
             </div>
           </div>
+        
+          {/* Save Button */}
+          <button
+            onClick={saveSettings}
+            className="w-full mt-4 px-4 py-2 bg-white text-black rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50">
+            Save
+          </button>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-function Header({ title}) {
-
+function Header({ title }) {
   const navigate = useNavigate();
   const [isPopupOpen, setIsPopupOpen] = React.useState(false);
 
@@ -117,42 +141,44 @@ function Header({ title}) {
   }
 
   function navigateToGame() {
-    navigate('/game');
+    navigate("/game");
   }
 
   return (
     <header className="header">
-      <div className='back-div'>
+      <div className="back-div">
         <button onClick={navigateToGame} className="back-button">
-          <PiArrowUUpLeftBold style={{ fontSize: '2rem', color: 'white' }} />
+          <PiArrowUUpLeftBold style={{ fontSize: "2rem", color: "white" }} />
         </button>
       </div>
-      <div className='tittle-div '>
-        <h1 className='text-border'>{title}</h1>
+      <div className="tittle-div ">
+        <h1 className="text-border">{title}</h1>
       </div>
       <div className="pr-6">
         <button onClick={togglePopup}>
-          <MdDashboardCustomize style={{ fontSize: '2rem', color: 'white' }} />
+          <MdOutlineSettingsSuggest
+            style={{ fontSize: "2rem", color: "white" }}
+          />
         </button>
       </div>
       {isPopupOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-[#1C1A27] rounded-lg shadow-lg p-6 w-4/5 max-w-lg">
-            <h2 className="text-xl font-bold mb-4">Customize Game</h2>
-            <Costumize />
-            <button
+          <div className="relative bg-[#1C1A27] rounded-lg shadow-lg p-6 w-4/5 max-w-lg">
+            <HiX
+              className="absolute top-4 right-4 cursor-pointer"
               onClick={togglePopup}
-              className="w-full mt-4 px-4 py-2 bg-white text-black rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-              Save
-            </button>
+              style={{ fontSize: "1.6rem", color: "white" }}
+            />
+            <h2 className="text-xl font-bold mb-4">Customize Game</h2>
+            <Costumize setIsPopupOpen={setIsPopupOpen} />
           </div>
         </div>
       )}
     </header>
-  )
+  );
 }
 
-function Mycard({image, playerName}) {
+function Mycard({ image, playerName }) {
   const { t } = useTranslation();
   return (
     <div className="player-card h-[90%] xsm:w-[50%] lg:w-[25%]">
@@ -178,7 +204,7 @@ function Wait_card() {
   );
 }
 
-function Vsplayer_card({player}) {
+function Vsplayer_card({ player }) {
   return (
     <div className="player-card h-[90%] xsm:w-[50%] lg:w-[25%]">
       <img src={vs_avatar} alt="Avatar" className="avatar-ping" />
@@ -190,12 +216,14 @@ function Vsplayer_card({player}) {
   );
 }
 
-function Matchmaking_button({onClick}) {
+function Matchmaking_button({ onClick }) {
   const { t } = useTranslation();
   return (
     <div className="matchmaking">
       <p>{t("MATCHMAKING")} ...</p>
-      <button onClick={onClick} className="cancel-button">{t("CANCEL")}</button>
+      <button onClick={onClick} className="cancel-button">
+        {t("CANCEL")}
+      </button>
     </div>
   );
 }
@@ -210,256 +238,334 @@ function Add_card() {
   );
 }
 
-function Start_button({onClick}) {
+function Start_button({ onClick }) {
   const { t } = useTranslation();
   return (
     <div className="start-button_div">
       <div className="empty_start"></div>
-      <button onClick={onClick} className="start-button">{t("START")}</button>
+      <button onClick={onClick} className="start-button">
+        {t("START")}
+      </button>
     </div>
   );
 }
 
-function Started_button({onClick}) {
+const fetch_matches = async (gameType, tokens, navigate) => {
+  const fetchUrl = `/api/notification/${
+    gameType === "P"
+      ? "pingpong_unfinished_match"
+      : "tictactoe_unfinished_match"
+  }`;
+  try {
+    const response = await fetch(fetchUrl, {
+      headers: {
+        Authorization: `JWT ${tokens.access}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+    const data = await response.json();
+    if (data.isMatch)
+      navigate(
+        `/game/${gameType === "P" ? "pingpong" : "tictactoe"}/pvpgame/match`,
+        { state: { gameid: data.id, isonline: true } }
+      );
+  } catch (error) {
+    console.error("Fetch failed: ", error);
+  }
+};
+
+function ReconnectButton({ gameType }) {
+  const { t } = useTranslation();
+  const { tokens } = useAuth();
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    fetch_matches(gameType, tokens, navigate);
+  };
+
+  return (
+    <div className="start-button_div">
+      <div className="empty_start"></div>
+      <button onClick={handleClick} className="start-button">
+        {t("RECONNECT")}
+      </button>
+    </div>
+  );
+}
+
+function Started_button({ onClick }) {
   const { t } = useTranslation();
   return (
     <div className="start-button_div">
       <div className="empty_start"></div>
-      <button onClick={onClick} className="started-button">{t('STARTED')}</button>
+      <button onClick={onClick} className="started-button">
+        {t("STARTED")}
+      </button>
     </div>
   );
-
 }
-function LocalButton({onClick,players}){
+function LocalButton({ onClick, players }) {
   const { t } = useTranslation();
-  let error = false
-  console.log("this is the shit here :",players)
-  if(players.player1 === "" || players.player2 === "")
-      error = true
+  let error = false;
+  console.log("this is the shit here :", players);
+  if (players.player1 === "" || players.player2 === "") error = true;
   return (
     <div className="start-button_div">
       <div className="empty_start"></div>
-      {error ? <p className="text-red-500"> {t("press done first")}t</p> :''} 
-      <button onClick={ error ? (e)=>e.preventDefault()  : onClick} className="started-button">{t("STARTED")}</button>
+      {error ? <p className="text-red-500"> {t("press done first")}</p> : ""}
+      <button
+        onClick={error ? (e) => e.preventDefault() : onClick}
+        className="started-button"
+      >
+        {t("STARTED")}
+      </button>
     </div>
   );
-
 }
 
+const fetchData = async (gameType, players, tokens) => {
+  let url = "";
 
-
-const fetchData = async (gameType,players,tokens)=> {
-
-  let url = ''
-
-  if(gameType === 'P')
-    url = '/api/pingpong/game/pingpong/offline/create'
-  else
-    url = '/api/game/tictactoe/offline/create_local_game'
-  const response = await fetch(url,{
-    method:"POST",
-    headers:{
-      Authorization: 'JWT ' + tokens.access,
-      "content-Type": "application/json"
+  if (gameType === "P") url = "/api/pingpong/game/pingpong/offline/create";
+  else url = "/api/game/tictactoe/offline/create_local_game";
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: "JWT " + tokens.access,
+      "content-Type": "application/json",
     },
-    body:JSON.stringify({
-        player1: players.player1,
-        player2: players.player2
-    })
-  })
-  const data = await response.json()
-  console.log("the data after fetch is ", data)
+    body: JSON.stringify({
+      player1: players.player1,
+      player2: players.player2,
+    }),
+  });
+  const data = await response.json();
+  console.log("the data after fetch is ", data);
 
-  if(response.ok)
-      return data
-  return null
-}
+  if (response.ok) return data;
+  return null;
+};
 
-function LocalPvp({player,setPlayers}) {
-
-  const [edit,setEdit] = useState(true)
-  const [name,setName] = useState('')
-  const [error,setEror] = useState(false)
-  let regex = new RegExp("^[a-z][a-zA-Z0-9]*$")
+function LocalPvp({ player, setPlayers }) {
+  const [edit, setEdit] = useState(true);
+  const [name, setName] = useState("");
+  const [error, setEror] = useState(false);
+  let regex = new RegExp("^[a-z][a-zA-Z0-9]*$");
   const { t } = useTranslation();
 
-  const handleInpute =(e)=> {
-      setName(()=>e.target.value)
-      if (e.target.value.length > 10 || !regex.test(e.target.value))
-          setEror(()=>true)
-      else
-        setEror(()=>false)
-  }
-  const handleClick = ()=> {
-    if (name.length > 10 || !regex.test(name))
-        setEror(()=>true)
-    else
-      {
-        setEror(()=>false)
-        setEdit((prevEdit)=>!prevEdit)
-        setPlayers((prevState)=>{
-           return {...prevState, [player]:name}
-          })
-          console.log("DATA RAH DKHLAT")
-      }
-  }
+  const handleInpute = (e) => {
+    setName(() => e.target.value);
+    if (e.target.value.length > 10 || !regex.test(e.target.value))
+      setEror(() => true);
+    else setEror(() => false);
+  };
+  const handleClick = () => {
+    if (name.length > 10 || !regex.test(name)) setEror(() => true);
+    else {
+      setEror(() => false);
+      setEdit((prevEdit) => !prevEdit);
+      setPlayers((prevState) => {
+        return { ...prevState, [player]: name };
+      });
+      console.log("DATA RAH DKHLAT");
+    }
+  };
   return (
     <div className="player-card  h-[90%] xsm:w-[50%]">
       <img src={mypic} alt="Avatar" className="avatar-ping" />
       <div className="player-info items-center flex flex-col">
-        {
-          edit ? <input className='bg-secondaryColor w-[95%] p-2 outline-none rounded border border-forthColor' type="text" value={ name} onChange={handleInpute} /> :<h2>{name}</h2>
-        }
-        {
-          error ? <p className='text-red-500'>{t("invalid name")}</p> : ''
-        }
-        <button disabled={error ? true : false} onClick={handleClick} className="p-2 w-24 mt-4 border rounded border-forthColor">
-          {
-            edit ? t("Done") : t("Edit")
-          }
+        {edit ? (
+          <input
+            className="bg-secondaryColor w-[95%] p-2 outline-none rounded border border-forthColor"
+            type="text"
+            value={name}
+            onChange={handleInpute}
+          />
+        ) : (
+          <h2>{name}</h2>
+        )}
+        {error ? <p className="text-red-500">{t("invalid name")}</p> : ""}
+        <button
+          disabled={error ? true : false}
+          onClick={handleClick}
+          className="p-2 w-24 mt-4 border rounded border-forthColor"
+        >
+          {edit ? t("Done") : t("Edit")}
         </button>
       </div>
     </div>
-  )
+  );
 }
 
-function OnlinePvp({isstarted,counter,isstart,pvpUser}) {
-
+function OnlinePvp({ isstarted, counter, isstart, pvpUser }) {
   return (
     <>
       <Mycard />
-      { counter && 
-          <div>
-            <h3>match will start in </h3>
-            <p className="text-center text-2xl">{counter}</p>
-          </div>
-      }
-      {
-          isstarted ? (
-            <Vsplayer_card player={pvpUser} />
-          ) : (
-            isstart ? <Wait_card /> : <Add_card />
-          )
-      }
+      {counter && (
+        <div>
+          <h3>match will start in </h3>
+          <p className="text-center text-2xl">{counter}</p>
+        </div>
+      )}
+      {isstarted ? (
+        <Vsplayer_card player={pvpUser} />
+      ) : isstart ? (
+        <Wait_card />
+      ) : (
+        <Add_card />
+      )}
     </>
-  )
+  );
 }
 
-function PvpGame({ title}) {
-
+function PvpGame({ title }) {
   const [isstart, setStart] = React.useState(false);
   const [isstarted, setStarted] = React.useState(false);
-  const [pvpUser,setPvpUser] = useState()
-  const [counter,setCounter] = useState(null)
-  const [mode,setMode] = useState(true)
-  const locations = useLocation()
-  const navigate = useNavigate()
-  const {socket,socketMessage, tokens} = useAuth()
+  const [pvpUser, setPvpUser] = useState();
+  const [counter, setCounter] = useState(null);
+  const [mode, setMode] = useState(true);
+  const locations = useLocation();
+  const navigate = useNavigate();
+  const { socket, socketMessage, tokens } = useAuth();
   const { t } = useTranslation();
   const [players, setPlayers] = useState({
-    player1:'',
-    player2:''
-  })
-  const gameType = title === "PING PONG" ? "P" : "T"
+    player1: "",
+    player2: "",
+  });
+  const gameType = title === "PING PONG" ? "P" : "T";
   function startGame() {
-    let gameType = title === "PING PONG" ? "P" : "T"
+    let gameType = title === "PING PONG" ? "P" : "T";
     setStart(true);
     if (socket && socket.readyState === WebSocket.OPEN) {
       const message = JSON.stringify({
-        type: 'pvpmatch_request',
-        gameType:gameType
+        type: "pvpmatch_request",
+        gameType: gameType,
       });
       socket.send(message);
     }
-    console.log(locations)
+    console.log(locations);
   }
 
   function stopGame() {
-    let gameType = title === "PING PONG" ? "P" : "T"
+    let gameType = title === "PING PONG" ? "P" : "T";
     setStart(false);
     if (socket && socket.readyState === WebSocket.OPEN) {
       const message = JSON.stringify({
-        type: 'cancel_pvp',
-        gameType:gameType
+        type: "cancel_pvp",
+        gameType: gameType,
       });
       socket.send(message);
     }
   }
 
   async function creatLocalGame() {
+    const gameType = title === "PING PONG" ? "P" : "T";
 
-  const gameType = title === "PING PONG" ? "P" : "T"
-
-    console.log("the players are ", players)
-    if(players.player1 === '' || players.player1 === '')
-        return
-    let type = gameType === "P" ? 'pingpong' : 'tictactoe'
-    const data = await fetchData(gameType,players,tokens)
-    console.log("the data is ", data)
-    if(data)
-      navigate(`/game/${type}/pvpgame/match`, { state: { gameid: data.game_id, isonline:false } })
+    console.log("the players are ", players);
+    if (players.player1 === "" || players.player1 === "") return;
+    let type = gameType === "P" ? "pingpong" : "tictactoe";
+    const data = await fetchData(gameType, players, tokens);
+    console.log("the data is ", data);
+    if (data)
+      navigate(`/game/${type}/pvpgame/match`, {
+        state: { gameid: data.game_id, isonline: false },
+      });
   }
 
   useEffect(() => {
-    
-    if(socketMessage && socketMessage.type === 'game.counter')
-        setCounter(socketMessage.counter)
-    if(socketMessage && socketMessage.type === 'game.player_info') {
-      console.log("print event shit",socketMessage.player)
+    if (socketMessage && socketMessage.type === "game.counter")
+      setCounter(socketMessage.counter);
+    if (socketMessage && socketMessage.type === "game.player_info") {
+      console.log("print event shit", socketMessage.player);
       setStarted(true);
-      setPvpUser(socketMessage.player)
+      setPvpUser(socketMessage.player);
     }
   }, [socketMessage]);
 
-  useEffect(()=>{
-    return ()=> {
-      let gameType = title === "PING PONG" ? "P" : "T"
+  useEffect(() => {
+    return () => {
+      let gameType = title === "PING PONG" ? "P" : "T";
       if (socket && socket.readyState === WebSocket.OPEN) {
         const message = JSON.stringify({
-          type: 'cancel_pvp',
-          gameType:gameType
+          type: "cancel_pvp",
+          gameType: gameType,
         });
         socket.send(message);
       }
-    }
-  },[])
-  console.log("i guess u r here successfully!",title)
+    };
+  }, []);
+  console.log("i guess u r here successfully!", title);
   return (
-
-    <div className='bg-primaryColor w-full flex items-center justify-between px-7 relative h-[100%]'>
-            <div className="h-[100%] flex  justify-center flex-col items-center xsm:w-[90%] lg:w-[80%] ">
-                <div className='holder'>
-                  <div className="ping-pong-container xsm:h-[50rem] bg-secondaryColor">
-                    <Header title={title}/>
-                    <div className=" w-full h-[90%] ">
-                        <div className=" flex gap-10 justify-center items-center mt-12">
-                            <div onClick={()=>setMode(()=>false)} className={`flex gap-2 p-2 items-center ${mode ===false ? 'bg-[#412e55] rounded-full border border-forthColor' : ''}`}>
-                                <RiWifiOffLine />
-                                <p>{t("offline")}</p>
-                            </div>
-                            <div onClick={()=>setMode(()=>true)} className={`flex gap-2 p-2 items-center ${mode === true ? 'bg-[#412e55] rounded-full border border-forthColor' : ''}`}>
-                                <IoWifiSharp />
-                                <p>{t("online")}</p>
-                            </div>
-                        </div>
-                        <div className="flex w-full items-center px-4 justify-evenly gap-12 h-[90%]">
-                          {
-                            !mode ? <> <LocalPvp player={"player1"} setPlayers={setPlayers} /> <LocalPvp player={"player2"} setPlayers={setPlayers} /></> : <OnlinePvp isstart={isstart} counter={counter} pvpUser={pvpUser} isstarted={isstarted}/>}
-                        </div>
-                    </div>
-                      {
-                       mode === true ? isstarted ? (
-                          <Started_button />
-                        ) : (
-                          isstart ? <Matchmaking_button onClick={stopGame} /> : <Start_button onClick={startGame} />
-                        ) :  <LocalButton players = {players} onClick={creatLocalGame}/>
-                      }
-                  </div>
+    <div className="bg-primaryColor w-full flex items-center justify-between px-7 relative h-[100%]">
+      <div className="h-[100%] flex  justify-center flex-col items-center xsm:w-[90%] lg:w-[80%] ">
+        <div className="holder">
+          <div className="ping-pong-container xsm:h-[50rem] bg-secondaryColor">
+            <Header title={title} />
+            <div className=" w-full h-[90%] ">
+              <div className=" flex gap-10 justify-center items-center mt-12">
+                <div
+                  onClick={() => setMode(() => false)}
+                  className={`flex gap-2 p-2 items-center ${
+                    mode === false
+                      ? "bg-[#412e55] rounded-full border border-forthColor"
+                      : ""
+                  }`}
+                >
+                  <RiWifiOffLine />
+                  <p>{t("offline")}</p>
                 </div>
+                <div
+                  onClick={() => setMode(() => true)}
+                  className={`flex gap-2 p-2 items-center ${
+                    mode === true
+                      ? "bg-[#412e55] rounded-full border border-forthColor"
+                      : ""
+                  }`}
+                >
+                  <IoWifiSharp />
+                  <p>{t("online")}</p>
+                </div>
+              </div>
+              <div className="flex w-full items-center px-4 justify-evenly gap-12 h-[90%]">
+                {!mode ? (
+                  <>
+                    {" "}
+                    <LocalPvp player={"player1"} setPlayers={setPlayers} />{" "}
+                    <LocalPvp player={"player2"} setPlayers={setPlayers} />
+                  </>
+                ) : (
+                  <OnlinePvp
+                    isstart={isstart}
+                    counter={counter}
+                    pvpUser={pvpUser}
+                    isstarted={isstarted}
+                  />
+                )}
+              </div>
             </div>
-            <Challenge gameType={gameType}/>
+            {mode === true ? (
+              isstarted ? (
+                <Started_button />
+              ) : isstart ? (
+                <Matchmaking_button onClick={stopGame} />
+              ) : (
+                <div className="flex justify-between items-center w-1/2">
+                  <Start_button onClick={startGame} />
+                  <ReconnectButton gameType={gameType} />
+                </div>
+              )
+            ) : (
+              <LocalButton players={players} onClick={creatLocalGame} />
+            )}
+          </div>
         </div>
+      </div>
+      <Challenge gameType={gameType} />
+    </div>
   );
-};
+}
 
 export default PvpGame;

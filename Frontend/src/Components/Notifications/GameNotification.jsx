@@ -7,7 +7,7 @@ function GameNotification({ notification }) {
     const { socket, socketMessage } = useAuth();
 
     function accept_game() {
-        if (socket) {
+        if (socket && socket.readyState === WebSocket.OPEN) {
             const message = JSON.stringify({
                 type: "accept_game",
                 receiver: socketMessage.from,
@@ -19,7 +19,7 @@ function GameNotification({ notification }) {
     }
 
     function reject_game() {
-        if (socket) {
+        if (socket && socket.readyState === WebSocket.OPEN) {
             const message = JSON.stringify({
                 type: "reject_game",
                 invite_id: socketMessage.invite_id

@@ -6,28 +6,7 @@ import { IoMdPersonAdd } from "react-icons/io";
 
 
 function FriendNotification({ notification }) {
-
     const { setFriendReceiver } = useAuth();
-
-    // function accept_friendship(receiver) {
-    //     if (socket) {
-    //         const message = JSON.stringify({
-    //             "type": "friend_accept",
-    //             "receiver": receiver
-    //         })
-    //         socket.send(message);
-    //     }
-    // }
-
-    // function reject_friendship(receiver) {
-    //     if (socket) {
-    //         const message = JSON.stringify({
-    //             "type": "friend_reject",
-    //             "receiver": receiver
-    //         })
-    //         socket.send(message);
-    //     }
-    // }
 
     useEffect(() => { setFriendReceiver(notification.sender?.username) }, []);
 

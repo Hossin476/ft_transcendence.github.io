@@ -3,7 +3,7 @@ import React from 'react'
 function TournamentInvitation({ t, socketMessage, socket, toast }) {
 
     function handle_accept_tour(tour_id) {
-        if (socket) {
+        if (socket && socket.readyState === WebSocket.OPEN) {
             const message = JSON.stringify({
                 type: "tour_accept",
                 id: tour_id
@@ -13,7 +13,7 @@ function TournamentInvitation({ t, socketMessage, socket, toast }) {
     }
 
     function handle_reject_tour(tour_id) {
-        if (socket) {
+        if (socket && socket.readyState === WebSocket.OPEN) {
             const message = JSON.stringify({
                 type: "tour_reject",
                 id: tour_id

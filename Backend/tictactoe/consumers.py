@@ -53,6 +53,7 @@ class Room:
         async with self.lock:
             if self.tasks.get(task_name):
                 self.tasks[task_name].cancel()
+                self.tasks[task_name] = None
             try:
                 self.tasks[task_name] = asyncio.create_task(coroutine)
             except Exception as e:
@@ -87,7 +88,7 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
             return
 
         self.user = self.scope.get('user')
-        if not self.user or not self.user.is_authenticated:
+        if not self.user:
             await self.close()
             return
 
@@ -276,9 +277,11 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
                     winner.xp += 30
                     winner.rank = winner.xp / 100
                     winner.wins_t += 1
+                    self.game_record.is_end = True
                     winner.save()
                 if loser:
                     loser.loses_t += 1
+                    self.game_record.is_end = True
                     loser.save()
             self.game_record.save()
         except Exception as e:
