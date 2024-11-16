@@ -53,6 +53,7 @@ class Room:
         async with self.lock:
             if self.tasks.get(task_name):
                 self.tasks[task_name].cancel()
+                self.tasks[task_name] = None
             try:
                 self.tasks[task_name] = asyncio.create_task(coroutine)
             except Exception as e:
