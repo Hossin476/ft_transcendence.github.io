@@ -3,7 +3,6 @@ from users.models import CustomUser
 
 
 class LocalGameModel(models.Model):
-    
     creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     player1 = models.CharField(max_length=150)
     player2 = models.CharField(max_length=150)
