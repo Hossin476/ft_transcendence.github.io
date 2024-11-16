@@ -116,7 +116,7 @@ function Start_button({ onClick }) {
   );
 }
 
-const fetch_matches = async (gameType, tokens, setIsMatch) => {
+const fetch_matches = async (gameType, tokens, navigate) => {
   const fetchUrl = `/api/notification/${gameType === 'P' ? 'pingpong_unfinished_match' : 'tictactoe_unfinished_match'}`;
   try {
     const response = await fetch(fetchUrl, {
@@ -130,18 +130,20 @@ const fetch_matches = async (gameType, tokens, setIsMatch) => {
       throw new Error(`HTTP error! status: ${response.status}`);
 
     const data = await response.json();
-    setIsMatch(data.isMatch)
+    if (data.isMatch)
+        navigate(`/game/${gameType === 'P' ? "pingpong" : "tictactoe"}/pvpgame/match`, { state: { gameid: data.id, isonline: true } })
   } catch (error) {
     console.error('Fetch failed: ', error);
   }
 }
 
-function ReconnectButton({ gameType, setIsMatch }) {
+function ReconnectButton({ gameType }) {
   const { t } = useTranslation();
   const { tokens } = useAuth();
+  const navigate = useNavigate();
 
   const handleClick = () => {
-    fetch_matches(gameType, tokens, setIsMatch);
+    fetch_matches(gameType, tokens, navigate);
   };
 
   return (
@@ -282,7 +284,6 @@ function PvpGame({ title }) {
   const [pvpUser, setPvpUser] = useState()
   const [counter, setCounter] = useState(null)
   const [mode, setMode] = useState(true)
-  const [isMatch, setIsMatch] = useState(false);
   const locations = useLocation()
   const navigate = useNavigate()
   const { socket, socketMessage, tokens } = useAuth()
@@ -340,8 +341,7 @@ function PvpGame({ title }) {
       setStarted(true);
       setPvpUser(socketMessage.player)
     }
-    if (isMatch)
-      console.log("it is match")
+
   }, [socketMessage]);
 
   useEffect(() => {
@@ -387,7 +387,7 @@ function PvpGame({ title }) {
                 isstart ? <Matchmaking_button onClick={stopGame} /> : (
                   <div className='flex justify-between items-center w-1/2'>
                     <Start_button onClick={startGame} />
-                    <ReconnectButton gameType={gameType} setIsMatch={setIsMatch} />
+                    <ReconnectButton gameType={gameType} />
                   </div>)
               ) : <LocalButton players={players} onClick={creatLocalGame} />
             }

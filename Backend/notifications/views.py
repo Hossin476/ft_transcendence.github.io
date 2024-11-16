@@ -158,9 +158,12 @@ def matchesNotFinishPingPong(request):
 
 @api_view(['GET'])
 def matchesNotFinishTictactoe(request):
-    matchs = OnlineGameModel.objects.filter(Q(player1=request.user) | Q(player2=request.user),game_start=True, game_end=False)
-    returnData = {"isMatch": False}
-    if len(matchs) != 0:
-        returnData['isMatch'] = True
-        returnData['id'] = matchs[0].id
-    return Response(returnData)
+    try:
+        matchs = OnlineGameModel.objects.filter(Q(player1=request.user) | Q(player2=request.user), is_end=False)
+        returnData = {"isMatch": False}
+        if matchs is not None and len(matchs) != 0:
+            returnData['isMatch'] = True
+            returnData['id'] = matchs[0].id
+        return Response(returnData)
+    except Exception as e:
+        print(f"error {str(e)}")
