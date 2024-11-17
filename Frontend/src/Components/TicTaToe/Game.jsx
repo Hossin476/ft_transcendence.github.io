@@ -85,8 +85,7 @@ const Game = () => {
             if (data.start_countdown_value === 0) setShowStartModal(false);
         }
         if (data.current_turn) setCurrentTurn(data.current_turn);
-        if (data.score_x !== undefined && data.score_o !== undefined)
-        {
+        if (data.score_x !== undefined && data.score_o !== undefined) {
             const [usernameX, scoreX] = data.score_x.split(' : ');
             const [usernameO, scoreO] = data.score_o.split(' : ');
             setScores({ [usernameX]: parseInt(scoreX, 10), [usernameO]: parseInt(scoreO, 10) });
@@ -104,8 +103,6 @@ const Game = () => {
     }, [board]);
 
     const TurnIndicator = () => {
-        if (isOnline === false || finalWinner || showStartModal || winnerLine || showReconnectModal || draw)
-            return null;
         const isYourTurn = currentTurn === playerRole;
         return (
             <div className={`absolute top-1 left-1/2 tranform -translate-x-1/2 p-2 rounded ${isYourTurn ? 'bg-green-500' : 'bg-red-500'} text-white font-bold`}>
@@ -132,14 +129,16 @@ const Game = () => {
                 </Suspense>
             </Canvas>
             {finalWinner && <Win final_winner={finalWinner} />}
-            {showReconnectModal && <ReconnectModal />}
+            {!finalWinner && showReconnectModal && <ReconnectModal />}
             {showStartModal && (
                 <StartModal
                     currentPlayer={playerRole}
                     countdownValue={startCountdownValue}
                 />
             )}
-            <TurnIndicator currentTurn={currentTurn} playerRole={playerRole} finalWinner={finalWinner} />
+            {!finalWinner && !showStartModal && !winnerLine && !showReconnectModal && !draw && (
+                <TurnIndicator />
+            )}
             {draw && <Draw />}
         </div>
     );

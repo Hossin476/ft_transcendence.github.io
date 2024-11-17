@@ -14,10 +14,12 @@ import { useTranslation } from "react-i18next";
 function Profile_info({ userid }) {
   const [IsFriend, setIsFriend] = React.useState(false);
   const [IsBlocked, setIsBlocked] = React.useState(false);
-  const { user } = useAuth();
+  const { user, socket } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
-
+  
+  const userXp = userid?.xp%100
+  const xp = 100 - userXp
 
   const handleChatRedirect = ()=> {
     navigate("/chat",{
@@ -25,6 +27,17 @@ function Profile_info({ userid }) {
             navigatedUser: userid?.username
         }
     })    
+  }
+
+  function request_friendship()
+  {
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      const message = JSON.stringify({
+          "type": "friend_request",
+          "receiver": userid?.username
+      })
+      socket.send(message);
+  }
   }
 
   return (
@@ -42,7 +55,7 @@ function Profile_info({ userid }) {
         {/* Profile Picture - Positioned to overlap */}
         <div className="absolute -bottom-16 left-6 xsm:w-20 xsm:h-20 md:w-32 md:h-32 lg:w-36 lg:h-36 xl:h-40 xl:w-40 flex items-center justify-center">
           <div className="xsm:text-xs sm:left-1/4 -bottom-2 xsm:w-16 text-center p-1 absolute z-50 bg-gray-300 xsm:rounded-3xl md:rounded-3xl border-black border-2 text-black">
-            {t("LEVEL")} {userid?.xp / 100}
+            {t("LEVEL")} {userid?.rank}
           </div>
           <div className="rounded-full border-thirdColor border-[8px] overflow-hidden relative z-20 xsm:w-16 xsm:h-16 md:w-28 md:h-28 lg:w-32 lg:h-32">
             <img
@@ -88,14 +101,15 @@ function Profile_info({ userid }) {
           <div className="relative">
             <div className="w-full h-2 bg-gray-100 rounded-full">
               <div
-                className={`w-[${userid?.xp}%] h-2 bg-forthColor rounded-full`}
+                style={{width:userXp + '%'}}
+                className={` h-2 bg-forthColor rounded-full`}
               ></div>
             </div>
             <span className="absolute xsm:bottom-3 md:bottom-5 left-2 text-sm xsm:text-xs">
-              {100 - userid?.xp} XP {t("TO GO")}
+              {xp} XP {t("TO GO")}
             </span>
             <span className="absolute text-sm right-3 xsm:bottom-3 md:bottom-5 xsm:text-xs">
-              {t("LEVEL")} 3
+              {t("LEVEL")} {userid?.rank+1}
             </span>
           </div>
         </div>

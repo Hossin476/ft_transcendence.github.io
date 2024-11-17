@@ -23,9 +23,9 @@ import { Signup, ForgetPassword, VerifyEmail, ResetPassword, MailSent } from "./
 
 import "./utils/i18n";
 import PrivateRoute from "./utils/privateRoute";
+import NotFoundPage from './Pages/NotFound'
 
 
-// import './server.js'
 function App() {
   return (
     <BrowserRouter>
@@ -72,6 +72,7 @@ function App() {
                   </Route>
                 </Route>
               </Route>
+              <Route path="*" element={<NotFoundPage />} />
             </Route>
           </Route>
         </Routes>

@@ -53,13 +53,15 @@ const Win = ({ final_winner }) => {
     if (!gameData) return null;
 
     const playerData = isWin ? gameData.winner : gameData.loser;
+    let profileImage = `${gameData.profile_image || '/user.jpeg'}`;
 
     const renderOfflineContent = () => (
+        
         <>
-            <p className={`font-Plaguard xsm:text-[10vw] lg:text-9xl text-green-500`}>
+            <p className={`font-Plaguard xsm:text-[8vw] lg:text-7xl text-green-500`}>
                 {gameData.winner} HAS WON
             </p>
-            <img src='/lshail.jpeg' alt="Player" className="rounded-full xsm:w-[10vw] lg:w-[140px] border-[2px] border-forthColor object-cover" />
+            <img src={profileImage} alt="Player" className="mt-8 rounded-full xsm:w-[15vw] lg:w-[140px] border-[2px] border-forthColor object-cover" />
         </>
     );
 
@@ -69,7 +71,7 @@ const Win = ({ final_winner }) => {
                 {isWin ? 'YOU WIN' : 'YOU LOSE'}
             </p>
             <div className="flex flex-col items-center gap-2 w-full">
-                <img src='/lshail.jpeg' alt="Player" className="rounded-full xsm:w-[10vw] lg:w-[140px] border-[2px] border-forthColor object-cover" />
+                <img src={playerData.profile_image} alt="Player" className="rounded-full xsm:w-[10vw] lg:w-[140px] border-[2px] border-forthColor object-cover" />
                 <p className="font-inter">{playerData.username}</p>
                 <p className="w-full text-right"> {isWin ? '+30XP' : '+0XP'} </p>
                 <div className="w-[90%] font-inter text-xs bg-secondaryColor xsm:p-2 lg:p-3 flex flex-col justify-center items-center rounded-full border-[1px]">
@@ -89,8 +91,8 @@ const Win = ({ final_winner }) => {
                 {isOffline ? renderOfflineContent() : renderOnlineContent()}
             </div>
             <div className="flex justify-evenly w-full">
-                <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 border-[2px] w-[40%] rounded-lg border-thirdColor p-2" onClick={() => navigate('/')}>HOME</button>
-                <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 border-[2px] w-[40%] rounded-lg border-thirdColor p-2" onClick={() => navigate('/game')}>Play again</button>
+                <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 border-[2px] w-[40%] max-w-[200px] rounded-lg border-thirdColor p-2" onClick={() => navigate('/')}>HOME</button>
+                <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 border-[2px] w-[40%] max-w-[200px] rounded-lg border-thirdColor p-2" onClick={() => navigate('/game')}>Play again</button>
             </div>
         </div>
     );

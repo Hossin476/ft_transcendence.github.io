@@ -52,7 +52,7 @@ function Score() {
     const renderPlayer = (playerData, PlayerComponent) => {
         if (!playerData) return null;
 
-        const profileImage = isOffline ? '/user.jpeg' : `${BASE_URL}${playerData.profile_image || ''}`;
+        const profileImage = isOffline ? '/user.jpeg' : `${playerData.profile_image || ''}`;
         const username = typeof playerData === 'object' ? playerData.username : playerData;
         const rank = isOffline ? '1' : (playerData.rank || 1);
         const playerScore = scores[username];

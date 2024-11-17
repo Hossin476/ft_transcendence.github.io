@@ -164,6 +164,7 @@ function Profile_history({ user }) {
     fetchData();
   }, [user]);
 
+  // console.log(matches);
   return (
     <div className="bg-secondaryColor text-center p-6  rounded-3xl grow">
       <h2 className="text-4xl font-semibold mb-8">{t("MATCH HISTORY")}</h2>
@@ -171,7 +172,7 @@ function Profile_history({ user }) {
         {matches &&
           matches.map((match, index) =>
             match.winner ? (
-              match.winner.id === user ? (
+              match.winner.id == user ? (
                 <Match_victory key={index}  match={match} />
               ) : (
                 <Match_defeat key={index} match={match} />

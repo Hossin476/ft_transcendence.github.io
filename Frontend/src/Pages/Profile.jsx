@@ -5,6 +5,7 @@ import Profile_info from "../Components/Profile/profileInfo";
 import Profile_history from "../Components/Profile/profileHistory";
 import Profile_friends from "../Components/Profile/profileFriends";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 async function getProfileData(tokens, userId){
   const response = await fetch(`/api/users/profile/${userId}/`,{
@@ -15,6 +16,10 @@ async function getProfileData(tokens, userId){
     }
   })
 
+  if (response.status === 404) {
+    throw new Error("User not found")
+  }
+
   let data = await response.json()
   if(response.ok)
       return data
@@ -23,31 +28,27 @@ async function getProfileData(tokens, userId){
 }
 
 function Profile() {
+  const navigate = useNavigate();
   let user_id = useParams();
   user_id = user_id.id;
   const {tokens} = useAuth()
   const [profileData,setProfileData] = useState(null)
-  const D404 = {
-    username: "404",
-    rank: "1",
-    xp: 40400,
-  };
+
   useEffect(()=>{
       const fetchData = async ()=> {
           try {
             let data = await getProfileData(tokens, user_id)
             setProfileData(()=>data)
           }
-          catch (e) {
-            console.log("Failed to fetch profile data:", e)
-            setProfileData(D404)
+          catch (error) {
+            navigate("/notfound")
           }
       }
       fetchData()
-  } ,[user_id])
+  } ,[user_id, tokens, navigate])
 
   return (
-    <div className="h-screen w-full flex justify-center xsm:pl-2 xsm:py-2 xsm:gap-2  sm:pl-4  sm:gap-4 ">
+    <div className="h-full flex justify-center xsm:pl-2 xsm:py-2 xsm:gap-2  sm:pl-4  sm:gap-4 ">
       <div className="flex flex-col flex-1  md:pl-12  gap-y-4 gap-x-16 xsm:p-`2">
         {
           <Profile_info userid={profileData} />

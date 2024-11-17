@@ -29,7 +29,7 @@ export default function Friend({ gameType, icon = false, gameName, hidden = fals
     }
 
     return (<div className={`flex flex-row w-[90%] h-[80px] items-center ${hidden ? 'justify-center' : ''}  gap-2`}>
-        <img src={"http://localhost" + image} className={`rounded-full w-[52px] h-[52px] object-fit border-[2px]  ${state ? 'border-green-600' : 'border-red-600'} `} />
+        <img src={image} className={`rounded-full w-[52px] h-[52px] object-fit border-[2px]  ${state ? 'border-green-600' : 'border-red-600'} `} />
         <div className={` items-center justify-between border-solid lg:flex xsm:${hidden ? "hidden" : "flex"} w-[90%]`}>
             <div >
                 <h3 className='font-medium text-ellipsis overflow-hidden whitespace-nowrap  text-[24px] font-inter'>{PlayerName}</h3>

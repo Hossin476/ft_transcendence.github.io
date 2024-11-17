@@ -30,6 +30,8 @@ export default function Tournaments() {
         }
         fetchDdata()
     },[])
+
+    console.log("tournament is ", tournaments)
     return(
     <div className=" xsm:mt-2 md:mt-0 xsm:w-full md:w-1/2 xsm:h-[19rem] md:h-[100%] bg-secondaryColor py-1 rounded-xl ">
         <h1 className="h-[2rem] block text-center mt-4 font-bold">{t('MATCH HISTORY')}</h1>

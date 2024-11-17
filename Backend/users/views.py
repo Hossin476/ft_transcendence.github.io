@@ -34,49 +34,65 @@ import time
 
 @api_view(['GET'])
 def get_profile(request, user_id):
-    user = CustomUser.objects.get(id=user_id)
-    serialized_user = playerSerializers(user)
-    user_list = serialized_user.data
-    new_list = {}
-    new_list['id'] = user_list['id']
-    new_list['username'] = user_list['username']
-    new_list['profile_image'] = user_list['profile_image']
-    new_list['background_image'] = user_list['profile_image']
-    new_list['rank'] = user_list['rank']
-    new_list['xp'] = user_list['xp']
-    return Response(new_list)
+    try:
+        user = CustomUser.objects.get(id=user_id)
+        serialized_user = playerSerializers(user)
+        user_list = serialized_user.data
+        new_list = {
+            'id': user_list['id'],
+            'username': user_list['username'],
+            'profile_image': user_list['profile_image'],
+            'background_image': user_list['profile_image'],
+            'rank': user_list['rank'],
+            'xp': user_list['xp']
+        }
+        return Response(new_list, status=status.HTTP_200_OK)
+    except CustomUser.DoesNotExist:
+        return Response({
+            'message': 'user not found !'
+        }, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['GET'])
 def get_profile_match(request, user_id):
-    user = CustomUser.objects.get(id=user_id)   
-    pong_matches = GameOnline.objects.filter(
-        Q(player1=user) | Q(player2=user)).order_by('-last_update')
-    tictactoe_matches = OnlineGameModel.objects.filter(
-        Q(player1=user) | Q(player2=user)).order_by('-game_end')
-    
-    ping_serialzer = MatchGameOnlineSerializer(pong_matches, many=True).data
-    tictactoe_serializer = MatchGameOnlineModelSerializer(tictactoe_matches, many=True).data
-    
-    profile_matches = list(chain(ping_serialzer + tictactoe_serializer))
-    return Response(profile_matches)
+    try:
+        user = CustomUser.objects.get(id=user_id)   
+        pong_matches = GameOnline.objects.filter(
+            Q(player1=user) | Q(player2=user)).order_by('-last_update')
+        tictactoe_matches = OnlineGameModel.objects.filter(
+            Q(player1=user) | Q(player2=user)).order_by('-game_end')
+        
+        ping_serialzer = MatchGameOnlineSerializer(pong_matches, many=True).data
+        tictactoe_serializer = MatchGameOnlineModelSerializer(tictactoe_matches, many=True).data
+        
+        profile_matches = list(chain(ping_serialzer + tictactoe_serializer))
+        return Response(profile_matches, status=status.HTTP_200_OK)
+    except CustomUser.DoesNotExist:
+        return Response({
+            'message': 'user not found !'
+        }, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['GET'])
 def get_profile_friends(request, user_id):
-    user = CustomUser.objects.get(id=user_id)
-    friends = Friendship.objects.filter(
-        Q(from_user=user) | Q(to_user=user),
-        request='A',
-        # active='A',
-        # block_user='N'
-    )
-    friends_list = []
-    for friend in friends:
-        if friend.from_user == user:
-            friends_list.append(friend.to_user)
-        else:
-            friends_list.append(friend.from_user)
-    serialized_friends = playerSerializers(friends_list, many=True)
-    return Response(serialized_friends.data)
+    try:
+        user = CustomUser.objects.get(id=user_id)
+        friends = Friendship.objects.filter(
+            Q(from_user=user) | Q(to_user=user),
+            request='A',
+            # active='A',
+            # block_user='N'
+        )
+        friends_list = []
+        for friend in friends:
+            if friend.from_user == user:
+                friends_list.append(friend.to_user)
+            else:
+                friends_list.append(friend.from_user)
+        serialized_friends = playerSerializers(friends_list, many=True)
+        return Response(serialized_friends.data, status=status.HTTP_200_OK)
+    except CustomUser.DoesNotExist:
+        return Response({
+            'message': 'user not found !'
+        }, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['GET'])
 def get_user_info(request):

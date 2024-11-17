@@ -46,11 +46,15 @@ class TournamentLocalView(APIView):
 
 @api_view(['GET'])
 def get_all_tournaments(request):
-    user = request.user
-    player = CustomUser.objects.get(id=user.id)
-    tournaments = player.tournament_set.all()
-    serialized_tournaments = TournamentSerializer(tournaments, many=True)
-    return Response(serialized_tournaments.data)
+    try:
+        user = request.user
+        player = CustomUser.objects.get(id=user.id)
+        tournaments = player.tournament_set.all()
+        serialized_tournaments = TournamentSerializer(tournaments, many=True)
+        return Response(serialized_tournaments.data)
+    except Exception:
+        return Response(None)
+
 
 class TournamentListView(APIView):
     def get(self, request, userId):

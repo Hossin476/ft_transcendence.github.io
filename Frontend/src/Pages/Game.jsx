@@ -10,6 +10,8 @@ function PingPong() {
     const navigate = useNavigate();
     const { t } = useTranslation();
 
+
+
     function navigateToTournament() {
         navigate('/game/pingpong/tournament');
     }

@@ -12,6 +12,7 @@ from tournament.models import Tournament, InviteTournament
 from django.http import JsonResponse
 from pingpong.models import GameOnline
 from tictactoe.models import OnlineGameModel
+from rest_framework import status
 
 # Create your views here.
 
@@ -48,9 +49,9 @@ class NotificationView(APIView):
                 notification['type'] = 'friend_response'
                 notification['response'] = f"{notification['receiver_username']} has accepted your friend request"
                 result.append(notification)
-            return Response(result)
+            return Response(result, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response(f"An Error Occured!  {str(e)}")
+            return Response(f"An Error Occured! {str(e)}", status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
@@ -82,7 +83,6 @@ def onlineFriends(request):
     users_list = list(set(users_list))
     data = {'users': []}
     data['users'] = playerSerializers(users_list, many=True).data
-    # print("Online Users : ", data)
     return Response(data)
 
 
@@ -118,7 +118,7 @@ def TournamentInvites(request, tour_id):
 def get_Leaderboard(request):
     game = request.GET.get('game', None)
     if game is None:
-        return JsonResponse({'error': 'Missing game parameter'}, status=400)
+        return JsonResponse({'error': 'Missing game parameter'}, status=status.HTTP_400_BAD_REQUEST)
     try:
         users = CustomUser.objects.all()
         if game == 'Tic Tac Toe':
@@ -138,10 +138,32 @@ def get_Leaderboard(request):
                 'win_rate': (user.wins_p * 100) // (user.wins_p + user.loses_p) if (user.wins_p + user.loses_p) != 0 else 0
             } for user in users]
         else:
-            return JsonResponse({'error': 'Invalid game parameter'}, status=400) 
+            return JsonResponse({'error': 'Invalid game parameter'}, status=status.HTTP_400_BAD_REQUEST) 
         leaderboard_list = sorted(leaderboard_list, key=lambda x: (x['wins'], x['win_rate']), reverse=True)
         for rank, user in enumerate(leaderboard_list, start=1):
             user['rank'] = rank
-        return JsonResponse(leaderboard_list, safe=False)
+        return JsonResponse(leaderboard_list, safe=False, status=status.HTTP_200_OK)
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=404)
+        return JsonResponse({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def matchesNotFinishPingPong(request):
+    matchs = GameOnline.objects.filter(Q(player1=request.user) | Q(player2=request.user),is_start=True, is_game_end=False)
+    returnData = {"isMatch": False}
+    if len(matchs) != 0:
+        returnData['isMatch'] = True
+        returnData['id'] = matchs[0].id
+    return Response(returnData)
+
+@api_view(['GET'])
+def matchesNotFinishTictactoe(request):
+    try:
+        matchs = OnlineGameModel.objects.filter(Q(player1=request.user) | Q(player2=request.user), is_end=False)
+        returnData = {"isMatch": False}
+        if matchs is not None and len(matchs) != 0:
+            returnData['isMatch'] = True
+            returnData['id'] = matchs[0].id
+        return Response(returnData)
+    except Exception as e:
+        print(f"error {str(e)}")
