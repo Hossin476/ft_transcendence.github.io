@@ -19,6 +19,7 @@ import { useAuth } from '../../context/AuthContext';
 import { RiWifiOffLine } from "react-icons/ri";
 import { IoWifiSharp } from "react-icons/io5";
 import { useTranslation } from 'react-i18next';
+import { useCallback } from 'react';
 
 
 function Header({ title }) {
@@ -116,34 +117,14 @@ function Start_button({ onClick }) {
   );
 }
 
-const fetch_matches = async (gameType, tokens, navigate) => {
-  const fetchUrl = `/api/notification/${gameType === 'P' ? 'pingpong_unfinished_match' : 'tictactoe_unfinished_match'}`;
-  try {
-    const response = await fetch(fetchUrl, {
-      headers: {
-        "Authorization": `JWT ${tokens.access}`,
-        "Content-Type": "application/json"
-      }
-    });
 
-    if (!response.ok)
-      throw new Error(`HTTP error! status: ${response.status}`);
 
-    const data = await response.json();
-    if (data.isMatch)
-        navigate(`/game/${gameType === 'P' ? "pingpong" : "tictactoe"}/pvpgame/match`, { state: { gameid: data.id, isonline: true } })
-  } catch (error) {
-    console.error('Fetch failed: ', error);
-  }
-}
-
-function ReconnectButton({ gameType }) {
+function ReconnectButton({ data, gameType, navigate }) {
   const { t } = useTranslation();
-  const { tokens } = useAuth();
-  const navigate = useNavigate();
 
   const handleClick = () => {
-    fetch_matches(gameType, tokens, navigate);
+    if (data.isMatch)
+      navigate(`/game/${gameType === 'P' ? "pingpong" : "tictactoe"}/pvpgame/match`, { state: { gameid: data.id, isonline: true } })
   };
 
   return (
@@ -179,8 +160,6 @@ function LocalButton({ onClick, players }) {
   );
 
 }
-
-
 
 const fetchData = async (gameType, players, tokens) => {
 
@@ -284,6 +263,7 @@ function PvpGame({ title }) {
   const [pvpUser, setPvpUser] = useState()
   const [counter, setCounter] = useState(null)
   const [mode, setMode] = useState(true)
+  const [matchData, setMatchData] = useState({})
   const locations = useLocation()
   const navigate = useNavigate()
   const { socket, socketMessage, tokens } = useAuth()
@@ -332,6 +312,25 @@ function PvpGame({ title }) {
       navigate(`/game/${type}/pvpgame/match`, { state: { gameid: data.game_id, isonline: false } })
   }
 
+  const fetch_matches = useCallback(async () => {
+    const fetchUrl = `/api/notification/${gameType === 'P' ? 'pingpong_unfinished_match' : 'tictactoe_unfinished_match'}`;
+    try {
+      const response = await fetch(fetchUrl, {
+        headers: {
+          "Authorization": `JWT ${tokens.access}`,
+          "Content-Type": "application/json"
+        }
+      });
+      if (!response.ok)
+        throw new Error(`HTTP error! status: ${response.status}`);
+      const data = await response.json();
+      console.log("data is ", data)
+      setMatchData(data);
+    } catch (error) {
+      console.error('Fetch failed: ', error);
+    }
+  }, [gameType, setMatchData])
+
   useEffect(() => {
 
     if (socketMessage && socketMessage.type === 'game.counter')
@@ -341,8 +340,9 @@ function PvpGame({ title }) {
       setStarted(true);
       setPvpUser(socketMessage.player)
     }
+    fetch_matches()
 
-  }, [socketMessage]);
+  }, [socketMessage, fetch_matches]);
 
   useEffect(() => {
     return () => {
@@ -382,12 +382,13 @@ function PvpGame({ title }) {
             {
               mode === true ? isstarted ? (
                 <Started_button />
-
               ) : (
                 isstart ? <Matchmaking_button onClick={stopGame} /> : (
-                  <div className='flex justify-between items-center w-1/2'>
-                    <Start_button onClick={startGame} />
-                    <ReconnectButton gameType={gameType} />
+                  <div className='flex justify-center items-center w-1/2'>
+                    { matchData && !matchData?.isMatch ?
+                      <Start_button onClick={startGame} /> :
+                      <ReconnectButton data={matchData} gameType={gameType} navigate={navigate} />
+                    }
                   </div>)
               ) : <LocalButton players={players} onClick={creatLocalGame} />
             }

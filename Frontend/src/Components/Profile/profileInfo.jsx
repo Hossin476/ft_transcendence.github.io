@@ -19,23 +19,22 @@ function Profile_info({ userid }) {
   const { t } = useTranslation();
 
 
-  const handleChatRedirect = ()=> {
-    navigate("/chat",{
-        state: {
-            navigatedUser: userid?.username
-        }
-    })    
+  const handleChatRedirect = () => {
+    navigate("/chat", {
+      state: {
+        navigatedUser: userid?.username
+      }
+    })
   }
 
-  function request_friendship()
-  {
+  function request_friendship() {
     if (socket && socket.readyState === WebSocket.OPEN) {
       const message = JSON.stringify({
-          "type": "friend_request",
-          "receiver": userid?.username
+        "type": "friend_request",
+        "receiver": userid?.username
       })
       socket.send(message);
-  }
+    }
   }
 
   return (
@@ -112,7 +111,7 @@ function Profile_info({ userid }) {
         </div>
         {/* Add friend and Message buttons */}
         {
-            user.user_id === userid?.id ? null :
+          user.user_id === userid?.id ? null :
             <div className="flex flex-col gap-2">
               <button
                 onClick={() => setIsFriend(!IsFriend)}

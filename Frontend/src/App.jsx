@@ -54,12 +54,6 @@ function App() {
                     <Route index element={<PvpGame title="TIC TAC TOE" />} />
                     <Route path="match/" element={<TicTacToe />} />
                   </Route>
-                  <Route path="tournament">
-                    <Route
-                      index
-                      element={<Tournament title={"TIC TAC TOE"} />}
-                    />
-                  </Route>
                 </Route>
                 <Route path="pingpong">
                   <Route path="pvpgame">

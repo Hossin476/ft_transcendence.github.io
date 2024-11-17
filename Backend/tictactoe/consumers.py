@@ -277,12 +277,11 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
                     winner.xp += 30
                     winner.rank = winner.xp / 100
                     winner.wins_t += 1
-                    self.game_record.is_end = True
                     winner.save()
                 if loser:
                     loser.loses_t += 1
-                    self.game_record.is_end = True
                     loser.save()
+                self.game_record.is_end = True
             self.game_record.save()
         except Exception as e:
             print(f"An error occurred: {str(e)}")
@@ -324,6 +323,7 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
                 if other_player:
                     self.game.final_winner = other_player_role
                     self.game.game_over = True
+                    self.game_record.is_end = True
                     await self.update_record()
                     await self.send_game_update()
 
@@ -331,6 +331,7 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
         async with asyncio.Lock():
             if self.game.countdown_value == 0 or self.game.game_over:
                 self.game.check_game_over()
+                self.game_record.is_end = True
                 await self.update_record()
                 await self.send_game_update()
                 await self.room.cancel_task('game_countdown')
