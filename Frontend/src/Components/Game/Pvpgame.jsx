@@ -21,116 +21,8 @@ import { RiWifiOffLine } from "react-icons/ri";
 import { IoWifiSharp } from "react-icons/io5";
 import { useTranslation } from "react-i18next";
 
-import { FaCheck } from "react-icons/fa";
-
-function Costumize( {setIsPopupOpen} ) {
-  const [Paddle, setPaddle] = React.useState(
-    localStorage.getItem("Paddle") || "white");
-
-  const [Ball, setBall] = React.useState(
-    localStorage.getItem("Ball") || "white");
-
-  const colorOptions = [
-    "white",
-    "red",
-    "green",
-    "blue",
-    "yellow",
-    "orange",
-    "purple",
-  ];
-
-  useEffect(() => {
-    const SavedPaddle = localStorage.getItem("Paddle");
-    const SavedBall = localStorage.getItem("Ball");
-
-    if (SavedPaddle) setPaddle(SavedPaddle);
-    if (SavedBall) setBall(SavedBall);
-
-  }, []);
-
-  const saveSettings = () => {
-    localStorage.setItem("Paddle", Paddle);
-    localStorage.setItem("Ball", Ball);
-    setIsPopupOpen(false);
-  };
-
-  return (
-    <div className="grid gap-4 py-4">
-      <div className="bg-[#1C1A27] border border-[#2A2833] rounded-lg p-6">
-        <div className="space-y-6">
-          {/* Paddle Customization */}
-          <div className="space-y-4">
-            <span className="text-white">Paddle Color</span>
-            <div className="flex gap-3 flex-wrap" id="paddle-color">
-              {colorOptions.map((color) => (
-                <button
-                  key={`paddle-${color}`}
-                  className="w-10 h-10 rounded-lg relative"
-                  style={{ backgroundColor: color }}
-                  onClick={() => setPaddle(color)}
-                  aria-label={`Select ${color} for paddle color`}
-                >
-                  {Paddle === color && (
-                    <FaCheck className="absolute inset-0 m-auto text-black" />
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Ball Customization */}
-          <div className="space-y-4">
-            <span className="text-white">Ball Color</span>
-            <div className="flex gap-3 flex-wrap" id="ball-color">
-              {colorOptions.map((color) => (
-                <button
-                  key={`ball-${color}`}
-                  className="w-10 h-10 rounded-lg relative"
-                  style={{ backgroundColor: color }}
-                  onClick={() => setBall(color)}
-                  aria-label={`Select ${color} for ball color`}
-                >
-                  {Ball === color && (
-                    <FaCheck className="absolute inset-0 m-auto text-black" />
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Preview */}
-          <div className="mt-8">
-            <h3 className="text-white">Preview</h3>
-            <div className="bg-[#13111C] rounded-lg p-6 mt-2">
-              <div className="relative h-40 border border-[#2A2833] rounded">
-                <div
-                  className="absolute left-4 top-1/2 -translate-y-1/2 w-3 h-16 rounded"
-                  style={{ backgroundColor: Paddle }}
-                />
-                <div
-                  className="absolute right-4 top-1/2 -translate-y-1/2 w-3 h-16 rounded"
-                  style={{ backgroundColor: Paddle }}
-                />
-                <div
-                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full"
-                  style={{ backgroundColor: Ball }}
-                />
-              </div>
-            </div>
-          </div>
-        
-          {/* Save Button */}
-          <button
-            onClick={saveSettings}
-            className="w-full mt-4 px-4 py-2 bg-white text-black rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50">
-            Save
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
+import CostumizePing from "./PingCostumize";
+import CostumizeTic from "./TicCostumize";
 
 function Header({ title }) {
   const navigate = useNavigate();
@@ -163,14 +55,16 @@ function Header({ title }) {
       </div>
       {isPopupOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="relative bg-[#1C1A27] rounded-lg shadow-lg p-6 w-4/5 max-w-lg">
+          <div className="relative bg-[#21162C] border border-[#C77DFF] rounded-lg shadow-lg p-6 w-4/5 max-w-lg">
             <HiX
               className="absolute top-4 right-4 cursor-pointer"
               onClick={togglePopup}
               style={{ fontSize: "1.6rem", color: "white" }}
             />
             <h2 className="text-xl font-bold mb-4">Customize Game</h2>
-            <Costumize setIsPopupOpen={setIsPopupOpen} />
+            {
+              title === "PING PONG" ? <CostumizePing setIsPopupOpen={setIsPopupOpen} /> : <CostumizeTic setIsPopupOpen={setIsPopupOpen} />
+            }
           </div>
         </div>
       )}
