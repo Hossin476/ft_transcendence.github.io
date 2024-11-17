@@ -26,7 +26,7 @@ function Friend({ friend }) {
         </div>
         <div className="xsm:hidden xl:block">
           <h1 className="font-semibold">{friend.username} </h1>
-          <p className="font-thin">{t("LEVEL")} {friend.xp / 100}</p>
+          <p className="font-thin">{t("LEVEL")} {friend.rank}</p>
         </div>
       </div>
       <div className="xsm:hidden xl:block">

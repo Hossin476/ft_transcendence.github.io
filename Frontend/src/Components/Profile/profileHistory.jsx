@@ -5,7 +5,6 @@ import imgProfile from "/public/avatar/sbzizal.jpeg";
 import imgYns from "/public/lshail.jpeg";
 import { useTranslation } from "react-i18next";
 
-
 function Match_victory({ match }) {
   const { t } = useTranslation();
   return (
