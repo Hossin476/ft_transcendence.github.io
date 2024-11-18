@@ -27,9 +27,11 @@ class CustomUser(AbstractUser):
     loses_t = models.IntegerField(default=0)
     last_time = models.DateTimeField(default=timezone.now)
     # 2FA
-    key             = models.CharField(max_length=255, null=True, default=None)
-    # profile image 
-    profile_image   = models.ImageField(upload_to='images/profile/',default=get_default_profile_image)
+    key = models.CharField(max_length=255, null=True, default=None)
+    two_factor_enabled = models.BooleanField(default=False)
+    
+    # profile image
+    profile_image   = models.ImageField(upload_to='images/profile/', default=get_default_profile_image)
     cover_image     = models.ImageField(upload_to='images/cover/', default=get_default_cover_image)
 
     USERNAME_FIELD  = "username"
@@ -37,7 +39,7 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.username
-    
+
     
     def tokens(self):
         refresh = RefreshToken.for_user(self)
