@@ -56,7 +56,6 @@ const SendMessage = () => {
       // console.log("typing", typing);
       handleMessage()
       handlecount()
-
     }
   }
 
