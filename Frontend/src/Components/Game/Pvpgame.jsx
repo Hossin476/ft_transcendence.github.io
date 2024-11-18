@@ -150,7 +150,7 @@ function ReconnectButton({ data, gameType, navigate }) {
   const { t } = useTranslation();
 
   const handleClick = () => {
-    if (data.isMatch)
+    if (data?.isMatch)
       navigate(`/game/${gameType === 'P' ? "pingpong" : "tictactoe"}/pvpgame/match`, { state: { gameid: data.id, isonline: true } })
   };
 
