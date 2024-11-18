@@ -76,9 +76,9 @@ function Mycard({ image, playerName }) {
   const { t } = useTranslation();
   return (
     <div className="player-card h-[90%] xsm:w-[50%] lg:w-[25%]">
-      <img src={mypic} alt="Avatar" className="avatar-ping" />
+      <img src={image} alt="Avatar" className="avatar-ping" />
       <div className="player-info">
-        <h2>KIRAZIZI</h2>
+        <h2>{playerName}</h2>
         <p>{t("LEVEL")} 2</p>
       </div>
     </div>
@@ -268,23 +268,27 @@ function LocalPvp({ player, setPlayers }) {
   );
 }
 
-function OnlinePvp({ isstarted, counter, isstart, pvpUser }) {
+function OnlinePvp({isstarted,counter,isstart,pvpUser}) {
+
+  const {user,username} = useAuth();
+  console.log("USER:", user)
+  console.log("user playerName(photo):", user.profile_image)
   return (
     <>
-      <Mycard />
-      {counter && (
-        <div>
-          <h3>match will start in </h3>
-          <p className="text-center text-2xl">{counter}</p>
-        </div>
-      )}
-      {isstarted ? (
-        <Vsplayer_card player={pvpUser} />
-      ) : isstart ? (
-        <Wait_card />
-      ) : (
-        <Add_card />
-      )}
+      <Mycard playerName={username} image={user.profile_image}/>
+      { counter && 
+          <div>
+            <h3>match will start in </h3>
+            <p className="text-center text-2xl">{counter}</p>
+          </div>
+      }
+      {
+          isstarted ? (
+            <Vsplayer_card player={pvpUser} />
+          ) : (
+            isstart ? <Wait_card /> : <Add_card />
+          )
+      }
     </>
   );
 }

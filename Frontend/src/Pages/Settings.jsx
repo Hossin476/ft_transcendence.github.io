@@ -73,10 +73,30 @@ function TwofaSetD({ SetEnable, IsEnable, setAnimation }) {
   const [IsNotCorrect, setNotCorrect] = useState(false);
   const { t } = useTranslation();
 
-  function handleClick() {
-    if (result == "000000") {
-      SetEnable(false);
-    } else setNotCorrect(true);
+  const tokens = JSON.parse(localStorage.getItem("tokens"))
+
+  const handleClick = async() => {
+    try{
+		const response = await fetch(`/api/auth/verify-2fa`,{
+			method : "POST",
+			headers:{
+				"Authorization": "JWT " + tokens.access,
+				'Content-Type':'application/json',
+			},
+			body: JSON.stringify({code: result, username: tokens.username})
+		})
+		if(response.ok)
+			SetEnable(false)
+		else{
+			res = await response.json()
+			console.log(res.error)
+			setNotCorrect(true)
+		}
+    }
+    catch (error){
+      console.log(error)
+      setNotCorrect(true)
+    }
   }
 
   useEffect(() => {
@@ -125,7 +145,7 @@ function TwofaSetE({ SetEnable, IsEnable, setAnimation }) {
   const [IsNotCorrect, setNotCorrect] = useState(false);
   const { t } = useTranslation();
 
-  function handleClick() {
+  function handleClick(){ 
     if (result == "000000") {
       SetEnable(true);
     } else setNotCorrect(true);
