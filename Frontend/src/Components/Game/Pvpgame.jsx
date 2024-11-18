@@ -1,5 +1,5 @@
 // src/PingPong.jsx
-import React from "react";
+import React, { useCallback } from "react";
 import { PiArrowUUpLeftBold } from "react-icons/pi";
 import { useEffect, useState } from "react";
 import { MdOutlineSettingsSuggest } from "react-icons/md";
@@ -19,7 +19,7 @@ import Challenge from "../Challenge/Challenge";
 import { useAuth } from "../../context/AuthContext";
 import { RiWifiOffLine } from "react-icons/ri";
 import { IoWifiSharp } from "react-icons/io5";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
 
 import  CustomizePing from "./PingCustomize";
 import  CustomizeTic from "./TicCustomize";
@@ -144,40 +144,14 @@ function Start_button({ onClick }) {
   );
 }
 
-const fetch_matches = async (gameType, tokens, navigate) => {
-  const fetchUrl = `/api/notification/${
-    gameType === "P"
-      ? "pingpong_unfinished_match"
-      : "tictactoe_unfinished_match"
-  }`;
-  try {
-    const response = await fetch(fetchUrl, {
-      headers: {
-        Authorization: `JWT ${tokens.access}`,
-        "Content-Type": "application/json",
-      },
-    });
 
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
-    const data = await response.json();
-    if (data.isMatch)
-      navigate(
-        `/game/${gameType === "P" ? "pingpong" : "tictactoe"}/pvpgame/match`,
-        { state: { gameid: data.id, isonline: true } }
-      );
-  } catch (error) {
-    console.error("Fetch failed: ", error);
-  }
-};
-
-function ReconnectButton({ gameType }) {
+function ReconnectButton({ data, gameType, navigate }) {
   const { t } = useTranslation();
-  const { tokens } = useAuth();
-  const navigate = useNavigate();
 
   const handleClick = () => {
-    fetch_matches(gameType, tokens, navigate);
+    if (data.isMatch)
+      navigate(`/game/${gameType === 'P' ? "pingpong" : "tictactoe"}/pvpgame/match`, { state: { gameid: data.id, isonline: true } })
   };
 
   return (
@@ -318,12 +292,13 @@ function OnlinePvp({ isstarted, counter, isstart, pvpUser }) {
 function PvpGame({ title }) {
   const [isstart, setStart] = React.useState(false);
   const [isstarted, setStarted] = React.useState(false);
-  const [pvpUser, setPvpUser] = useState();
-  const [counter, setCounter] = useState(null);
-  const [mode, setMode] = useState(true);
-  const locations = useLocation();
-  const navigate = useNavigate();
-  const { socket, socketMessage, tokens } = useAuth();
+  const [pvpUser, setPvpUser] = useState()
+  const [counter, setCounter] = useState(null)
+  const [mode, setMode] = useState(true)
+  const [matchData, setMatchData] = useState({})
+  const locations = useLocation()
+  const navigate = useNavigate()
+  const { socket, socketMessage, tokens } = useAuth()
   const { t } = useTranslation();
   const [players, setPlayers] = useState({
     player1: "",
@@ -369,6 +344,25 @@ function PvpGame({ title }) {
       });
   }
 
+  const fetch_matches = useCallback(async () => {
+    const fetchUrl = `/api/notification/${gameType === 'P' ? 'pingpong_unfinished_match' : 'tictactoe_unfinished_match'}`;
+    try {
+      const response = await fetch(fetchUrl, {
+        headers: {
+          "Authorization": `JWT ${tokens.access}`,
+          "Content-Type": "application/json"
+        }
+      });
+      if (!response.ok)
+        throw new Error(`HTTP error! status: ${response.status}`);
+      const data = await response.json();
+      console.log("data is ", data)
+      setMatchData(data);
+    } catch (error) {
+      console.error('Fetch failed: ', error);
+    }
+  }, [gameType, setMatchData])
+
   useEffect(() => {
     if (socketMessage && socketMessage.type === "game.counter")
       setCounter(socketMessage.counter);
@@ -377,7 +371,10 @@ function PvpGame({ title }) {
       setStarted(true);
       setPvpUser(socketMessage.player);
     }
-  }, [socketMessage]);
+
+    fetch_matches()
+
+  }, [socketMessage, fetch_matches]);
 
   useEffect(() => {
     return () => {
@@ -402,22 +399,20 @@ function PvpGame({ title }) {
               <div className=" flex gap-10 justify-center items-center mt-12">
                 <div
                   onClick={() => setMode(() => false)}
-                  className={`flex gap-2 p-2 items-center ${
-                    mode === false
-                      ? "bg-[#412e55] rounded-full border border-forthColor"
-                      : ""
-                  }`}
+                  className={`flex gap-2 p-2 items-center ${mode === false
+                    ? "bg-[#412e55] rounded-full border border-forthColor"
+                    : ""
+                    }`}
                 >
                   <RiWifiOffLine />
                   <p>{t("offline")}</p>
                 </div>
                 <div
                   onClick={() => setMode(() => true)}
-                  className={`flex gap-2 p-2 items-center ${
-                    mode === true
-                      ? "bg-[#412e55] rounded-full border border-forthColor"
-                      : ""
-                  }`}
+                  className={`flex gap-2 p-2 items-center ${mode === true
+                    ? "bg-[#412e55] rounded-full border border-forthColor"
+                    : ""
+                    }`}
                 >
                   <IoWifiSharp />
                   <p>{t("online")}</p>
@@ -440,20 +435,23 @@ function PvpGame({ title }) {
                 )}
               </div>
             </div>
-            {mode === true ? (
-              isstarted ? (
-                <Started_button />
-              ) : isstart ? (
-                <Matchmaking_button onClick={stopGame} />
-              ) : (
-                <div className="flex justify-between items-center w-1/2">
-                  <Start_button onClick={startGame} />
-                  <ReconnectButton gameType={gameType} />
-                </div>
-              )
-            ) : (
-              <LocalButton players={players} onClick={creatLocalGame} />
-            )}
+            {
+              mode === true ? (
+                isstarted ? (
+                  <Started_button />
+                ) : (
+                  isstart ? <Matchmaking_button onClick={stopGame} /> :
+                    (
+                      <div className='flex justify-center items-center w-1/2'>
+                        {
+                          matchData && !matchData?.isMatch ?
+                            <Start_button onClick={startGame} /> :
+                            <ReconnectButton data={matchData} gameType={gameType} navigate={navigate} />
+                        }
+                      </div>
+                    )
+                )) : <LocalButton players={players} onClick={creatLocalGame} />
+            }
           </div>
         </div>
       </div>
@@ -463,3 +461,4 @@ function PvpGame({ title }) {
 }
 
 export default PvpGame;
+
