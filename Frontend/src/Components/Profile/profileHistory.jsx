@@ -5,7 +5,6 @@ import imgProfile from "/public/avatar/sbzizal.jpeg";
 import imgYns from "/public/lshail.jpeg";
 import { useTranslation } from "react-i18next";
 
-
 function Match_victory({ match }) {
   const { t } = useTranslation();
   return (
@@ -139,7 +138,6 @@ async function getAllMatches(tokens, userId) {
       method: "GET",
       headers: {
         Authorization: "JWT " + tokens.access,
-        "Content-Type": "application/json",
       },
     }
   );
@@ -171,7 +169,7 @@ function Profile_history({ user }) {
         {matches &&
           matches.map((match, index) =>
             match.winner ? (
-              match.winner.id === user ? (
+              match.winner.id == user ? (
                 <Match_victory key={index}  match={match} />
               ) : (
                 <Match_defeat key={index} match={match} />

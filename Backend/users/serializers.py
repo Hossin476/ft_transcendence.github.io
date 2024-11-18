@@ -68,17 +68,24 @@ class UserLoginSerializer(serializers.ModelSerializer):
         password = attrs.get('password')
         request = self.context.get('request')
         user = authenticate(request, username=username, password=password)
-        if not user:
-            raise AuthenticationFailed("invalid credentials, try again !")
-        if not user.is_verified:
-            raise AuthenticationFailed("user not Verified")
-        user_tokens = user.tokens()
-        return {
-            'username': user.username,
-            'email': user.email,
-            'access': str(user_tokens.get('access')),
-            'refresh': str(user_tokens.get('refresh'))
-        }
+
+        if user:
+            if not user.is_verified:
+                raise AuthenticationFailed({'error': 'user not verified !'})
+            user_tokens = user.tokens()
+            if user.two_factor_enabled:
+                print(user.username, user.two_factor_enabled)
+                return {'username': user.username}
+            else:
+                print(user.username, user.two_factor_enabled)
+                return {
+                    'username': user.username,
+                    'access': str(user_tokens.get('access')),
+                    'refresh': str(user_tokens.get('refresh')),
+                }
+        raise AuthenticationFailed({'error': 'invalid credentials, try again !'})
+
+
 
 class PasswordResetSerializer(serializers.Serializer):
     

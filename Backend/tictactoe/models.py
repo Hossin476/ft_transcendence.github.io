@@ -21,6 +21,7 @@ class OnlineGameModel(models.Model):
     score_o = models.IntegerField(("Score O"), default=0)
     game_start = models.DateTimeField(auto_now_add=True)
     game_end = models.DateTimeField(auto_now=True)
+    is_end = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Game between {self.player1} and {self.player2}"

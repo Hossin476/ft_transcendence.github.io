@@ -26,7 +26,7 @@ function Friend({ friend }) {
         </div>
         <div className="xsm:hidden xl:block">
           <h1 className="font-semibold">{friend.username} </h1>
-          <p className="font-thin">{t("LEVEL")} {friend.xp / 100}</p>
+          <p className="font-thin">{t("LEVEL")} {friend.rank}</p>
         </div>
       </div>
       <div className="xsm:hidden xl:block">
@@ -41,7 +41,6 @@ async function getProfileData(tokens, userId){
         method : "GET",
         headers:{
             "Authorization": "JWT " + tokens.access,
-            'Content-Type':'application/json',
         }
     })
 
@@ -63,6 +62,7 @@ function Profile_friends({ user }) {
         };
         fetchData();
     }, [user]);
+    
     return (
         <div className=" xsm:w-12 lg:w-74 xl:w-80 sm:w-28 md:w-32 lg:px-4 bg-secondaryColor rounded-3xl ">
         <div className="flex h-[5rem] xsm:justify-center items-center lg:justify-between">

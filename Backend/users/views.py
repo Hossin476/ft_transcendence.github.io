@@ -1,6 +1,4 @@
-from rest_framework.mixins import CreateModelMixin, DestroyModelMixin, RetrieveModelMixin, UpdateModelMixin
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.decorators import api_view, permission_classes,authentication_classes
 from .models import *
 from .serializers import *
@@ -16,70 +14,85 @@ from calendar import monthrange
 from django.utils import timezone
 from django.db.models import Q, Count
 from itertools import chain
-from django.http import JsonResponse
 import os
 import secrets
 import string
 import requests
-import json
 from rest_framework.generics import GenericAPIView
+from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from .utils import send_otp_email
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import smart_str, DjangoUnicodeDecodeError
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
+import pyotp
+import qrcode
+import base64
+from io import BytesIO
 import time
-class AppUserViewSet(CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
-    queryset = CustomUser.objects.all()
-    serilizer_class = AppUserSerializer
-
 
 @api_view(['GET'])
 def get_profile(request, user_id):
-    user = CustomUser.objects.get(id=user_id)
-    serialized_user = playerSerializers(user)
-    user_list = serialized_user.data
-    new_list = {}
-    new_list['id'] = user_list['id']
-    new_list['username'] = user_list['username']
-    new_list['profile_image'] = user_list['profile_image']
-    new_list['background_image'] = user_list['profile_image']
-    new_list['rank'] = user_list['rank']
-    new_list['xp'] = user_list['xp']
-    return Response(new_list)
+    try:
+        user = CustomUser.objects.get(id=user_id)
+        serialized_user = playerSerializers(user)
+        user_list = serialized_user.data
+        new_list = {
+            'id': user_list['id'],
+            'username': user_list['username'],
+            'profile_image': user_list['profile_image'],
+            'background_image': user_list['profile_image'],
+            'rank': user_list['rank'],
+            'xp': user_list['xp']
+        }
+        return Response(new_list, status=status.HTTP_200_OK)
+    except CustomUser.DoesNotExist:
+        return Response({
+            'message': 'user not found !'
+        }, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['GET'])
 def get_profile_match(request, user_id):
-    user = CustomUser.objects.get(id=user_id)   
-    pong_matches = GameOnline.objects.filter(
-        Q(player1=user) | Q(player2=user)).order_by('-last_update')
-    tictactoe_matches = OnlineGameModel.objects.filter(
-        Q(player1=user) | Q(player2=user)).order_by('-game_end')
-    
-    ping_serialzer = MatchGameOnlineSerializer(pong_matches, many=True).data
-    tictactoe_serializer = MatchGameOnlineModelSerializer(tictactoe_matches, many=True).data
-    
-    profile_matches = list(chain(ping_serialzer + tictactoe_serializer))
-    return Response(profile_matches)
+    try:
+        user = CustomUser.objects.get(id=user_id)   
+        pong_matches = GameOnline.objects.filter(
+            Q(player1=user) | Q(player2=user)).order_by('-last_update')
+        tictactoe_matches = OnlineGameModel.objects.filter(
+            Q(player1=user) | Q(player2=user)).order_by('-game_end')
+        
+        ping_serialzer = MatchGameOnlineSerializer(pong_matches, many=True).data
+        tictactoe_serializer = MatchGameOnlineModelSerializer(tictactoe_matches, many=True).data
+        
+        profile_matches = list(chain(ping_serialzer + tictactoe_serializer))
+        return Response(profile_matches, status=status.HTTP_200_OK)
+    except CustomUser.DoesNotExist:
+        return Response({
+            'message': 'user not found !'
+        }, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['GET'])
 def get_profile_friends(request, user_id):
-    user = CustomUser.objects.get(id=user_id)
-    friends = Friendship.objects.filter(
-        Q(from_user=user) | Q(to_user=user),
-        request='A',
-        # active='A',
-        # block_user='N'
-    )
-    friends_list = []
-    for friend in friends:
-        if friend.from_user == user:
-            friends_list.append(friend.to_user)
-        else:
-            friends_list.append(friend.from_user)
-    serialized_friends = playerSerializers(friends_list, many=True)
-    return Response(serialized_friends.data)
+    try:
+        user = CustomUser.objects.get(id=user_id)
+        friends = Friendship.objects.filter(
+            Q(from_user=user) | Q(to_user=user),
+            request='A',
+            # active='A',
+            # block_user='N'
+        )
+        friends_list = []
+        for friend in friends:
+            if friend.from_user == user:
+                friends_list.append(friend.to_user)
+            else:
+                friends_list.append(friend.from_user)
+        serialized_friends = playerSerializers(friends_list, many=True)
+        return Response(serialized_friends.data, status=status.HTTP_200_OK)
+    except CustomUser.DoesNotExist:
+        return Response({
+            'message': 'user not found !'
+        }, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['GET'])
 def get_user_info(request):
@@ -312,7 +325,6 @@ class UserLoginView(GenericAPIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data, context={'request':request})
         serializer.is_valid(raise_exception=True)
-        print(serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 class UserProfileView(GenericAPIView):
@@ -341,6 +353,7 @@ class UserPasswordResetView(GenericAPIView):
             return Response({
                 'message': 'user with this email does not exist !'
             }, status=status.HTTP_404_NOT_FOUND)
+
 
 class PasswordResetConfirmationView(GenericAPIView):
     permission_classes = [AllowAny]
@@ -385,3 +398,116 @@ class UserLogoutView(GenericAPIView):
         return Response({
             'message': 'logout successfull !'
         }, status=status.HTTP_200_OK)
+
+
+class Verify2FAView(APIView):
+    permission_classes = [AllowAny]
+    
+    def post(self, request):
+        username = request.data.get('username')
+        code = request.data.get('code')
+
+        try:
+            user = CustomUser.objects.get(username=username)
+            totp = pyotp.TOTP(user.key)
+            user_tokens = user.tokens()
+            if totp.verify(code):
+                return Response({
+                    'username': user.username,
+                    'access': str(user_tokens.get('access')),
+                    'refresh': str(user_tokens.get('refresh'))
+                }, status = status.HTTP_200_OK)
+            return Response({
+                'error': 'token unvalid or expired'
+            }, status = status.HTTP_400_BAD_REQUEST)
+        except CustomUser.DoesNotExist:
+            return Response({
+                'error': 'User not found'
+            }, status=status.HTTP_404_NOT_FOUND)
+
+
+class Setup2FAView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        if user.two_factor_enabled:
+            return Response({
+                'error': '2FA already enabled'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        if not user.key:
+            user.key = pyotp.random_base32()
+            user.save()
+
+        totp = pyotp.TOTP(user.key)
+        provisioning_uri = totp.provisioning_uri(
+            name = user.email,
+            issuer_name="Ponfly"
+        )
+
+        qr = qrcode.QRCode(version=1, box_size=10, border=5)
+        qr.add_data(provisioning_uri)
+        qr.make(fit=True)
+        qr_image = qr.make_image(fill_color="black", back_color="white")
+
+        buffer = BytesIO()
+        qr_image.save(buffer, format="PNG")
+        qr_base64 = base64.b64encode(buffer.getvalue()).decode()
+
+        return Response({
+            'is_enabled': False,
+            'is_configured': False,
+            'qr_code': f"data:image/png;base64,{qr_base64}",
+            'secret_key': user.key
+        })
+    
+    def post(self, request):
+        user = request.user
+        otp_code = request.data.get('code')
+
+        # ??? Questionable
+        if not user.key:
+            return Response({
+                'error': 'Please Scan the Qr first using your Auth App'
+            }, status = status.HTTP_400_BAD_REQUEST)
+
+        totp = pyotp.TOTP(user.key)
+        if totp.verify(otp_code):
+            user.two_factor_enabled = True
+            user.save()
+            return Response({
+                'message': '2FA enabled Successfully',
+                'two_factor_enabled': user.two_factor_enabled
+            }, status=status.HTTP_200_OK)
+
+        return Response({
+            'error': 'Invalid verificataion code'
+        }, status = status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request):
+        user = request.user
+        code = request.data.get('code')
+
+        totp = pyotp.TOTP(user.key)
+        if totp.verify(code):
+            user.two_factor_enabled = False
+            user.key = None
+            user.save()
+            return Response(status = status.HTTP_200_OK)
+        return Response({
+            'error': 'Invalid verification code'
+        }, status = status.HTTP_400_BAD_REQUEST)
+
+
+class Check2FAView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        user = CustomUser.objects.get(username = request.data.get('username'))
+
+        return Response({
+            'two_factor_enabled': user.two_factor_enabled,
+            'key': user.key
+        }, status=status.HTTP_200_OK)
+

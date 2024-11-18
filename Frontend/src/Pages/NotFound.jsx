@@ -54,7 +54,7 @@ export default function NotFoundPage() {
                             </Canvas>
                             <div className="absolute left-1/2 top-[65%] transform -translate-x-1/2 -translate-y-1/2 text-center text-white w-[90%] p-4">
                                 <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-Plaguard mb-4">Oops! Page Not Found</h2>
-                                <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-inter mb-12">The page you're looking for doesn't exist or has been moved.</p>
+                                <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-inter">The page you're looking for doesn't exist or has been moved.</p>
                             </div>
                 </div>
             </div>

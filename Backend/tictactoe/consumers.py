@@ -53,6 +53,7 @@ class Room:
         async with self.lock:
             if self.tasks.get(task_name):
                 self.tasks[task_name].cancel()
+                self.tasks[task_name] = None
             try:
                 self.tasks[task_name] = asyncio.create_task(coroutine)
             except Exception as e:
@@ -87,7 +88,7 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
             return
 
         self.user = self.scope.get('user')
-        if not self.user or not self.user.is_authenticated:
+        if not self.user:
             await self.close()
             return
 
@@ -280,6 +281,7 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
                 if loser:
                     loser.loses_t += 1
                     loser.save()
+                self.game_record.is_end = True
             self.game_record.save()
         except Exception as e:
             print(f"An error occurred: {str(e)}")
@@ -321,6 +323,7 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
                 if other_player:
                     self.game.final_winner = other_player_role
                     self.game.game_over = True
+                    self.game_record.is_end = True
                     await self.update_record()
                     await self.send_game_update()
 
@@ -328,6 +331,7 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
         async with asyncio.Lock():
             if self.game.countdown_value == 0 or self.game.game_over:
                 self.game.check_game_over()
+                self.game_record.is_end = True
                 await self.update_record()
                 await self.send_game_update()
                 await self.room.cancel_task('game_countdown')

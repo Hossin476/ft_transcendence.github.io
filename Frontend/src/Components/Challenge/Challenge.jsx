@@ -5,8 +5,10 @@ import { useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { LiaBattleNet } from "react-icons/lia";
 import { FaChevronRight } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 export default function Challenge({ setopen, gameType }) {
+    const { t } = useTranslation();
     const [open, setOpen] = useState(true)
     const [online_ingame, setChallengeData] = useState(null);
     const {tokens, socket, socketMessage} = useAuth();
@@ -52,7 +54,7 @@ export default function Challenge({ setopen, gameType }) {
                 <FaChevronRight className={`${open? "rotate-180": "rotate-0"} lg:hidden rounded-full`} onClick={()=>setOpen((current)=> !current)}/>
                 <div className={`w-[80%]  lg:flex gap-2 justify-center xsm:${open ? "hidden": 'flex'}`} >
                     <LiaBattleNet className={`font-bold text-3xl `}/>
-                    <h1 className={`font-bold text-xl lg:block `}> CHALLENGE</h1>
+                    <h1 className={`font-bold text-xl lg:block `}> {t("CHALLENGE")}</h1>
                 </div>
             </div>
             <div className='flex  flex-col w-[100%] xsm:gap-2 lg:gap-4 h-[100%] '>

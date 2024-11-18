@@ -16,7 +16,6 @@ from tournament.serializers import TournamentSerializer
 from channels.layers import get_channel_layer
 import asyncio
 
-
 channle_layer = get_channel_layer()
 
 

@@ -85,8 +85,7 @@ const Game = () => {
             if (data.start_countdown_value === 0) setShowStartModal(false);
         }
         if (data.current_turn) setCurrentTurn(data.current_turn);
-        if (data.score_x !== undefined && data.score_o !== undefined)
-        {
+        if (data.score_x !== undefined && data.score_o !== undefined) {
             const [usernameX, scoreX] = data.score_x.split(' : ');
             const [usernameO, scoreO] = data.score_o.split(' : ');
             setScores({ [usernameX]: parseInt(scoreX, 10), [usernameO]: parseInt(scoreO, 10) });
@@ -104,8 +103,6 @@ const Game = () => {
     }, [board]);
 
     const TurnIndicator = () => {
-        if (isOnline === false || finalWinner || showStartModal || winnerLine || showReconnectModal || draw)
-            return null;
         const isYourTurn = currentTurn === playerRole;
         return (
             <div className={`absolute top-1 left-1/2 tranform -translate-x-1/2 p-2 rounded ${isYourTurn ? 'bg-green-500' : 'bg-red-500'} text-white font-bold`}>
@@ -132,14 +129,16 @@ const Game = () => {
                 </Suspense>
             </Canvas>
             {finalWinner && <Win final_winner={finalWinner} />}
-            {showReconnectModal && <ReconnectModal />}
+            {!finalWinner && showReconnectModal && <ReconnectModal />}
             {showStartModal && (
                 <StartModal
                     currentPlayer={playerRole}
                     countdownValue={startCountdownValue}
                 />
             )}
-            <TurnIndicator currentTurn={currentTurn} playerRole={playerRole} finalWinner={finalWinner} />
+            {!finalWinner && !showStartModal && !winnerLine && !showReconnectModal && !draw && (
+                <TurnIndicator />
+            )}
             {draw && <Draw />}
         </div>
     );
@@ -181,29 +180,35 @@ const GameCell = memo(({ position, value, onClick }) => (
     )
 ));
 
-const MeshX = ({ position }) => (
-    <RigidBody position={[position[0], position[1], position[2] - 1]} restitution={0.5}>
-        <group>
-            <mesh rotation={[0, 0, Math.PI / 4]}>
-                <boxGeometry args={[0.6, 0.1, 0.1]} />
-                <meshStandardMaterial color="green" />
-            </mesh>
-            <mesh rotation={[0, 0, -Math.PI / 4]}>
-                <boxGeometry args={[0.6, 0.1, 0.1]} />
-                <meshStandardMaterial color="green" />
-            </mesh>
-        </group>
-    </RigidBody>
-);
+const MeshX = ({ position }) => {
+    const Xcolor = JSON.parse(localStorage.getItem("TicSettings")) || { X: "Blue" };
+    return (
+        <RigidBody position={[position[0], position[1], position[2] - 1]} restitution={0.5}>
+            <group>
+                <mesh rotation={[0, 0, Math.PI / 4]}>
+                    <boxGeometry args={[0.6, 0.1, 0.1]} />
+                    <meshStandardMaterial color={Xcolor.X} />
+                </mesh>
+                <mesh rotation={[0, 0, -Math.PI / 4]}>
+                    <boxGeometry args={[0.6, 0.1, 0.1]} />
+                    <meshStandardMaterial color={Xcolor.X}  />
+                </mesh>
+            </group>
+        </RigidBody>
+    )
+}
 
-const MeshO = ({ position }) => (
-    <RigidBody position={[position[0], position[1], position[2] - 1]} restitution={0.5}>
-        <mesh rotation={[0, 0, 0]}>
-            <torusGeometry args={[0.25, 0.08, 16, 48]} />
-            <meshStandardMaterial color="red" />
-        </mesh>
-    </RigidBody>
-);
+const MeshO = ({ position }) => {
+    const Ocolor = JSON.parse(localStorage.getItem("TicSettings")) || { O: "Red" };
+    return (
+        <RigidBody position={[position[0], position[1], position[2] - 1]} restitution={0.5}>
+            <mesh rotation={[0, 0, 0]}>
+                <torusGeometry args={[0.25, 0.08, 16, 48]} />
+                <meshStandardMaterial color={Ocolor.O} />
+            </mesh>
+        </RigidBody>
+    )
+}
 
 const TicTacToeGrid = () => (
     <>
