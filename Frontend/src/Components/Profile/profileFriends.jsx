@@ -7,6 +7,9 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 function Friend({ friend }) {
+
+  console.log(friend);
+
     const { t } = useTranslation();
     const navigate = useNavigate();
     const handleFriendClick = () => {
@@ -19,7 +22,7 @@ function Friend({ friend }) {
         <div className=" xsm:h-[2rem] xsm:w-[2rem] sm:w-[4rem] sm:h-[4rem] relative rounded-full">
           <img
             onClick={handleFriendClick}
-            src={imgYns}
+            src={friend.profile_image}
             alt="profile"
             className="w-full h-full object-cover rounded-full cursor-pointer"
           />

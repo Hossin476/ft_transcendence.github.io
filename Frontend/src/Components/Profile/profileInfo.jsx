@@ -17,7 +17,7 @@ function Profile_info({ userid }) {
   const { user, socket } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  
+
   const userXp = userid?.xp%100
   const xp = 100 - userXp
 
@@ -58,7 +58,7 @@ function Profile_info({ userid }) {
           </div>
           <div className="rounded-full border-thirdColor border-[8px] overflow-hidden relative z-20 xsm:w-16 xsm:h-16 md:w-28 md:h-28 lg:w-32 lg:h-32">
             <img
-              src={imgProfile}
+              src={userid?.profile_image}
               alt="Profile"
               className="w-full h-full object-cover"
             />

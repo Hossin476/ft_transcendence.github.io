@@ -1,8 +1,9 @@
 import { CgCopy } from "react-icons/cg";
-import qrcode from '../../../public/avatar/qrcode.png';
+// import qrcode from '../../../public/avatar/qrcode.png';
 import {useTranslation} from 'react-i18next';
 import { useState } from 'react';
-import LanguageSwitcher from './LanguageSwitcher';
+import { useEffect } from 'react';
+import { useAuth } from '../../context/AuthContext';
 
 import './Disable2fa.css';
 import './Enable2fa.css';
@@ -20,6 +21,35 @@ function CircleIcon( {iconText}){
 
 function Mid_Nav_enable(){
     const { t } = useTranslation();
+    const { tokens } = useAuth();
+    const [Qrcode, setQrCode] = useState("");
+    const [SecretKey, setSecretKey] = useState("");
+
+    const setup_2fa = async () => {
+      try {
+        const response = await fetch(`/api/users/setup-2fa/`, {
+          method: "GEt",
+          headers: {
+            Authorization: "JWT " + tokens.access,
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+            setQrCode(data.qr_code);
+            setSecretKey(data.secret_key);
+        } else {
+          console.log("error");
+        }
+      }
+      catch (error) {
+        console.log(error);
+      }
+    }
+  
+    useEffect(() => {
+      setup_2fa();
+    }, []);
+
     return (
         <div className="mid-nav">
         <div className="number1-nav ">
@@ -32,11 +62,11 @@ function Mid_Nav_enable(){
                     {t("qr_instructions")}
                 </p>
                 <div className="flex gap-3 items-center">
-                    <p className="code">Y77CFN2D76BJLBTBKKN3YHNWR</p>
+                    <p className="code">{SecretKey}</p>
                     <CgCopy />
                 </div>
             </div>
-                <img src={qrcode} alt="QR code" className="lg:w-[116px] lg:h-[116px] xsm:w-[10vw] xsm:h-[10vw]"/>
+              <img src={Qrcode} alt="QR code" className="lg:w-[110px] lg:h-[110px] xsm:w-[10vw] xsm:h-[10vw]"/>
         </div>
         <div className="number2-nav">
             <div className="icon-left">
