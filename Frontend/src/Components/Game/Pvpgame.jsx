@@ -42,13 +42,14 @@ function Header({ title}) {
   )
 }
 
-function Mycard({image, playerName}) {
+function Mycard({playerName,image}) {
+  console.log("my body my choice:",image)
   const { t } = useTranslation();
   return (
     <div className="player-card h-[90%] xsm:w-[50%] lg:w-[25%]">
-      <img src={mypic} alt="Avatar" className="avatar-ping" />
+      <img src={image} alt="Avatar" className="avatar-ping" />
       <div className="player-info">
-        <h2>KIRAZIZI</h2>
+        <h2>{playerName}</h2>
         <p>{t("LEVEL")} 2</p>
       </div>
     </div>
@@ -214,9 +215,13 @@ function LocalPvp({player,setPlayers}) {
 }
 
 function OnlinePvp({isstarted,counter,isstart,pvpUser}) {
+
+  const {user,username} = useAuth();
+  console.log("USER:", user)
+  console.log("user playerName(photo):", user.profile_image)
   return (
     <>
-      <Mycard />
+      <Mycard playerName={username} image={user.profile_image}/>
       { counter && 
           <div>
             <h3>match will start in </h3>

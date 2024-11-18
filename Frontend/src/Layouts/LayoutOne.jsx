@@ -20,7 +20,7 @@ export default function LayoutOne(){
                     },
                 }}
             />
-                    <div className=" text-white xsm:h-12 sm:h-28 ">
+                    <div className=" text-white xsm:h-12 mb-2 sm:h-28 ">
                         <NavBar/>
                     </div>
                     <div className=" flex flex-1 main-wrapper  h-full ">
