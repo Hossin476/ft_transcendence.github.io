@@ -11,6 +11,7 @@ class LocalGameModel(models.Model):
     score_o = models.IntegerField(("Score O"), default=0)
     game_start = models.DateField(("Game Start"), auto_now_add=True)
     game_end = models.DateField(("Game End"), auto_now=True)
+    is_end = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Game between {self.player1} and {self.player2}"

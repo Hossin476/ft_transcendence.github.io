@@ -17,7 +17,7 @@ class TicTacToeLocalConsumer(AsyncWebsocketConsumer):
         self.current_player = 'X'
         self.start_countdown_task = None
         self.game_countdown_task = None
-        self.start_countdown_value = 10
+        self.start_countdown_value = 5
 
     async def connect(self):
         self.game_id = self.scope['url_route']['kwargs']['game_id']
@@ -98,6 +98,7 @@ class TicTacToeLocalConsumer(AsyncWebsocketConsumer):
             if not game_instance.game_start:
                 game_instance.game_start = timezone.now()
             game_instance.game_end = timezone.now()
+            game_instance.is_end = True
             game_instance.save()
         except Exception as e:
             print(f"An error occured: {str(e)}")

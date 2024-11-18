@@ -25,6 +25,17 @@ def get_user_data(req, game_id):
 
 
 @api_view(['GET'])
+def get_is_game_over(req, game_id):
+    try:
+        game = OnlineGameModel.objects.get(id=game_id)
+        return Response({"is_end": game.is_end}, status=status.HTTP_200_OK)
+    except OnlineGameModel.DoesNotExist:
+        return Response({'error': 'Game not found'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
 def get_winner_data(request, game_id):
     try:
         game = OnlineGameModel.objects.get(id=game_id)

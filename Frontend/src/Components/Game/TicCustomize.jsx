@@ -6,7 +6,7 @@ function CustomizeTic( {setIsPopupOpen} ) {
       const savedSettings = localStorage.getItem("TicSettings");
       return savedSettings
         ? JSON.parse(savedSettings)
-        : { X: "Blue", O: "Red" };
+        : { X: "green", O: "red" };
     });
   
     const colorOptions = [

@@ -9,6 +9,7 @@ import Win from './win';
 import StartModal from './StartModal'
 import ReconnectModal from './ReconnectModal'
 import Draw from './Draw';
+import useWebSocket from './useWebSocket';
 
 const WS_ONLINE_URL = `wss://${window.location.host}/ws/game/tictactoe`;
 const WS_OFFLINE_URL = `wss://${window.location.host}/ws/game/tictactoe/offline`;
@@ -28,45 +29,44 @@ const Game = () => {
     const [startCountdownValue, setStartCountdownValue] = useState(null);
     const [currentTurn, setCurrentTurn] = useState(null);
     const [draw, setDraw] = useState(false);
+    const startModalShownRef = useRef(false);
 
     const { setScores, setTimer, setPlayerRole, setReconnectTimer, playerRole } = useTicTacToe();
     const { tokens } = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
-    const socketRef = useRef(null);
-    const startModalShownRef = useRef(false);
     const gameId = location.state?.gameid;
     const isOnline = location.state?.isonline;
 
-    const connectWebSocket = useCallback(() => {
-        if (!gameId) {
+    const fetchGame = useCallback(async () => {
+        const fetchUrl = `/api/is_game_over/${gameId}`;
+        try {
+            const response = await fetch(fetchUrl, {
+                headers: {
+                    "Authorization": `JWT ${tokens.access}`,
+                    "Content-Type": "application/json"
+                }
+            });
+            if (!response.ok)
+                throw new Error(`HTTP error! status: ${response.status}`);
+            const data = await response.json();
+            if (data?.is_end)
+                navigate('/game')
+        } catch (error) {
+            console.error('Fetch failed: ', error);
+        }
+    }, [tokens.access, gameId, navigate])
+    const url = `${isOnline == true ? WS_ONLINE_URL : WS_OFFLINE_URL}/${gameId}/?token=${tokens?.access}`;
+    useEffect(() => {
+        if (gameId) fetchGame();
+        else {
             console.error('Game ID is undefined or null');
             navigate('/game');
-            return;
         }
 
-        const url = `${isOnline == true ? WS_ONLINE_URL : WS_OFFLINE_URL}/${gameId}/?token=${tokens?.access}`;
-
-        socketRef.current = new WebSocket(url);
-        socketRef.current.onopen = () => console.log('WebSocket connected');
-        socketRef.current.onerror = (error) => console.error('WebSocket error: ', error);
-        socketRef.current.onclose = () => console.log('WebSocket disconnected');
-        socketRef.current.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            handleWebSocketMessage(data);
-        };
-    }, [gameId, tokens?.access]);
-
-    useEffect(() => {
-        connectWebSocket();
-
-        return () => {
-            if (socketRef.current) socketRef.current.close();
-        };
-    }, [connectWebSocket]);
+    }, [gameId, fetchGame]);
 
     const handleWebSocketMessage = useCallback((data) => {
-
         if (data.state) setBoard(data.state);
         if (data.final_winner) setFinalWinner(data.final_winner);
         if (data.draw !== undefined) setDraw(data.draw);
@@ -96,11 +96,11 @@ const Game = () => {
         else setWinnerLine(false);
 
     }, [setScores, setTimer, setPlayerRole, setReconnectTimer, setCurrentTurn]);
+    const sendMessage = useWebSocket(url, handleWebSocketMessage);
 
     const handleCellClick = useCallback((index) => {
-        if (!board[index] && socketRef.current?.readyState === WebSocket.OPEN)
-            socketRef.current.send(JSON.stringify({ action: 'move', index }));
-    }, [board]);
+        if (!board[index]) sendMessage({ action: 'move', index });
+    }, [board, sendMessage]);
 
     const TurnIndicator = () => {
         const isYourTurn = currentTurn === playerRole;
@@ -181,7 +181,7 @@ const GameCell = memo(({ position, value, onClick }) => (
 ));
 
 const MeshX = ({ position }) => {
-    const Xcolor = JSON.parse(localStorage.getItem("TicSettings")) || { X: "Blue" };
+    const Xcolor = JSON.parse(localStorage.getItem("TicSettings")) || { X: "green" };
     return (
         <RigidBody position={[position[0], position[1], position[2] - 1]} restitution={0.5}>
             <group>
@@ -191,7 +191,7 @@ const MeshX = ({ position }) => {
                 </mesh>
                 <mesh rotation={[0, 0, -Math.PI / 4]}>
                     <boxGeometry args={[0.6, 0.1, 0.1]} />
-                    <meshStandardMaterial color={Xcolor.X}  />
+                    <meshStandardMaterial color={Xcolor.X} />
                 </mesh>
             </group>
         </RigidBody>
@@ -199,7 +199,7 @@ const MeshX = ({ position }) => {
 }
 
 const MeshO = ({ position }) => {
-    const Ocolor = JSON.parse(localStorage.getItem("TicSettings")) || { O: "Red" };
+    const Ocolor = JSON.parse(localStorage.getItem("TicSettings")) || { O: "red" };
     return (
         <RigidBody position={[position[0], position[1], position[2] - 1]} restitution={0.5}>
             <mesh rotation={[0, 0, 0]}>
