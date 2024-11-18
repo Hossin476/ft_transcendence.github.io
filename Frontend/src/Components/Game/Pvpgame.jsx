@@ -21,8 +21,8 @@ import { RiWifiOffLine } from "react-icons/ri";
 import { IoWifiSharp } from "react-icons/io5";
 import { useTranslation } from "react-i18next";
 
-import CostumizePing from "./PingCostumize";
-import CostumizeTic from "./TicCostumize";
+import  CustomizePing from "./PingCustomize";
+import  CustomizeTic from "./TicCustomize";
 
 function Header({ title }) {
   const navigate = useNavigate();
@@ -63,7 +63,7 @@ function Header({ title }) {
             />
             <h2 className="text-xl font-bold mb-4">Customize Game</h2>
             {
-              title === "PING PONG" ? <CostumizePing setIsPopupOpen={setIsPopupOpen} /> : <CostumizeTic setIsPopupOpen={setIsPopupOpen} />
+              title === "PING PONG" ? <CustomizePing setIsPopupOpen={setIsPopupOpen} /> : <CustomizeTic setIsPopupOpen={setIsPopupOpen} />
             }
           </div>
         </div>

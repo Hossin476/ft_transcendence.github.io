@@ -180,29 +180,35 @@ const GameCell = memo(({ position, value, onClick }) => (
     )
 ));
 
-const MeshX = ({ position }) => (
-    <RigidBody position={[position[0], position[1], position[2] - 1]} restitution={0.5}>
-        <group>
-            <mesh rotation={[0, 0, Math.PI / 4]}>
-                <boxGeometry args={[0.6, 0.1, 0.1]} />
-                <meshStandardMaterial color={localStorage.getItem('X')} />
-            </mesh>
-            <mesh rotation={[0, 0, -Math.PI / 4]}>
-                <boxGeometry args={[0.6, 0.1, 0.1]} />
-                <meshStandardMaterial color={localStorage.getItem('X')}  />
-            </mesh>
-        </group>
-    </RigidBody>
-);
+const MeshX = ({ position }) => {
+    const Xcolor = JSON.parse(localStorage.getItem("TicSettings")) || { X: "Blue" };
+    return (
+        <RigidBody position={[position[0], position[1], position[2] - 1]} restitution={0.5}>
+            <group>
+                <mesh rotation={[0, 0, Math.PI / 4]}>
+                    <boxGeometry args={[0.6, 0.1, 0.1]} />
+                    <meshStandardMaterial color={Xcolor.X} />
+                </mesh>
+                <mesh rotation={[0, 0, -Math.PI / 4]}>
+                    <boxGeometry args={[0.6, 0.1, 0.1]} />
+                    <meshStandardMaterial color={Xcolor.X}  />
+                </mesh>
+            </group>
+        </RigidBody>
+    )
+}
 
-const MeshO = ({ position }) => (
-    <RigidBody position={[position[0], position[1], position[2] - 1]} restitution={0.5}>
-        <mesh rotation={[0, 0, 0]}>
-            <torusGeometry args={[0.25, 0.08, 16, 48]} />
-            <meshStandardMaterial color={localStorage.getItem('O')} />
-        </mesh>
-    </RigidBody>
-);
+const MeshO = ({ position }) => {
+    const Ocolor = JSON.parse(localStorage.getItem("TicSettings")) || { O: "Red" };
+    return (
+        <RigidBody position={[position[0], position[1], position[2] - 1]} restitution={0.5}>
+            <mesh rotation={[0, 0, 0]}>
+                <torusGeometry args={[0.25, 0.08, 16, 48]} />
+                <meshStandardMaterial color={Ocolor.O} />
+            </mesh>
+        </RigidBody>
+    )
+}
 
 const TicTacToeGrid = () => (
     <>

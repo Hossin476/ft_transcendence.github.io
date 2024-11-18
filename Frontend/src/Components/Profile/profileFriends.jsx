@@ -41,7 +41,6 @@ async function getProfileData(tokens, userId){
         method : "GET",
         headers:{
             "Authorization": "JWT " + tokens.access,
-            'Content-Type':'application/json',
         }
     })
 

@@ -138,7 +138,6 @@ async function getAllMatches(tokens, userId) {
       method: "GET",
       headers: {
         Authorization: "JWT " + tokens.access,
-        "Content-Type": "application/json",
       },
     }
   );
@@ -163,7 +162,6 @@ function Profile_history({ user }) {
     fetchData();
   }, [user]);
 
-  // console.log(matches);
   return (
     <div className="bg-secondaryColor text-center p-6  rounded-3xl grow">
       <h2 className="text-4xl font-semibold mb-8">{t("MATCH HISTORY")}</h2>
