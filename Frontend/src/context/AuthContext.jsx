@@ -16,7 +16,6 @@ export const AuthProvider = ({ children }) => {
     const [username, setUserName] = useState(null);
     const [chatsocket, setChatSocket] = useState(null);
     const [socketMessage, setSocketMessage] = useState(null);
-    const [friendReceiver, setFriendReceiver] = useState(null);
 
     const login = async (data) => {
         localStorage.setItem('tokens', JSON.stringify(data.tokens))
@@ -90,6 +89,11 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
+    useEffect(() => {
+        if (tokens)
+            global_socket();
+    }, [tokens]);
+
     let value = {
         login,
         logout,
@@ -101,8 +105,6 @@ export const AuthProvider = ({ children }) => {
         socketMessage: socketMessage,
         createSocket,
         chatsocket: chatsocket,
-        friendReceiver,
-        setFriendReceiver,
         setUser
     }
 

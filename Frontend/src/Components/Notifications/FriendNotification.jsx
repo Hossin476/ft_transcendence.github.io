@@ -1,14 +1,8 @@
 import React, { useEffect } from 'react';
-import { useAuth } from '../../context/AuthContext'
 import moment from 'moment';
 import { IoMdPersonAdd } from "react-icons/io";
 
-
-
 function FriendNotification({ notification }) {
-    const { setFriendReceiver } = useAuth();
-
-    useEffect(() => { setFriendReceiver(notification.sender?.username) }, []);
 
     return (
         <>
