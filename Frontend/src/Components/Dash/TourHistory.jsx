@@ -21,7 +21,7 @@ export default function TourHistory({tour}) {
             <div>
                 <h3>{tour.name}</h3>
             </div>
-            <p>{tour.winner.id ===user.user_id ? 'Win':'Lose' }</p>
+            <p>{tour?.winner?.id ===user.user_id ? 'Win':'Lose' }</p>
         </div>
     )
 }

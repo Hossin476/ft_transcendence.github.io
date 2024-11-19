@@ -100,8 +100,6 @@ export const AuthProvider = ({ children }) => {
         socketMessage: socketMessage,
         createSocket,
         chatsocket: chatsocket,
-        friendReceiver,
-        setFriendReceiver,
         setUser
     }
 
