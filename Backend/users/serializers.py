@@ -187,3 +187,9 @@ class ProfileImageSerializer(serializers.Serializer):
         
         user.save()
         return user
+    
+
+class BlockSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Block
+        fields = ['id', 'blocker', 'blocked', 'Block_user']

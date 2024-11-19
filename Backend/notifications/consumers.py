@@ -3,10 +3,11 @@ from .models import GameNotification, FriendshipNotification
 import json
 from django.db.models import Q
 from channels.db import database_sync_to_async
-from users.models import CustomUser, Friendship
+from users.models import CustomUser, Friendship, Block
 from tictactoe.models import OnlineGameModel
 from pingpong.models import GameOnline
 from .serializers import FriendshipNotificationSerializer, playerSerializers
+from users.serializers import BlockSerializer
 from pingpong.serializers import GameOnlineSerializer
 from tictactoe.serializers import OnlineGameModelSerializer
 from django.core.cache import cache
@@ -41,6 +42,8 @@ def create_game_db(sender, receiver, game):
 @database_sync_to_async
 def create_friend_db(sender, receiver_id):
     try:
+        if sender.username == receiver_id:
+            raise ValueError("A user cannot send a friend request to himself.")
         receiver = CustomUser.objects.get(username=receiver_id)
         existing_friendship = Friendship.objects.filter(
             (Q(from_user=sender, to_user=receiver) | Q(from_user=receiver, to_user=sender)) &
@@ -54,7 +57,8 @@ def create_friend_db(sender, receiver_id):
             sender=sender, receiver=receiver, friendship=friendship
         )
         return obj, receiver.id
-    except Exception:
+    except Exception as e:
+        print(f"error : {str(e)}")
         return None
 
 
@@ -62,21 +66,59 @@ def create_friend_db(sender, receiver_id):
 @database_sync_to_async
 def accept_friend_request(sender, receiver_id):
     try:
+        if sender.username == receiver_id:
+            raise ValueError("A user cannot send a friend accept to himself.")
         receiver = CustomUser.objects.get(username=receiver_id)
         friendship = Friendship.objects.get(from_user=receiver, to_user=sender)
         friendship.request = 'A'
         friendship.save()
-    except Exception:
+    except Exception as e:
+        print(f"error : {str(e)}")
         return None
 
 
 @database_sync_to_async
 def reject_friend_request(sender, receiver_id):
     try:
+        if sender.username == receiver_id:
+            raise ValueError("A user cannot send a friend reject to himself.")
         receiver = CustomUser.objects.get(username=receiver_id)
         friendship = Friendship.objects.get(from_user=receiver, to_user=sender)
         friendship.delete()
     except Exception:
+        print(f"error : {str(e)}")
+        return None
+
+
+
+@database_sync_to_async
+def block_request(sender, receiver_id):
+    try:
+        if sender.username == receiver_id:
+            raise ValueError("A user cannot block himself.")
+        receiver = CustomUser.objects.get(username=receiver_id)
+        existing_block = Block.objects.filter(
+            blocker=sender, blocked=receiver
+        ).first()
+        if existing_block:
+            return existing_block, receiver.id
+        block = Block.objects.create(blocker=sender, blocked=receiver, Block_user='F')
+        return block, receiver.id
+    except Exception as e:
+        print(f"error : {str(e)}")
+        return None
+
+
+@database_sync_to_async
+def unblock_request(sender, receiver_id):
+    try:
+        if sender.username == receiver_id:
+            raise ValueError("A user cannot unblock himself.")
+        receiver = CustomUser.objects.get(username=receiver_id)
+        block = Block.objects.get(blocker=sender, blocked=receiver)
+        block.delete()
+    except Exception as e:
+        print(f"error : {str(e)}")
         return None
 
 
@@ -96,7 +138,8 @@ def create_game_object(sender, receiver_name, game, invite_id):
         if invite_id:
             GameNotification.objects.filter(id=invite_id).delete()
         return game_obj
-    except Exception:
+    except Exception as e:
+        print(f"error : {str(e)}")
         return None
 
 
@@ -170,7 +213,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         data = json.loads(text_data)
-        # print(data)
         types = data['type']
         if types == 'game_request':
             await self.handle_game_request(data)
@@ -180,6 +222,10 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             await self.handle_friend_accept(data)
         elif types == 'friend_reject':
             await self.handle_friend_reject(data)
+        elif types == 'block_request':
+            await self.handle_block_request(data)
+        elif types == 'unblock_request':
+            await self.handle_unblock_request(data)
         elif types == 'accept_game':
             await self.handle_accept_game(data)
         elif types == 'reject_game':
@@ -211,6 +257,12 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps(event))
 
     async def friend_reject(self, event):
+        await self.send(text_data=json.dumps(event))
+    
+    async def block_req(self, event):
+        await self.send(text_data=json.dumps(event))
+
+    async def unblock_req(self, event):
         await self.send(text_data=json.dumps(event))
 
     async def online_state(self, event):
@@ -353,12 +405,45 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             print(str(e))
 
     async def handle_friend_accept(self, data):
-        receiver_id = data.get('receiver')
-        await accept_friend_request(self.user, receiver_id)
+        try:
+            receiver_id = data.get('receiver')
+            await accept_friend_request(self.user, receiver_id)
+        except Exception as e:
+            print(f"error:  {str(e)}")
 
     async def handle_friend_reject(self, data):
-        receiver_id = data.get('receiver')
-        await reject_friend_request(self.user, receiver_id)
+        try:
+            receiver_id = data.get('receiver')
+            await reject_friend_request(self.user, receiver_id)
+        except Exception as e:
+            print(f"error:  {str(e)}")
+
+    async def handle_block_request(self, data):
+        try:
+            receiver = data.get('receiver')
+            obj, receiver_id = await block_request(self.user, receiver)
+            if obj:
+                await self.channel_layer.group_send(
+                    f'notification_{self.user.id}', {
+                        'type': 'block.req',
+                        'block_id': BlockSerializer(obj).data
+                    }
+                )
+        except Exception as e:
+            print(f"error:  {str(e)}")
+
+    async def handle_unblock_request(self, data):
+        try:
+            receiver_id = data.get('receiver')
+            await unblock_request(self.user, receiver_id)
+            await self.channel_layer.group_send(
+                f'notification_{self.user.id}', {
+                    'type': 'unblock.req',
+                    'message': "unblocked" 
+                }
+            )
+        except Exception as e:
+            print(f"error:  {str(e)}")
 
     async def handle_accept_game(self, data):
         game_type = data['game']

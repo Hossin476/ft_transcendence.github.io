@@ -497,7 +497,8 @@ class Setup2FAView(APIView):
     def post(self, request):
         user = request.user
         otp_code = request.data.get('code')
-
+        
+        print(otp_code)
         # ??? Questionable
         if not user.key:
             return Response({
@@ -526,7 +527,10 @@ class Setup2FAView(APIView):
             user.two_factor_enabled = False
             user.key = None
             user.save()
-            return Response(status = status.HTTP_200_OK)
+            return Response({
+                'message': '2FA disabled successfully',
+                'two_factor_enabled': user.two_factor_enabled
+            },status = status.HTTP_200_OK)
         return Response({
             'error': 'Invalid verification code'
         }, status = status.HTTP_400_BAD_REQUEST)
@@ -535,8 +539,8 @@ class Setup2FAView(APIView):
 class Check2FAView(APIView):
     permission_classes = [AllowAny]
 
-    def post(self, request):
-        user = CustomUser.objects.get(username = request.data.get('username'))
+    def get(self, request):
+        user = request.user
 
         return Response({
             'two_factor_enabled': user.two_factor_enabled,
@@ -594,13 +598,9 @@ class ProfileMediaUploadView(APIView):
 				}, status=status.HTTP_400_BAD_REQUEST)
 			user.save()
 
-			image_url = user.profile_image.url if mediaType == 'profile' else user.cover_image.url
-			absolute_image_url = request.build_absolute_uri(image_url)
-			if absolute_image_url.startswith('http://'):
-				absolute_image_url = absolute_image_url.replace('http://', 'https://', 1)
 
 			return Response({
-			    'imageUrl': image_url
+			    'imageUrl': user.profile_image.url if mediaType == 'profile' else user.cover_image.url
 			}, status=status.HTTP_200_OK)
 
 		except Exception as e:

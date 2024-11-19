@@ -12,6 +12,7 @@ import AuthCode from "react-auth-code-input";
 import { PiWarningCircleBold } from "react-icons/pi";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../context/AuthContext";
 
 function Tittle() {
   const { t } = useTranslation();
@@ -43,6 +44,7 @@ function Header({ activeTab, setActiveTab }) {
 }
 
 function InputQrCode({ result, setResult, IsNotCorrect, setNotCorrect }) {
+
   const handleOnChange = (res) => {
     setResult(res);
     setNotCorrect(false);
@@ -53,6 +55,7 @@ function InputQrCode({ result, setResult, IsNotCorrect, setNotCorrect }) {
       containerClassName="input-holder"
       inputClassName={IsNotCorrect ? "input-error" : "input"}
       allowedCharacters="numeric"
+      onKeyDown={handleKeyDown}
       onChange={handleOnChange}
     />
   );
@@ -82,31 +85,43 @@ function TwofaSetD({ SetEnable, IsEnable, setAnimation }) {
   const [result, setResult] = useState();
   const [IsNotCorrect, setNotCorrect] = useState(false);
   const { t } = useTranslation();
+  const { tokens } = useAuth();
 
-  const tokens = JSON.parse(localStorage.getItem("tokens"))
+  const Disable_2fa = async () => {
+    try {
+      const response = await fetch(`/api/users/setup-2fa/`, {
+        method: "DELETE",
+        headers: {
+          Authorization: "JWT " + tokens.access,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          code: result,
+        }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        SetEnable(false);
+      } else {
+        console.log("error");
+        setNotCorrect(true);
+      }
+    }
+    catch (error) {
+      console.log(error);
+      setNotCorrect(true);
+    } 
+  }
 
-  const handleClick = async() => {
-    try{
-		const response = await fetch(`/api/auth/verify-2fa`,{
-			method : "POST",
-			headers:{
-				"Authorization": "JWT " + tokens.access,
-				'Content-Type':'application/json',
-			},
-			body: JSON.stringify({code: result, username: tokens.username})
-		})
-		if(response.ok)
-			SetEnable(false)
-		else{
-			res = await response.json()
-			console.log(res.error)
-			setNotCorrect(true)
-		}
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      Disable_2fa();
     }
-    catch (error){
-      console.log(error)
-      setNotCorrect(true)
-    }
+  };
+
+  function handleClick() {
+    Disable_2fa();
   }
 
   useEffect(() => {
@@ -130,12 +145,11 @@ function TwofaSetD({ SetEnable, IsEnable, setAnimation }) {
           setResult={setResult}
           IsNotCorrect={IsNotCorrect}
           setNotCorrect={setNotCorrect}
+          onKeyDown={handleKeyDown}
         />
         <div className="warning-text">
           <PiWarningCircleBold color="#E33838" size={"2vw"} />
-          <p>
-            {t("logout_message")}
-          </p>
+          <p>{t("logout_message")}</p>
         </div>
       </div>
       <Button_section Name={t("Disable")} handleClick={handleClick} />
@@ -154,11 +168,47 @@ function TwofaSetE({ SetEnable, IsEnable, setAnimation }) {
   const [result, setResult] = useState();
   const [IsNotCorrect, setNotCorrect] = useState(false);
   const { t } = useTranslation();
+  const { tokens } = useAuth();
 
-  function handleClick(){ 
-    if (result == "000000") {
-      SetEnable(true);
-    } else setNotCorrect(true);
+
+  const Setup_2fa = async () => {
+    try {
+      const response = await fetch(`/api/users/setup-2fa/`, {
+        method: "POST",
+        headers: {
+          Authorization: "JWT " + tokens.access,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          code: result,
+        }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        SetEnable(data.two_factor_enabled);
+      } else {
+        console.log("error");
+        SetEnable(false);
+        setNotCorrect(true);
+      }
+    }
+    catch (error) {
+      console.log(error);
+      SetEnable(false);
+      setNotCorrect(true);
+    }
+  }
+
+  const handleKeyDown = (e) => {
+    console.log("fafsf", e.key);
+    if (e.key === "Enter") {
+      Setup_2fa();
+    }
+  };
+
+  function handleClick() {
+    Setup_2fa();
   }
 
   useEffect(() => {
@@ -178,17 +228,16 @@ function TwofaSetE({ SetEnable, IsEnable, setAnimation }) {
           <Mid_Nav_enable />
         </div>
         <div className="input-section">
-          <InputQrCode 
+          <InputQrCode
             result={result}
             setResult={setResult}
             IsNotCorrect={IsNotCorrect}
             setNotCorrect={setNotCorrect}
+            onKeyDown={handleKeyDown}
           />
           <div className="warning-text">
-            <PiWarningCircleBold color="#E33838" size={"2vw"}/>
-            <p>
-              {t("logout_message")}
-            </p>
+            <PiWarningCircleBold color="#E33838" size={"2vw"} />
+            <p>{t("logout_message")}</p>
           </div>
         </div>
         <Button_section Name={t("Enable")} handleClick={handleClick} />
@@ -199,8 +248,35 @@ function TwofaSetE({ SetEnable, IsEnable, setAnimation }) {
 }
 
 function Two2fa() {
+  const { tokens } = useAuth();
   const [IsEnable, SetEnable] = useState(false);
   const [Isanimation, setAnimation] = useState(false);
+
+  const get_2fa = async () => {
+    try {
+      const response = await fetch(`/api/users/check-2fa/`, {
+        method: "GET",
+        headers: {
+          Authorization: "JWT " + tokens.access,
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        SetEnable(data.two_factor_enabled);
+      } else {
+        console.log("error");
+        SetEnable(false);
+      }
+    }
+    catch (error) {
+      console.log(error);
+      SetEnable(false);
+    }
+  };
+
+  useEffect(() => {
+    get_2fa();
+  }, []);
 
   return (
     <>

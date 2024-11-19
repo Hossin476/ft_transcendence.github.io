@@ -13,10 +13,9 @@ export const AuthProvider = ({ children }) => {
     const [tokens, setTokens] = useState(fillToken);
     const [user, setUser] = useState(tokens ? jwtDecode(tokens.access) : null)
     const [socket, setSocket] = useState(null);
-    const [username, setUserName] = useState(null);
+    const [username, setUserName] = useState(fillToken?.username);
     const [chatsocket, setChatSocket] = useState(null);
     const [socketMessage, setSocketMessage] = useState(null);
-    const [friendReceiver, setFriendReceiver] = useState(null);
 
     const login = async (data) => {
         localStorage.setItem('tokens', JSON.stringify(data.tokens))
@@ -101,8 +100,6 @@ export const AuthProvider = ({ children }) => {
         socketMessage: socketMessage,
         createSocket,
         chatsocket: chatsocket,
-        friendReceiver,
-        setFriendReceiver,
         setUser
     }
 

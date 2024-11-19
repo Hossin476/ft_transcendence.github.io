@@ -49,7 +49,7 @@ def get_all_tournaments(request):
     try:
         user = request.user
         player = CustomUser.objects.get(id=user.id)
-        tournaments = player.tournament_set.all()
+        tournaments = player.tournament_set.filter(is_end=True)
         serialized_tournaments = TournamentSerializer(tournaments, many=True)
         return Response(serialized_tournaments.data)
     except Exception:

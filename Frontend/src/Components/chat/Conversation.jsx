@@ -96,7 +96,7 @@ const Conversation = () => {
 
   return useMemo(()=> {
     return (
-      <div  className="flex-1 overflow-y-scroll flex flex-col space-y-4 px-4  text-gray-600">
+      <div  className="flex-1 overflow-y-scroll flex flex-col space-y-4 px-4 bg-gray-300 ">
         {messages && messages.map((conv, index) => (
             <div key={`${index}`} className="w-full   flex flex-col mt-4">
               <div className={`w-fit rounded-xl  ${conv.sendId === user.user_id ? 'self-end bg-linkColor  border-forthColor' : 'self-start bg-gray-400  border-linkColor'} max-w-[50%]  border-[2px]  relative`}>
@@ -106,7 +106,7 @@ const Conversation = () => {
                         {conv.content}
                       </p>
                 </div>
-                <p style={{fontSize: '10px'}} className={`absolute right-2  opacity-60`}>{getFormatedDate(conv.created_at)}</p>
+                <p style={{fontSize: '10px'}} className={`absolute right-2  text-black opacity-60`}>{getFormatedDate(conv.created_at)}</p>
               </div>
             </div>
         ))}

@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from django.db.models import Q
 from notifications.models import FriendshipNotification, GameNotification
 from .serializers import FriendshipNotificationSerializer, GameNotificationSerializer, playerSerializers, TourInvitesSerializers, FriendshipSerializer
-from users.models import CustomUser, Friendship
+from users.models import CustomUser, Friendship,Block
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from itertools import chain
@@ -15,6 +15,7 @@ from tictactoe.models import OnlineGameModel
 from rest_framework import status
 
 # Create your views here.
+
 
 class NotificationView(APIView):
     def get(self, request):
@@ -149,12 +150,15 @@ def get_Leaderboard(request):
 
 @api_view(['GET'])
 def matchesNotFinishPingPong(request):
-    matchs = GameOnline.objects.filter(Q(player1=request.user) | Q(player2=request.user),is_start=True, is_game_end=False)
-    returnData = {"isMatch": False}
-    if len(matchs) != 0:
-        returnData['isMatch'] = True
-        returnData['id'] = matchs[0].id
-    return Response(returnData)
+    try:
+        matchs = GameOnline.objects.filter(Q(player1=request.user) | Q(player2=request.user),is_start=True, is_game_end=False)
+        returnData = {"isMatch": False}
+        if len(matchs) != 0:
+            returnData['isMatch'] = True
+            returnData['id'] = matchs[0].id
+        return Response(returnData)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 def matchesNotFinishTictactoe(request):
@@ -166,4 +170,40 @@ def matchesNotFinishTictactoe(request):
             returnData['id'] = matchs[0].id
         return Response(returnData)
     except Exception as e:
-        print(f"error {str(e)}")
+        return JsonResponse({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def get_full_friendships(request):
+    friend_type = request.GET.get('type', None)
+    if friend_type is None:
+        return JsonResponse({'error': 'Missing type parameter'}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        user = request.user
+        if friend_type == 'requests':
+            requests = Friendship.objects.filter(Q(to_user=user) & Q(request='P'))
+            requests_data = [
+                {
+                    'type': 'requests',
+                    'from_user': req.from_user.username,
+                    'rank': req.from_user.rank,
+                    'profile_image': str(req.from_user.profile_image.url) if req.from_user.profile_image else None,
+                }
+                for req in requests]
+            return JsonResponse(requests_data, safe=False, status=status.HTTP_200_OK)
+        elif friend_type == 'blocked':
+            blocked_users = Block.objects.filter(blocker=user)
+            blocked_data = [
+                {
+                    'type': 'blocked',
+                    'blocked_user': blk.blocked.username,
+                    'rank': blk.blocked.rank,
+                    'profile_image': str(blk.blocked.profile_image.url) if blk.blocked.profile_image else None,
+                }
+                for blk in blocked_users]
+            return JsonResponse(blocked_data, safe=False, status=status.HTTP_200_OK)
+        else:
+            return JsonResponse({'error': 'Invalid type parameter'}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        print(f"error: {str(e)}")
+        return JsonResponse({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

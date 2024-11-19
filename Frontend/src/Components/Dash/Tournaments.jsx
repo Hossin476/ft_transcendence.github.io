@@ -37,7 +37,7 @@ export default function Tournaments() {
         <h1 className="h-[2rem] block text-center mt-4 font-bold">{t('MATCH HISTORY')}</h1>
         <div className="h-[calc(97%-2rem)] w-full  overflow-scroll">
             {
-                tournaments && tournaments.map(item=>< TourHistory tour={item}/>)
+                tournaments && tournaments.map((item)=>< TourHistory key={item.id} tour={item}/>)
             }
         </div>
     </div>
