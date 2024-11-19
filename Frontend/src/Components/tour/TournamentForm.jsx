@@ -62,7 +62,7 @@ export default function TournamentForm() {
         <div className="flex h-[30%]  my-1 justify-between">
            <div className=" flex  mx-4 gap-1 relative flex-col w-1/2">
               <label>{t("player")}1</label>
-              <input onChange={handleInpute} className={`border  ${errors.player1 ? 'border-red-500' :'border-forthColor'}  rounded p-1 outline-none`} name="player1" value={ form.player1} type="text" />
+              <input onChange={handleInpute} className={`border  ${errors.player1 ? 'border-red-500' :'border-forthColor'} bg-gray-900 text-white  rounded p-1 outline-none`} name="player1" value={ form.player1} type="text" />
               {
                   errors.player1 ==='error' ? <span className="bottom-0 text-red-500 text-xs">{t("max 10 chars")}</span>
                   : errors.player1 === "duplicate" ? <span className="bottom-0 text-red-500 text-xs">{t("this name is already taken")}</span>
@@ -71,7 +71,7 @@ export default function TournamentForm() {
            </div>
            <div className="flex  mx-4 gap-1 flex-col relative w-1/2">
               <label>{t("player")}2</label>
-              <input onChange={handleInpute} className={`border  ${errors.player2 ? 'border-red-500' :'border-forthColor'}  rounded p-1 outline-none`} name="player2" value={form.player2} type="text" />
+              <input onChange={handleInpute} className={`border  ${errors.player2 ? 'border-red-500' :'border-forthColor'} bg-gray-900 text-white  rounded p-1 outline-none`} name="player2" value={form.player2} type="text" />
               {
                   errors.player2 ==='error' ? <span className="bottom-0 text-red-500 text-xs">{t("max 10 chars")}</span>
                   : errors.player2 === "duplicate" ? <span className="bottom-0 text-red-500 text-xs">{t("this name is already taken")}</span>
@@ -82,7 +82,7 @@ export default function TournamentForm() {
         <div className="flex h-[30%] my-2 justify-between">
            <div className="flex  mx-4 gap-1 relative flex-col w-1/2">
               <label>{t("player")}3</label>
-              <input onChange={handleInpute} className={`border  ${errors.player3  ? 'border-red-500' :'border-forthColor'}  rounded p-1 outline-none`} name="player3" value={form.player3} type="text" />
+              <input onChange={handleInpute} className={`border  ${errors.player3  ? 'border-red-500' :'border-forthColor'} bg-gray-900 text-white  rounded p-1 outline-none`} name="player3" value={form.player3} type="text" />
               {
                   errors.player3 ==='error' ? <span className="bottom-0 text-red-500 text-xs">{t("max 10 chars")}</span>
                   : errors.player3 === "duplicate" ? <span className="bottom-0 text-red-500 text-xs">{t("this name is already taken")}</span>
@@ -91,7 +91,7 @@ export default function TournamentForm() {
            </div>
            <div className="flex  mx-4 gap-1 relative flex-col w-1/2">
               <label>{t("player")}4</label>
-              <input onChange={handleInpute} className={`border  ${errors.player4 ? 'border-red-500' :'border-forthColor'}  rounded p-1 outline-none`} name="player4" value={form.player4} type="text" />
+              <input onChange={handleInpute} className={`border  ${errors.player4 ? 'border-red-500' :'border-forthColor'} bg-gray-900 text-white  rounded p-1 outline-none`} name="player4" value={form.player4} type="text" />
               {
                   errors.player4 ==='error' ? <span className="bottom-0 text-red-500 text-xs">{t("max 10 chars")}</span>
                   : errors.player4 === "duplicate" ? <span className="bottom-0 text-red-500 text-xs">{t("this name is already taken")}</span>

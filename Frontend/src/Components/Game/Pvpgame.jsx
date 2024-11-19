@@ -222,6 +222,7 @@ function LocalPvp({ player, setPlayers }) {
   const [edit, setEdit] = useState(true);
   const [name, setName] = useState("");
   const [error, setEror] = useState(false);
+  const {user} = useAuth()
   let regex = new RegExp("^[a-z][a-zA-Z0-9]*$");
   const { t } = useTranslation();
 
@@ -242,9 +243,10 @@ function LocalPvp({ player, setPlayers }) {
       console.log("DATA RAH DKHLAT");
     }
   };
+  console.log("well wtf is this peace of shit:",player)
   return (
     <div className="player-card  h-[90%] xsm:w-[50%]">
-      <img src={mypic} alt="Avatar" className="avatar-ping" />
+      <img src={user.profile_image} alt="Avatar" className="avatar-ping" />
       <div className="player-info items-center flex flex-col">
         {edit ? (
           <input

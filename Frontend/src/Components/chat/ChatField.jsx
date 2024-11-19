@@ -12,7 +12,7 @@ export default function ChatField(){
     const {user} = useAuth()
     console.log("wtf: is this",currantUser ? 'flex' : 'hidden')
     return(
-        <div className={`xsm:flex bg-red-500 h-[90%] sm:flex md:flex   flex-1  flex-col  bg-gray-300  sm:px-4 xl:px-8 rounded-3xl`}>
+        <div className={`xsm:flex  h-[90%] sm:flex md:flex   flex-1  flex-col  bg-gray-300  sm:px-4 xl:px-8 rounded-3xl`}>
             <FriendHeader  />
             <Conversation />
             {blocker 
