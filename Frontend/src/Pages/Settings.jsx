@@ -55,7 +55,7 @@ function InputQrCode({ result, setResult, IsNotCorrect, setNotCorrect }) {
       containerClassName="input-holder"
       inputClassName={IsNotCorrect ? "input-error" : "input"}
       allowedCharacters="numeric"
-      onKeyDown={handleKeyDown}
+      // onKeyDown={handleKeyDown}
       onChange={handleOnChange}
     />
   );
