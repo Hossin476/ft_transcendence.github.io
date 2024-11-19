@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
     const [tokens, setTokens] = useState(fillToken);
     const [user, setUser] = useState(tokens ? jwtDecode(tokens.access) : null)
     const [socket, setSocket] = useState(null);
-    const [username, setUserName] = useState(null);
+    const [username, setUserName] = useState(fillToken?.username);
     const [chatsocket, setChatSocket] = useState(null);
     const [socketMessage, setSocketMessage] = useState(null);
 
@@ -89,11 +89,6 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
-    useEffect(() => {
-        if (tokens)
-            global_socket();
-    }, [tokens]);
-
     let value = {
         login,
         logout,
@@ -105,6 +100,8 @@ export const AuthProvider = ({ children }) => {
         socketMessage: socketMessage,
         createSocket,
         chatsocket: chatsocket,
+        friendReceiver,
+        setFriendReceiver,
         setUser
     }
 
