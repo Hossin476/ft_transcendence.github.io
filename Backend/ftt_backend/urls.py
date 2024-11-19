@@ -29,6 +29,7 @@ urlpatterns = [
         path('tournament/',include('tournament.urls')),
         path('chat/', include('chat.urls')),
         path('users/', include('users.urls')),
+        path('profile/', include('users.urls'))
     ])),
 ]
 
