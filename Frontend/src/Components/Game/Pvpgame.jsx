@@ -99,12 +99,13 @@ function Wait_card() {
 }
 
 function Vsplayer_card({ player }) {
+  console.log("this is me the player", player)
   return (
     <div className="player-card h-[90%] xsm:w-[50%] lg:w-[25%]">
-      <img src={vs_avatar} alt="Avatar" className="avatar-ping" />
+      <img src={player.profile_image} alt="Avatar" className="avatar-ping" />
       <div className="player-info">
         <h2>{player.username}</h2>
-        <p>{player.rank}</p>
+        <p>level {player.rank}</p>
       </div>
     </div>
   );
@@ -271,7 +272,7 @@ function LocalPvp({ player, setPlayers }) {
 function OnlinePvp({isstarted,counter,isstart,pvpUser}) {
 
   const {user,username} = useAuth();
-  console.log("USER:", user)
+  console.log("USER:", pvpUser)
   console.log("user playerName(photo):", user.profile_image)
   return (
     <>
