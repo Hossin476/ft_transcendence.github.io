@@ -28,11 +28,11 @@ export default function Manage() {
             console.error('Fetch failed: ', error);
             setFriends([]);
         }
-    }, [selected, tokens.access]);
+    }, [selected, tokens.access, setFriends]);
 
     useEffect(() => {
         fetchData();
-    }, [fetchData, socketMessage]);
+    }, [fetchData]);
 
     const handleSelection = (type) => {
         if (type !== selected)
@@ -49,9 +49,9 @@ export default function Manage() {
                 {
                     friends.map((item, index) => {
                         if (item.type === 'blocked')
-                            return <Blocked key={item.blocked_user || index} friends={item} />
+                            return <Blocked key={item.blocked_user || index} friends={item} setFriends={setFriends} />
                         else if (item.type === 'requests')
-                            return <Request key={item.from_user || index} friends={item} />
+                            return <Request key={item.from_user || index} friends={item} setFriends={setFriends} />
                         return null;
                     })
                 }
