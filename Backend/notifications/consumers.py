@@ -420,14 +420,15 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     async def handle_block_request(self, data):
         try:
-            receiver_id = data.get('receiver')
-            obj, receiver = await block_request(self.user, receiver_id)
-            await self.channel_layer.group_send(
-                f'notification_{receiver}', {
-                    'type': 'block.req',
-                    'block_id': BlockSerializer(obj).data
-                }
-            )
+            receiver = data.get('receiver')
+            obj, receiver_id = await block_request(self.user, receiver)
+            if obj:
+                await self.channel_layer.group_send(
+                    f'notification_{self.user.id}', {
+                        'type': 'block.req',
+                        'block_id': BlockSerializer(obj).data
+                    }
+                )
         except Exception as e:
             print(f"error:  {str(e)}")
 
@@ -436,7 +437,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             receiver_id = data.get('receiver')
             await unblock_request(self.user, receiver_id)
             await self.channel_layer.group_send(
-                f'notification_{receiver_id}', {
+                f'notification_{self.user.id}', {
                     'type': 'unblock.req',
                     'message': "unblocked" 
                 }
