@@ -9,4 +9,5 @@ urlpatterns = [
     path('leaderboard/', views.get_Leaderboard),
     path('pingpong_unfinished_match/', views.matchesNotFinishPingPong),
     path('tictactoe_unfinished_match/', views.matchesNotFinishTictactoe),
+    path('friends/', views.get_full_friendships),
 ]
