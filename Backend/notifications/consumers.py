@@ -405,47 +405,45 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             print(str(e))
 
     async def handle_friend_accept(self, data):
-        receiver_id = data.get('receiver')
-        await accept_friend_request(self.user, receiver_id)
-        await self.channel_layer.group_send(
-            f'notification_{receiver_id}', {
-                'type': 'friend.accept',
-                'message' : "accepted" 
-            }
-        )
-
-    async def handle_friend_reject(self, data):
-        receiver_id = data.get('receiver')
-        await reject_friend_request(self.user, receiver_id)
-        await self.channel_layer.group_send(
-            f'notification_{receiver_id}', {
-                'type': 'friend.reject',
-                'message' : "rejected" 
-            }
-        )
-    
-    async def handle_block_request(self, data):
         try:
             receiver_id = data.get('receiver')
-            obj, receiver = await block_request(self.user, receiver_id)
-            await self.channel_layer.group_send(
-                f'notification_{receiver}', {
-                    'type': 'block.req',
-                    'block_id': BlockSerializer(obj).data
-                }
-            )
+            await accept_friend_request(self.user, receiver_id)
+        except Exception as e:
+            print(f"error:  {str(e)}")
+
+    async def handle_friend_reject(self, data):
+        try:
+            receiver_id = data.get('receiver')
+            await reject_friend_request(self.user, receiver_id)
+        except Exception as e:
+            print(f"error:  {str(e)}")
+
+    async def handle_block_request(self, data):
+        try:
+            receiver = data.get('receiver')
+            obj, receiver_id = await block_request(self.user, receiver)
+            if obj:
+                await self.channel_layer.group_send(
+                    f'notification_{self.user.id}', {
+                        'type': 'block.req',
+                        'block_id': BlockSerializer(obj).data
+                    }
+                )
         except Exception as e:
             print(f"error:  {str(e)}")
 
     async def handle_unblock_request(self, data):
-        receiver_id = data.get('receiver')
-        await unblock_request(self.user, receiver_id)
-        await self.channel_layer.group_send(
-            f'notification_{receiver_id}', {
-                'type': 'unblock.req',
-                'message': "unblocked" 
-            }
-        )
+        try:
+            receiver_id = data.get('receiver')
+            await unblock_request(self.user, receiver_id)
+            await self.channel_layer.group_send(
+                f'notification_{self.user.id}', {
+                    'type': 'unblock.req',
+                    'message': "unblocked" 
+                }
+            )
+        except Exception as e:
+            print(f"error:  {str(e)}")
 
     async def handle_accept_game(self, data):
         game_type = data['game']

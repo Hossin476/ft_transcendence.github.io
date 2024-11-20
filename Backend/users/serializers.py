@@ -165,6 +165,28 @@ class UserLogoutSerializer(serializers.Serializer):
             RefreshToken(self.token).blacklist()
         except TokenError:
             return self.fail('bad_token')
+
+class ProfileImageSerializer(serializers.Serializer):
+    image = serializers.ImageField()
+
+    def validate(self, data):
+        image_type = self.context.get('image_type')
+        if image_type not in ['profile', 'cover']:
+            raise serializers.ValidationError("Invalid image type")
+        return data
+
+    def create(self, validated_data):
+        request = self.context['request']
+        user = request.user
+        image = validated_data['image']
+        
+        if self.context['image_type'] == 'user':
+            user.profile_image = image
+        else:
+            user.cover_image = image
+        
+        user.save()
+        return user
     
 
 class BlockSerializer(serializers.ModelSerializer):

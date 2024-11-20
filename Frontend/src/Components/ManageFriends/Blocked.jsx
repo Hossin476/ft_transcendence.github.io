@@ -1,7 +1,7 @@
 import { CgUnblock } from "react-icons/cg";
 import { useAuth } from "../../context/AuthContext";
 
-export default function Blocked({ friends }) {
+export default function Blocked({ friends, setFriends }) {
     const { socket } = useAuth();
 
     function handle_unblock_request() {
@@ -10,7 +10,8 @@ export default function Blocked({ friends }) {
                 "type": "unblock_request",
                 "receiver": friends.blocked_user
             })
-            socket.send(message);
+            socket.send(message)
+            setFriends(prevFriends => prevFriends.filter(friend => friend.blocked_user !== friends.blocked_user));
         }
     }
 

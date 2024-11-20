@@ -3,7 +3,7 @@ import AnimationD from "../Components/Settings/AnimationD";
 import Mid_Nav_disable from "../Components/Settings/Disable2fa";
 import Mid_Nav_enable from "../Components/Settings/Enable2fa";
 import LanguageSwitcher from "../Components/Settings/LanguageSwitcher";
-
+import ProfileSettings from "../Components/Settings/ProfileSettings";
 import "../Components/Settings/Disable2fa.css";
 import "../Components/Settings/Enable2fa.css";
 import "../Components/Settings/Settings.css";
@@ -23,12 +23,22 @@ function Tittle() {
   );
 }
 
-function Header() {
+function Header({ activeTab, setActiveTab }) {
   const { t } = useTranslation();
   return (
     <div className="settings-header">
-      <button className="myprofile">{t("MY PROFILE")}</button>
-      <button className="settings">{t("SETTINGS")}</button>
+      <button 
+        className={`myprofile ${activeTab === 'profile' ? 'active' : ''}`}
+        onClick={() => setActiveTab('profile')}
+      >
+        {t("MY PROFILE")}
+      </button>
+      <button 
+        className={`settings ${activeTab === 'settings' ? 'active' : ''}`}
+        onClick={() => setActiveTab('settings')}
+      >
+        {t("SETTINGS")}
+      </button>
     </div>
   );
 }
@@ -270,12 +280,7 @@ function Two2fa() {
   }, []);
 
   return (
-    <div className="holder-container">
-      <div className="settings-tittle">
-        <Tittle />
-      </div>
-      <div className="settings-container">
-        <Header />
+    <>
         {Isanimation ? (
           <TwofaSetD
             SetEnable={SetEnable}
@@ -289,13 +294,28 @@ function Two2fa() {
             setAnimation={setAnimation}
           />
         )}
-      </div>
-    </div>
+    </>
   );
 }
 
 function Settings() {
-  return <Two2fa />;
+  const [activeTab, setActiveTab] = useState("profile");
+
+  return (
+    <div className="holder-container">
+      <div className="settings-tittle">
+        <Tittle />
+      </div>
+      <div className="settings-container">
+        <Header activeTab={activeTab} setActiveTab={setActiveTab} />
+        {activeTab === 'settings' ? (
+          <Two2fa />
+        ) : (
+          <ProfileSettings />
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default Settings;

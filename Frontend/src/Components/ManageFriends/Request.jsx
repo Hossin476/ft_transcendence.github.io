@@ -2,7 +2,7 @@ import { FaCheck } from "react-icons/fa";
 import { GiCancel } from "react-icons/gi";
 import { useAuth } from "../../context/AuthContext";
 
-export default function Request({ friends }) {
+export default function Request({ friends, setFriends }) {
     const { socket } = useAuth();
 
     function accept_friendship() {
@@ -10,8 +10,9 @@ export default function Request({ friends }) {
             const message = JSON.stringify({
                 "type": "friend_accept",
                 "receiver": friends.from_user
-            })
-            socket.send(message);
+            });
+            socket.send(message)
+            setFriends(prevFriends => prevFriends.filter(friend => friend.from_user !== friends.from_user));
         }
     }
 
@@ -20,8 +21,9 @@ export default function Request({ friends }) {
             const message = JSON.stringify({
                 "type": "friend_reject",
                 "receiver": friends.from_user
-            })
-            socket.send(message);
+            });
+            socket.send(message)
+            setFriends(prevFriends => prevFriends.filter(friend => friend.from_user !== friends.from_user));
         }
     }
 

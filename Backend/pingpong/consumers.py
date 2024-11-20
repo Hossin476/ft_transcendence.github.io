@@ -278,12 +278,14 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     async def game_update(self, event):
         room_obj = GameConsumer.game_room[self.game_group_id]
-        if self.user == room_obj.player1:
-            event[self.user.username] = room_obj.game.score2
-            event['other'] = room_obj.game.score1
-        else:
-            event[self.user.username] = room_obj.game.score1
-            event['other'] = room_obj.game.score2
+        # if self.user == room_obj.player1:
+        #     event[self.user.username] = room_obj.game.score2
+        #     event['other'] = room_obj.game.score1
+        # else:
+        #     event[self.user.username] = room_obj.game.score1
+        #     event['other'] = room_obj.game.score2
+        event["score1"] = room_obj.game.score1
+        event["score2"] = room_obj.game.score2
         await self.send(text_data=json.dumps(event))
 
     async def game_start(self, event):

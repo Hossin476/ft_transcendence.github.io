@@ -9,8 +9,6 @@ export default function Manage() {
     const [friends, setFriends] = useState([]);
     const BASE_URL = '/api/notification/friends';
 
-    console.log("the socket message is ", socketMessage)
-
     const fetchData = useCallback(async () => {
         try {
             const response = await fetch(`${BASE_URL}/?type=${selected}`, {
@@ -22,13 +20,12 @@ export default function Manage() {
             if (!response.ok)
                 throw new Error(`HTTP error! status: ${response.status}`);
             const data = await response.json();
-            console.log("the data is ", data)
             setFriends(data);
         } catch (error) {
             console.error('Fetch failed: ', error);
             setFriends([]);
         }
-    }, [selected, tokens.access]);
+    }, [selected, tokens.access, setFriends]);
 
     useEffect(() => {
         fetchData();
@@ -49,9 +46,9 @@ export default function Manage() {
                 {
                     friends.map((item, index) => {
                         if (item.type === 'blocked')
-                            return <Blocked key={item.blocked_user || index} friends={item} />
+                            return <Blocked key={item.blocked_user || index} friends={item} setFriends={setFriends} />
                         else if (item.type === 'requests')
-                            return <Request key={item.from_user || index} friends={item} />
+                            return <Request key={item.from_user || index} friends={item} setFriends={setFriends} />
                         return null;
                     })
                 }

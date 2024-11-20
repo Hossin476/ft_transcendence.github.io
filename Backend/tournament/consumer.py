@@ -226,6 +226,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 @database_sync_to_async
 def make_matches(tour_id, user, players):
     tournament = TournamentLocal.objects.get(id=tour_id)
+    if tournament.is_start:
+        return False
     tournament.is_start = True
     random.shuffle(players)
     j = 0
@@ -261,6 +263,8 @@ class Tournamentlocal(AsyncWebsocketConsumer):
         data = json.loads(text_data)
         if data['type'] == "start_tournament":
             tournament_model =  await make_matches(self.tour_id, self.user,data['players'])
+            if tournament_model:
+                return
             await self.channel_layer.group_send(self.room_name,
                             {
                                 'type':'start.tournament',
@@ -273,6 +277,7 @@ class Tournamentlocal(AsyncWebsocketConsumer):
     async def matches_watcher(self, tour_id, next_match, current_match):
         tournament = await database_sync_to_async(lambda : TournamentLocal.objects.prefetch_related('matches').get(id=tour_id))()
         matches = await database_sync_to_async(lambda :list(tournament.matches.select_related('creater_game').all().order_by('id')))()
+        await asyncio.sleep(3000)
         await self.channel_layer.group_send(f'notification_{self.user.id}',{
             'type': 'game.offline',
             'game_id': matches[current_match].id,
