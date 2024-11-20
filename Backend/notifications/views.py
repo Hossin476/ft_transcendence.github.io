@@ -207,3 +207,26 @@ def get_full_friendships(request):
     except Exception as e:
         print(f"error: {str(e)}")
         return JsonResponse({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def check_friendship(request, user_id):
+    print(request.user.id)
+    try:
+        user = request.user.id
+        friend = CustomUser.objects.get(id=user_id)
+        friendship = Friendship.objects.filter(
+            Q(from_user=user, to_user=friend) | Q(from_user=friend, to_user=user)).first()
+        if friendship:
+                return JsonResponse({
+                "friendship_exists": True,
+                "status": friendship.request,
+                "from_user": friendship.from_user.username,
+                "to_user": friendship.to_user.username,
+            }, status=status.HTTP_200_OK)
+        return JsonResponse({
+            "friendship_exists": False,
+        }, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

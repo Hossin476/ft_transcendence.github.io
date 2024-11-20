@@ -45,7 +45,7 @@ function InputQrCode({ result, setResult, IsNotCorrect, setNotCorrect }) {
       containerClassName="input-holder"
       inputClassName={IsNotCorrect ? "input-error" : "input"}
       allowedCharacters="numeric"
-      onKeyDown={handleKeyDown}
+      // onKeyDown={handleKeyDown}
       onChange={handleOnChange}
     />
   );
@@ -104,11 +104,11 @@ function TwofaSetD({ SetEnable, IsEnable, setAnimation }) {
     } 
   }
 
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      Disable_2fa();
-    }
-  };
+  // const handleKeyDown = (e) => {
+  //   if (e.key === "Enter") {
+  //     Disable_2fa();
+  //   }
+  // };
 
   function handleClick() {
     Disable_2fa();
@@ -135,7 +135,7 @@ function TwofaSetD({ SetEnable, IsEnable, setAnimation }) {
           setResult={setResult}
           IsNotCorrect={IsNotCorrect}
           setNotCorrect={setNotCorrect}
-          onKeyDown={handleKeyDown}
+          // onKeyDown={handleKeyDown}
         />
         <div className="warning-text">
           <PiWarningCircleBold color="#E33838" size={"2vw"} />
@@ -190,12 +190,12 @@ function TwofaSetE({ SetEnable, IsEnable, setAnimation }) {
     }
   }
 
-  const handleKeyDown = (e) => {
-    console.log("fafsf", e.key);
-    if (e.key === "Enter") {
-      Setup_2fa();
-    }
-  };
+  // const handleKeyDown = (e) => {
+  //   console.log("fafsf", e.key);
+  //   if (e.key === "Enter") {
+  //     Setup_2fa();
+  //   }
+  // };
 
   function handleClick() {
     Setup_2fa();
@@ -223,7 +223,7 @@ function TwofaSetE({ SetEnable, IsEnable, setAnimation }) {
             setResult={setResult}
             IsNotCorrect={IsNotCorrect}
             setNotCorrect={setNotCorrect}
-            onKeyDown={handleKeyDown}
+            // onKeyDown={handleKeyDown}
           />
           <div className="warning-text">
             <PiWarningCircleBold color="#E33838" size={"2vw"} />
@@ -253,6 +253,7 @@ function Two2fa() {
       if (response.ok) {
         const data = await response.json();
         SetEnable(data.two_factor_enabled);
+        setAnimation(data.two_factor_enabled);
       } else {
         console.log("error");
         SetEnable(false);
