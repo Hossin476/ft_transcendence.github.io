@@ -8,7 +8,7 @@ from users.models import CustomUser,Friendship
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id','username','is_online','profile_image']
+        fields = ['id','username','is_online','profile_image','cover_image','rank']
 
 
 class FriendShipSerializer(serializers.ModelSerializer):

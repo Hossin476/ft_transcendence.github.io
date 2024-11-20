@@ -9,10 +9,10 @@ const FriendHero = () => {
   const { currantUser } = useContext(ChatContext);
 
   let friend = {
-    profilePicture: "/public/user.jpeg",
-    coverPicture: "/public/bg.jpg",
+    profilePicture: currantUser.user.profile_image,
+    coverPicture: currantUser.user.cover_image,
     name: currantUser && currantUser.user.username,
-    id: "ID: X83L5LM" + (currantUser && currantUser.user.id),
+    id: "LEVEL : " + currantUser.user.rank,
     alt: "alt",
   };
 
@@ -31,7 +31,7 @@ const FriendHero = () => {
           className="absolute translate-y-14 w-28 h-28 rounded-full"
         />
       </div>
-      <div className="flex flex-col justify-center items-center bg-indigo-900 mt-20">
+      <div className="flex flex-col justify-center items-center  mt-20">
         <p className="text-xl text-white">{friend.name}</p>
         <p className="font-thin text-xs text-white opacity-70">{friend.id}</p>
       </div>

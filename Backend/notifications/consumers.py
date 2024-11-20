@@ -79,15 +79,11 @@ def accept_friend_request(sender, receiver_id):
 
 @database_sync_to_async
 def reject_friend_request(sender, receiver_id):
-    try:
-        if sender.username == receiver_id:
-            raise ValueError("A user cannot send a friend reject to himself.")
-        receiver = CustomUser.objects.get(username=receiver_id)
-        friendship = Friendship.objects.get(from_user=receiver, to_user=sender)
-        friendship.delete()
-    except Exception:
-        print(f"error : {str(e)}")
-        return None
+    if sender.username == receiver_id:
+        raise ValueError("A user cannot send a friend reject to himself.")
+    receiver = CustomUser.objects.get(username=receiver_id)
+    friendship = Friendship.objects.get(from_user=receiver, to_user=sender)
+    friendship.delete()
 
 
 
@@ -501,7 +497,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                     'type': "online.state",
                     'user': user_s,
                 }})
-        # print("data send to  font :",data_send)
         return data_send
 
 

@@ -30,7 +30,7 @@ export default function FriendChat({ contacts, handleOnClick, selected }) {
       >
         <div className="flex gap-4 items-center">
           <div className="w-16 h-16 rounded-full relative">
-            <img className="w-full rounded-full" src={img} alt="" />
+            <img className="w-full rounded-full" src={contacts.user.profile_image} alt="" />
             <span
               className={`w-4 h-4 right-0 bottom-0 rounded-full ${
                 contacts.user.is_online ? "bg-green-500" : "bg-red-500"
