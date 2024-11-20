@@ -145,7 +145,11 @@ def create_game_object(sender, receiver_name, game, invite_id):
 
 @database_sync_to_async
 def delete_game_request(invite_id):
-    GameNotification.objects.filter(id=invite_id).delete()
+    try:
+        GameNotification.objects.filter(id=invite_id).delete()
+    except Exception as e:
+        print(f"error : {str(e)}")
+        return None
 
 
 @database_sync_to_async
