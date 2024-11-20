@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 
 
 
-function UserInvite({user, tour_id, removeuser, key }) {
+function UserInvite({user, tour_id, setUsers }) {
     const { socket } = useAuth()
 
     function send_tour_invite() {
@@ -17,7 +17,7 @@ function UserInvite({user, tour_id, removeuser, key }) {
                 }
             })
             socket.send(message);
-            removeuser(key)
+            setUsers(prevUsers => prevUsers.filter(users => users.username !== user.username));
         }
     }
 
