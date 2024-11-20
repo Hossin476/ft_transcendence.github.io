@@ -117,12 +117,11 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 
     async def match_watcher(self, id, start, nbr_matches):
-        await asyncio.sleep(60)
+        await asyncio.sleep(120)
         print("the watcher is watching the games")
         tournament = await database_sync_to_async(
             lambda: Tournament.objects.prefetch_related('matches').get(id=id)
         )()
-        print("tournament", tournament)
         matches_state = start
         tour_knockouts = nbr_matches
         match_list = await database_sync_to_async(lambda: list(tournament.matches.select_related("player1", "player2", "winner").all()))()
@@ -164,11 +163,10 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         )()
         tour = await database_sync_to_async(lambda: TournamentSerializer(tournament).data)()
         if knockout > 0:
-            asyncio.create_task(self.countdown(
-                tour, nbr_matches, nbr_matches + knockout))
-            asyncio.create_task(self.match_watcher(
-                tour["id"], nbr_matches, nbr_matches + knockout))
+            asyncio.create_task(self.countdown(tour, nbr_matches, nbr_matches + knockout))
+            asyncio.create_task(self.match_watcher(tour["id"], nbr_matches, nbr_matches + knockout))
         else:
+            print("game is end ------------------------------------------------")
             tournament.is_end = True
             match_list = await database_sync_to_async(lambda: list(tournament.matches.select_related("player1", "player2", "winner").all()))()
             tournament.winner = match_list[-1].winner
@@ -179,22 +177,19 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         await asyncio.sleep(6)
         match_query = tournament["matches"]
         matches = list(match_query)
-        print(tournament)
         for i in range(int(start), int(nbr_matches)):
-            print("i : ", i)
             if matches[i]["is_game_end"] is True:
                 continue
             await self.channel_layer.group_send(f'notification_{matches[i]["player1"]["id"]}', {
                 'type': 'next.matchtour',
-                "message" : f"your next match in the tournament  {tournament["name"]} against {matches[i]["player2"]} will start in 2 minutes"
+                "message" : f"your next match in the tournament  {tournament["name"]} against {matches[i]["player2"]['username']} will start in 1 minutes"
             })
             await self.channel_layer.group_send(f'notification_{matches[i]["player2"]["id"]}', {
                 'type': 'next.matchtour',
-                "message" : f"your next match in the tournament  {tournament["name"]} against {matches[i]["player1"]} will start in 2 minutes"
+                "message" : f"your next match in the tournament  {tournament["name"]} against {matches[i]["player1"]['username']} will start in 1 minutes"
             })
-        await asyncio.sleep(120)
+        await asyncio.sleep(60)
         for i in range(int(start), int(nbr_matches)):
-            print("i : ", i)
             if matches[i]["is_game_end"] is True:
                 continue
             await self.channel_layer.group_send(f'notification_{matches[i]["player1"]["id"]}', {

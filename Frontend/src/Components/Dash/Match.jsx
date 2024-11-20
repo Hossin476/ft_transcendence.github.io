@@ -28,7 +28,7 @@ export default function Match({match}) {
     },[])
 
     return (
-        (bgColor || textColor) && <div style={{backgroundColor:bgColor}}  className={`flex  items-center justify-between xsm:p-1 xsm:m-2 sm:p-2  rounded-xl`}>
+        (match.player1 && match.player2) && <div style={{backgroundColor:bgColor}}  className={`flex  items-center justify-between xsm:p-1 xsm:m-2 sm:p-2  rounded-xl`}>
             <hr  className=" xsm:h-[3rem] sm:h-[4rem] lg:ml-2 w-1 bg-gray-200 rounded-full border-none"/>
             <div className="xsm:text-xs lg:text-lg flex flex-col items-center justify-center">
                 <div className="xsm:h-8 xsm:w-8 sm:h-16 sm:w-16  overflow-hidden  rounded-full">
