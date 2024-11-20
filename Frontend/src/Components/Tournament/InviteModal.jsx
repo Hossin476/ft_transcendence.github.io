@@ -27,7 +27,7 @@ function InviteModal({ setInvite, tour_id }) {
             console.error('Fetch failed: ', error);
             setUsers([])
         }
-    }, [tokens.access, tour_id]);
+    }, [tokens.access, tour_id, setUsers]);
 
     useEffect(() => {
         fetchData();
