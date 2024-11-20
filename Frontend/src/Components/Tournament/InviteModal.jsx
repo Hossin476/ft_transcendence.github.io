@@ -25,18 +25,14 @@ function InviteModal({ setInvite, tour_id }) {
             setUsers(data)
         } catch (error) {
             console.error('Fetch failed: ', error);
+            setUsers([])
         }
     }, [tokens.access, tour_id]);
 
     useEffect(() => {
         fetchData();
     }, [fetchData])
-    const afterinvite = (key) => {
-        setUsers((current) => {
-            current.splice(key, 1)
-            return [...current]
-        })
-    }
+
     return (
         <div className='w-[101%] h-[101%] backdrop-blur-md absolute top-1/2 left-1/2 transform -translate-y-1/2  -translate-x-1/2'>
             <div className={`w-[60%] inset-0 backdrop-blur-md h-[70%] min-h-[500px] absolute border-[3px] flex flex-col items-center z-10 gap-6 rounded-[20px] bg-gradient-to-r from-purple-400 via-pink-500 top-[50%] translate-y-[-50%] left-[50%] translate-x-[-50%] to-red-500 shadow-lg`}>
@@ -47,7 +43,7 @@ function InviteModal({ setInvite, tour_id }) {
                 <div className="w-[80%] p-4 space-y-4 overflow-y-auto h-[calc(100%-5rem)]">
                     {
                         users.map((user, index) => (
-                            <UserInvite user={user} key={index} tour_id={tour_id} removeuser={afterinvite} />
+                            <UserInvite user={user} key={user.username || index} tour_id={tour_id} setUsers={setUsers} />
                         ))
                     }
                 </div>

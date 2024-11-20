@@ -45,15 +45,18 @@ function Game(props)
         MyPaddleRef.current.position.x = paddle_one_position.x;
         OtherPaddleRef.current.position.x = paddle_two_position.x;
         if (location.state.isonline == true){
-          score1.current.innerText = '0' + hold[username];
-          score2.current.innerText = '0' + hold['other'];
+          score1.current.innerText = '0' + hold["score1"];
+          score2.current.innerText = '0' + hold["score2"];
         }else{
           score1.current.innerText = '0' + hold['score2'];
           score2.current.innerText = '0' + hold['score1'];
         }
         break;
       case 'game.winner':
-        props.handleWin(winner === username, true, location.state.gameid);
+        if(location.state.isonline == true)
+          props.handleWin(winner === username, true, location.state.gameid);
+        else
+          props.handleWin(true,true,location.state.gameid)
         break;
       case 'game.waiting':
         props.handleWaiting(() => iswaiting);

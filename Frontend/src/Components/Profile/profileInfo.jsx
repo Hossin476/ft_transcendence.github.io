@@ -5,39 +5,57 @@ import { IoPersonAdd } from "react-icons/io5";
 import { IoPersonRemove } from "react-icons/io5";
 import { CgUnblock } from "react-icons/cg";
 import { RiFileCopy2Line } from "react-icons/ri";
-import imgBanner from "/public/cover.jpg";
-import imgProfile from "/public/avatar/sbzizal.jpeg";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useEffect } from "react";
 
 function Profile_info({ userid }) {
   const [IsFriend, setIsFriend] = React.useState(false);
   const [IsBlocked, setIsBlocked] = React.useState(false);
-  const { user, socket } = useAuth();
+  const { user, socket, tokens } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  const userXp = userid?.xp%100
-  const xp = 100 - userXp
+  const userXp = userid?.xp % 100;
+  const xp = 100 - userXp;
 
   const handleChatRedirect = () => {
     navigate("/chat", {
       state: {
-        navigatedUser: userid?.username
-      }
-    })
-  }
+        navigatedUser: userid?.username,
+      },
+    });
+  };
 
   function request_friendship() {
     if (socket && socket.readyState === WebSocket.OPEN) {
       const message = JSON.stringify({
-        "type": "friend_request",
-        "receiver": userid?.username
-      })
+        type: "friend_request",
+        receiver: userid?.username,
+      });
       socket.send(message);
     }
   }
+
+  async function checkFriendStatus() {
+    const response = await fetch(`/api/notification/check_friendship/4/`, {
+      method: "GET",
+      headers: {
+        Authorization: "JWT " + tokens.access,
+      },
+    });
+  
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data);
+      setIsFriend(data.friendship_exists);
+    }
+  }
+
+  useEffect(() => {
+      checkFriendStatus();
+  }, []);
 
   return (
     <div className="bg-secondaryColor flex flex-col rounded-3xl md:h-96 xsm:h-96 gap-4 overflow-hidden">
@@ -46,7 +64,7 @@ function Profile_info({ userid }) {
         {/* Banner Image */}
         <div className="h-36">
           <img
-            src={imgBanner}
+            src={userid?.background_image}
             alt="Banner"
             className="w-full h-full object-cover"
           />
@@ -100,7 +118,7 @@ function Profile_info({ userid }) {
           <div className="relative">
             <div className="w-full h-2 bg-gray-100 rounded-full">
               <div
-                style={{width:userXp + '%'}}
+                style={{ width: userXp + "%" }}
                 className={` h-2 bg-forthColor rounded-full`}
               ></div>
             </div>
@@ -108,50 +126,53 @@ function Profile_info({ userid }) {
               {xp} XP {t("TO GO")}
             </span>
             <span className="absolute text-sm right-3 xsm:bottom-3 md:bottom-5 xsm:text-xs">
-              {t("LEVEL")} {userid?.rank+1}
+              {t("LEVEL")} {userid?.rank + 1}
             </span>
           </div>
         </div>
         {/* Add friend and Message buttons */}
-        {
-          user.user_id === userid?.id ? null :
-            <div className="flex flex-col gap-2">
-              <button
-                onClick={() => setIsFriend(!IsFriend)}
-                className={
-                  IsFriend
-                    ? "bg-red-500 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-red-400 transition-colors xsm:text-sm md:text-base w-36"
-                    : "bg-gray-800 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-gray-700 transition-colors xsm:text-sm md:text-base w-36"
-                }
-              >
-                {IsFriend ? <IoPersonRemove /> : <IoPersonAdd />}
-                <span className="text-[0.9em]">
-                  {IsFriend ? "Unfriend" : "Add friend"}
-                </span>
-              </button>
-              <button onClick={handleChatRedirect} className="bg-gray-800 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-gray-700 transition-colors xsm:text-sm md:text-base w-36">
-                <BsChatDotsFill />
-                <span className="text-[0.9em]">{t("Message")}</span>
-              </button>
-              <button
-                onClick={() => setIsBlocked(!IsBlocked)}
-                className={
-                  IsBlocked
-                    ? "bg-gray-800 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-gray-700 transition-colors xsm:text-sm md:text-base w-36"
-                    : "bg-red-500 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-red-400 transition-colors xsm:text-sm md:text-base w-36"
-                }
-              >
-                {IsBlocked ? (
-                  <CgUnblock className="h-5 w-5" />
-                ) : (
-                  <MdBlock className="h-5 w-5" />
-                )}
-                <span className="text-[0.9em]">
-                  {IsBlocked ? t("Unblock") : t("Block")}
-                </span>
-              </button>
-            </div>
-        }
+        {user.user_id === userid?.id ? null : (
+          <div className="flex flex-col gap-2">
+            <button
+              // onClick={request_friendship}
+              onClick={() => setIsFriend(!IsFriend)}
+              className={
+                IsFriend
+                  ? "bg-red-500 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-red-400 transition-colors xsm:text-sm md:text-base w-36"
+                  : "bg-gray-800 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-gray-700 transition-colors xsm:text-sm md:text-base w-36"
+              }
+            >
+              {IsFriend ? <IoPersonRemove /> : <IoPersonAdd />}
+              <span className="text-[0.9em]">
+                {IsFriend ? "Unfriend" : "Add friend"}
+              </span>
+            </button>
+            <button
+              onClick={handleChatRedirect}
+              className="bg-gray-800 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-gray-700 transition-colors xsm:text-sm md:text-base w-36"
+            >
+              <BsChatDotsFill />
+              <span className="text-[0.9em]">{t("Message")}</span>
+            </button>
+            <button
+              onClick={() => setIsBlocked(!IsBlocked)}
+              className={
+                IsBlocked
+                  ? "bg-gray-800 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-gray-700 transition-colors xsm:text-sm md:text-base w-36"
+                  : "bg-red-500 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-red-400 transition-colors xsm:text-sm md:text-base w-36"
+              }
+            >
+              {IsBlocked ? (
+                <CgUnblock className="h-5 w-5" />
+              ) : (
+                <MdBlock className="h-5 w-5" />
+              )}
+              <span className="text-[0.9em]">
+                {IsBlocked ? t("Unblock") : t("Block")}
+              </span>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

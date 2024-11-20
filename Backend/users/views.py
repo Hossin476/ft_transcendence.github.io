@@ -387,6 +387,38 @@ class SetNewPasswordView(GenericAPIView):
             'message': 'password reset successfully !'
         }, status=status.HTTP_200_OK)
 
+class ChangePasswordView(GenericAPIView):
+	permission_classes = [IsAuthenticated]
+
+	def post(self, request):
+		oldPassword = request.data.get('oldPassword')
+		newPassword = request.data.get('newPassword')
+		user = request.user
+
+		if not user.check_password(oldPassword):
+			return Response(
+				{'message': 'old password is incorrect'}
+				, status=status.HTTP_400_BAD_REQUEST
+			)
+
+		if len(newPassword) < 8:
+			return Response(
+				{'message': 'Password must be at least 8 characters long'},
+				status=status.HTTP_400_BAD_REQUEST
+			)
+
+		if oldPassword == newPassword:
+			return Response(
+				{'message': 'New password must be different from old password'},
+				status=status.HTTP_400_BAD_REQUEST
+			)
+		user.set_password(newPassword)
+		user.save()
+		return Response(
+			{'message': 'password reset successfully !'}
+			, status=status.HTTP_200_OK
+		)
+
 class UserLogoutView(GenericAPIView):
     serializer_class = UserLogoutSerializer
     permission_classes = [IsAuthenticated]
@@ -515,3 +547,63 @@ class Check2FAView(APIView):
             'key': user.key
         }, status=status.HTTP_200_OK)
 
+
+class ProfileMediaView(APIView):
+	permission_classes = [IsAuthenticated]
+
+	def get(self, request):
+		user = request.user
+		return Response({
+			'profileImage': user.profile_image.url,
+            'coverImage': user.cover_image.url
+		}, status=status.HTTP_200_OK)
+
+
+class ProfileMediaUploadView(APIView):
+	permission_classes = [IsAuthenticated]
+
+	def post(self, request, mediaType):
+		user = request.user
+		image = request.FILES.get('image')
+
+		if not image:
+			return Response({
+			'message': 'No image uploaded'
+		}, status=status.HTTP_400_BAD_REQUEST)
+
+		allowed_types = ['image/jpeg', 'image/png', 'image/jpg']
+		if image.content_type not in allowed_types:
+			return Response(
+				{'error': 'Invalid file type. Only JPEG and PNG are allowed.'},
+				status=status.HTTP_400_BAD_REQUEST
+			)
+
+		if image.size > 5 * 1024 * 1024:
+			return Response(
+				{'error': 'File size too large. Maximum size is 5MB.'},
+				status=status.HTTP_400_BAD_REQUEST
+			)
+		try:
+			if mediaType == 'profile':
+				if user.profile_image and not user.profile_image.name.startswith('defaults/'):
+					user.profile_image.delete()
+				user.profile_image = image
+			elif mediaType == 'cover':
+				if user.cover_image and not user.cover_image.name.startswith('defaults/'):
+					user.cover_image.delete()
+				user.cover_image = image
+			else:
+				return Response({
+					'message': 'Invalid media type'
+				}, status=status.HTTP_400_BAD_REQUEST)
+			user.save()
+
+
+			return Response({
+			    'imageUrl': user.profile_image.url if mediaType == 'profile' else user.cover_image.url
+			}, status=status.HTTP_200_OK)
+
+		except Exception as e:
+			return Response({
+				'message': str(e)
+			}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

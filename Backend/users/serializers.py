@@ -102,10 +102,7 @@ class PasswordResetSerializer(serializers.Serializer):
             uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
             token = PasswordResetTokenGenerator().make_token(user)
             request = self.context.get('request')
-            if settings.DEBUG:
-                site_domain = 'localhost'
-            else:
-                site_domain = get_current_site(request).domain
+            site_domain = get_current_site(request).domain
             rltv_link = reverse('password-reset-confirm', kwargs={'uidb64': uidb64, 'token': token})
             absl_link = f"https://{site_domain}{rltv_link.replace('api/users/', '')}"
             email_body = f"Hi {user.username}, use the link bellow to reset your password \n {absl_link}"
@@ -165,6 +162,28 @@ class UserLogoutSerializer(serializers.Serializer):
             RefreshToken(self.token).blacklist()
         except TokenError:
             return self.fail('bad_token')
+
+class ProfileImageSerializer(serializers.Serializer):
+    image = serializers.ImageField()
+
+    def validate(self, data):
+        image_type = self.context.get('image_type')
+        if image_type not in ['profile', 'cover']:
+            raise serializers.ValidationError("Invalid image type")
+        return data
+
+    def create(self, validated_data):
+        request = self.context['request']
+        user = request.user
+        image = validated_data['image']
+        
+        if self.context['image_type'] == 'user':
+            user.profile_image = image
+        else:
+            user.cover_image = image
+        
+        user.save()
+        return user
     
 
 class BlockSerializer(serializers.ModelSerializer):

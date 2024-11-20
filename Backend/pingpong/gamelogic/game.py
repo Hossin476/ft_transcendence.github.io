@@ -138,6 +138,11 @@ class GameLogic:
                 matchObj.score2 = 0
                 matchObj.winner.xp = matchObj.winner.xp + 30
                 matchObj.winner.rank =  matchObj.winner.xp / 100
+                if matchObj.player2 != None:
+                    matchObj.player2.loses_p = matchObj.player2.loses_p + 1
+                    matchObj.player2.save()
+                matchObj.player1.wins_p = matchObj.player1.wins_p + 1
+                matchObj.player1.save()
                 matchObj.winner.save()
             elif player2_status:
                 matchObj.winner = matchObj.player2
@@ -147,6 +152,11 @@ class GameLogic:
                 self.score2 = 3
                 matchObj.winner.xp = matchObj.winner.xp + 30
                 matchObj.winner.rank =  matchObj.winner.xp / 100
+                if matchObj.player1 != None:
+                    matchObj.player1.loses_p = matchObj.player1.loses_p + 1
+                    matchObj.player1.save()
+                matchObj.player2.wins_p = matchObj.player2.wins_p + 1
+                matchObj.player2.save()
                 matchObj.winner.save()
 
             if player1_status or player2_status:

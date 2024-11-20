@@ -31,8 +31,18 @@ class CustomUser(AbstractUser):
     two_factor_enabled = models.BooleanField(default=False)
     
     # profile image
-    profile_image   = models.ImageField(upload_to='images/profile/', default=get_default_profile_image)
-    cover_image     = models.ImageField(upload_to='images/cover/', default=get_default_cover_image)
+    profile_image = models.ImageField(
+        upload_to='profile/', 
+        null=True, 
+        blank=True,
+        default='defaults/profileImage.jpeg'
+    )
+    cover_image = models.ImageField(
+        upload_to='cover/', 
+        null=True, 
+        blank=True,
+        default='defaults/coverImage.jpeg'
+    )
 
     USERNAME_FIELD  = "username"
     REQUIRED_FIELDS = ['email']

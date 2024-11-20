@@ -79,15 +79,11 @@ def accept_friend_request(sender, receiver_id):
 
 @database_sync_to_async
 def reject_friend_request(sender, receiver_id):
-    try:
-        if sender.username == receiver_id:
-            raise ValueError("A user cannot send a friend reject to himself.")
-        receiver = CustomUser.objects.get(username=receiver_id)
-        friendship = Friendship.objects.get(from_user=receiver, to_user=sender)
-        friendship.delete()
-    except Exception:
-        print(f"error : {str(e)}")
-        return None
+    if sender.username == receiver_id:
+        raise ValueError("A user cannot send a friend reject to himself.")
+    receiver = CustomUser.objects.get(username=receiver_id)
+    friendship = Friendship.objects.get(from_user=receiver, to_user=sender)
+    friendship.delete()
 
 
 
@@ -145,7 +141,11 @@ def create_game_object(sender, receiver_name, game, invite_id):
 
 @database_sync_to_async
 def delete_game_request(invite_id):
-    GameNotification.objects.filter(id=invite_id).delete()
+    try:
+        GameNotification.objects.filter(id=invite_id).delete()
+    except Exception as e:
+        print(f"error : {str(e)}")
+        return None
 
 
 @database_sync_to_async
@@ -275,6 +275,9 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps(event))
 
     async def tour_reject(self, event):
+        await self.send(text_data=json.dumps(event))
+    
+    async def next_matchtour(self, event):
         await self.send(text_data=json.dumps(event))
 
     async def handle_tour_reject(self, data):
@@ -494,7 +497,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                     'type': "online.state",
                     'user': user_s,
                 }})
-        # print("data send to  font :",data_send)
         return data_send
 
 
