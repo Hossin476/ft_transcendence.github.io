@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 
-  const PaddleColor = JSON.parse(localStorage.getItem("PingSettings")) || { Paddle: "Purple" };
-  const Paddle = forwardRef((props, ref) => {
+const Paddle = forwardRef((props, ref) => {
+    const PaddleColor = JSON.parse(localStorage.getItem("PingSettings")) || { Paddle: "Purple" };
   return (
     <mesh position={props.position} ref={ref}>
       <boxGeometry args={[0.5, 0.1, 0.05]} />

@@ -280,6 +280,9 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     async def tour_reject(self, event):
         await self.send(text_data=json.dumps(event))
+    
+    async def next_matchtour(self, event):
+        await self.send(text_data=json.dumps(event))
 
     async def handle_tour_reject(self, data):
         await accept_reject(data["id"], self.user, "reject")
