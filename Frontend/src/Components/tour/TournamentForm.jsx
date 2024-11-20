@@ -1,10 +1,25 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useTournament } from "../../context/TournamentContext";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../../context/AuthContext";
 
-export default function TournamentForm() {
+export default function TournamentForm({id}) {
    const {socket} = useTournament()
+   const [tourObject, setTourObject] = useState(null)
+   const {tokens} = useAuth()
    const { t } = useTranslation()
+   useEffect(()=>{
+      const fetchTournament = async ()=>{
+         const response = await fetch(`/api/offline/${id}`,{
+            headers : {
+               "Authorization": "JWT " + tokens.access,
+               'Content-Type':'application/json',}
+         })
+         const data = await response.json();
+         setTourObject(data)
+         console.log(data)
+      }  
+   },[])
     const [form,setForm] = useState({
         player1:'',
         player2:'',
