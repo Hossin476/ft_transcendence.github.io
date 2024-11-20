@@ -26,7 +26,7 @@ import { useTranslation } from "react-i18next";
 // };
 
 const UserBox = ({ username, position, image }) => {
-   const texture = useLoader(TextureLoader, "/media/profile/hossin.jpeg");
+   const texture = useLoader(TextureLoader, image ? image : "/media/profile/hossin.jpeg");
    return (
       <mesh position={position}>
          <mesh position={[-0.4, 0, 0.2]}>
@@ -52,18 +52,18 @@ const MatchesRound = ({ player1, player2, position1, position2, gameType }) => {
    let player1T = {name: "", image: ""}
    let player2T = {name: "", image: ""}
    if(gameType == "online") {
-      player1T.name = player1.username
-      player1T.image = player1.profile_image
-      player2T.image = player2.profile_image
-      player2T.name = player2.username
+      player1T.name = player1?.username
+      player1T.image = player1?.profile_image
+      player2T.image = player2?.profile_image
+      player2T.name = player2?.username
    }else {
       player1T.name = player1 ;
       player2T.name = player2;
    }
    return (
    <>
-      <UserBox position={position1} username={player1 ? player1T.name : ""} image={player1 ? player1T.image : "./user.jpeg"} />
-      <UserBox position={position2} username={player2 ? player2T.name : ""} image={player2 ? player2T.image : "./user.jpeg"} />
+      <UserBox position={position1} username={player1 ? player1T.name : ""} image={player1 ? player1T.image : ""} />
+      <UserBox position={position2} username={player2 ? player2T.name : ""} image={player2 ? player2T.image : ""} />
    </>
    )
 }

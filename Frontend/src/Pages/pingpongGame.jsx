@@ -92,11 +92,11 @@ function PingPongGame() {
   const [stop , setstop] = useState(false)
   const [beforeStart , selBeforeStart] = useState(false)
   const handleWin = (win,endGame,game_id)=> {
-    setStatus(()=>({win:win, endGame:endGame,game_id:game_id  }))
+    setStatus(()=>({win:win, endGame:endGame,game_id:game_id }))
   }
   useEffect(()=>{
-    const  getGame = async () => {
-        const response  = await fetch(`/api/pingpong/game/pingpong/${location.state.gameid}/`,{
+    const  getGame = async (url) => {
+        const response  = await fetch(url,{
           headers: {Authorization: "JWT " + tokens.access}
         })
         const data =   await response.json()
@@ -104,7 +104,10 @@ function PingPongGame() {
         if(data.is_game_end == true)
             navigate('../')
     }
-    getGame()
+    if(location.state.isonline == true)
+      getGame(`/api/pingpong/game/pingpong/${location.state.gameid}/`)
+    else
+      getGame(`/api/pingpong/game/pingpong/offline/${location.state.gameid}/`)
     if(location.state?.gameid == undefined)
       navigate('../')
   },[location.state])

@@ -277,7 +277,6 @@ class Tournamentlocal(AsyncWebsocketConsumer):
     async def matches_watcher(self, tour_id, next_match, current_match):
         tournament = await database_sync_to_async(lambda : TournamentLocal.objects.prefetch_related('matches').get(id=tour_id))()
         matches = await database_sync_to_async(lambda :list(tournament.matches.select_related('creater_game').all().order_by('id')))()
-        await asyncio.sleep(3000)
         await self.channel_layer.group_send(f'notification_{self.user.id}',{
             'type': 'game.offline',
             'game_id': matches[current_match].id,

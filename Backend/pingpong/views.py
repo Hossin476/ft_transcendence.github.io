@@ -13,9 +13,12 @@ def players(request, game_id):
 
 @api_view(['GET'])
 def match_offline(request, game_id):
-    obj = get_object_or_404(GameOffline, id=game_id)
-    serializer = GameOfflineSerializer(obj)
-    return Response(serializer.data)
+    try:
+        obj = get_object_or_404(GameOffline, id=game_id)
+        serializer = GameOfflineSerializer(obj)
+        return Response(serializer.data)
+    except Exception as e:
+        print("view : ", e)
 
     
 @api_view(['POST'])
