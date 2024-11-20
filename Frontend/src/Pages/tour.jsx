@@ -92,6 +92,7 @@ console.log(tournament)
    return (
       <>
          {tournament && tournament.matches && tournament.matches && tournament.matches.map((item, key) => <MatchesRound key={key} gameType={gameType} player1={item.player1} player2={item.player2} position1={position[key * 2]} position2={position[key * 2 + 1]} />)}
+         {tournament && gameType=="online" && tournament.winner != null  && <UserBox position={[0, 0.7, 0]} username={tournament.winner.username} image={tournament.winner.profile_image} />}
       </>
 
    )
@@ -125,6 +126,7 @@ const Tour = () => {
       }
 
       const data = await response.json()
+      console.log(data)
       setTournament(data)
    }
 
@@ -194,7 +196,7 @@ const Tour = () => {
                   <div className="flex  w-[100%] h-[70%]  flex-wrap ">
                      {tournament.players  && tournament.players.map((item, index) =>
                         <div key={index} className="flex items-center  w-[23%] h-[33%] gap-3 border-[2px] border-forthColor m-1  min-w-[150px] rounded-[20px]">
-                           <img src="./silver.jpg" className="rounded-full w-[52px] h-[52px]" />
+                           <img src={item.profile_image} className="rounded-full w-[52px] h-[52px]" />
                            <div className="flex flex-col">
                               <p>{item.username}</p>
                               <p className="text-[10px] font-inter">RANK {item.rank}</p>

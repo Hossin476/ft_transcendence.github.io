@@ -87,16 +87,12 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard(self.room_name, self.channel_name)
 
     async def receive(self, text_data):
-        # try:
         data_json = json.loads(text_data)
         print("tour_id", self.tour_id)
         tournament = None
         if data_json["type"] == "start_tournament":
             if not await  checkStart(self.tour_id, self.user):
                 return
-            # set the tournament to start
-            # create the matches after shuffle
-            # return and array of matches
             tournament = await set_start(self.tour_id)
             await self.channel_layer.group_send(self.room_name,
                                                 {
@@ -119,8 +115,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             else:
                 await self.channel_layer.group_send(self.room_name, {"type": "state.change", })
 
-        # except Exception as e:
-        #     print("error",e)
 
     async def match_watcher(self, id, start, nbr_matches):
         await asyncio.sleep(60)
@@ -180,13 +174,25 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             tournament.winner = match_list[-1].winner
             await database_sync_to_async(tournament.save)()
             
-            
 
     async def countdown(self, tournament, start, nbr_matches):
         await asyncio.sleep(6)
         match_query = tournament["matches"]
         matches = list(match_query)
         print(tournament)
+        for i in range(int(start), int(nbr_matches)):
+            print("i : ", i)
+            if matches[i]["is_game_end"] is True:
+                continue
+            await self.channel_layer.group_send(f'notification_{matches[i]["player1"]["id"]}', {
+                'type': 'next.matchtour',
+                "message" : f"your next match in the tournament  {tournament["name"]} against {matches[i]["player2"]} will start in 2 minutes"
+            })
+            await self.channel_layer.group_send(f'notification_{matches[i]["player2"]["id"]}', {
+                'type': 'next.matchtour',
+                "message" : f"your next match in the tournament  {tournament["name"]} against {matches[i]["player1"]} will start in 2 minutes"
+            })
+        await asyncio.sleep(120)
         for i in range(int(start), int(nbr_matches)):
             print("i : ", i)
             if matches[i]["is_game_end"] is True:
