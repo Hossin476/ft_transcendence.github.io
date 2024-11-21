@@ -34,10 +34,16 @@ def change_online_state(user, state):
 
 @database_sync_to_async
 def create_game_db(sender, receiver, game):
-    receiver_obj = CustomUser.objects.get(username=receiver)
-    invite = GameNotification.objects.create(
-        sender=sender, receiver=receiver_obj, game=game)
-    return {"receiver"  :receiver_obj.pk, 'invite_id'   :invite.id}
+    try:
+        receiver_obj = CustomUser.objects.get(username=receiver)
+        invite = GameNotification.objects.create(
+            sender=sender, receiver=receiver_obj, game=game)
+        return {"receiver"  :receiver_obj.pk, 'invite_id'   :invite.id}
+    except Exception as e:
+        async_to_sync(channel_layer.group_send)(f'notification_{sender.id}', {
+            'type': 'error.handle',
+            'error': str(e)
+        })
 
 
 @database_sync_to_async
@@ -168,7 +174,10 @@ def create_game_object(sender, receiver_name, game, invite_id):
             GameNotification.objects.filter(id=invite_id).delete()
         return game_obj
     except Exception as e:
-        print(f"error : {str(e)}")
+        async_to_sync(channel_layer.group_send)(f'notification_{sender.id}', {
+            'type': 'error.handle',
+            'error': str(e)
+        })
         return None
 
 
@@ -183,30 +192,36 @@ def delete_game_request(invite_id):
 
 @database_sync_to_async
 def get_tour_from_db(id, userid):
-    tournament = Tournament.objects.select_related("creator").get(id=id)
-    user = CustomUser.objects.get(id=userid)
     try:
-        InviteTournament.objects.get(tournament=tournament, user=user)
-    except Exception:
-        InviteTournament.objects.create(tournament=tournament, user=user)
-    return TournamentSerializer(tournament).data
+        tournament = Tournament.objects.select_related("creator").get(id=id)
+        user = CustomUser.objects.get(id=userid)
+        try:
+            InviteTournament.objects.get(tournament=tournament, user=user)
+        except Exception:
+            InviteTournament.objects.create(tournament=tournament, user=user)
+        return TournamentSerializer(tournament).data
+    except Excpetion as e:
+        print(f'error : {str(e)}')
 
 
 @database_sync_to_async
 def accept_reject(tour_id, user, state):
-    tournament = Tournament.objects.select_related(
-        "creator").prefetch_related('players').get(id=tour_id)
-    state_return = {"tour_id": tournament.id, "state": False}
-    if not tournament.is_full  and state == "accept" and user not in tournament.players.all():
-        tournament.players.add(user)
-        count = tournament.players.count()
-        if count == 8:
-            tournament.is_full = True
-            tournament.save()
-        state_return["state"] = True
-    InviteTournament.objects.filter(
-        user=user, tournament=tournament).delete()
-    return state_return
+    try:
+        tournament = Tournament.objects.select_related(
+            "creator").prefetch_related('players').get(id=tour_id)
+        state_return = {"tour_id": tournament.id, "state": False}
+        if not tournament.is_full  and state == "accept" and user not in tournament.players.all():
+            tournament.players.add(user)
+            count = tournament.players.count()
+            if count == 8:
+                tournament.is_full = True
+                tournament.save()
+            state_return["state"] = True
+        InviteTournament.objects.filter(
+            user=user, tournament=tournament).delete()
+        return state_return
+    except Excpetion as e:
+        print(f'error : {str(e)}')
 
 
 class NotificationConsumer(AsyncWebsocketConsumer):
