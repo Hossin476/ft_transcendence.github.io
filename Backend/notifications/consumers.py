@@ -484,7 +484,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         try:
             receiver = data.get('receiver')
             obj, receiver_id = await block_request(self.user, receiver)
-            if obj:
+            if obj and receiver_id:
                 await self.channel_layer.group_send(
                     f'notification_{self.user.id}', {
                         'type': 'block.req',
