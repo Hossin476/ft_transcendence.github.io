@@ -98,6 +98,15 @@ def get_profile_friends(request, user_id):
             'message': 'user not found !'
         }, status=status.HTTP_404_NOT_FOUND)
 
+
+@api_view(['GET'])
+def get_all_users(request):
+    blocked_me = Block.objects.filter(blocked=request.user)
+    blocked_me_list = [block.blocker.id for block in blocked_me]
+    users = CustomUser.objects.exclude(id=request.user.id).exclude(id__in=blocked_me_list)
+    serialized_users = playerSerializers(users, many=True)
+    return Response(serialized_users.data)
+
 @api_view(['GET'])
 def get_user_info(request):
     user = request.user
