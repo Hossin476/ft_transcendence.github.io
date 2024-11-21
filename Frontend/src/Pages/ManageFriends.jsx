@@ -3,7 +3,7 @@ import Manage from "../Components/ManageFriends/Manage";
 
 export default function ManageFriends() {
     return (
-        <div className="text-white w-full flex items-center justify-center bg-red-500 h-[100%] ">
+        <div className="text-white w-full flex items-center justify-center h-[100%] ">
             <div className=" w-11/12 h-5/6 xsm:p-4 sm:p-12 bg-secondaryColor rounded-lg border border-forthColor">
                 <div className="flex items-center justify-between mb-8">
                     <h1 className=" sm:text-4xl font-semibold" >Friends</h1>
@@ -12,7 +12,6 @@ export default function ManageFriends() {
                         <FaSearch className="absolute xsm:right-4 xsm:text-sx sm:right-5 sm:top-4 text-xl text-gray-500" />
                     </div>
                 </div>
-
                 <div className="w-full h-[90%] ">
                     <Manage/> 
                 </div>

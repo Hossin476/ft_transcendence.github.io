@@ -110,9 +110,9 @@ def TournamentInvites(request, tour_id):
             if friend not in tournament.players.all() and friend not in invited_users:
                 new_friends.append(friend)
         friends_data = TourInvitesSerializers(new_friends, many=True).data
+        return Response(friends_data)
     except Exception as e:
-        print("Error : ", e)
-    return Response(friends_data)
+        return JsonResponse({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
@@ -228,5 +228,24 @@ def check_friendship(request, user_id):
             "friendship_exists": False,
         }, status=status.HTTP_200_OK)
 
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def check_blocked(request, user_id):
+    try:
+        user = request.user
+        friend = CustomUser.objects.get(id=user_id)
+        blocked = Block.objects.filter(blocker=user, blocked=friend).first()
+        if blocked:
+            return JsonResponse({
+                "block": True,
+                "blocker": blocked.blocker.username,
+                "blocked": blocked.blocked.username,
+            }, status=status.HTTP_200_OK)
+        return JsonResponse({
+            "block": False,
+        }, status=status.HTTP_200_OK)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

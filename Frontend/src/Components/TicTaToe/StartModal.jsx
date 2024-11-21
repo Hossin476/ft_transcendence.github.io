@@ -20,7 +20,7 @@ function StartModal({ currentPlayer, countdownValue }) {
                             The player who aligns 3 of their marks vertically, horizontally, or diagonally first wins the round and gets a point.
                         </li>
                         <li className='my-3 text-center font-poppins'>
-                            If no player aligns 3 of their marks when the timer reaches 0, the game is a draw.
+                            If no player scores when the timer reaches 0, the game is a draw.
                         </li>
                     </ul>
                     <div className='h-[40%] flex flex-col justify-start items-center'>
