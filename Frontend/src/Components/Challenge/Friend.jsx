@@ -1,5 +1,4 @@
 import toast from 'react-hot-toast'
-import 'react-toastify/dist/ReactToastify.css';
 import 'ldrs/hourglass'
 import {  useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
