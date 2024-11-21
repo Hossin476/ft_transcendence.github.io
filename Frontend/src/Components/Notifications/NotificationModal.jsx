@@ -16,14 +16,13 @@ function NotificationModal() {
                     "Content-Type": "application/json"
                 }
             });
-
             if (!response.ok)
                 throw new Error(`HTTP error!  status: ${response.status}`);
-
             const data = await response.json();
             setNotifications(data);
         } catch (error) {
             console.error('Fetch failed: ', error);
+            setNotifications([])
         }
     }, [tokens.access]);
 

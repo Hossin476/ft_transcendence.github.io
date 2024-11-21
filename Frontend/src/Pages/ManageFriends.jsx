@@ -97,7 +97,6 @@ export default function ManageFriends() {
                         </div>
                     </div>
                 </div>
-
                 <div className="w-full h-[90%] ">
                     <Manage/> 
                 </div>

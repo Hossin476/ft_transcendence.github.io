@@ -110,9 +110,9 @@ def TournamentInvites(request, tour_id):
             if friend not in tournament.players.all() and friend not in invited_users:
                 new_friends.append(friend)
         friends_data = TourInvitesSerializers(new_friends, many=True).data
+        return Response(friends_data)
     except Exception as e:
-        print("Error : ", e)
-    return Response(friends_data)
+        return JsonResponse({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])

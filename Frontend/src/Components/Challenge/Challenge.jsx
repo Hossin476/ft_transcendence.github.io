@@ -40,11 +40,11 @@ export default function Challenge({ setopen, gameType }) {
                             online_ingame.users.splice(finindex, 1)
                         else
                             online_ingame.users[finindex] = data.user
-                        setChallengeData({users: online_ingame.users})
+                        setChallengeData({...online_ingame})
                     }else
                         setChallengeData({users: [...online_ingame.users, data.user]})
+                        console.log("new friend change state : ",data)
                 }
-                console.log("new friend change state : ",data)
             }
 
     },[socketMessage])
