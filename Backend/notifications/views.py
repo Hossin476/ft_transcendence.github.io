@@ -230,3 +230,22 @@ def check_friendship(request, user_id):
 
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def check_blocked(request, user_id):
+    try:
+        user = request.user
+        friend = CustomUser.objects.get(id=user_id)
+        blocked = Block.objects.filter(blocker=user, blocked=friend).first()
+        if blocked:
+            return JsonResponse({
+                "block": True,
+                "blocker": blocked.blocker.username,
+                "blocked": blocked.blocked.username,
+            }, status=status.HTTP_200_OK)
+        return JsonResponse({
+            "block": False,
+        }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

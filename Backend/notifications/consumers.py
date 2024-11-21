@@ -89,7 +89,15 @@ def reject_friend_request(sender, receiver_id):
         print(f"error : {str(e)}")
         return None
 
-
+@database_sync_to_async
+def unfriend_request(sender, receiver_id):
+    try:
+        receiver = CustomUser.objects.get(username=receiver_id)
+        friendship = Friendship.objects.get(Q(from_user=receiver, to_user=sender) | Q(from_user=sender, to_user=receiver))
+        friendship.delete()
+    except Exception as e:
+        print(f"error : {str(e)}")
+        return None
 
 @database_sync_to_async
 def block_request(sender, receiver_id):
@@ -101,8 +109,14 @@ def block_request(sender, receiver_id):
             blocker=sender, blocked=receiver
         ).first()
         if existing_block:
+            friendship = Friendship.objects.get(Q(from_user=receiver, to_user=sender) | Q(from_user=sender, to_user=receiver))
+            if friendship:
+                friendship.delete()
             return existing_block, receiver.id
         block = Block.objects.create(blocker=sender, blocked=receiver, Block_user='F')
+        friendship = Friendship.objects.get(Q(from_user=receiver, to_user=sender) | Q(from_user=sender, to_user=receiver))
+        if friendship:
+            friendship.delete()
         return block, receiver.id
     except Exception as e:
         print(f"error : {str(e)}")
@@ -222,6 +236,8 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             await self.handle_friend_accept(data)
         elif types == 'friend_reject':
             await self.handle_friend_reject(data)
+        elif types == 'unfriend_request':
+            await self.handle_unfriend_request(data)
         elif types == 'block_request':
             await self.handle_block_request(data)
         elif types == 'unblock_request':
@@ -415,6 +431,13 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         try:
             receiver_id = data.get('receiver')
             await reject_friend_request(self.user, receiver_id)
+        except Exception as e:
+            print(f"error:  {str(e)}")
+        
+    async def handle_unfriend_request(self, data):
+        try:
+            receiver_id = data.get('receiver')
+            await unfriend_request(self.user, receiver_id)
         except Exception as e:
             print(f"error:  {str(e)}")
 

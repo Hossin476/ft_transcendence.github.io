@@ -11,9 +11,19 @@ import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 
 function Profile_info({ userid }) {
-  const [IsFriend, setIsFriend] = React.useState(false);
-  const [IsBlocked, setIsBlocked] = React.useState(false);
-  const { user, socket, tokens } = useAuth();
+  const [friendshipStatus, setFriendshipStatus] = React.useState({
+    exists: false,
+    status: null,
+    fromUser: null,
+    toUser: null
+  });
+
+  const [blockStatus, setBlockStatus] = React.useState({
+    block : false,
+    blocker : null,
+    blocked : null
+  })
+  const { user, socket, tokens, username } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -28,34 +38,209 @@ function Profile_info({ userid }) {
     });
   };
 
-  function request_friendship() {
+  function sendFriendRequest() {
     if (socket && socket.readyState === WebSocket.OPEN) {
       const message = JSON.stringify({
         type: "friend_request",
         receiver: userid?.username,
       });
       socket.send(message);
+      setFriendshipStatus({
+        exists: true,
+        status: "P",
+        fromUser: username,
+        toUser: userid?.username
+      });
+    }
+  }
+  
+  function acceptFriendRequest() {
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      const message = JSON.stringify({
+        type: "friend_accept",
+        receiver: userid?.username,
+      });
+      socket.send(message);
+      setFriendshipStatus({
+        exists: true,
+        status: "A",
+        fromUser: username,
+        toUser: userid?.username
+      });
+    }
+  }
+
+  function unfriend_request() {
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      const message = JSON.stringify({
+        type: "unfriend_request",
+        receiver: userid?.username,
+      });
+      socket.send(message);
+      setFriendshipStatus({
+        exists: false,
+        status: null,
+        fromUser: null,
+        toUser: null
+      });
+    }
+  }
+
+  function block_request() {
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      const message = JSON.stringify({
+        type: "block_request",
+        receiver: userid?.username,
+      });
+      socket.send(message);
+      setFriendshipStatus({
+        exists: false,
+        status: null,
+        fromUser: null,
+        toUser: null
+      });
+      setBlockStatus({
+        block: true,
+        blocker: username,
+        blocked: userid?.username
+      });
+    }
+  }
+
+  function unblock_request() {
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      const message = JSON.stringify({
+        type: "unblock_request",
+        receiver: userid?.username,
+      });
+      socket.send(message);
+      setBlockStatus({
+        block: false,
+        blocker: null,
+        blocked: null
+      }); 
     }
   }
 
   async function checkFriendStatus() {
-    const response = await fetch(`/api/notification/check_friendship/4/`, {
+    const response = await fetch(`/api/notification/check_friendship/${userid?.id}/`, {
       method: "GET",
       headers: {
         Authorization: "JWT " + tokens.access,
       },
     });
-  
     if (response.ok) {
       const data = await response.json();
-      console.log(data);
-      setIsFriend(data.friendship_exists);
+      console.log("this is friend", data);
+      setFriendshipStatus({
+        exists: data.friendship_exists,
+        status: data.status,
+        fromUser: data.from_user,
+        toUser: data.to_user
+      });
     }
   }
 
+  async function checkBlockStatus() {
+    const response = await fetch(`/api/notification/check_blocked/${userid?.id}/`, {
+      method: "GET",
+      headers: {
+        Authorization: "JWT " + tokens.access,
+      },
+    });
+    if (response.ok) {
+      const data = await response.json();
+      console.log("this is bock", data);
+      setBlockStatus({
+        block: data.block,
+        blocker: data.blocker,
+        blocked: data.blocked
+      });
+    }
+  }
   useEffect(() => {
+    if (userid?.id) {
       checkFriendStatus();
-  }, []);
+      checkBlockStatus();
+    }
+  }, [userid?.id]);
+
+  const renderFriendButton = () => {
+    console.log(username, friendshipStatus.fromUser);
+    if (!friendshipStatus.exists) {
+      return (
+        <button
+          onClick={sendFriendRequest}
+          className="bg-gray-800 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-gray-700 transition-colors xsm:text-sm md:text-base w-36"
+        >
+          <IoPersonAdd />
+          <span className="text-[0.9em]">{t("Add friend")}</span>
+        </button>
+      );
+    }
+
+    if (friendshipStatus.status === 'P') {
+      if (friendshipStatus.fromUser === username) {
+        return (
+          <button
+            className="bg-yellow-500 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-yellow-400 transition-colors xsm:text-sm md:text-base w-36"
+          >
+            <IoPersonRemove />
+            <span className="text-[0.9em]">{t("Pending")}</span>
+          </button>
+        );
+      } else {
+        return (
+          <button
+            onClick={acceptFriendRequest}
+            className="bg-green-500 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-green-400 transition-colors xsm:text-sm md:text-base w-36"
+          >
+            <IoPersonAdd />
+            <span className="text-[0.9em]">{t("Accept")}</span>
+          </button>
+        );
+      }
+    }
+
+    if (friendshipStatus.status === 'A') {
+      return (
+        <button
+          onClick={unfriend_request}
+          className="bg-red-500 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-red-400 transition-colors xsm:text-sm md:text-base w-36"
+        >
+          <IoPersonRemove />
+          <span className="text-[0.9em]">{t("Unfriend")}</span>
+        </button>
+      );
+    }
+  }
+
+  const renderBlockButton = () => {
+
+    if (blockStatus.block) {
+      return (
+        <button
+          onClick={unblock_request}
+          className="bg-gray-800 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-gray-700 transition-colors xsm:text-sm md:text-base w-36"
+        >
+          <CgUnblock className="h-5 w-5" />
+          <span className="text-[0.9em]">{t("Unblock")}</span>
+        </button>
+      );
+    }
+
+    if (!blockStatus.block) {
+      return (
+        <button
+          onClick={block_request}
+          className="bg-red-500 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-red-400 transition-colors xsm:text-sm md:text-base w-36"
+        >
+          <MdBlock className="h-5 w-5" />
+          <span className="text-[0.9em]">{t("Block")}</span>
+        </button>
+      );
+    }
+  };
 
   return (
     <div className="bg-secondaryColor flex flex-col rounded-3xl md:h-96 xsm:h-96 gap-4 overflow-hidden">
@@ -133,44 +318,39 @@ function Profile_info({ userid }) {
         {/* Add friend and Message buttons */}
         {user.user_id === userid?.id ? null : (
           <div className="flex flex-col gap-2">
-            <button
-              // onClick={request_friendship}
-              onClick={() => setIsFriend(!IsFriend)}
-              className={
-                IsFriend
-                  ? "bg-red-500 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-red-400 transition-colors xsm:text-sm md:text-base w-36"
-                  : "bg-gray-800 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-gray-700 transition-colors xsm:text-sm md:text-base w-36"
-              }
-            >
-              {IsFriend ? <IoPersonRemove /> : <IoPersonAdd />}
-              <span className="text-[0.9em]">
-                {IsFriend ? "Unfriend" : "Add friend"}
-              </span>
-            </button>
-            <button
-              onClick={handleChatRedirect}
-              className="bg-gray-800 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-gray-700 transition-colors xsm:text-sm md:text-base w-36"
-            >
-              <BsChatDotsFill />
-              <span className="text-[0.9em]">{t("Message")}</span>
-            </button>
-            <button
-              onClick={() => setIsBlocked(!IsBlocked)}
-              className={
-                IsBlocked
-                  ? "bg-gray-800 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-gray-700 transition-colors xsm:text-sm md:text-base w-36"
-                  : "bg-red-500 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-red-400 transition-colors xsm:text-sm md:text-base w-36"
-              }
-            >
-              {IsBlocked ? (
-                <CgUnblock className="h-5 w-5" />
+            {
+              blockStatus.block ? (
+                <button
+                  className="bg-gray-800 text-gray-600 px-6 py-2 rounded-full flex items-center gap-2 xsm:text-sm md:text-base w-36"
+                  disabled
+                >
+                  <IoPersonAdd />
+                  <span className="text-[0.9em]">{t("Add friend")}</span>
+                </button>
               ) : (
-                <MdBlock className="h-5 w-5" />
-              )}
-              <span className="text-[0.9em]">
-                {IsBlocked ? t("Unblock") : t("Block")}
-              </span>
-            </button>
+                renderFriendButton()
+              )
+            }
+            {
+              friendshipStatus.status === 'A' ? (
+              <button
+                onClick={handleChatRedirect}
+                className="bg-gray-800 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-gray-700 transition-colors xsm:text-sm md:text-base w-36"
+              >
+                <BsChatDotsFill />
+                <span className="text-[0.9em]">{t("Message")}</span>
+              </button>
+            ) : (
+              <button
+                className="bg-gray-800 text-gray-600 px-6 py-2 rounded-full flex items-center gap-2 xsm:text-sm md:text-base w-36"
+                disabled
+              >
+                <BsChatDotsFill />
+                <span className="text-[0.9em]">{t("Message")}</span>
+              </button>
+            )
+            }
+            {renderBlockButton()}
           </div>
         )}
       </div>

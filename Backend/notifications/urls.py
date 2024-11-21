@@ -11,4 +11,5 @@ urlpatterns = [
     path('tictactoe_unfinished_match/', views.matchesNotFinishTictactoe),
     path('friends/', views.get_full_friendships),
     path('check_friendship/<int:user_id>/', views.check_friendship),
+    path('check_blocked/<int:user_id>/', views.check_blocked),
 ]
