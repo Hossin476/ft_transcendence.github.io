@@ -21,12 +21,12 @@ const GRID_POSITIONS = [
 ];
 
 const Game = () => {
-    const [board, setBoard] = useState(Array(9).fill(null));
+    const [board, setBoard] = useState(Array(9).fill(0));
     const [winnerLine, setWinnerLine] = useState(null);
     const [finalWinner, setFinalWinner] = useState(null);
     const [showReconnectModal, setShowReconnectModal] = useState(false);
     const [showStartModal, setShowStartModal] = useState(false);
-    const [startCountdownValue, setStartCountdownValue] = useState(null);
+    const [startCountdownValue, setStartCountdownValue] = useState(0);
     const [currentTurn, setCurrentTurn] = useState(null);
     const [draw, setDraw] = useState(false);
     const startModalShownRef = useRef(false);
