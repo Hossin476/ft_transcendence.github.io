@@ -13,7 +13,6 @@ function NotificationHandler() {
 
     useEffect(() => {
         if (socketMessage) {
-            console.log("the socket message is ", socketMessage)
             if (socketMessage.type === 'game_request') {
                 toast.custom((t) => (
                     <GameRequest t={t} toast={toast} socketMessage={socketMessage} socket={socket} />

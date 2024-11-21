@@ -341,5 +341,6 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
 
     async def send_error(self, message):
         await self.send(text_data=json.dumps({
+            'type': 'error.handle',
             'error': message
         }))
