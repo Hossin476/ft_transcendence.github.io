@@ -4,6 +4,7 @@ const ProfileSettings = () => {
 const tokens = JSON.parse(localStorage.getItem('tokens'))
 const [errorMessage, setErrorMessage] = useState("");
 const [successMessage, setSuccessMessage] = useState("");
+const [mediaError, setMediaError] = useState("");
 const [loading, setLoading] = useState(true);
 const [passwords, setPasswords] = useState({
 	oldPassword: '',
@@ -49,24 +50,21 @@ const handleMediaUpload = async (e, mediaType) => {
 	const formData = new FormData();
 	formData.append('image', file);
 
-	try {
-		const response = await fetch(`/api/profile/media/${mediaType}/`, {
-			method: 'POST',
-			headers: {
-				'Authorization': `JWT ${tokens.access}`
-			},
-			body: formData
-		});
-		if (response.ok) {
-			const data = await response.json();
-			setProfileMedia(prev => ({
-				...prev,
-				[mediaType === 'profile' ? 'profileImage' : 'coverImage']: data.imageUrl
-			}));
-			console.log(profileMedia)
-		}
-	} catch (error) {
-		console.error("(media-upload)~error: ", error);
+	const response = await fetch(`/api/profile/media/${mediaType}/`, {
+		method: 'POST',
+		headers: {
+			'Authorization': `JWT ${tokens.access}`
+		},
+		body: formData
+	});
+	if (response.ok) {
+		const data = await response.json();
+		setProfileMedia(prev => ({
+			...prev,
+			[mediaType === 'profile' ? 'profileImage' : 'coverImage']: data.imageUrl
+		}));
+	} else {
+		alert("file is too Large, file size should be less than 1Mb");
 	}
 }
 
@@ -182,6 +180,11 @@ return (
 		</div>
 		</div>
 	</div>
+
+	{/* Upload Error Section
+	<div className='flex justify-center items-center'>
+		<p className="text-red-500 pb-3 font-bold">{mediaError}</p>
+	</div> */}
 
 	{/* Password Change Section */}
 	<div className="flex justify-center items-center">
