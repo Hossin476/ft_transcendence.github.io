@@ -148,7 +148,7 @@ const Login = () => {
                         {loginStep === 'credentials' ? (
                             <div className="space-y-4 py-4">
                                 <div className="mt-4 space-y-2">
-                                    <button className="w-full py-2 text-white bg-thirdColor rounded-lg hover:bg-white transition duration-300 hover:text-thirdColor hover:border-2 border-thirdColor">
+                                    <button onClick={handle42} className="w-full py-2 text-white bg-thirdColor rounded-lg hover:bg-white transition duration-300 hover:text-thirdColor hover:border-2 border-thirdColor">
                                         Continue with Intra
                                     </button>
                                 </div>

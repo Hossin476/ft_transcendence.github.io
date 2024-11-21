@@ -242,6 +242,7 @@ function Profile_info({ userid }) {
     }
   };
 
+  console.log("profile info", userid);
   return (
     <div className="bg-secondaryColor flex flex-col rounded-3xl md:h-96 xsm:h-96 gap-4 overflow-hidden">
       {/* Banner Section with Overlapping Profile */}

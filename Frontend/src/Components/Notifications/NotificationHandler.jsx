@@ -28,6 +28,14 @@ function NotificationHandler() {
                     <TourResponseNotification toast={toast} t={t} socketMessage={socketMessage} />
                 ))
             }
+            if (socketMessage.type === 'next.matchtour') {
+                toast(
+                    socketMessage.message,
+                    {
+                        duration: 8000,
+                    }
+                );
+            }
         }
     }, [socketMessage])
 

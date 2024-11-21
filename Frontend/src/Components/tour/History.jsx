@@ -21,7 +21,7 @@ export default function History({item}) {
             </div>
             <div className="flex">
                 <p className={` ${item.is_start ? 'text-green-500' : ""} ${item.is_end ? 'text-red-500' : ""} text-yellow-500`}>{
-                    item.is_start === true ? t("live") : (item.is_end ? t("finished") : t("pending"))
+                    item.is_start === false ? t("pending") : (item.is_end ? t("finished") : t("live"))
                 }</p>
             </div>
         </div>

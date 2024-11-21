@@ -363,10 +363,10 @@ function PvpGame({ title }) {
       if (!response.ok)
         throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
-      console.log("data is ", data)
       setMatchData(data);
     } catch (error) {
       console.error('Fetch failed: ', error);
+      setMatchData({})
     }
   }, [gameType, setMatchData])
 

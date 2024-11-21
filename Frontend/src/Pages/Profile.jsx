@@ -15,7 +15,7 @@ async function getProfileData(tokens, userId) {
     },
   });
 
-  if (response.status === 404) {
+  if (response.status !== 200) {
     throw new Error("User not found");
   }
 

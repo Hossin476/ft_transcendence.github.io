@@ -74,6 +74,7 @@ export const AuthProvider = ({ children }) => {
         };
         ws.onmessage = (e) => {
             const data = JSON.parse(e.data);
+            console.log("the data is ", data)
             setSocketMessage(data)
         }
     }

@@ -111,7 +111,7 @@ const Conversation = () => {
             </div>
         ))}
         {
-          seen === true ? <p className="self-end pr-4">seen</p>: ""
+          seen === true ? <p className="self-end text-black pr-4">seen</p>: ""
         }
         {
           currantUser && currantUser.user.id === typing.sender &&

@@ -35,6 +35,10 @@ import time
 @api_view(['GET'])
 def get_profile(request, user_id):
     try:
+        if Block.objects.filter(blocked=request.user, blocker=user_id).exists():
+            return Response({
+                'message': 'user is blocked !'
+            }, status=status.HTTP_403_FORBIDDEN)
         user = CustomUser.objects.get(id=user_id)
         serialized_user = playerSerializers(user)
         user_list = serialized_user.data
@@ -42,7 +46,7 @@ def get_profile(request, user_id):
             'id': user_list['id'],
             'username': user_list['username'],
             'profile_image': user_list['profile_image'],
-            'background_image': user_list['profile_image'],
+            'background_image': user_list['cover_image'],
             'rank': user_list['rank'],
             'xp': user_list['xp']
         }

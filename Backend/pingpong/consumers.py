@@ -430,8 +430,25 @@ class LocalGameConsumer(AsyncWebsocketConsumer):
         event['score2'] = room_obj.game.score1
         await self.send(text_data=json.dumps(event))
 
+
+    async def winner(self):
+        try:
+            room_obj = LocalGameConsumer.game_room[self.game_group_id]
+            winner = None
+            if room_obj.game.score1 > room_obj.game.score2:
+                winner = room_obj.player1
+            else:
+                winner = room_obj.player2
+            data = {
+                'type': 'game.winner',
+            }
+            print("winner send ")
+            await self.channel_layer.group_send(self.game_group_id, data)
+        except Exception as e:
+            print(e)
+
     async def game_start(self, event):
-        self.send(text_data=json.dumps(event))
+        await self.send(text_data=json.dumps(event))
 
     async def game_waiting(self, event):
         await self.send(text_data=json.dumps(event))
@@ -440,18 +457,6 @@ class LocalGameConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps(event))
 
     async def game_winner(self, event):
+        print(json.dumps(event))
+        print("hamza was here two minutes ago")
         await self.send(text_data=json.dumps(event))
-
-    async def winner(self):
-        room_obj = LocalGameConsumer.game_room[self.game_group_id]
-        winner = None
-        if room_obj.game.score1 > room_obj.game.score2:
-            winner = room_obj.player1
-        else:
-            winner = room_obj.player2
-        data = {
-            'type': 'game.winner',
-            'winner': winner
-        }
-        print("winner send ")
-        await self.channel_layer.group_send(self.game_group_id, data)

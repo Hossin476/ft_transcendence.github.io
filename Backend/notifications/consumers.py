@@ -45,6 +45,11 @@ def create_friend_db(sender, receiver_id):
         if sender.username == receiver_id:
             raise ValueError("A user cannot send a friend request to himself.")
         receiver = CustomUser.objects.get(username=receiver_id)
+        block = Block.objects.filter(
+            Q(blocker=sender, blocked=receiver) | Q(blocker=receiver, blocked=sender)
+        ).exists()
+        if block:
+            raise ValueError("A user cannot send a friend request to a blocked user.")
         existing_friendship = Friendship.objects.filter(
             (Q(from_user=sender, to_user=receiver) | Q(from_user=receiver, to_user=sender)) &
             Q(request__in=['P', 'A'])
@@ -58,7 +63,7 @@ def create_friend_db(sender, receiver_id):
         )
         return obj, receiver.id
     except Exception as e:
-        print(f"error : {str(e)}")
+        self.send_error(str(e))
         return None
 
 
@@ -73,7 +78,7 @@ def accept_friend_request(sender, receiver_id):
         friendship.request = 'A'
         friendship.save()
     except Exception as e:
-        print(f"error : {str(e)}")
+        self.send_error(str(e))
         return None
 
 
@@ -85,8 +90,8 @@ def reject_friend_request(sender, receiver_id):
         receiver = CustomUser.objects.get(username=receiver_id)
         friendship = Friendship.objects.get(from_user=receiver, to_user=sender)
         friendship.delete()
-    except Exception:
-        print(f"error : {str(e)}")
+    except Exception as e:
+        self.send_error(str(e))
         return None
 
 @database_sync_to_async
@@ -119,7 +124,7 @@ def block_request(sender, receiver_id):
             friendship.delete()
         return block, receiver.id
     except Exception as e:
-        print(f"error : {str(e)}")
+        self.send_error(str(e))
         return None
 
 
@@ -132,7 +137,7 @@ def unblock_request(sender, receiver_id):
         block = Block.objects.get(blocker=sender, blocked=receiver)
         block.delete()
     except Exception as e:
-        print(f"error : {str(e)}")
+        self.send_error(str(e))
         return None
 
 
@@ -159,7 +164,11 @@ def create_game_object(sender, receiver_name, game, invite_id):
 
 @database_sync_to_async
 def delete_game_request(invite_id):
-    GameNotification.objects.filter(id=invite_id).delete()
+    try:
+        GameNotification.objects.filter(id=invite_id).delete()
+    except Exception as e:
+        print(f"error : {str(e)}")
+        return None
 
 
 @database_sync_to_async
@@ -291,6 +300,9 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps(event))
 
     async def tour_reject(self, event):
+        await self.send(text_data=json.dumps(event))
+    
+    async def next_matchtour(self, event):
         await self.send(text_data=json.dumps(event))
 
     async def handle_tour_reject(self, data):
@@ -517,7 +529,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                     'type': "online.state",
                     'user': user_s,
                 }})
-        # print("data send to  font :",data_send)
         return data_send
 
 
@@ -553,3 +564,8 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps(event))
     async def game_counter(self, event):
         await self.send(text_data=json.dumps(event))
+    
+    async def send_error(self, message):
+        await self.send(text_data=json.dumps({
+            'error': message
+        }))
