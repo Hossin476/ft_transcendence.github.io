@@ -8,7 +8,7 @@ const ProfileSettings = () => {
 	const [errorMessage, setErrorMessage] = useState("");
 	const [successMessage, setSuccessMessage] = useState("");
 	const [loading, setLoading] = useState(true);
-	const {customFetch, tokens} = useAuth();
+	const {customFetch, tokens, username} = useAuth();
 	const [passwords, setPasswords] = useState({
 		oldPassword: '',
 		newPassword: '',
@@ -18,6 +18,7 @@ const ProfileSettings = () => {
 		profileImage: null,
 		coverImage: null
 	})
+  const [isIntraUser, setIsIntraUser] = useState(false);
 
   useEffect(() => {
     fetchProfileMedia();
@@ -33,7 +34,9 @@ const ProfileSettings = () => {
       });
       if (response.ok) {
         const data = await response.json();
-        console.log("response: ", data);
+        if (data.isIntraUser) {
+          setIsIntraUser(true);
+        }
         setProfileMedia({
           profileImage: data.profileImage,
           coverImage: data.coverImage,
@@ -118,7 +121,7 @@ const ProfileSettings = () => {
       <div className="w-full p-4">
         <div className="relative mb-24">
           {/* Cover Photo Section */}
-          <div className=" h-64 bg-gray-100 rounded-lg overflow-hidden">
+          <div className="h-64 bg-gray-100 rounded-lg overflow-hidden">
             {profileMedia.coverImage ? (
               <img
                 src={profileMedia.coverImage}
@@ -212,64 +215,71 @@ const ProfileSettings = () => {
           </div>
         </div>
 
-        {/* Password Change Section */}
+        {/* Username or Password Change Section */}
         <div className="flex justify-center items-center">
-          <div className="bg-secondaryColor rounded-lg mt-8 w-96">
-            <div className="px-6 py-5 border-b border-gray-100 border-opacity-50">
-              <h2 className="text-xl font-semibold text-white text-center">
-                {t("Change Password")}
-              </h2>
+          {isIntraUser ? (
+            <h1 className="text-xl font-semibold">{username}</h1>
+          ) : (
+            <div className="bg-secondaryColor rounded-lg mt-8 w-96">
+              <div className="px-6 py-5 border-b border-gray-100 border-opacity-50">
+                <h2 className="text-xl font-semibold text-white text-center">
+                  {t("Change Password")}
+                </h2>
+              </div>
+              <div className="w-full p-5">
+                <form onSubmit={handleSubmit}>
+                  <p className="text-red-500 pb-3 font-bold">{errorMessage}</p>
+                  <p className="text-green-500 pb-3 font-bold">
+                    {successMessage}
+                  </p>
+                  <div className="mb-4 flex justify-center">
+                    <input
+                      id="oldPassword"
+                      name="oldPassword"
+                      placeholder={t("Old Password")}
+                      type="password"
+                      className="w-full max-w-xs text-primaryColor rounded-md p-2 border border-linkColor"
+                      value={passwords.oldPassword}
+                      onChange={handlePasswordChange}
+                      autoComplete="off"
+                    />
+                  </div>
+                  <div className="mb-4 flex justify-center">
+                    <input
+                      id="newPassword"
+                      name="newPassword"
+                      placeholder={t("New Password")}
+                      type="password"
+                      className="w-full max-w-xs text-primaryColor rounded-md p-2 border border-linkColor"
+                      value={passwords.newPassword}
+                      onChange={handlePasswordChange}
+                      autoComplete="off"
+                    />
+                  </div>
+                  <div className="mb-4 flex justify-center">
+                    <input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      placeholder={t("Confirm Password")}
+                      type="password"
+                      className="w-full max-w-xs text-primaryColor rounded-md p-2 border border-linkColor"
+                      value={passwords.confirmPassword}
+                      onChange={handlePasswordChange}
+                      autoComplete="off"
+                    />
+                  </div>
+                  <div className="flex justify-center">
+                    <button
+                      type="submit"
+                      className="bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    >
+                      {t("Update Password")}
+                    </button>
+                  </div>
+                </form>
+              </div>
             </div>
-            <div className="w-full p-5">
-              <form onSubmit={handleSubmit}>
-                <p className="text-red-500 pb-3 font-bold">{errorMessage}</p>
-                <p className="text-green-500 pb-3 font-bold">
-                  {successMessage}
-                </p>
-                <div className="mb-4 flex justify-center">
-                  <input
-                    id="oldPassword"
-                    name="oldPassword"
-                    placeholder={t("Old Password")}
-                    type="password"
-                    className="w-full max-w-xs text-primaryColor rounded-md p-2 border border-linkColor"
-                    value={passwords.oldPassword}
-                    onChange={handlePasswordChange}
-                  />
-                </div>
-                <div className="mb-4 flex justify-center">
-                  <input
-                    id="newPassword"
-                    name="newPassword"
-                    placeholder={t("New Password")}
-                    type="password"
-                    className="w-full max-w-xs text-primaryColor rounded-md p-2 border border-linkColor"
-                    value={passwords.newPassword}
-                    onChange={handlePasswordChange}
-                  />
-                </div>
-                <div className="mb-4 flex justify-center">
-                  <input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    placeholder={t("Confirm Password")}
-                    type="password"
-                    className="w-full max-w-xs text-primaryColor rounded-md p-2 border border-linkColor"
-                    value={passwords.confirmPassword}
-                    onChange={handlePasswordChange}
-                  />
-                </div>
-                <div className="flex justify-center">
-                  <button
-                    type="submit"
-                    className="bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                  >
-                    {t("Update Password")}
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     )

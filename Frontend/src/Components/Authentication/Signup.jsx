@@ -19,14 +19,17 @@ const Signup = () => {
     if (errorMessage != "")
       setErrorMessage("")
   }
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setIsLoading(true)
     try {
 
       const validation = validateCredentials(formData)
       if (!validation.valid) {
         setErrorMessage(validation.message)
+        setIsLoading(false)
       }
       else {
         
@@ -40,11 +43,14 @@ const Signup = () => {
         const response = await res.json()
         if (res.ok)
           navigate("/otp/verify")
-        else
+        else {
           setErrorMessage(response.message)
+          setIsLoading(false)
+        }
       }
     } catch (error) {
       console.log(error)
+      setIsLoading(false)
     }
 
   }
@@ -55,6 +61,7 @@ const Signup = () => {
         <div className="bg-white p-8 rounded-lg shadow-2xl shadow-thirdColor w-full max-w-md">
           <h2 className="text-2xl font-bold text-black mb-6">Create Account</h2>
           <p className="text-red-500 px-3 pb-3 font-bold">{errorMessage ? errorMessage : ""}</p>
+          <br />
           <form onSubmit={handleSubmit}>
             <div className="space-y-4">
               <div>
@@ -65,8 +72,9 @@ const Signup = () => {
                   placeholder="Username"
                   onChange={handleChange}
                   value={username}
+                  autoComplete='username'
                   className="w-full px-4 py-2 text-black border-2 bg-white border-thirdColor rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
+                  />
               </div>
               <div>
                 <label htmlFor="email" className="block"></label>
@@ -76,8 +84,9 @@ const Signup = () => {
                   placeholder="email"
                   onChange={handleChange}
                   value={email}
+                  autoComplete='email'
                   className="w-full px-4 py-2 text-black border-2 bg-white border-thirdColor rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
+                  />
               </div>
               <div>
                 <label htmlFor="password" className="block text-sm mb-1"></label>
@@ -86,9 +95,10 @@ const Signup = () => {
                   type="password"
                   name="password"
                   placeholder="Password"
+                  autoComplete="new-password"
                   value={password}
                   onChange={handleChange}
-                />
+                  />
               </div>
               <div>
                 <label htmlFor="password2" className="block text-sm font-medium text-black mb-1"></label>
@@ -98,28 +108,24 @@ const Signup = () => {
                   placeholder="Confirm Password"
                   onChange={handleChange}
                   value={password2}
+                  autoComplete="new-password"
                   className="w-full px-4 py-2 bg-white text-black border-2 border-thirdColor rounded-lg focus:outline-none focus:ring-4 focus:ring-purple-300"
-                />
+                  />
               </div>
-              <input
+              {isLoading ? <p className="mx-5 text-center text-primaryColor font-bold">Loading...</p>
+               : <input
                 type="submit"
                 value="Submit"
                 className="w-full bg-secondaryColor text-white py-2 rounded-lg hover:bg-thirdColor transition duration-300"
-              />
+                /> }
             </div>
           </form>
           <p className='text-thirdColor px-3 py-2 hover:text-primaryColor transition duration-300'><Link to={'/login'}>already have an account ?</Link></p>
-          <h3 className="text-center text-black mt-6">Or</h3>
-          <div className="mt-4 space-y-2" >
-            <button className="w-full bg-secondaryColor text-white py-2 rounded-lg hover:bg-gray-800 transition duration-300" id="signin-with-Intra">
-              Continue with Intra
-            </button>
-          </div>
         </div>
       </div>
     </>
 
-  );
+);
 };
 
 export default Signup;
