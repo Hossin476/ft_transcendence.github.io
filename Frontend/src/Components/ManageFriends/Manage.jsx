@@ -5,13 +5,13 @@ import { useAuth } from '../../context/AuthContext';
 
 export default function Manage() {
     const [selected, setSelected] = useState("requests");
-    const { tokens, socketMessage } = useAuth();
+    const { tokens, socketMessage, customFetch } = useAuth();
     const [friends, setFriends] = useState([]);
     const BASE_URL = '/api/notification/friends';
 
     const fetchData = useCallback(async () => {
         try {
-            const response = await fetch(`${BASE_URL}/?type=${selected}`, {
+            const response = await customFetch(`${BASE_URL}/?type=${selected}`, {
                 headers: {
                     "Authorization": "JWT " + tokens.access,
                     "Content-Type": "application/json"

@@ -6,7 +6,7 @@ import _ from "lodash";
 import {useNavigate} from "react-router-dom";
 
 export default function ManageFriends() {
-    const { tokens } = useAuth();
+    const { tokens, customFetch } = useAuth();
     const [focus, setFocus] = useState(false);
     const [users, setUsers] = useState([]);
     const [search, setSearch] = useState("");
@@ -17,7 +17,7 @@ export default function ManageFriends() {
     }
 
     const get_all_users = async () => {
-        const response = await fetch("/api/users/all_users", {
+        const response = await customFetch("/api/users/all_users", {
             method: "GET",
             headers: {
                 "Authorization": "JWT " + tokens.access,

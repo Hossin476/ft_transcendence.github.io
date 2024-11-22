@@ -6,11 +6,11 @@ import FriendResponseNotification from './FriendResponseNotification';
 
 function NotificationModal() {
     const [notifications, setNotifications] = useState([]);
-    const { tokens, socketMessage } = useAuth();
+    const { tokens, socketMessage, customFetch } = useAuth();
 
     const fetchData = useCallback(async () => {
         try {
-            const response = await fetch('/api/notification/', {
+            const response = await customFetch('/api/notification/', {
                 headers: {
                     "Authorization": "JWT " + tokens.access,
                     "Content-Type": "application/json"

@@ -72,8 +72,8 @@ const data = [
   ];
 
 
-const getChartData = async (tokens)=> {
-   const response = await fetch("/api/users/chart_data/",{
+const getChartData = async (tokens, customFetch)=> {
+   const response = await customFetch("/api/users/chart_data/",{
     method:"GET",
     headers: {
       'Authorization' : "JWT " + tokens.access,
@@ -88,11 +88,11 @@ const getChartData = async (tokens)=> {
 
 export default function PlayerCharts() {
 
-  const {tokens} = useAuth()
+  const {tokens, customFetch} = useAuth()
   const [chartData,setChatData] = useState(null)
     useEffect(()=>{
       const fetchData = async()=>{
-        let data = await getChartData(tokens)
+        let data = await getChartData(tokens, customFetch)
         setChatData(()=>data)
       }
       fetchData()

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from "react-router-dom";
+import { validateCredentials } from '../../utils/auth/validators';  
 
 
 const Signup = () => {
@@ -22,13 +23,13 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      if (!password2 || !username || !password || !email)
-        setErrorMessage("all fields are required !")
-      else if (password !== password2)
-        setErrorMessage("passwords do not match !")
-      else if (password.length < 8)
-        setErrorMessage("password must be at least 8 characters long !")
+
+      const validation = validateCredentials(formData)
+      if (!validation.valid) {
+        setErrorMessage(validation.message)
+      }
       else {
+        
         const res = await fetch(`/api/auth/register/`, {
           method: "POST",
           headers: {

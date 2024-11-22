@@ -7,8 +7,8 @@ import Profile_friends from "../Components/Profile/profileFriends";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-async function getProfileData(tokens, userId) {
-  const response = await fetch(`/api/users/profile/${userId}/`, {
+async function getProfileData(tokens, userId, customFetch) {
+  const response = await customFetch(`/api/users/profile/${userId}/`, {
     method: "GET",
     headers: {
       Authorization: "JWT " + tokens.access,
@@ -28,13 +28,13 @@ function Profile() {
   const navigate = useNavigate();
   let user_id = useParams();
   user_id = user_id.id;
-  const { tokens } = useAuth();
+  const { tokens, customFetch } = useAuth();
   const [profileData, setProfileData] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let data = await getProfileData(tokens, user_id);
+        let data = await getProfileData(tokens, user_id, customFetch);
         setProfileData(() => data);
       } catch (error) {
         navigate("/notfound");

@@ -4,8 +4,8 @@ import TourHistory from './TourHistory'
 import { useTranslation } from "react-i18next";
 
 
-const getTournaments = async (tokens)=> {
-    const response = await fetch("/api/tournament/tournaments/", {
+const getTournaments = async (tokens, customFetch)=> {
+    const response = await customFetch("/api/tournament/tournaments/", {
         method:"GET",
         headers: {
             "Authorization" : "JWT " + tokens.access,
@@ -22,10 +22,10 @@ const getTournaments = async (tokens)=> {
 export default function Tournaments() {
     const { t } = useTranslation();
     const [tournaments,setTournament] = useState(null)
-    const {tokens}  = useAuth()
+    const {tokens, customFetch}  = useAuth()
     useEffect(()=> {
         const fetchDdata = async()=> {
-            let data = await getTournaments(tokens)
+            let data = await getTournaments(tokens, customFetch)
             setTournament(()=>data)
         }
         fetchDdata()

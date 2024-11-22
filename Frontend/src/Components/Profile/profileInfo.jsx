@@ -23,7 +23,7 @@ function Profile_info({ userid }) {
     blocker : null,
     blocked : null
   })
-  const { user, socket, tokens, username } = useAuth();
+  const { user, socket, tokens, username, customFetch } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -123,7 +123,7 @@ function Profile_info({ userid }) {
   }
 
   async function checkFriendStatus() {
-    const response = await fetch(`/api/notification/check_friendship/${userid?.id}/`, {
+    const response = await customFetch(`/api/notification/check_friendship/${userid?.id}/`, {
       method: "GET",
       headers: {
         Authorization: "JWT " + tokens.access,
@@ -142,7 +142,8 @@ function Profile_info({ userid }) {
   }
 
   async function checkBlockStatus() {
-    const response = await fetch(`/api/notification/check_blocked/${userid?.id}/`, {
+
+    const response = await customFetch(`/api/notification/check_blocked/${userid?.id}/`, {
       method: "GET",
       headers: {
         Authorization: "JWT " + tokens.access,

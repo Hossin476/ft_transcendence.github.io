@@ -9,7 +9,7 @@ const Win = ({ final_winner }) => {
     const { playerRole } = useTicTacToe();
     const location = useLocation();
     const navigate = useNavigate();
-    const { tokens } = useAuth();
+    const { tokens, customFetch } = useAuth();
 
     const isWin = final_winner === playerRole;
     const isOffline = location.state?.isonline === false;
@@ -21,7 +21,7 @@ const Win = ({ final_winner }) => {
             return;
         const fetchUrl = `${BASE_URL}/${isOffline ? 'offline_winner_data' : 'winner_data'}/${gameId}`;
         try {
-            const response = await fetch(fetchUrl, {
+            const response = await customFetch(fetchUrl, {
                 headers: {
                     "Authorization": `JWT ${tokens.access}`,
                     "Content-Type": "application/json"

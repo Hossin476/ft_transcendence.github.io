@@ -11,12 +11,12 @@ export default function Challenge({ setopen, gameType }) {
     const { t } = useTranslation();
     const [open, setOpen] = useState(true)
     const [online_ingame, setChallengeData] = useState(null);
-    const {tokens, socket, socketMessage} = useAuth();
+    const {tokens, socket, socketMessage, customFetch} = useAuth();
     const handleOpen = () => {
         setOpen(!open)
     }
     const fetchData = async () => {
-        const response = await fetch(`/api/notification/onlinegame/`,
+        const response = await customFetch(`/api/notification/onlinegame/`,
             {
                 headers: {Authorization: "JWT " + tokens.access}
             }

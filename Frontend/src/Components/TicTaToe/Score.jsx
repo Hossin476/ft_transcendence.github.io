@@ -9,7 +9,7 @@ import { useTicTacToe } from '../../context/TicTacToeContext';
 function Score() {
     const [users, setUsers] = useState({ player1: null, player2: null });
     const location = useLocation();
-    const { tokens } = useAuth();
+    const { tokens, customFetch } = useAuth();
     const navigate = useNavigate();
     const { scores } = useTicTacToe();
 
@@ -22,7 +22,7 @@ function Score() {
 
         const fetchUrl = `${BASE_URL}/${isOffline ? 'offline_user_data' : 'user_data'}/${gameId}`;
         try {
-            const response = await fetch(fetchUrl, {
+            const response = await customFetch(fetchUrl, {
                 headers: {
                     "Authorization": `JWT ${tokens.access}`,
                     "Content-Type": "application/json"

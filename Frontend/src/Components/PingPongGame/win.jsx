@@ -38,7 +38,7 @@ const OfflineWin = ({matchObj})=>{
 
 export default function Win({iswin, game_id})
 {
-    const {tokens, username} = useAuth()
+    const {tokens, username, customFetch} = useAuth()
     const [userGame, setUserGame] = useState(null)
     const [Game, setGame] = useState(null)
     const location = useLocation()
@@ -51,7 +51,7 @@ export default function Win({iswin, game_id})
                 url = `/api/pingpong/game/pingpong/${game_id}/`
             else
                 url = `/api/pingpong/game/pingpong/offline/${game_id}/`
-            const response = await fetch(url,{
+            const response = await customFetch(url,{
                 headers: {Authorization : "JWT " + tokens.access}
             })
             const data = await response.json()

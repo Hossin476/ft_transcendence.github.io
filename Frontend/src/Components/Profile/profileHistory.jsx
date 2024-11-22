@@ -131,8 +131,8 @@ function Match_draw({ match }) {
   );
 }
 
-async function getAllMatches(tokens, userId) {
-  const response = await fetch(
+async function getAllMatches(tokens, userId, customFetch) {
+  const response = await customFetch(
     `/api/users/profile/match/${userId}`,
     {
       method: "GET",
@@ -148,13 +148,13 @@ async function getAllMatches(tokens, userId) {
 
 function Profile_history({ user }) {
   const { t } = useTranslation();
-  const { tokens } = useAuth();
+  const { tokens, customFetch } = useAuth();
   const [matches, setMatches] = useState(null);
 
   
   useEffect(() => {
     const fetchData = async () => {
-      let data = await getAllMatches(tokens, user);
+      let data = await getAllMatches(tokens, user, customFetch);
       data.sort((a, b) => {
         return a.created < b.created;
       });

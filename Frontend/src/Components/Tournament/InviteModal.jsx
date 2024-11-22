@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 
 function InviteModal({ setInvite, tour_id }) {
     const [users, setUsers] = useState([])
-    const { tokens } = useAuth()
+    const { tokens, customFetch } = useAuth()
 
     function clear_invite() {
         setInvite(false)
@@ -13,7 +13,7 @@ function InviteModal({ setInvite, tour_id }) {
 
     const fetchData = useCallback(async () => {
         try {
-            const response = await fetch(`/api/notification/tourinvites/${tour_id}`, {
+            const response = await customFetch(`/api/notification/tourinvites/${tour_id}`, {
                 headers: {
                     "Authorization": "JWT " + tokens.access,
                     "content-Type": "application/json"

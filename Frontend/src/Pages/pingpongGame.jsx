@@ -55,7 +55,7 @@ function PingPongGame() {
   const location = useLocation()
   const navigate = useNavigate()
   const ref = useRef()
-  const { tokens } = useAuth();
+  const { tokens, customFetch } = useAuth();
   const currentCamera = useRef(0)
   const cameraPositions = useMemo(()=>[
     {rotation: {x: -Math.PI/2, y: Math.PI, z: -Math.PI/2}, position: {x:0,y:2,z:-2.8}},
@@ -96,7 +96,7 @@ function PingPongGame() {
   }
   useEffect(()=>{
     const  getGame = async (url) => {
-        const response  = await fetch(url,{
+        const response  = await customFetch(url,{
           headers: {Authorization: "JWT " + tokens.access}
         })
         const data =   await response.json()

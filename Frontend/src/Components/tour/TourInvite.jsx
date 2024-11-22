@@ -3,8 +3,8 @@ import TourInvites from "./TourInvites"
 import { useAuth } from '../../context/AuthContext'
 import { useTranslation } from 'react-i18next';
 
-const getTourInvites = async (userId,tokens)=> {
-    const response = await fetch(`/api/tournament/invites/`, {
+const getTourInvites = async (userId,tokens,customFetch)=> {
+    const response = await customFetch(`/api/tournament/invites/`, {
         method:"GET",
         headers: {
             "Authorization" : "JWT " + tokens.access
@@ -18,12 +18,12 @@ const getTourInvites = async (userId,tokens)=> {
 
 export default function TourInvite() {
     const { t } = useTranslation();
-    const {user,tokens,socketMessage} = useAuth()
+    const {user,tokens,socketMessage, customFetch} = useAuth()
     const [invites,setInvites] = useState([])
     
 
     const fetchInvites = async()=> {
-        const data = await getTourInvites(user.user_id,tokens)
+        const data = await getTourInvites(user.user_id,tokens, customFetch)
         if(data)
             setInvites(()=>data)
     }
