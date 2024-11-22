@@ -116,6 +116,7 @@ export const AuthProvider = ({ children }) => {
                         options.headers["Authorization"] = "JWT " + newTokens.access;
                     }else {
                         localStorage.removeItem('tokens');
+                        console.error
                         nav('/login');
                         return;
                     }

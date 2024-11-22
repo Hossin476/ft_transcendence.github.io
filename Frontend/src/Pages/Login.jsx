@@ -5,8 +5,14 @@ import { useAuth } from '../context/AuthContext';
 import axiosInstance from '../utils/axiosInstance';
 
 const handleIntraLogin = async (code,login,navigate)=> {
-    const res = await axiosInstance.post("/users/oauth2/intra/", {code:code})
-    let data = await res.data
+    const res = await fetch(`/api/users/oauth2/intra/`,{
+        method:"POST",
+        headers: {
+            'Content-Type':'application/json'
+        },
+        body: JSON.stringify({code:code})
+    })
+    let data = await res.json()
 
     if(res.ok) {
         login({tokens:data })
@@ -66,9 +72,16 @@ const Login = () => {
 
         if (loginStep === 'credentials')
         {
-            const res = await axiosInstance.post("/auth/login/", loginData)
-            const tokens = await res.data;
-            if (res.status !== 200) {
+            const res = await fetch("/api/auth/login/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(loginData)
+            });
+
+            const tokens = await res.json();
+            if (!res.ok) {
                 console.log('response ', tokens.access)
                 setErrorMessage(tokens.error);
                 setIsLoading(false);
@@ -86,13 +99,19 @@ const Login = () => {
         {
             try
             {
-                const res = await axiosInstance.post("/auth/verify-2fa/", {
-                    username: loginData.username,
-                    code: twoFactorCode}
-                )
+                const res = await fetch("/api/auth/verify-2fa/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        username: loginData.username,
+                        code: twoFactorCode
+                    })
+                });
     
-                const tokens = await res.data;
-                if (res.status == 200)
+                const tokens = await res.json();
+                if (res.ok)
                 {
                     login({ tokens });
                     navigate('/dashboard');
