@@ -73,7 +73,7 @@ const Win = ({ final_winner }) => {
                         <p>LEVEL {playerData?.rank}</p>
                         <p>LEVEL {playerData?.rank + 1}</p>
                     </div>
-                    <Progress value={playerData?.xp % 100} max={100} />
+                    <Progress value={playerData.xp % 100} max={100} />
                 </div>
             </div>
         </>
