@@ -12,7 +12,7 @@ function ScoreBar({gameid})
     const location = useLocation();
     const {score1, score2} = useContext(GameContext)
     const [players, setPlayers] = useState(null)
-    const {tokens} = useAuth()
+    const {tokens, customFetch} = useAuth()
 
     const fetch_game = async ()=>{
         let url = null
@@ -20,7 +20,7 @@ function ScoreBar({gameid})
             url = `/api/pingpong/game/pingpong/${gameid}/`
         else
             url = `/api/pingpong/game/pingpong/offline/${gameid}/`
-        const response = await fetch(url,{
+        const response = await customFetch(url,{
             headers: {Authorization : "JWT " + tokens.access}
         })
         const data = await response.json()

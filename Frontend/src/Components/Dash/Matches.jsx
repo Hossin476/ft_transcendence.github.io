@@ -3,8 +3,8 @@ import Match from "./Match"
 import {useEffect,useState} from "react"
 import { useTranslation } from "react-i18next";
 
-const getAllMatches = async(tokens)=> {
-    const response = await fetch("/api/users/all_matches/", {
+const getAllMatches = async(tokens, customFetch)=> {
+    const response = await customFetch("/api/users/all_matches/", {
         method:"GET",
         headers: {
             "Authorization" : "JWT " + tokens.access,
@@ -19,11 +19,11 @@ const getAllMatches = async(tokens)=> {
 
 export default function Matches() {
     const { t } = useTranslation();
-    const {tokens} = useAuth()
+    const {tokens, customFetch} = useAuth()
     const [matches,setMatches] = useState(null)
     useEffect(()=> {
         const fetchData = async ()=> {
-            let data = await getAllMatches(tokens)
+            let data = await getAllMatches(tokens, customFetch)
             data.sort((a,b)=>{
                 return a.created < b.created
             })

@@ -19,11 +19,11 @@ function Profile_info({ userid }) {
   });
 
   const [blockStatus, setBlockStatus] = React.useState({
-    block: false,
-    blocker: null,
-    blocked: null,
-  });
-  const { user, socket, tokens, username } = useAuth();
+    block : false,
+    blocker : null,
+    blocked : null
+  })
+  const { user, socket, tokens, username, customFetch } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -123,15 +123,12 @@ function Profile_info({ userid }) {
   }
 
   async function checkFriendStatus() {
-    const response = await fetch(
-      `/api/notification/check_friendship/${userid?.id}/`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: "JWT " + tokens.access,
-        },
-      }
-    );
+    const response = await customFetch(`/api/notification/check_friendship/${userid?.id}/`, {
+      method: "GET",
+      headers: {
+        Authorization: "JWT " + tokens.access,
+      },
+    });
     if (response.ok) {
       const data = await response.json();
       console.log("this is friend", data);
@@ -145,15 +142,13 @@ function Profile_info({ userid }) {
   }
 
   async function checkBlockStatus() {
-    const response = await fetch(
-      `/api/notification/check_blocked/${userid?.id}/`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: "JWT " + tokens.access,
-        },
-      }
-    );
+
+    const response = await customFetch(`/api/notification/check_blocked/${userid?.id}/`, {
+      method: "GET",
+      headers: {
+        Authorization: "JWT " + tokens.access,
+      },
+    });
     if (response.ok) {
       const data = await response.json();
       console.log("this is bock", data);

@@ -20,9 +20,9 @@ const Typing_render = () => {
     )
 } 
 
-const getMessages = async (chatUser,tokens)=> {
+const getMessages = async (chatUser,tokens, customFetch)=> {
 
-  const respons = await fetch("/api/chat/messages",{
+  const respons = await customFetch("/api/chat/messages",{
       method:"POST",
       headers :{
               'Content-Type':"application/json",
@@ -53,14 +53,14 @@ function getFormatedDate(messageTime) {
 
 const Conversation = () => {
 
-  const {user,tokens,chatsocket} = useAuth()
+  const {user,tokens,chatsocket, customFetch} = useAuth()
   const {currantUser,messages,setMessages,seen,setSeen, typing,setBlocker,blocker} = useContext(ChatContext)
   const elementRef = useRef(null)
   
 
   useEffect(()=> {
     const fetchMessages = async ()=> {
-      const data = await getMessages(currantUser,tokens)
+      const data = await getMessages(currantUser,tokens, customFetch)
       setSeen(()=> {
         if(!data || data.length === 0)
             return false

@@ -196,12 +196,12 @@ function LocalButton({ onClick, players }) {
   );
 }
 
-const fetchData = async (gameType, players, tokens) => {
+const fetchData = async (gameType, players, tokens, customFetch) => {
   let url = "";
 
   if (gameType === "P") url = "/api/pingpong/game/pingpong/offline/create";
   else url = "/api/game/tictactoe/offline/create_local_game";
-  const response = await fetch(url, {
+  const response = await customFetch(url, {
     method: "POST",
     headers: {
       Authorization: "JWT " + tokens.access,
@@ -306,7 +306,7 @@ function PvpGame({ title }) {
   const [matchData, setMatchData] = useState({})
   const locations = useLocation()
   const navigate = useNavigate()
-  const { socket, socketMessage, tokens } = useAuth()
+  const { socket, socketMessage, tokens, customFetch } = useAuth()
   const { t } = useTranslation();
   const [players, setPlayers] = useState({
     player1: "",
@@ -344,7 +344,7 @@ function PvpGame({ title }) {
     console.log("the players are ", players);
     if (players.player1 === "" || players.player1 === "") return;
     let type = gameType === "P" ? "pingpong" : "tictactoe";
-    const data = await fetchData(gameType, players, tokens);
+    const data = await fetchData(gameType, players, tokens, customFetch);
     console.log("the data is ", data);
     if (data)
       navigate(`/game/${type}/pvpgame/match`, {
@@ -355,7 +355,7 @@ function PvpGame({ title }) {
   const fetch_matches = useCallback(async () => {
     const fetchUrl = `/api/notification/${gameType === 'P' ? 'pingpong_unfinished_match' : 'tictactoe_unfinished_match'}`;
     try {
-      const response = await fetch(fetchUrl, {
+      const response = await customFetch(fetchUrl, {
         headers: {
           "Authorization": `JWT ${tokens.access}`,
           "Content-Type": "application/json"

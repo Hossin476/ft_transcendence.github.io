@@ -6,8 +6,9 @@ import ChatContext from "../../context/ChatContext";
 import _ from "lodash";
 import { useTranslation } from "react-i18next";
 
-const getConversations = async (tokens, user) => {
-  const response = await fetch("/api/chat/conversation", {
+
+const getConversations = async (tokens, user, customFetch) => {
+  const response = await customFetch("/api/chat/conversation", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -41,7 +42,7 @@ export default function ChatList() {
   const { setCurrentUser, conversation, setConversation, currantUser,setBlocker } =
     useContext(ChatContext);
   const { messages, setMessages } = useContext(ChatContext);
-  const { user, tokens,socketMessage } = useAuth();
+  const { user, tokens,socketMessage, customFetch } = useAuth();
   const [selectedChat, setSelectedChat] = useState(-1);
   const [search, setSearch] = useState("");
   const { count, setCount } = useContext(ChatContext);
@@ -72,7 +73,7 @@ export default function ChatList() {
   },[conversation,currantUser])
   useEffect(() => {
     const fetchConversation = async () => {
-      const data = await getConversations(tokens, user);
+      const data = await getConversations(tokens, user, customFetch);
       setConversation(() => data);
     };
     fetchConversation();

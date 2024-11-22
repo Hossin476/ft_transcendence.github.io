@@ -3,11 +3,10 @@ import { useAuth } from '../context/AuthContext'
 import CreateTournament from "../Components/tour/CreateTournament";
 import HistoryAndInvites from "../Components/tour/HistoryAndInvites";
 import Header from "../Components/tour/Header";
-import TournamentProvider from '../context/TournamentContext';
 
 
-const getTours = async (userId, tokens) => {
-    const response = await fetch(`/api/tournament/tourlist/${userId}`, {
+const getTours = async (userId, tokens, customFetch) => {
+    const response = await customFetch(`/api/tournament/tourlist/${userId}`, {
         method: 'GET',
         headers: {
             Authorization: 'JWT ' + tokens.access
@@ -23,11 +22,11 @@ export default function Chat() {
 
     const [tours, setTours] = useState(null)
     const [tournamentName, setTournamentName] = useState("")
-    const { tokens, user, socketMessage, socket } = useAuth()
+    const { tokens, user, socketMessage, socket, customFetch } = useAuth()
 
 
     const fetchTours = async () => {
-        const data = await getTours(user.user_id, tokens)
+        const data = await getTours(user.user_id, tokens, customFetch)
         setTours(() => data)
     }
 
