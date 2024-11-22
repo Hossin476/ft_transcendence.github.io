@@ -32,8 +32,10 @@ const Win = ({ final_winner }) => {
             if (!response.ok)
                 throw new Error(`HTTP error! status: ${response.status}`);
             const data = await response.json();
+            console.log(data);
             setGameData(data);
         } catch (error) {
+            console.error(error);
             setGameData({})
         }
     }, [gameId, isOffline, tokens.access])

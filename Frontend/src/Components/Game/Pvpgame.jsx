@@ -282,7 +282,7 @@ function OnlinePvp({isstarted,counter,isstart,pvpUser}) {
 
   const { t } = useTranslation();
   const {user,username} = useAuth();
-  console.log("USER:", pvpUser)
+  console.log("USER:", user)
   console.log("user playerName(photo):", user.profile_image)
   return (
     <>
@@ -307,7 +307,7 @@ function OnlinePvp({isstarted,counter,isstart,pvpUser}) {
 function PvpGame({ title }) {
   const [isstart, setStart] = React.useState(false);
   const [isstarted, setStarted] = React.useState(false);
-  const [pvpUser, setPvpUser] = useState()
+  const [pvpUser, setPvpUser] = useState(null)
   const [counter, setCounter] = useState(null)
   const [mode, setMode] = useState(true)
   const [matchData, setMatchData] = useState({})

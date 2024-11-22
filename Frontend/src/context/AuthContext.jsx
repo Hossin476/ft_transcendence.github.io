@@ -37,6 +37,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('tokens', JSON.stringify(encryptedToken))
         setTokens(data.tokens)
         setUser(jwtDecode(data.tokens.access))
+        console.log('login:', data.tokens.access)
         setUserName(data.tokens?.username);
     }
 

@@ -60,7 +60,7 @@ function Game(props)
         break;
       case 'game.waiting':
         props.handleWaiting(() => iswaiting);
-        if (iswaiting && (status === 'reconnect' || status === 'pause')) {
+        if (waiting.current && iswaiting && (status === 'reconnect' || status === 'pause')) {
           waiting.current.innerText = currentSecond;
           waitingStatus.current.innerText = message;
         }

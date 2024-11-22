@@ -107,9 +107,12 @@ function PingPongGame() {
           console.log(data)
           if(data.is_game_end == true)
               navigate('../')
+        }else {
+          navigate('../')
         }
       } catch (error) {
         navigate('../')
+        return 
       }
     }
     if(location.state.isonline == true)

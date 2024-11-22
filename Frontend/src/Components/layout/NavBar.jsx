@@ -9,9 +9,31 @@ import NotificationHandler from "../Notifications/NotificationHandler";
 import { useNavigate } from 'react-router-dom';
 import LanguageSwitcher from "../../Components/Settings/LanguageSwitcher";
 
+
+const  getUserData= async (tokens, customFetch)=> {
+    try {
+        const response = await customFetch("/api/users/user_info/",{
+            method : "GET",
+            headers:{
+                "Authorization": "JWT " + tokens.access,
+                'Content-Type':'application/json',
+            }
+        })
+        if(response.ok) {
+            let data = await response.json()
+            return data
+        }
+        return null
+    } catch(error) {
+        return null
+    }
+}
+
+
 export default function NavBar() {
 
-    const { socket, global_socket, socketMessage, createSocket,user, username } = useAuth()
+
+    const { socket, global_socket, socketMessage, createSocket,user, username, setUser, customFetch, tokens } = useAuth()
     const [showNotifications, setShowNotifications] = useState(false);
     const nav = useNavigate();
 
@@ -33,6 +55,14 @@ export default function NavBar() {
     useEffect(() => {
         global_socket();
         createSocket();
+        const fetchData = async ()=> {
+            let data = await getUserData(tokens, customFetch)
+            setUser(()=>{
+                return data
+            })
+        }
+        fetchData()
+
         return () => {
             if (socket)
                 socket.close()
