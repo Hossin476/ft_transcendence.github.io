@@ -139,6 +139,20 @@ def get_all_matches(request):
     ping_serialzer = MatchGameOnlineSerializer(pong_matches, many=True).data
     tictactoe_serializer = MatchGameOnlineModelSerializer(tictactoe_matches, many=True).data
     
+    socre = None;
+    for item in tictactoe_serializer:
+        if item.get('winner'):
+            if item['player1']['id'] == item['winner']['id']:
+                if int(item['score1']) < int(item['score2']):
+                    score = item['score2']
+                    item['score2'] = item['score1']
+                    item['score1'] = score
+            else:
+                if int(item['score1']) > int(item['score2']):
+                    score = item['score2']
+                    item['score2'] = item['score1']
+                    item['score1'] = score
+    
     all_matches = list(chain(ping_serialzer + tictactoe_serializer))
     return Response(all_matches)
 

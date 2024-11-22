@@ -18,22 +18,19 @@
     z-index: 1;
 }
 
-.myprofile{
+.settings{
     color: rgb(153, 153, 153);
     border: 1px solid rgb(153, 153, 153);
     border-radius: 20px;
     font-size: 12px;
     cursor: pointer;
-    padding: 10px 20px;
+    padding: 10px 25px;
 }
 
-.settings{
+.settings.active{
     color: white;
     border: 1px solid white;
     border-radius: 20px;
-    font-size: 12px;
-    cursor: pointer;
-    padding: 10px 25px;
 }
 
 .tittle-section{

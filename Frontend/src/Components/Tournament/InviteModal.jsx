@@ -2,10 +2,12 @@ import React, { useEffect, useState,useCallback } from 'react'
 import UserInvite from './UserInvite'
 import { MdClear } from "react-icons/md";
 import { useAuth } from '../../context/AuthContext';
+import { useTranslation } from 'react-i18next'
 
 function InviteModal({ setInvite, tour_id }) {
     const [users, setUsers] = useState([])
     const { tokens, customFetch } = useAuth()
+    const { t } = useTranslation()
 
     function clear_invite() {
         setInvite(false)
@@ -24,7 +26,6 @@ function InviteModal({ setInvite, tour_id }) {
             const data = await response.json()
             setUsers(data)
         } catch (error) {
-            console.error('Fetch failed: ', error);
             setUsers([])
         }
     }, [tokens.access, tour_id, setUsers]);
@@ -39,7 +40,7 @@ function InviteModal({ setInvite, tour_id }) {
                 <div className='h-[4rem] absolute right-4 top-2'>
                     <MdClear size={40} onClick={clear_invite} style={{ cursor: 'pointer' }} />
                 </div>
-                <h1 className={`font-Plaguard xsm:text-[3.5vw] lg:text-2xl text-white mt-4 `}> Invite Players to Tournament</h1>
+                <h1 className={`font-Plaguard xsm:text-[3.5vw] lg:text-2xl text-white mt-4 `}>{t("Invite Players to Tournament")}</h1>
                 <div className="w-[80%] p-4 space-y-4 overflow-y-auto h-[calc(100%-5rem)]">
                     {
                         users.map((user, index) => (

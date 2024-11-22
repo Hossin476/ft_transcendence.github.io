@@ -21,7 +21,6 @@ function NotificationModal() {
             const data = await response.json();
             setNotifications(data);
         } catch (error) {
-            console.error('Fetch failed: ', error);
             setNotifications([])
         }
     }, [tokens.access]);

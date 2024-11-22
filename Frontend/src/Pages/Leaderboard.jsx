@@ -29,7 +29,7 @@ export default function Leaderboard() {
       setLeaderboardData(data);
 
     } catch (error) {
-      console.error('Fetch failed: ', error);
+      setLeaderboardData([])
     }
   }, [activeGame, tokens.access])
 

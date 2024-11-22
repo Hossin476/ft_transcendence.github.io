@@ -1,9 +1,11 @@
 import { FaCheck } from "react-icons/fa";
 import { GiCancel } from "react-icons/gi";
 import { useAuth } from "../../context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 export default function Request({ friends, setFriends }) {
     const { socket } = useAuth();
+    const { t } = useTranslation();
 
     function accept_friendship() {
         if (socket && socket.readyState === WebSocket.OPEN) {
@@ -35,17 +37,17 @@ export default function Request({ friends, setFriends }) {
                 </div>
                 <div>
                     <h3 className="  md:text-lg font-semibold">{friends.from_user}</h3>
-                    <p className="xsm:text-xs md:text-sm">level {friends.rank}</p>
+                    <p className="xsm:text-xs md:text-sm">{t("Level")} {friends.rank}</p>
                 </div>
             </div>
             <div className="flex  xsm:gap-2 sm:gap-x-4 items-center">
                 <button className="flex items-center gap-x-2 border border-green-500 p-1 text-green-500 rounded-lg text-sm" onClick={accept_friendship}>
                     <FaCheck className="xsm:text-xs sm:text-sm" />
-                    <span className="xsm:hidden sm:block"> accept</span>
+                    <span className="xsm:hidden sm:block"> {t("Accept")}</span>
                 </button>
                 <button className="flex items-center gap-x-2 border border-red-500 p-1 text-red-500 rounded-lg text-sm" onClick={reject_friendship}>
                     <GiCancel />
-                    <span className="xsm:hidden sm:block"> reject</span>
+                    <span className="xsm:hidden sm:block"> {t("Reject")}</span>
                 </button>
             </div>
         </div>

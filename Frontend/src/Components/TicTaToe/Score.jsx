@@ -36,13 +36,12 @@ function Score() {
                 player2: data.player2 || null
             });
         } catch (error) {
-            console.error('Fetch failed:', error);
+            setUsers({player1: null, player2: null})
         }
     }, [gameId, isOffline, tokens.access]);
 
     useEffect(() => {
         if (!gameId) {
-            console.error('Game ID is undefined or null');
             navigate('/game');
             return;
         }
@@ -52,7 +51,7 @@ function Score() {
     const renderPlayer = (playerData, PlayerComponent) => {
         if (!playerData) return null;
 
-        const profileImage = isOffline ? '/user.jpeg' : `${playerData.profile_image || ''}`;
+        const profileImage = isOffline ? '/user.jpeg' : `${playerData?.profile_image || ''}`;
         const username = typeof playerData === 'object' ? playerData.username : playerData;
         const rank = isOffline ? '1' : (playerData.rank || 1);
         const playerScore = scores[username];

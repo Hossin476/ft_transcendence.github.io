@@ -27,9 +27,18 @@ def get_user_data(req, game_id):
 @api_view(['GET'])
 def get_is_game_over(req, game_id):
     try:
-        game = OnlineGameModel.objects.get(id=game_id)
-        return Response({"is_end": game.is_end}, status=status.HTTP_200_OK)
+        game_type = req.GET.get('type', None)
+        if game_type == 'online':
+            game = OnlineGameModel.objects.get(id=game_id)
+            return Response({"is_end": game.is_end}, status=status.HTTP_200_OK)
+        elif game_type == 'offline':
+            game = LocalGameModel.objects.get(id=game_id)
+            return Response({"is_end": game.is_end}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'invalid type'}, status=status.HTTP_400_BAD_REQUEST)
     except OnlineGameModel.DoesNotExist:
+        return Response({'error': 'Game not found'}, status=status.HTTP_404_NOT_FOUND)
+    except LocalGameModel.DoesNotExist:
         return Response({'error': 'Game not found'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

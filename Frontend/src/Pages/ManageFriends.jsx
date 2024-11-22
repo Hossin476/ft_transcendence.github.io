@@ -4,8 +4,10 @@ import { useEffect, useState, useMemo } from "react";
 import { useAuth } from "../context/AuthContext";
 import _ from "lodash";
 import {useNavigate} from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function ManageFriends() {
+    const { t } = useTranslation();
     const { tokens, customFetch } = useAuth();
     const [focus, setFocus] = useState(false);
     const [users, setUsers] = useState([]);
@@ -58,14 +60,14 @@ export default function ManageFriends() {
             <div className=" relative w-11/12 h-5/6 xsm:p-4 sm:p-12 bg-secondaryColor rounded-lg border border-forthColor">
                 <div className={` ${focus ? 'block' : 'hidden'} absolute w-full left-0 top-0 opacity-50 h-full bg-gray-400`}></div>
                 <div className="flex items-center justify-between mb-8">
-                    <h1 className=" sm:text-4xl font-semibold" >Friends</h1>
+                    <h1 className=" sm:text-4xl font-semibold" >{t("Friends")}</h1>
                     <div className="flex items-center justify-center relative">
                         <input 
                             className=" xsm:h-8 xsm:p-2  sm:h-12 sm:p-4 sm:w-72 relative rounded-lg text-gray-800 outline-none bg-gray-300"  
                             type="text" 
                             name="" 
                             id="" 
-                            placeholder="add friend here"
+                            placeholder={t("add friend here")}
                             onChange={debounce_searchig}
                             onFocus={() => setFocus(true)}
                             onBlur={() => setTimeout(() => setFocus(false), 300)}

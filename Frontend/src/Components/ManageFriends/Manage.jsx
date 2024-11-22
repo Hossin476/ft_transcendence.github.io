@@ -2,8 +2,10 @@ import { useEffect, useState, useCallback } from 'react';
 import Request from "./Request";
 import Blocked from "./Blocked";
 import { useAuth } from '../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 export default function Manage() {
+    const { t } = useTranslation();
     const [selected, setSelected] = useState("requests");
     const { tokens, socketMessage, customFetch } = useAuth();
     const [friends, setFriends] = useState([]);
@@ -22,7 +24,6 @@ export default function Manage() {
             const data = await response.json();
             setFriends(data);
         } catch (error) {
-            console.error('Fetch failed: ', error);
             setFriends([]);
         }
     }, [selected, tokens.access, setFriends]);
@@ -39,8 +40,8 @@ export default function Manage() {
     return (
         <div className="w-full h-[100%] sm:p-8">
             <div className="flex justify-center xsm:mb-8 sm:mb-12 sm:text-2xl font-semibold gap-x-8 items-center">
-                <button onClick={() => handleSelection('blocked')} className={`${selected === 'blocked' ? 'text-thirdColor border-b-4 border-thirdColor' : ''} h-12`}>Blocked</button>
-                <button onClick={() => handleSelection('requests')} className={`${selected === 'requests' ? 'text-thirdColor border-b-4 border-thirdColor' : ''} h-12`}>Requests</button>
+                <button onClick={() => handleSelection('blocked')} className={`${selected === 'blocked' ? 'text-thirdColor border-b-4 border-thirdColor' : ''} h-12`}>{t("Blocked")}</button>
+                <button onClick={() => handleSelection('requests')} className={`${selected === 'requests' ? 'text-thirdColor border-b-4 border-thirdColor' : ''} h-12`}>{t("Requests")}</button>
             </div>
             <div className="w-full sm:px-4 h-[95%] overflow-scroll border border-thirdColor">
                 {

@@ -23,9 +23,8 @@ export function Progress({value, max})
     },[])
 
     useEffect(() => {
-        if (ref.current) {
+        if (ref.current)
             ref.current.style.width = `${progress}%`;
-        }
     }, [progress]);
     return (
         <div className="w-full h-4 xsm:h-1 lg:h-2 bg-white rounded-full">

@@ -25,6 +25,7 @@ import  CustomizePing from "./PingCustomize";
 import  CustomizeTic from "./TicCustomize";
 
 function Header({ title }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [isPopupOpen, setIsPopupOpen] = React.useState(false);
 
@@ -61,7 +62,7 @@ function Header({ title }) {
               onClick={togglePopup}
               style={{ fontSize: "1.6rem", color: "white" }}
             />
-            <h2 className="text-xl font-bold mb-4">Customize Game</h2>
+            <h2 className="text-xl font-bold mb-4">{t("Customize Game")}</h2>
             {
               title === "PING PONG" ? <CustomizePing setIsPopupOpen={setIsPopupOpen} /> : <CustomizeTic setIsPopupOpen={setIsPopupOpen} />
             }

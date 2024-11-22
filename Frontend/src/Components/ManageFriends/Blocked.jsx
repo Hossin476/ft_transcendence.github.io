@@ -1,8 +1,10 @@
 import { CgUnblock } from "react-icons/cg";
 import { useAuth } from "../../context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 export default function Blocked({ friends, setFriends }) {
     const { socket } = useAuth();
+    const { t } = useTranslation();
 
     function handle_unblock_request() {
         if (socket && socket.readyState === WebSocket.OPEN) {
@@ -23,13 +25,13 @@ export default function Blocked({ friends, setFriends }) {
                 </div>
                 <div>
                     <h3 className="md:text-lg font-semibold">{friends.blocked_user}</h3>
-                    <p className="xsm:text-xs md:text-sm">level {friends.rank}</p>
+                    <p className="xsm:text-xs md:text-sm">{t("Level")} {friends.rank}</p>
                 </div>
             </div>
             <div className="flex  xsm:gap-2 sm:gap-x-4 items-center xsm:text-lg sm:text-4xl">
                 <button className="flex items-center gap-x-2 border border-blue-500 p-1 text-red-500 rounded-lg text-sm" onClick={handle_unblock_request}>
                     <CgUnblock className="text-blue-500" />
-                    <span className="xsm:hidden text-blue-500 sm:block">unblock</span>
+                    <span className="xsm:hidden text-blue-500 sm:block">{t("Unblock")}</span>
                 </button>
             </div>
         </div>

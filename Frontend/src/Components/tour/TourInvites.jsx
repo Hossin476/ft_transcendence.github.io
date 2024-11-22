@@ -1,8 +1,9 @@
 import { useAuth } from "../../context/AuthContext"
-
+import { useTranslation } from "react-i18next"
 
 export default function TourInvites({setInvites, tourInvite}) {
     const {socket}  = useAuth()
+    const {t} = useTranslation()
 
     function handle_accept_tour(tour_id) {
         if (socket && socket.readyState === WebSocket.OPEN) {
@@ -32,8 +33,8 @@ export default function TourInvites({setInvites, tourInvite}) {
                 <p className="xsm:text-xs md:text-sm text-gray-400">{tourInvite.tournament.creator.username}</p>
             </div>
             <div className="flex">
-                <button onClick={ ()=>handle_accept_tour(tourInvite.tournament.id)} className="xsm:text-xs xsm:p-1 xsm:m-1 md:p-2 md:m-2  border-[1px] text-green-500 border-green-500 rounded ">Accept</button>
-                <button onClick={()=>handle_reject_tour(tourInvite.tournament.id)} className="xsm:text-xs xsm:p-1 xsm:m-1 md:p-2 md:m-2  border-[1px] text-red-500 border-red-500 rounded ">Decline</button>
+                <button onClick={ ()=>handle_accept_tour(tourInvite.tournament.id)} className="xsm:text-xs xsm:p-1 xsm:m-1 md:p-2 md:m-2  border-[1px] text-green-500 border-green-500 rounded ">{t("Accept")}</button>
+                <button onClick={()=>handle_reject_tour(tourInvite.tournament.id)} className="xsm:text-xs xsm:p-1 xsm:m-1 md:p-2 md:m-2  border-[1px] text-red-500 border-red-500 rounded ">{t("Reject")}</button>
             </div>
         </div>
     )

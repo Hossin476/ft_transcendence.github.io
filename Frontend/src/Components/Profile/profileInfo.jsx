@@ -15,7 +15,7 @@ function Profile_info({ userid }) {
     exists: false,
     status: null,
     fromUser: null,
-    toUser: null
+    toUser: null,
   });
 
   const [blockStatus, setBlockStatus] = React.useState({
@@ -49,11 +49,11 @@ function Profile_info({ userid }) {
         exists: true,
         status: "P",
         fromUser: username,
-        toUser: userid?.username
+        toUser: userid?.username,
       });
     }
   }
-  
+
   function acceptFriendRequest() {
     if (socket && socket.readyState === WebSocket.OPEN) {
       const message = JSON.stringify({
@@ -65,7 +65,7 @@ function Profile_info({ userid }) {
         exists: true,
         status: "A",
         fromUser: username,
-        toUser: userid?.username
+        toUser: userid?.username,
       });
     }
   }
@@ -81,7 +81,7 @@ function Profile_info({ userid }) {
         exists: false,
         status: null,
         fromUser: null,
-        toUser: null
+        toUser: null,
       });
     }
   }
@@ -97,12 +97,12 @@ function Profile_info({ userid }) {
         exists: false,
         status: null,
         fromUser: null,
-        toUser: null
+        toUser: null,
       });
       setBlockStatus({
         block: true,
         blocker: username,
-        blocked: userid?.username
+        blocked: userid?.username,
       });
     }
   }
@@ -117,8 +117,8 @@ function Profile_info({ userid }) {
       setBlockStatus({
         block: false,
         blocker: null,
-        blocked: null
-      }); 
+        blocked: null,
+      });
     }
   }
 
@@ -136,7 +136,7 @@ function Profile_info({ userid }) {
         exists: data.friendship_exists,
         status: data.status,
         fromUser: data.from_user,
-        toUser: data.to_user
+        toUser: data.to_user,
       });
     }
   }
@@ -155,7 +155,7 @@ function Profile_info({ userid }) {
       setBlockStatus({
         block: data.block,
         blocker: data.blocker,
-        blocked: data.blocked
+        blocked: data.blocked,
       });
     }
   }
@@ -180,12 +180,10 @@ function Profile_info({ userid }) {
       );
     }
 
-    if (friendshipStatus.status === 'P') {
+    if (friendshipStatus.status === "P") {
       if (friendshipStatus.fromUser === username) {
         return (
-          <button
-            className="bg-yellow-500 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-yellow-400 transition-colors xsm:text-sm md:text-base w-36"
-          >
+          <button className="bg-yellow-500 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-yellow-400 transition-colors xsm:text-sm md:text-base w-36">
             <IoPersonRemove />
             <span className="text-[0.9em]">{t("Pending")}</span>
           </button>
@@ -203,7 +201,7 @@ function Profile_info({ userid }) {
       }
     }
 
-    if (friendshipStatus.status === 'A') {
+    if (friendshipStatus.status === "A") {
       return (
         <button
           onClick={unfriend_request}
@@ -214,10 +212,9 @@ function Profile_info({ userid }) {
         </button>
       );
     }
-  }
+  };
 
   const renderBlockButton = () => {
-
     if (blockStatus.block) {
       return (
         <button
@@ -246,9 +243,7 @@ function Profile_info({ userid }) {
   console.log("profile info", userid);
   return (
     <div className="bg-secondaryColor flex flex-col rounded-3xl md:h-96 xsm:h-96 gap-4 overflow-hidden">
-      {/* Banner Section with Overlapping Profile */}
       <div className="relative">
-        {/* Banner Image */}
         <div className="h-36">
           <img
             src={userid?.background_image}
@@ -256,7 +251,6 @@ function Profile_info({ userid }) {
             className="w-full h-full object-cover"
           />
         </div>
-        {/* Profile Picture - Positioned to overlap */}
         <div className="absolute -bottom-16 left-6 xsm:w-20 xsm:h-20 md:w-32 md:h-32 lg:w-36 lg:h-36 xl:h-40 xl:w-40 flex items-center justify-center">
           <div className="xsm:text-xs sm:left-1/4 -bottom-2 xsm:w-16 text-center p-1 absolute z-50 bg-gray-300 xsm:rounded-3xl md:rounded-3xl border-black border-2 text-black">
             {t("LEVEL")} {userid?.rank}
@@ -271,10 +265,8 @@ function Profile_info({ userid }) {
         </div>
       </div>
 
-      {/* Content Section - Adjusted spacing to account for overlapping profile */}
       <div className="flex flex-1 mt-14 px-6">
         <div className="flex-1 flex xsm:p-1 sm:p-4 flex-col h-full xsm:justify-center md:justify-around gap-y-8 lg:justify-between">
-          {/* Profile name */}
           <div className="flex justify-between">
             <div>
               <h2 className="xsm:text-xs sm:text-sm md:text-lg xl:text-4xl font-semibold">
@@ -287,7 +279,6 @@ function Profile_info({ userid }) {
                 </span>
               </h3>
             </div>
-            {/* 1st */}
             <div>
               <h2 className="text-center xsm:text-sm md:text-lg lg:text-2xl xl:text-4xl font-semibold relative">
                 {userid?.rank}
@@ -301,7 +292,6 @@ function Profile_info({ userid }) {
             </div>
           </div>
 
-          {/* Progress bar */}
           <div className="relative">
             <div className="w-full h-2 bg-gray-100 rounded-full">
               <div
@@ -317,24 +307,20 @@ function Profile_info({ userid }) {
             </span>
           </div>
         </div>
-        {/* Add friend and Message buttons */}
         {user.user_id === userid?.id ? null : (
           <div className="flex flex-col gap-2">
-            {
-              blockStatus.block ? (
-                <button
-                  className="bg-gray-800 text-gray-600 px-6 py-2 rounded-full flex items-center gap-2 xsm:text-sm md:text-base w-36"
-                  disabled
-                >
-                  <IoPersonAdd />
-                  <span className="text-[0.9em]">{t("Add friend")}</span>
-                </button>
-              ) : (
-                renderFriendButton()
-              )
-            }
-            {
-              friendshipStatus.status === 'A' ? (
+            {blockStatus.block ? (
+              <button
+                className="bg-gray-800 text-gray-600 px-6 py-2 rounded-full flex items-center gap-2 xsm:text-sm md:text-base w-36"
+                disabled
+              >
+                <IoPersonAdd />
+                <span className="text-[0.9em]">{t("Add friend")}</span>
+              </button>
+            ) : (
+              renderFriendButton()
+            )}
+            {friendshipStatus.status === "A" ? (
               <button
                 onClick={handleChatRedirect}
                 className="bg-gray-800 text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-gray-700 transition-colors xsm:text-sm md:text-base w-36"
@@ -350,8 +336,7 @@ function Profile_info({ userid }) {
                 <BsChatDotsFill />
                 <span className="text-[0.9em]">{t("Message")}</span>
               </button>
-            )
-            }
+            )}
             {renderBlockButton()}
           </div>
         )}

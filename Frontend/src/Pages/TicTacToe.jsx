@@ -1,4 +1,4 @@
-import React, { useRef, useState, forwardRef, useEffect } from 'react';
+import React from 'react';
 import '../tictactoe.css';
 import Header from '../Components/TicTaToe/Header';
 import Game from '../Components/TicTaToe/Game';
@@ -25,4 +25,4 @@ const TicTacToe = () => {
     );
 };
 
-export default forwardRef(TicTacToe);
+export default TicTacToe;
