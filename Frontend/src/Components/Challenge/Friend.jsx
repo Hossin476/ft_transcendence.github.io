@@ -2,8 +2,10 @@ import toast from 'react-hot-toast'
 import 'ldrs/hourglass'
 import {  useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 export default function Friend({ gameType, icon = false, gameName, hidden = false, PlayerName, image }) {
+    const { t } = useTranslation();
     const [WaitRequest, setwaitRequest] = useState(false)
     const { socket } = useAuth();
 
@@ -31,7 +33,7 @@ export default function Friend({ gameType, icon = false, gameName, hidden = fals
         <div className={` items-center justify-between border-solid lg:flex xsm:${hidden ? "hidden" : "flex"} w-[90%]`}>
             <div >
                 <h3 className='font-medium text-ellipsis overflow-hidden whitespace-nowrap  text-[24px] font-inter'>{PlayerName}</h3>
-                <p className='text-xs opacity-70 text-ellipsis overflow-hidden whitespace-nowrap font-inter text-[12px]'>{icon ? "in lobby" : 'playing ' + gameName}</p>
+                <p className='text-xs opacity-70 text-ellipsis overflow-hidden whitespace-nowrap font-inter text-[12px]'>{icon ? t("Lobby") : t("playing") + gameName}</p>
             </div>
             {icon && (!WaitRequest ? <button onClick={notify}><img src="/png.png" className="w-[30px] h-[30px]" /> </button> : <l-hourglass size="19" bg-opacity="0.1" speed="1.75" color="white" ></l-hourglass>)}
         </div>

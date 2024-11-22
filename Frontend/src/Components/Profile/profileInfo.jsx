@@ -283,7 +283,9 @@ function Profile_info({ userid }) {
               <h3 className="font-xs xsm:text-xs lg:text-sm flex gap-x-1 items-center text-gray-300">
                 ID {userid?.id}
                 <span className="text-sm cursor-pointer hover:text-gray-400">
-                  <RiFileCopy2Line />
+                  <RiFileCopy2Line
+                    onClick={() => navigator.clipboard.writeText(userid?.id)}
+                   />
                 </span>
               </h3>
             </div>

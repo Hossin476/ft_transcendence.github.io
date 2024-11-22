@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Text, Stars, PerspectiveCamera } from '@react-three/drei'
+import { useTranslation } from 'react-i18next'
 
 function FloatingText() {
     const textRef = useRef()
@@ -42,6 +43,7 @@ function AnimatedStars() {
 }
 
 export default function NotFoundPage() {
+    const { t } = useTranslation()
     return (
         <div className="bg-primaryColor w-full h-full flex flex-col items-center justify-center">
             <div className="flex justify-evenly items-center w-11/12 h-[90%] relative">
@@ -53,8 +55,8 @@ export default function NotFoundPage() {
                     <FloatingText />
                 </Canvas>
                 <div className="absolute left-1/2 top-[65%] transform -translate-x-1/2 -translate-y-1/2 text-center text-white w-[90%] p-4">
-                    <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-Plaguard mb-4">Oops! Page Not Found</h2>
-                    <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-inter">The page you're looking for doesn't exist or has been moved.</p>
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-Plaguard mb-4">{t("Oops! Page Not Found")}</h2>
+                    <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-inter">{t("The page you're looking for doesn't exist or has been moved.")}</p>
                 </div>
             </div>
         </div>
