@@ -39,7 +39,7 @@ const Game = () => {
     const isOnline = location.state?.isonline;
 
     const fetchGame = useCallback(async () => {
-        const fetchUrl = `/api/is_game_over/${gameId}`;
+        const fetchUrl = `/api/is_game_over/${gameId}/?type=${isOnline === true ? 'online' : 'offline'}`;
         try {
             const response = await customFetch(fetchUrl, {
                 headers: {
@@ -52,17 +52,13 @@ const Game = () => {
             const data = await response.json();
             if (data?.is_end)
                 navigate('/game')
-        } catch (error) {
-            console.error('Fetch failed: ', error);
-        }
+        } catch (error) {}
     }, [tokens.access, gameId, navigate])
-    const url = `${isOnline == true ? WS_ONLINE_URL : WS_OFFLINE_URL}/${gameId}/?token=${tokens?.access}`;
+    const url = `${isOnline === true ? WS_ONLINE_URL : WS_OFFLINE_URL}/${gameId}/?token=${tokens?.access}`;
     useEffect(() => {
         if (gameId) fetchGame();
-        else {
-            console.error('Game ID is undefined or null');
+        else
             navigate('/game');
-        }
 
     }, [gameId, fetchGame]);
 
@@ -136,7 +132,7 @@ const Game = () => {
                     countdownValue={startCountdownValue}
                 />
             )}
-            {!finalWinner && !showStartModal && !winnerLine && !showReconnectModal && !draw && (
+            {!finalWinner && !showStartModal && isOnline && !winnerLine && !showReconnectModal && !draw && (
                 <TurnIndicator />
             )}
             {draw && <Draw />}

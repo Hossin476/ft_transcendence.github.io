@@ -26,7 +26,6 @@ function InviteModal({ setInvite, tour_id }) {
             const data = await response.json()
             setUsers(data)
         } catch (error) {
-            console.error('Fetch failed: ', error);
             setUsers([])
         }
     }, [tokens.access, tour_id, setUsers]);

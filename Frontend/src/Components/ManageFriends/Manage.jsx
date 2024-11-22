@@ -24,7 +24,6 @@ export default function Manage() {
             const data = await response.json();
             setFriends(data);
         } catch (error) {
-            console.error('Fetch failed: ', error);
             setFriends([]);
         }
     }, [selected, tokens.access, setFriends]);

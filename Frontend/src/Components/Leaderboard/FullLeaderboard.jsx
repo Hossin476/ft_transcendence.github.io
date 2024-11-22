@@ -2,7 +2,9 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 
 function FullLeaderboard({ leaderboardData }) {
+
   const { t } = useTranslation();
+
   return (
     <div className="w-full h-full flex justify-center">
       <div className="overflow-auto w-full">
