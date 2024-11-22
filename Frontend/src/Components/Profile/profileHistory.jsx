@@ -132,18 +132,25 @@ function Match_draw({ match }) {
 }
 
 async function getAllMatches(tokens, userId, customFetch) {
-  const response = await customFetch(
-    `/api/users/profile/match/${userId}`,
-    {
-      method: "GET",
-      headers: {
-        Authorization: "JWT " + tokens.access,
-      },
-    }
-  );
-  let data = await response.json();
-  if (response.ok) return data;
-  return null;
+  try {
+      const response = await customFetch(
+        `/api/users/profile/match/${userId}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: "JWT " + tokens.access,
+          },
+        }
+      );
+      if (response.ok) {
+        let data = await response.json();
+        return data;
+      }
+      return null;
+  } catch (error) {
+      console.log("Error in fetching data", error);
+      return null;
+  }
 }
 
 function Profile_history({ user }) {
@@ -155,10 +162,12 @@ function Profile_history({ user }) {
   useEffect(() => {
     const fetchData = async () => {
       let data = await getAllMatches(tokens, user, customFetch);
-      data.sort((a, b) => {
-        return a.created < b.created;
-      });
-      setMatches(() => data);
+      if(data){
+          data.sort((a, b) => {
+            return a.created < b.created;
+          });
+          setMatches(() => data);
+      }
     };
     fetchData();
   }, [user]);

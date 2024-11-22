@@ -20,7 +20,9 @@ export default function Profile({user}) {
         <div className="xsm:ml-2 sm:ml-0 w-[calc(100%-30%)] h-[50%] flex  flex-col justify-between">
             <div className="xsm:mb-2 sm:mb-4">
                     <h1 className="sm:text-lg lg:text-2xl uppercase font-bold">{user.username}</h1>
-                    <p className="flex  text-xs items-center">ID {user.id} <RiFileCopy2Line className="ml-2"/></p>                                       
+                    <p className="flex  text-xs items-center">ID {user.id} 
+                    <span onClick={() => navigator.clipboard.writeText(user.id)} className="cursor-pointer hover:text-gray-400"><RiFileCopy2Line/></span>
+                    </p>                                  
             </div>
             <div className=" ">
                 <div className="flex justify-between xsm:text-xs mb-1">

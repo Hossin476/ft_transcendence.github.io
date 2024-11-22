@@ -20,11 +20,17 @@ function ScoreBar({gameid})
             url = `/api/pingpong/game/pingpong/${gameid}/`
         else
             url = `/api/pingpong/game/pingpong/offline/${gameid}/`
-        const response = await customFetch(url,{
-            headers: {Authorization : "JWT " + tokens.access}
-        })
-        const data = await response.json()
-        setPlayers(data)
+        try {
+          const response = await customFetch(url,{
+              headers: {Authorization : "JWT " + tokens.access}
+          })
+          if (response.ok){
+              const data = await response.json()
+              setPlayers(data)
+          }
+        } catch (error) {
+          console.log("error in fetching game",error)
+        }
     }
     useEffect(()=>{
       if (score1.current && score2.current){

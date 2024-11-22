@@ -5,18 +5,22 @@ import { useAuth } from "../../context/AuthContext"
 import {useEffect,useState} from 'react'
 
 const  getUserData= async (tokens, customFetch)=> {
-
-    const response = await customFetch("/api/users/user_info/",{
-        method : "GET",
-        headers:{
-            "Authorization": "JWT " + tokens.access,
-            'Content-Type':'application/json',
+    try {
+        const response = await customFetch("/api/users/user_info/",{
+            method : "GET",
+            headers:{
+                "Authorization": "JWT " + tokens.access,
+                'Content-Type':'application/json',
+            }
+        })
+        if(response.ok) {
+            let data = await response.json()
+            return data
         }
-    })
-    let data = await response.json()
-    if(response.ok)
-        return data
-    return null
+        return null
+    } catch(error) {
+        return null
+    }
 }
 
 

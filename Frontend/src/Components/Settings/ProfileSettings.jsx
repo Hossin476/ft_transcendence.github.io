@@ -54,23 +54,25 @@ const ProfileSettings = () => {
 
     const formData = new FormData();
     formData.append("image", file);
-
-    const response = await customFetch(`/api/profile/media/${mediaType}/`, {
-      method: "POST",
-      headers: {
-        Authorization: `JWT ${tokens.access}`,
-      },
-      body: formData,
-    });
-    if (response.ok) {
-      const data = await response.json();
-      setProfileMedia((prev) => ({
-        ...prev,
-        [mediaType === "profile" ? "profileImage" : "coverImage"]:
-          data.imageUrl,
-      }));
-    } else {
-      alert("file is too Large, file size should be less than 1Mb");
+    try {
+      const response = await customFetch(`/api/profile/media/${mediaType}/`, {
+        method: "POST",
+        headers: {
+          Authorization: `JWT ${tokens.access}`,
+        },
+        body: formData,
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setProfileMedia((prev) => ({
+          ...prev,
+          [mediaType === "profile" ? "profileImage" : "coverImage"]:
+            data.imageUrl,
+        }));
+      } else {
+        alert("file is too Large, file size should be less than 1Mb");
+      }
+    } catch (error) {
     }
   };
 
@@ -91,22 +93,26 @@ const ProfileSettings = () => {
       setErrorMessage(passwordValidation.message);
       return;
     } else {
-      const response = await customFetch("/api/auth/change-password/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `JWT ${tokens.access}`,
-        },
-        body: JSON.stringify({
-          oldPassword: passwords.oldPassword,
-          newPassword: passwords.newPassword,
-        }),
-      });
-      const res = await response.json();
-      if (!response.ok) {
-        setErrorMessage(res.message);
-      } else {
-        setSuccessMessage(res.message);
+      try {
+        const response = await customFetch("/api/auth/change-password/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `JWT ${tokens.access}`,
+          },
+          body: JSON.stringify({
+            oldPassword: passwords.oldPassword,
+            newPassword: passwords.newPassword,
+          }),
+        });
+        const res = await response.json();
+        if (!response.ok) {
+          setErrorMessage(res.message);
+        } else {
+          setSuccessMessage(res.message);
+        }
+      } catch (error) {
+        
       }
     }
     setPasswords({

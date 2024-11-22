@@ -123,40 +123,48 @@ function Profile_info({ userid }) {
   }
 
   async function checkFriendStatus() {
-    const response = await customFetch(`/api/notification/check_friendship/${userid?.id}/`, {
-      method: "GET",
-      headers: {
-        Authorization: "JWT " + tokens.access,
-      },
-    });
-    if (response.ok) {
-      const data = await response.json();
-      console.log("this is friend", data);
-      setFriendshipStatus({
-        exists: data.friendship_exists,
-        status: data.status,
-        fromUser: data.from_user,
-        toUser: data.to_user,
+    try {
+
+      const response = await customFetch(`/api/notification/check_friendship/${userid?.id}/`, {
+        method: "GET",
+        headers: {
+          Authorization: "JWT " + tokens.access,
+        },
       });
+      if (response.ok) {
+        const data = await response.json();
+        console.log("this is friend", data);
+        setFriendshipStatus({
+          exists: data.friendship_exists,
+          status: data.status,
+          fromUser: data.from_user,
+          toUser: data.to_user,
+        });
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
 
   async function checkBlockStatus() {
-
-    const response = await customFetch(`/api/notification/check_blocked/${userid?.id}/`, {
-      method: "GET",
-      headers: {
-        Authorization: "JWT " + tokens.access,
-      },
-    });
-    if (response.ok) {
-      const data = await response.json();
-      console.log("this is bock", data);
-      setBlockStatus({
-        block: data.block,
-        blocker: data.blocker,
-        blocked: data.blocked,
+    try {
+      const response = await customFetch(`/api/notification/check_blocked/${userid?.id}/`, {
+        method: "GET",
+        headers: {
+          Authorization: "JWT " + tokens.access,
+        },
       });
+      if (response.ok) {
+        const data = await response.json();
+        console.log("this is bock", data);
+        setBlockStatus({
+          block: data.block,
+          blocker: data.blocker,
+          blocked: data.blocked,
+        });
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
   useEffect(() => {
@@ -275,7 +283,9 @@ function Profile_info({ userid }) {
               <h3 className="font-xs xsm:text-xs lg:text-sm flex gap-x-1 items-center text-gray-300">
                 ID {userid?.id}
                 <span className="text-sm cursor-pointer hover:text-gray-400">
-                  <RiFileCopy2Line />
+                  <RiFileCopy2Line
+                    onClick={() => navigator.clipboard.writeText(userid?.id)}
+                   />
                 </span>
               </h3>
             </div>

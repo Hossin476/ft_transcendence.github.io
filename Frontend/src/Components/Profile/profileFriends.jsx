@@ -37,6 +37,7 @@ function Friend({ friend }) {
 }
 
 async function getProfileData(tokens, userId, customFetch){
+  try {
     const response = await customFetch(`/api/users/profile/friends/${userId}/`,{
         method : "GET",
         headers:{
@@ -44,10 +45,14 @@ async function getProfileData(tokens, userId, customFetch){
         }
     })
 
-    let data = await response.json()
-    if(response.ok)
-        return data
+    if(response.ok){
+      let data = await response.json()
+      return data
+    }
     return null
+  } catch (error) {
+    return null
+  }
 }
 
 function Profile_friends({ user }) {

@@ -6,16 +6,21 @@ import Header from "../Components/tour/Header";
 
 
 const getTours = async (userId, tokens, customFetch) => {
-    const response = await customFetch(`/api/tournament/tourlist/${userId}`, {
-        method: 'GET',
-        headers: {
-            Authorization: 'JWT ' + tokens.access
+    try {
+        const response = await customFetch(`/api/tournament/tourlist/${userId}`, {
+            method: 'GET',
+            headers: {
+                Authorization: 'JWT ' + tokens.access
+            }
+        })
+        if (response.ok) {
+            const data = await response.json()
+            return data
         }
-    })
-    const data = await response.json()
-    if (response.ok)
-        return data
-    return null
+        return null
+    } catch (error) {
+        return null
+    }
 }
 
 export default function Chat() {

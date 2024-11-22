@@ -5,18 +5,23 @@ import { useTranslation } from "react-i18next";
 
 
 const getTournaments = async (tokens, customFetch)=> {
-    const response = await customFetch("/api/tournament/tournaments/", {
-        method:"GET",
-        headers: {
-            "Authorization" : "JWT " + tokens.access,
-            'Content-Type':'application/json',
+    try { 
+        const response = await customFetch("/api/tournament/tournaments/", {
+            method:"GET",
+            headers: {
+                "Authorization" : "JWT " + tokens.access,
+                'Content-Type':'application/json',
+            }
+        })
+        
+        if (response.ok) {
+            let data = await response.json()
+            return data
         }
-    })
-    let data = await response.json()
-
-    if (response.ok)
-        return data
-    return null
+        return null
+    } catch (error) {
+        return null
+    }
 }
 
 export default function Tournaments() {

@@ -8,20 +8,24 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 async function getProfileData(tokens, userId, customFetch) {
-  const response = await customFetch(`/api/users/profile/${userId}/`, {
-    method: "GET",
-    headers: {
-      Authorization: "JWT " + tokens.access,
-    },
-  });
-
-  if (response.status !== 200) {
-    throw new Error("User not found");
+  try {
+    const response = await customFetch(`/api/users/profile/${userId}/`, {
+      method: "GET",
+      headers: {
+        Authorization: "JWT " + tokens.access,
+      },
+    });
+  
+    if (response.status !== 200) {
+      throw new Error("User not found");
+    }
+  
+    let data = await response.json();
+    if (response.ok) return data;
+    return null;
+  } catch (error) {
+    return null;
   }
-
-  let data = await response.json();
-  if (response.ok) return data;
-  return null;
 }
 
 function Profile() {

@@ -21,23 +21,27 @@ const Typing_render = () => {
 } 
 
 const getMessages = async (chatUser,tokens, customFetch)=> {
-
-  const respons = await customFetch("/api/chat/messages",{
-      method:"POST",
-      headers :{
-              'Content-Type':"application/json",
-              'Authorization': 'JWT ' + tokens.access
-      },
-      body:JSON.stringify({
-              "friendship" : chatUser.id
-      })
-  })
+ try {
+    const respons = await customFetch("/api/chat/messages",{
+        method:"POST",
+        headers :{
+                'Content-Type':"application/json",
+                'Authorization': 'JWT ' + tokens.access
+        },
+        body:JSON.stringify({
+                "friendship" : chatUser.id
+        })
+    })
+    
   
+    let data = await respons.json()
+    if(respons.ok)
+      return data
+    return null
 
-  let data = await respons.json()
-  if(respons.ok)
-    return data
-  return null
+ } catch (error) {
+    return null
+ }
 }
 
 function getFormatedDate(messageTime) {

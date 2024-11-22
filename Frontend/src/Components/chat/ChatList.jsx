@@ -8,34 +8,39 @@ import { useTranslation } from "react-i18next";
 
 
 const getConversations = async (tokens, user, customFetch) => {
-  const response = await customFetch("/api/chat/conversation", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "JWT " + tokens.access,
-    },
-    body: JSON.stringify({
-      user: user,
-    }),
-  });
-  let data = await response.json();
-
-  if (response.ok) {
-    data.map((convo) => {
-      if (convo.last_msg == null) {
-        convo.last_msg = {
-          content: "",
-          created_at: 0,
-        };
-      }
+  try {
+    const response = await customFetch("/api/chat/conversation", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "JWT " + tokens.access,
+      },
+      body: JSON.stringify({
+        user: user,
+      }),
     });
-    data.sort(
-      (a, b) =>
-        new Date(b.last_msg.created_at) - new Date(a.last_msg.created_at)
-    );
-    return data;
+    
+    if (response.ok) {
+      let data = await response.json();
+      data.map((convo) => {
+        if (convo.last_msg == null) {
+          convo.last_msg = {
+            content: "",
+            created_at: 0,
+          };
+        }
+      });
+      data.sort(
+        (a, b) =>
+          new Date(b.last_msg.created_at) - new Date(a.last_msg.created_at)
+      );
+      return data;
+    }
+    return null;
+
+  } catch (error) {
+    return null;
   }
-  return null;
 };
 
 export default function ChatList() {

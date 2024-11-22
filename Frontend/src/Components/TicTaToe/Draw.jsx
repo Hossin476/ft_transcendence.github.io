@@ -1,13 +1,15 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 function Draw() {
     const navigate = useNavigate();
+    const { t } = useTranslation();
     return (
         <div className={`w-[101%] h-[101%] top-0 -mt-1 backdrop-blur-md  absolute border-yellow-600 border-[3px] flex flex-col items-center justify-evenly z-10 gap-6 rounded-[20px]`}>
             <div className="relative flex flex-col justify-center items-center">
                 <p className={`font-Plaguard xsm:text-[7vw] lg:text-6xl text-yellow-500`}>
-                    The Match Is A Draw!
+                    {t("The Match Is A Draw!")}
                 </p>
             </div>
                 <div className="flex justify-evenly w-[100%]">
