@@ -55,7 +55,6 @@ function InputQrCode({ result, setResult, IsNotCorrect, setNotCorrect }) {
       containerClassName="input-holder"
       inputClassName={IsNotCorrect ? "input-error" : "input"}
       allowedCharacters="numeric"
-      // onKeyDown={handleKeyDown}
       onChange={handleOnChange}
     />
   );
@@ -69,11 +68,14 @@ function Title_section({ Title }) {
   );
 }
 
-function Button_section({ Name, handleClick }) {
+function Button_section({ Name, handleClick, setActiveTab }) {
   const { t } = useTranslation();
   return (
     <div className="button-section">
-      <button className="cancel">{t("Cancel")}</button>
+      <button 
+      onClick={() => setActiveTab('profile')}
+      className="cancel">{t("Cancel")}
+      </button>
       <button onClick={handleClick} className="enable">
         {Name}
       </button>
@@ -81,7 +83,7 @@ function Button_section({ Name, handleClick }) {
   );
 }
 
-function TwofaSetD({ SetEnable, IsEnable, setAnimation }) {
+function TwofaSetD({ SetEnable, IsEnable, setAnimation, setActiveTab }) {
   const [result, setResult] = useState();
   const [IsNotCorrect, setNotCorrect] = useState(false);
   const { t } = useTranslation();
@@ -114,12 +116,6 @@ function TwofaSetD({ SetEnable, IsEnable, setAnimation }) {
     } 
   }
 
-  // const handleKeyDown = (e) => {
-  //   if (e.key === "Enter") {
-  //     Disable_2fa();
-  //   }
-  // };
-
   function handleClick() {
     Disable_2fa();
   }
@@ -128,7 +124,7 @@ function TwofaSetD({ SetEnable, IsEnable, setAnimation }) {
     if (IsEnable == false) {
       const timer = setTimeout(() => {
         setAnimation(false);
-      }, 3000); // 3 seconds
+      }, 3000);
       return () => clearTimeout(timer);
     }
   }, [IsEnable]);
@@ -145,14 +141,13 @@ function TwofaSetD({ SetEnable, IsEnable, setAnimation }) {
           setResult={setResult}
           IsNotCorrect={IsNotCorrect}
           setNotCorrect={setNotCorrect}
-          // onKeyDown={handleKeyDown}
         />
         <div className="warning-text">
           <PiWarningCircleBold color="#E33838" size={"2vw"} />
           <p>{t("logout_message")}</p>
         </div>
       </div>
-      <Button_section Name={t("Disable")} handleClick={handleClick} />
+      <Button_section Name={t("Disable")} handleClick={handleClick} setActiveTab={setActiveTab} />
       {!IsEnable ? <Save_animation Status={false} /> : null}
     </div>
   );
@@ -164,7 +159,7 @@ function Save_animation({ Status }) {
   );
 }
 
-function TwofaSetE({ SetEnable, IsEnable, setAnimation }) {
+function TwofaSetE({ SetEnable, IsEnable, setAnimation, setActiveTab }) {
   const [result, setResult] = useState();
   const [IsNotCorrect, setNotCorrect] = useState(false);
   const { t } = useTranslation();
@@ -200,13 +195,6 @@ function TwofaSetE({ SetEnable, IsEnable, setAnimation }) {
     }
   }
 
-  // const handleKeyDown = (e) => {
-  //   console.log("fafsf", e.key);
-  //   if (e.key === "Enter") {
-  //     Setup_2fa();
-  //   }
-  // };
-
   function handleClick() {
     Setup_2fa();
   }
@@ -215,7 +203,7 @@ function TwofaSetE({ SetEnable, IsEnable, setAnimation }) {
     if (IsEnable) {
       const timer = setTimeout(() => {
         setAnimation(true);
-      }, 3000); // 3 seconds
+      }, 3000);
       return () => clearTimeout(timer);
     }
   }, [IsEnable]);
@@ -233,21 +221,20 @@ function TwofaSetE({ SetEnable, IsEnable, setAnimation }) {
             setResult={setResult}
             IsNotCorrect={IsNotCorrect}
             setNotCorrect={setNotCorrect}
-            // onKeyDown={handleKeyDown}
           />
           <div className="warning-text">
             <PiWarningCircleBold color="#E33838" size={"2vw"} />
             <p>{t("logout_message")}</p>
           </div>
         </div>
-        <Button_section Name={t("Enable")} handleClick={handleClick} />
+        <Button_section Name={t("Enable")} handleClick={handleClick} setActiveTab={setActiveTab} />
         {IsEnable ? <Save_animation Status={true} /> : null}
       </div>
     </>
   );
 }
 
-function Two2fa() {
+function Two2fa({ setActiveTab }) {
   const { tokens } = useAuth();
   const [IsEnable, SetEnable] = useState(false);
   const [Isanimation, setAnimation] = useState(false);
@@ -286,12 +273,14 @@ function Two2fa() {
             SetEnable={SetEnable}
             IsEnable={IsEnable}
             setAnimation={setAnimation}
+            setActiveTab={setActiveTab}
           />
         ) : (
           <TwofaSetE
             SetEnable={SetEnable}
             IsEnable={IsEnable}
             setAnimation={setAnimation}
+            setActiveTab={setActiveTab}
           />
         )}
     </>
@@ -309,7 +298,7 @@ function Settings() {
       <div className="settings-container">
         <Header activeTab={activeTab} setActiveTab={setActiveTab} />
         {activeTab === 'settings' ? (
-          <Two2fa />
+          <Two2fa setActiveTab={setActiveTab} />
         ) : (
           <ProfileSettings />
         )}
