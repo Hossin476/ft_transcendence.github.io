@@ -2,7 +2,6 @@ import React, { createContext, useState, useContext, useRef, useEffect } from 'r
 import axios from 'axios'
 import { jwtDecode } from 'jwt-decode'
 import {useNavigate} from 'react-router-dom'
-import axiosInstance from '../utils/axiosInstance';
 
 const AuthContext = createContext()
 
@@ -13,7 +12,7 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
     let fillToken = localStorage.getItem('tokens') ? JSON.parse(localStorage.getItem('tokens')) : null;
     const [tokens, setTokens] = useState(fillToken);
-    const [user, setUser] = useState(null)
+    const [user, setUser] = useState(fillToken ? jwtDecode(fillToken.access) : null);
     const [socket, setSocket] = useState(null);
     const [username, setUserName] = useState(fillToken?.username);
     const [chatsocket, setChatSocket] = useState(null);
@@ -75,7 +74,6 @@ export const AuthProvider = ({ children }) => {
             console.log('WebSocket disconnected');
             ws.close();
             setSocket(null);
-            setTimeout(global_socket, 5000)
         };
         ws.onmessage = (e) => {
             const data = JSON.parse(e.data);
@@ -112,16 +110,21 @@ export const AuthProvider = ({ children }) => {
                         const newTokens = await response.json();
                         localStorage.setItem('tokens', JSON.stringify({...tokens, ...newTokens}));
                         setTokens({...tokens, access: newTokens.access});
-                        // setUser(jwtDecode(newTokens.access));
+                        setUser(jwtDecode(newTokens.access));
                         options.headers["Authorization"] = "JWT " + newTokens.access;
                     }else {
                         localStorage.removeItem('tokens');
-                        console.error
+                        setUser(null)
+                        setTokens(null)
+                        setUserName(null)
                         nav('/login');
                         return;
                     }
                 } catch (error) {
                     localStorage.removeItem('tokens');
+                    setUser(null)
+                    setTokens(null)
+                    setUserName(null)
                     nav('/login');
                     return;
                 }

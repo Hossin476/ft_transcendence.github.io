@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { passwordValidator } from '../../utils/auth/validators';
 
 const ProfileSettings = () => {
 const tokens = JSON.parse(localStorage.getItem('tokens'))
@@ -78,41 +79,40 @@ const handlePasswordChange = (e) => {
 };
 
 
-const handleSubmit = async () => {
+const handleSubmit = async (e) => {
 
-    if (!passwords.oldPassword || !passwords.newPassword || !passwords.confirmPassword) {
-        setErrorMessage("All fields are required.");
-        return false;
-    }
+	e.preventDefault();
 
-    if (passwords.newPassword !== passwords.confirmPassword) {
-        setErrorMessage("Passwords do not match.");
-        return false;
-    }
+    const passwordValidation = passwordValidator(passwords);
+	if (!passwordValidation.valid) {
 
-	const response = await customFetch('/api/auth/change-password/', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			'Authorization': `JWT ${tokens.access}`
-		},
-		body: JSON.stringify({
-			oldPassword: passwords.oldPassword,
-			newPassword: passwords.newPassword
-		})
-	});
-	const res = await response.json();
-	if (!response.ok) {
-	setErrorMessage(res.message);
+		setErrorMessage(passwordValidation.message);
+		return;
 	} else {
-	setSuccessMessage(res.message);
+
+		const response = await customFetch('/api/auth/change-password/', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `JWT ${tokens.access}`
+			},
+			body: JSON.stringify({
+				oldPassword: passwords.oldPassword,
+				newPassword: passwords.newPassword
+			})
+		});
+		const res = await response.json();
+		if (!response.ok) {
+			setErrorMessage(res.message);
+		} else {
+			setSuccessMessage(res.message);
+		}
 	}
 	setPasswords({
-	oldPassword: '',
-	newPassword: '',
-	confirmPassword: ''
+		oldPassword: '',
+		newPassword: '',
+		confirmPassword: ''
 	});
-
 };
 
 return (
@@ -181,11 +181,6 @@ return (
 		</div>
 	</div>
 
-	{/* Upload Error Section
-	<div className='flex justify-center items-center'>
-		<p className="text-red-500 pb-3 font-bold">{mediaError}</p>
-	</div> */}
-
 	{/* Password Change Section */}
 	<div className="flex justify-center items-center">
 		<div className="bg-secondaryColor rounded-lg mt-8 w-96"> 
@@ -193,49 +188,51 @@ return (
 			<h2 className="text-xl font-semibold text-white text-center">Change Password</h2>
 		</div>
 		<div className="w-full p-5">
-		<p className="text-red-500 pb-3 font-bold">{errorMessage}</p>
-		<p className="text-green-500 pb-3 font-bold">{successMessage}</p>
+		<form onSubmit={handleSubmit}>
+			<p className="text-red-500 pb-3 font-bold">{errorMessage}</p>
+			<p className="text-green-500 pb-3 font-bold">{successMessage}</p>
 			<div className="mb-4 flex justify-center">
-			<input
-				id="oldPassword"
-				name="oldPassword"
-				placeholder='Old Password'
-				type="password"
-				className="w-full max-w-xs rounded-md p-2 border border-linkColor" 
-				value={passwords.oldPassword}
-				onChange={handlePasswordChange}
-			/>
+				<input
+					id="oldPassword"
+					name="oldPassword"
+					placeholder='Old Password'
+					type="password"
+					className="w-full max-w-xs text-primaryColor rounded-md p-2 border border-linkColor" 
+					value={passwords.oldPassword}
+					onChange={handlePasswordChange}
+				/>
+				</div>
+				<div className="mb-4 flex justify-center">
+				<input
+					id="newPassword"
+					name="newPassword"
+					placeholder='New Password'
+					type="password"
+					className="w-full max-w-xs text-primaryColor rounded-md p-2 border border-linkColor" 
+					value={passwords.newPassword}
+					onChange={handlePasswordChange}
+				/>
+				</div>
+				<div className="mb-4 flex justify-center">
+				<input
+					id="confirmPassword"
+					name="confirmPassword"
+					placeholder='Confirm Password'
+					type="password"
+					className="w-full max-w-xs text-primaryColor rounded-md p-2 border border-linkColor" 
+					value={passwords.confirmPassword}
+					onChange={handlePasswordChange}
+				/>
+				</div>
+				<div className="flex justify-center">
+				<button 
+					type='submit'
+					className="bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+				>
+					Update Password
+				</button>
 			</div>
-			<div className="mb-4 flex justify-center">
-			<input
-				id="newPassword"
-				name="newPassword"
-				placeholder='New Password'
-				type="password"
-				className="w-full max-w-xs rounded-md p-2 border border-linkColor" 
-				value={passwords.newPassword}
-				onChange={handlePasswordChange}
-			/>
-			</div>
-			<div className="mb-4 flex justify-center">
-			<input
-				id="confirmPassword"
-				name="confirmPassword"
-				placeholder='Confirm Password'
-				type="password"
-				className="w-full max-w-xs rounded-md p-2 border border-linkColor" 
-				value={passwords.confirmPassword}
-				onChange={handlePasswordChange}
-			/>
-			</div>
-			<div className="flex justify-center">
-			<button 
-				onClick={handleSubmit}
-				className="bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-			>
-				Update Password
-			</button>
-			</div>
+		</form>
 		</div>
 		</div>
 	</div>
