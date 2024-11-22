@@ -14,7 +14,7 @@ function Match_victory({ match }) {
         <div className="flex flex-col items-center">
           <div className="xsm:h-8 xsm:w-8 sm:h-20 sm:w-20 ">
             <img
-              src={imgProfile}
+              src={match.player1.profile_image}
               alt="profile"
               className="w-full h-full object-cover rounded-full"
             />
@@ -35,7 +35,7 @@ function Match_victory({ match }) {
         <div className="flex flex-col items-center">
           <div className="xsm:h-8 xsm:w-8 sm:h-20 sm:w-20">
             <img
-              src={imgYns}
+              src={match.player2.profile_image}
               alt="profile"
               className="w-full h-full object-cover rounded-full"
             />
@@ -56,7 +56,7 @@ function Match_defeat({ match }) {
         <div className="flex flex-col items-center">
           <div className="xsm:h-8 xsm:w-8 sm:h-20 sm:w-20">
             <img
-              src={imgProfile}
+              src={match.player1.profile_image}
               alt="profile"
               className="w-full h-full object-cover rounded-full"
             />
@@ -77,7 +77,7 @@ function Match_defeat({ match }) {
         <div className="flex flex-col items-center">
           <div className="xsm:h-8 xsm:w-8 sm:h-20 sm:w-20">
             <img
-              src={imgYns}
+              src={match.player2.profile_image}
               alt="profile"
               className="w-full h-full object-cover rounded-full"
             />
@@ -98,7 +98,7 @@ function Match_draw({ match }) {
         <div className="flex flex-col items-center">
           <div className="xsm:h-8 xsm:w-8 sm:h-20 sm:w-20">
             <img
-              src={imgProfile}
+              src={match.player1.profile_image}
               alt="profile"
               className="w-full h-full object-cover rounded-full"
             />
@@ -119,7 +119,7 @@ function Match_draw({ match }) {
         <div className="flex flex-col items-center">
           <div className="xsm:h-8 xsm:w-8 sm:h-20 sm:w-20">
             <img
-              src={imgYns}
+              src={match.player2.profile_image}
               alt="profile"
               className="w-full h-full object-cover rounded-full"
             />
@@ -151,6 +151,7 @@ function Profile_history({ user }) {
   const { tokens } = useAuth();
   const [matches, setMatches] = useState(null);
 
+  
   useEffect(() => {
     const fetchData = async () => {
       let data = await getAllMatches(tokens, user);
@@ -161,7 +162,8 @@ function Profile_history({ user }) {
     };
     fetchData();
   }, [user]);
-
+  
+  console.log(matches);
   return (
     <div className="bg-secondaryColor text-center p-6  rounded-3xl grow">
       <h2 className="text-4xl font-semibold mb-8">{t("MATCH HISTORY")}</h2>

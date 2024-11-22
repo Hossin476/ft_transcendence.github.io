@@ -32,9 +32,6 @@ function Friend({ friend }) {
           <p className="font-thin">{t("LEVEL")} {friend.rank}</p>
         </div>
       </div>
-      <div className="xsm:hidden xl:block">
-        <AiOutlineUserAdd className="text-xl cursor-pointer" />
-      </div>
     </div>
   );
 }

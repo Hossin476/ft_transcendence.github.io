@@ -15,9 +15,10 @@ from django.utils import timezone
 from tournament.models import Tournament, InviteTournament
 from tournament.serializers import TournamentSerializer
 from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 import asyncio
 
-channle_layer = get_channel_layer()
+channel_layer = get_channel_layer()
 
 
 
@@ -33,10 +34,16 @@ def change_online_state(user, state):
 
 @database_sync_to_async
 def create_game_db(sender, receiver, game):
-    receiver_obj = CustomUser.objects.get(username=receiver)
-    invite = GameNotification.objects.create(
-        sender=sender, receiver=receiver_obj, game=game)
-    return {"receiver"  :receiver_obj.pk, 'invite_id'   :invite.id}
+    try:
+        receiver_obj = CustomUser.objects.get(username=receiver)
+        invite = GameNotification.objects.create(
+            sender=sender, receiver=receiver_obj, game=game)
+        return {"receiver"  :receiver_obj.pk, 'invite_id'   :invite.id}
+    except Exception as e:
+        async_to_sync(channel_layer.group_send)(f'notification_{sender.id}', {
+            'type': 'error.handle',
+            'error': str(e)
+        })
 
 
 @database_sync_to_async
@@ -63,8 +70,10 @@ def create_friend_db(sender, receiver_id):
         )
         return obj, receiver.id
     except Exception as e:
-        self.send_error(str(e))
-        return None
+        async_to_sync(channel_layer.group_send)(f'notification_{sender.id}', {
+            'type': 'error.handle',
+            'error': str(e)
+        })
 
 
 
@@ -78,8 +87,10 @@ def accept_friend_request(sender, receiver_id):
         friendship.request = 'A'
         friendship.save()
     except Exception as e:
-        self.send_error(str(e))
-        return None
+        async_to_sync(channel_layer.group_send)(f'notification_{sender.id}', {
+            'type': 'error.handle',
+            'error': str(e)
+        })
 
 
 @database_sync_to_async
@@ -91,8 +102,10 @@ def reject_friend_request(sender, receiver_id):
         friendship = Friendship.objects.get(from_user=receiver, to_user=sender)
         friendship.delete()
     except Exception as e:
-        self.send_error(str(e))
-        return None
+        async_to_sync(channel_layer.group_send)(f'notification_{sender.id}', {
+            'type': 'error.handle',
+            'error': str(e)
+        })
 
 @database_sync_to_async
 def unfriend_request(sender, receiver_id):
@@ -101,7 +114,6 @@ def unfriend_request(sender, receiver_id):
         friendship = Friendship.objects.get(Q(from_user=receiver, to_user=sender) | Q(from_user=sender, to_user=receiver))
         friendship.delete()
     except Exception as e:
-        print(f"error : {str(e)}")
         return None
 
 @database_sync_to_async
@@ -124,8 +136,10 @@ def block_request(sender, receiver_id):
             friendship.delete()
         return block, receiver.id
     except Exception as e:
-        self.send_error(str(e))
-        return None
+        async_to_sync(channel_layer.group_send)(f'notification_{sender.id}', {
+            'type': 'error.handle',
+            'error': str(e)
+        })
 
 
 @database_sync_to_async
@@ -137,8 +151,10 @@ def unblock_request(sender, receiver_id):
         block = Block.objects.get(blocker=sender, blocked=receiver)
         block.delete()
     except Exception as e:
-        self.send_error(str(e))
-        return None
+        async_to_sync(channel_layer.group_send)(f'notification_{sender.id}', {
+            'type': 'error.handle',
+            'error': str(e)
+        })
 
 
 
@@ -158,7 +174,10 @@ def create_game_object(sender, receiver_name, game, invite_id):
             GameNotification.objects.filter(id=invite_id).delete()
         return game_obj
     except Exception as e:
-        print(f"error : {str(e)}")
+        async_to_sync(channel_layer.group_send)(f'notification_{sender.id}', {
+            'type': 'error.handle',
+            'error': str(e)
+        })
         return None
 
 
@@ -173,30 +192,36 @@ def delete_game_request(invite_id):
 
 @database_sync_to_async
 def get_tour_from_db(id, userid):
-    tournament = Tournament.objects.select_related("creator").get(id=id)
-    user = CustomUser.objects.get(id=userid)
     try:
-        InviteTournament.objects.get(tournament=tournament, user=user)
-    except Exception:
-        InviteTournament.objects.create(tournament=tournament, user=user)
-    return TournamentSerializer(tournament).data
+        tournament = Tournament.objects.select_related("creator").get(id=id)
+        user = CustomUser.objects.get(id=userid)
+        try:
+            InviteTournament.objects.get(tournament=tournament, user=user)
+        except Exception:
+            InviteTournament.objects.create(tournament=tournament, user=user)
+        return TournamentSerializer(tournament).data
+    except Excpetion as e:
+        print(f'error : {str(e)}')
 
 
 @database_sync_to_async
 def accept_reject(tour_id, user, state):
-    tournament = Tournament.objects.select_related(
-        "creator").prefetch_related('players').get(id=tour_id)
-    state_return = {"tour_id": tournament.id, "state": False}
-    if not tournament.is_full  and state == "accept" and user not in tournament.players.all():
-        tournament.players.add(user)
-        count = tournament.players.count()
-        if count == 8:
-            tournament.is_full = True
-            tournament.save()
-        state_return["state"] = True
-    InviteTournament.objects.filter(
-        user=user, tournament=tournament).delete()
-    return state_return
+    try:
+        tournament = Tournament.objects.select_related(
+            "creator").prefetch_related('players').get(id=tour_id)
+        state_return = {"tour_id": tournament.id, "state": False}
+        if not tournament.is_full  and state == "accept" and user not in tournament.players.all():
+            tournament.players.add(user)
+            count = tournament.players.count()
+            if count == 8:
+                tournament.is_full = True
+                tournament.save()
+            state_return["state"] = True
+        InviteTournament.objects.filter(
+            user=user, tournament=tournament).delete()
+        return state_return
+    except Excpetion as e:
+        print(f'error : {str(e)}')
 
 
 class NotificationConsumer(AsyncWebsocketConsumer):
@@ -304,6 +329,9 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     
     async def next_matchtour(self, event):
         await self.send(text_data=json.dumps(event))
+
+    async def error_handle(self, message):
+        await self.send(text_data=json.dumps(message))
 
     async def handle_tour_reject(self, data):
         await accept_reject(data["id"], self.user, "reject")
@@ -426,7 +454,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 await self.channel_layer.group_send(
                     f'notification_{receiver_id}', {
                         'type': 'friend.request',
-                        'Friendship_id': FriendshipNotificationSerializer(obj).data
                     }
                 )
         except Exception as e:
@@ -437,31 +464,30 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             receiver_id = data.get('receiver')
             await accept_friend_request(self.user, receiver_id)
         except Exception as e:
-            print(f"error:  {str(e)}")
+            print(str(e))
 
     async def handle_friend_reject(self, data):
         try:
             receiver_id = data.get('receiver')
             await reject_friend_request(self.user, receiver_id)
         except Exception as e:
-            print(f"error:  {str(e)}")
+            print(str(e))
         
     async def handle_unfriend_request(self, data):
         try:
             receiver_id = data.get('receiver')
             await unfriend_request(self.user, receiver_id)
         except Exception as e:
-            print(f"error:  {str(e)}")
+            print(str(e))
 
     async def handle_block_request(self, data):
         try:
             receiver = data.get('receiver')
             obj, receiver_id = await block_request(self.user, receiver)
-            if obj:
+            if obj and receiver_id:
                 await self.channel_layer.group_send(
                     f'notification_{self.user.id}', {
                         'type': 'block.req',
-                        'block_id': BlockSerializer(obj).data
                     }
                 )
         except Exception as e:
@@ -474,7 +500,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_send(
                 f'notification_{self.user.id}', {
                     'type': 'unblock.req',
-                    'message': "unblocked" 
                 }
             )
         except Exception as e:
@@ -564,8 +589,3 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps(event))
     async def game_counter(self, event):
         await self.send(text_data=json.dumps(event))
-    
-    async def send_error(self, message):
-        await self.send(text_data=json.dumps({
-            'error': message
-        }))
