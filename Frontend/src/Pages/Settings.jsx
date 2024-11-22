@@ -28,7 +28,7 @@ function Header({ activeTab, setActiveTab }) {
   return (
     <div className="settings-header">
       <button 
-        className={`myprofile ${activeTab === 'profile' ? 'active' : ''}`}
+        className={`settings ${activeTab === 'profile' ? 'active' : ''}`}
         onClick={() => setActiveTab('profile')}
       >
         {t("MY PROFILE")}

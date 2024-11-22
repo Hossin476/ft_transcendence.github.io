@@ -1,6 +1,8 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 function Winner({ className }) {
+    const { t } = useTranslation();
     return (
         <div className={`${className} flex flex-col items-center justify-center sm:h-[30%] xsm:[30%]`}>
             <div className="relative grid place-items-center w-full h-full">
@@ -15,7 +17,7 @@ function Winner({ className }) {
                     className="rounded-full xsm:w-[2.3rem] xsm:h-[2.3rem] sm:w-20 sm:h-20 md:w-16 md:h-16 lg:w-22 lg:h-22 xl:w-[5rem] xl:h-[5rem] col-start-1 row-start-1"
                 />
             </div>
-            <p className="text-center text-white text-sm md:text-md lg:text-xl mb-4">Username</p>
+            <p className="text-center text-white text-sm md:text-md lg:text-xl mb-4">{t("Username")}</p>
         </div>
     );
 }
