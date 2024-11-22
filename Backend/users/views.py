@@ -110,11 +110,15 @@ def get_all_users(request):
 @api_view(['GET'])
 def get_user_info(request):
     user = request.user
+    pong_matches = GameOnline.objects.filter(
+        Q(player1=user) | Q(player2=user)).count()
+    tictactoe_matches = OnlineGameModel.objects.filter(
+        Q(player1=user) | Q(player2=user)).count()
     seriaized_user = playerSerializers(user)
     total_wins =  user.wins_p + user.wins_t
     total_loses = user.loses_p + user.loses_t
-    total_games = total_wins + total_loses
-    win_rate = ( (total_wins * 100) // total_games ) if total_games > 0 else 0
+    total_games = pong_matches + tictactoe_matches
+    win_rate = ( (total_wins * 100) // (total_wins + total_loses) ) if (total_wins + total_loses) > 0 else 0
     user_list = seriaized_user.data
     user_list['total_wins'] = total_wins
     user_list['total_loses'] = total_loses

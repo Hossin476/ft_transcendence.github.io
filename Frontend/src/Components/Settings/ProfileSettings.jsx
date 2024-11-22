@@ -3,12 +3,11 @@ import { useAuth } from '../../context/AuthContext';
 import { passwordValidator } from '../../utils/auth/validators';
 
 const ProfileSettings = () => {
-const tokens = JSON.parse(localStorage.getItem('tokens'))
 const [errorMessage, setErrorMessage] = useState("");
 const [successMessage, setSuccessMessage] = useState("");
 const [mediaError, setMediaError] = useState("");
 const [loading, setLoading] = useState(true);
-const {customFetch} = useAuth();
+const {customFetch, tokens} = useAuth();
 const [passwords, setPasswords] = useState({
 	oldPassword: '',
 	newPassword: '',

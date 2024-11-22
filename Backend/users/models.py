@@ -6,21 +6,21 @@ from rest_framework_simplejwt.tokens import RefreshToken
 import random
 
 def get_default_profile_image():
-    return f'images/profile/p{random.choice(range(1, 5))}.jpeg'
+    return f'profile/p{random.choice(range(1, 5))}.jpeg'
 
 def get_default_cover_image():
-    return f'images/cover/p{random.choice(range(1, 5))}.jpg'
+    return f'cover/c{random.choice(range(1, 5))}.jpeg'
 
 class CustomUser(AbstractUser):
-    username = models.CharField(max_length=255, unique=True, blank=False, null=False, default='default_username')
+    username = models.CharField(max_length=255, unique=True, default='default_username')
     date_joined = models.DateTimeField(auto_now_add=True)
     email = models.EmailField(max_length=255, unique=True)
     is_verified = models.BooleanField(default=False)
     is_online = models.BooleanField(default=False)
     is_ingame = models.BooleanField(default=False)
     game_type = models.CharField(max_length=255, blank=True, null=True, default=None)
-    rank = models.IntegerField(default=1, validators=[MinValueValidator(1)])
-    xp = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(100)])
+    rank = models.IntegerField(default=0, validators=[MinValueValidator(0)])
+    xp = models.IntegerField(default=0, validators=[MinValueValidator(0)])
     wins_p = models.IntegerField(default=0)
     loses_p = models.IntegerField(default=0)
     wins_t = models.IntegerField(default=0)
@@ -32,16 +32,12 @@ class CustomUser(AbstractUser):
     
     # profile image
     profile_image = models.ImageField(
-        upload_to='profile/', 
-        null=True, 
-        blank=True,
-        default='defaults/profileImage.jpeg'
+        upload_to='profile/',
+        default=get_default_profile_image
     )
     cover_image = models.ImageField(
-        upload_to='cover/', 
-        null=True, 
-        blank=True,
-        default='defaults/coverImage.jpeg'
+        upload_to='cover/',
+        default=get_default_cover_image
     )
 
     USERNAME_FIELD  = "username"

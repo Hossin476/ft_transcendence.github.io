@@ -96,11 +96,11 @@ ASGI_APPLICATION = "ftt_backend.asgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'mypassword',
-        'HOST': 'postgres',
-        'PORT': '5432',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
     }
 }
 
@@ -168,8 +168,8 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=30),
-    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=10),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": False,
@@ -190,11 +190,6 @@ SIMPLE_JWT = {
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-DJOSER = {
-   'SERIALIZERS': {
-       'user_create': 'users.serializers.UserCreateSerializer'
-   }
-}
 
 CACHES = {
     "default": {
@@ -213,16 +208,9 @@ CORS_ALLOWED_ORIGINS = os.environ.get("CORS_ALLOWED_ORIGINS").split(',')
 
 # Looking to send emails in production? Check out our Email API/SMTP product!
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'starhamza430@gmail.com'
-EMAIL_HOST_PASSWORD = 'hfgi fwmi kfkr tscp'
-EMAIL_PORT = '465'
-EMAIL_USE_SSL = True
-
-DEBUG = True
+EMAIL_HOST = os.environ.get("EMAIL_HOST")
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = os.environ.get("EMAIL_PORT")
+EMAIL_USE_SSL = os.environ.get("EMAIL_USE_SSL")
 PASSWORD_RESET_TIMEOUT_DAYS = 1
-# Looking to send emails in production? Check out our Email API/SMTP product!
-# EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
-# EMAIL_HOST_USER = 'd9736dcacea0f3'
-# EMAIL_HOST_PASSWORD = '09b4b782cc2d8c'
-# EMAIL_PORT = '2525'

@@ -207,7 +207,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                     # This condition  checks if the time has ended when the time reaches 0 the connected player is set as winner.
                     print(timeSpand)
                     # Create a task to either save the result in the database or remove the object from it if both players are disconnected.
-                    if timeSpand == 0:
+                    if timeSpand == 0 or (room_obj.player1_connect == True and room_obj.player2_connect == True):
                         await asyncio.create_task(game.reconnect(room_obj.player1_connect, room_obj.player2_connect, int(self.game_id)))
                         room_obj.game_end = True
                         data['iswaiting'] = False
