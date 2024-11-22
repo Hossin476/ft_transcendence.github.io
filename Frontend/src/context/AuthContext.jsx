@@ -1,9 +1,10 @@
 import React, { createContext, useState, useContext, useRef, useEffect } from 'react';
 import axios from 'axios'
 import { jwtDecode } from 'jwt-decode'
-import axiosInstance from '../utils/axiosInstance';
+import {useNavigate} from 'react-router-dom'
 
 const AuthContext = createContext()
+
 
 export const useAuth = () => useContext(AuthContext);
 
@@ -11,11 +12,12 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
     let fillToken = localStorage.getItem('tokens') ? JSON.parse(localStorage.getItem('tokens')) : null;
     const [tokens, setTokens] = useState(fillToken);
-    const [user, setUser] = useState(tokens ? jwtDecode(tokens.access) : null)
+    const [user, setUser] = useState(fillToken ? jwtDecode(fillToken.access) : null)
     const [socket, setSocket] = useState(null);
     const [username, setUserName] = useState(fillToken?.username);
     const [chatsocket, setChatSocket] = useState(null);
     const [socketMessage, setSocketMessage] = useState(null);
+    const  nav  = useNavigate();
 
     const login = async (data) => {
         localStorage.setItem('tokens', JSON.stringify(data.tokens))
@@ -39,7 +41,7 @@ export const AuthProvider = ({ children }) => {
             )
             if (res.ok) {
                 if (socket)
-                    socket.send(JSON.stringify({ "type": "log_out" }))
+                    socket.send(JSON.stringify({"type": "log_out"}))
                 localStorage.removeItem('tokens');
                 setUser(null)
                 setTokens(null)
@@ -50,6 +52,8 @@ export const AuthProvider = ({ children }) => {
             console.error('Error logging out:', error)
         }
     };
+
+
 
     const global_socket = () => {
         const ws = new WebSocket(`wss://${window.location.host}/ws/notifications/?token=${tokens.access}`)
@@ -64,17 +68,16 @@ export const AuthProvider = ({ children }) => {
             console.error('WebSocket error:', error);
             ws.close();
             setSocket(null)
+            // setTimeout(global_socket, 5000)
         };
 
         ws.onclose = () => {
             console.log('WebSocket disconnected');
             ws.close();
             setSocket(null);
-            setTimeout(global_socket, 5000)
         };
         ws.onmessage = (e) => {
             const data = JSON.parse(e.data);
-            console.log("the data is ", data)
             setSocketMessage(data)
         }
     }
@@ -90,6 +93,48 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
+    const customFetch = async (url, options) => {
+        if (tokens) {
+            const decodedToken = jwtDecode(tokens.access);
+            const currentTime = Date.now() / 1000;
+
+            if (decodedToken.exp < currentTime) {
+                try {
+                    const response = await fetch('/api/auth/token/refresh/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body:JSON.stringify({refresh: tokens.refresh})
+                    });
+                    if(response.ok) {
+                        const newTokens = await response.json();
+                        localStorage.setItem('tokens', JSON.stringify({...tokens, ...newTokens}));
+                        setTokens({...tokens, access: newTokens.access});
+                        setUser(jwtDecode(newTokens.access));
+                        options.headers["Authorization"] = "JWT " + newTokens.access;
+                    }else {
+                        localStorage.removeItem('tokens');
+                        setUser(null)
+                        setTokens(null)
+                        setUserName(null)
+                        nav('/login');
+                        return;
+                    }
+                } catch (error) {
+                    localStorage.removeItem('tokens');
+                    setUser(null)
+                    setTokens(null)
+                    setUserName(null)
+                    nav('/login');
+                    return;
+                }
+            }
+        }
+
+        return fetch(url, options);
+    }
+
     let value = {
         login,
         logout,
@@ -101,7 +146,8 @@ export const AuthProvider = ({ children }) => {
         socketMessage: socketMessage,
         createSocket,
         chatsocket: chatsocket,
-        setUser
+        setUser,
+        customFetch
     }
 
     return (

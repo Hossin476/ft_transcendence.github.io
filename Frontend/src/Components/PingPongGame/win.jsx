@@ -3,15 +3,15 @@ import { useEffect, useState } from "react";
 import { Progress } from "./progressBar";
 import { useAuth } from "../../context/AuthContext";
 import { useLocation, useNavigate } from "react-router";
-
+import { useTranslation } from "react-i18next";
 
 const OfflineWin = ({matchObj})=>{
     const navigate = useNavigate()
     return (
         <div className="w-[99%] h-[99%]  absolute z-20 backdrop-blur-lg  flex flex-col justify-center items-center xsm:text-[10px] lg:text-2xl rounded-lg">
         <div className="w-[70%] h-[100%]flex flex-col space-y-10 bg-secondaryColor p-10 rounded-lg  border-thirdColor border-[2px] ">
-          <p className=" sm:text-[3vw] xl:text-[40px]   font-bold text-center leader flex justify-center items-center font-Valorax text-border ">GAME END</p>
-          <p className=" font-bold text-center leader flex justify-center items-center  ">winner is {matchObj.winner} </p>
+          <p className=" sm:text-[3vw] xl:text-[40px]   font-bold text-center leader flex justify-center items-center font-Valorax text-border ">{t("GAME END")}</p>
+          <p className=" font-bold text-center leader flex justify-center items-center  ">{t("winner is")} {matchObj.winner} </p>
           <div className="flex items-center justify-between  w-[100%] ">
             <div className="flex flex-col items-center gap-2 p-2">
               <img src="/lshail.jpeg" className="rounded-full w-[100px] border-[2px] " />
@@ -26,8 +26,8 @@ const OfflineWin = ({matchObj})=>{
             </div>
           </div>
           <div className="flex justify-evenly w-[100%] "> 
-            <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 border-[2px] w-[40%] rounded-lg border-thirdColor p-2" onClick={()=> navigate('/')} >HOME</button>
-            <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 border-[2px] w-[40%] rounded-lg border-thirdColor p-2" onClick={()=> navigate('../')}>Play again </button>
+            <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 border-[2px] w-[40%] rounded-lg border-thirdColor p-2" onClick={()=> navigate('/')} >{t("HOME")}</button>
+            <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 border-[2px] w-[40%] rounded-lg border-thirdColor p-2" onClick={()=> navigate('../')}>{t("PLAY AGAIN")}</button>
           </div>
         </div>
         </div>
@@ -38,7 +38,8 @@ const OfflineWin = ({matchObj})=>{
 
 export default function Win({iswin, game_id})
 {
-    const {tokens, username} = useAuth()
+    const { t } = useTranslation()
+    const {tokens, username, customFetch} = useAuth()
     const [userGame, setUserGame] = useState(null)
     const [Game, setGame] = useState(null)
     const location = useLocation()
@@ -51,7 +52,7 @@ export default function Win({iswin, game_id})
                 url = `/api/pingpong/game/pingpong/${game_id}/`
             else
                 url = `/api/pingpong/game/pingpong/offline/${game_id}/`
-            const response = await fetch(url,{
+            const response = await customFetch(url,{
                 headers: {Authorization : "JWT " + tokens.access}
             })
             const data = await response.json()
@@ -78,16 +79,16 @@ export default function Win({iswin, game_id})
                         <p className="w-[100%] text-right">{iswin ? '+30XP': '+0XP'}</p>
                         <div className="w-[90%] font-inter text-xs bg-secondaryColor xsm:p-2  lg:p-3  flex flex-col justify-center items-center rounded-full border-[1px] ">
                             <div className="flex justify-between w-[100%] xsm:text-[8px] lg:text-[15px] ">
-                                <p className="">LEVEL {userGame.rank}</p>
-                                <p>LEVEL {userGame.rank + 1}</p>
+                                <p className="">{t("LEVEL")} {userGame.rank}</p>
+                                <p>{t("LEVEL")} {userGame.rank + 1}</p>
                             </div>
                             <Progress value={userGame.xp%100} max={100}/>
                         </div>
                     </div>}
                 </div>
                 <div className="w-[100%] flex justify-center gap-9  xsm:text-[8px] lg:text-[15px] ">
-                    <button className="xsm:w-[60px]  xsm:h-[30px] lg:w-[120px] lg:h-[40px] transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110  duration-150 bg-secondaryColor font-inter lg:border-[2px] xsm:border-[1px] border-forthColor rounded-lg " onClick={()=> navigate('../')}>PLAY AGAIN</button>
-                    <button className="xsm:w-[60px]  xsm:h-[30px] lg:w-[120px] lg:h-[40px] transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110  duration-150 bg-secondaryColor font-inter lg:border-[2px] xsm:border-[1px] border-forthColor rounded-lg " onClick={()=> navigate('/')}>HOME</button>
+                    <button className="xsm:w-[60px]  xsm:h-[30px] lg:w-[120px] lg:h-[40px] transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110  duration-150 bg-secondaryColor font-inter lg:border-[2px] xsm:border-[1px] border-forthColor rounded-lg " onClick={()=> navigate('../')}>{t("PLAY AGAIN")}</button>
+                    <button className="xsm:w-[60px]  xsm:h-[30px] lg:w-[120px] lg:h-[40px] transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110  duration-150 bg-secondaryColor font-inter lg:border-[2px] xsm:border-[1px] border-forthColor rounded-lg " onClick={()=> navigate('/')}>{t("HOME")}</button>
                 </div>
             </div>)
         }

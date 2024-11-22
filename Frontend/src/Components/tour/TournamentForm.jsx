@@ -6,11 +6,11 @@ import { useAuth } from "../../context/AuthContext";
 export default function TournamentForm({id}) {
    const {socket} = useTournament()
    const [tourObject, setTourObject] = useState(null)
-   const {tokens} = useAuth()
+   const {tokens, customFetch} = useAuth()
    const { t } = useTranslation()
    useEffect(()=>{
       const fetchTournament = async ()=>{
-         const response = await fetch(`/api/offline/${id}`,{
+         const response = await customFetch(`/api/offline/${id}`,{
             headers : {
                "Authorization": "JWT " + tokens.access,
                'Content-Type':'application/json',}

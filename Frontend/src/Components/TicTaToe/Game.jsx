@@ -21,18 +21,18 @@ const GRID_POSITIONS = [
 ];
 
 const Game = () => {
-    const [board, setBoard] = useState(Array(9).fill(null));
+    const [board, setBoard] = useState(Array(9).fill(0));
     const [winnerLine, setWinnerLine] = useState(null);
     const [finalWinner, setFinalWinner] = useState(null);
     const [showReconnectModal, setShowReconnectModal] = useState(false);
     const [showStartModal, setShowStartModal] = useState(false);
-    const [startCountdownValue, setStartCountdownValue] = useState(null);
+    const [startCountdownValue, setStartCountdownValue] = useState(0);
     const [currentTurn, setCurrentTurn] = useState(null);
     const [draw, setDraw] = useState(false);
     const startModalShownRef = useRef(false);
 
     const { setScores, setTimer, setPlayerRole, setReconnectTimer, playerRole } = useTicTacToe();
-    const { tokens } = useAuth();
+    const { tokens, customFetch } = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
     const gameId = location.state?.gameid;
@@ -41,7 +41,7 @@ const Game = () => {
     const fetchGame = useCallback(async () => {
         const fetchUrl = `/api/is_game_over/${gameId}`;
         try {
-            const response = await fetch(fetchUrl, {
+            const response = await customFetch(fetchUrl, {
                 headers: {
                     "Authorization": `JWT ${tokens.access}`,
                     "Content-Type": "application/json"

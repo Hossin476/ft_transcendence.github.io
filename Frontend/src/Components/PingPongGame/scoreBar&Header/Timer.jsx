@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 
 function Timer({game_id}) {
     const [time, setTime] = useState(0);
+    const { t } = useTranslation();
 
     useEffect(() => {
         let interval = null;
@@ -24,7 +26,7 @@ function Timer({game_id}) {
 
     return (
         <div className=" flex flex-col items-center justify-center border-2 max-w-48 border-white rounded-lg flex-grow">
-            <h1 className="xsm:text-[2vw] lg:text-2xl text-white ">Time</h1>
+            <h1 className="xsm:text-[2vw] lg:text-2xl text-white ">{t("Time")}</h1>
             <hr className='bg-gray-100 w-[50%] opacity-80'/>
             <h2 className="xsm:text-[2vw] lg:text-xl text-white ">{formatTime(time)}</h2>
         </div>

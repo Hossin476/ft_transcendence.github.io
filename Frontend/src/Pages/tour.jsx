@@ -99,12 +99,10 @@ console.log(tournament)
 }
 
 const Tour = () => {
-   // const texture = useLoader(TextureLoader, "copper.jpg");
    const location = useLocation()
    const  {setTournamentSocket } = useTournament() 
-   const { socket, user, tokens, username } = useAuth();
+   const { tokens, username, customFetch } = useAuth();
    const [tournament, setTournament] = useState(location.state.item)
-   const status = location.state.status
    const [invite, setInvite] = useState(false)
    const [tour_socker, setTourSocket] = useState(null)
    const navigate = useNavigate();
@@ -117,7 +115,7 @@ const Tour = () => {
    }
    const fetch_matches = async () => {
       const url = `/api/tournament/${location.state.status === 'online' ? '' : 'offline/'}${tournament.id}`
-      const response = await fetch(url, {
+      const response = await customFetch(url, {
          headers: { Authorization: "JWT " + tokens.access }
       })
       if (!response.ok){

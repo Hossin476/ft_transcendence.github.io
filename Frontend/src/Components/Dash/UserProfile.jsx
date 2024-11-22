@@ -4,9 +4,9 @@ import Statistics from "./Statistics"
 import { useAuth } from "../../context/AuthContext"
 import {useEffect,useState} from 'react'
 
-const  getUserData= async (tokens)=> {
+const  getUserData= async (tokens, customFetch)=> {
 
-    const response = await fetch("/api/users/user_info/",{
+    const response = await customFetch("/api/users/user_info/",{
         method : "GET",
         headers:{
             "Authorization": "JWT " + tokens.access,
@@ -23,11 +23,11 @@ const  getUserData= async (tokens)=> {
 
 export default function UserProfile() {
 
-    const {tokens,setUser} = useAuth()
+    const {tokens,setUser, customFetch} = useAuth()
     const [userData,setUserData] = useState(null)
     useEffect(()=>{
         const fetchData = async ()=> {
-            let data = await getUserData(tokens)
+            let data = await getUserData(tokens, customFetch)
             setUserData(()=>data)
             setUser(prevUser=>{
                 return {...prevUser,profile_image:data.profile_image}
@@ -36,7 +36,7 @@ export default function UserProfile() {
         fetchData()
     },[])
 
-    console.log("this is the user:",userData)
+    // console.log("this is the user:",userData)
     return (
         <>
         {

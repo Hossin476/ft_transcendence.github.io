@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 
 export default function CreateTournament({setTournamentName, tournamentName, setTours}) {
     
-    const {tokens,user} = useAuth()
+    const {tokens,customFetch} = useAuth()
     const [status,setStatus] = useState("")
     const [error,setError] = useState("")
     const navigate = useNavigate()
@@ -40,7 +40,7 @@ export default function CreateTournament({setTournamentName, tournamentName, set
         else
             url = `/api/tournament/create/`
 
-        const response = await fetch(url,{
+        const response = await customFetch(url,{
             method :"POST",
             headers :{
                 "Authorization" : "JWT " + tokens.access,

@@ -6,24 +6,23 @@ import FriendResponseNotification from './FriendResponseNotification';
 
 function NotificationModal() {
     const [notifications, setNotifications] = useState([]);
-    const { tokens, socketMessage } = useAuth();
+    const { tokens, socketMessage, customFetch } = useAuth();
 
     const fetchData = useCallback(async () => {
         try {
-            const response = await fetch('/api/notification/', {
+            const response = await customFetch('/api/notification/', {
                 headers: {
                     "Authorization": "JWT " + tokens.access,
                     "Content-Type": "application/json"
                 }
             });
-
             if (!response.ok)
                 throw new Error(`HTTP error!  status: ${response.status}`);
-
             const data = await response.json();
             setNotifications(data);
         } catch (error) {
             console.error('Fetch failed: ', error);
+            setNotifications([])
         }
     }, [tokens.access]);
 

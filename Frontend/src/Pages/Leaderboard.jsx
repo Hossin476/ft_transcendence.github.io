@@ -10,12 +10,12 @@ export default function Leaderboard() {
   const { t } = useTranslation();
   const [activeGame, setActiveGame] = useState('Tic Tac Toe')
   const [leaderboardData, setLeaderboardData] = useState([])
-  const { tokens } = useAuth();
+  const { tokens, customFetch } = useAuth();
   const BASE_URL = '/api/notification/leaderboard';
 
   const fetchData = useCallback(async () => {
     try {
-      const response = await fetch(`${BASE_URL}/?game=${activeGame}`, {
+      const response = await customFetch(`${BASE_URL}/?game=${activeGame}`, {
         headers: {
           "Authorization": "JWT " + tokens.access,
           "Content-Type": "application/json"

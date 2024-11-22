@@ -2,7 +2,7 @@ import React from 'react'
 import { useState,useEffect } from 'react'
 import { useNavigate, Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext';
-
+import axiosInstance from '../utils/axiosInstance';
 
 const handleIntraLogin = async (code,login,navigate)=> {
     const res = await fetch(`/api/users/oauth2/intra/`,{
@@ -13,7 +13,7 @@ const handleIntraLogin = async (code,login,navigate)=> {
         body: JSON.stringify({code:code})
     })
     let data = await res.json()
-    console.log(data)
+
     if(res.ok) {
         login({tokens:data })
         navigate('/dashboard')
@@ -49,8 +49,6 @@ const Login = () => {
     }
 
     useEffect(()=> {
-        console.log("yes it's here ")
-        console.log("this is the error :",code)
         if(code)
             handleIntraLogin(code,login,navigate)
     },[code])
@@ -58,7 +56,6 @@ const Login = () => {
     const handle42 = (e)=> {
         e.preventDefault()
         const redirectUrl = import.meta.env.VITE_URI_INTRA
-        console.log("this is the shit: ",redirectUrl)
         window.location.href = redirectUrl
     }
 
@@ -75,7 +72,6 @@ const Login = () => {
 
         if (loginStep === 'credentials')
         {
-
             const res = await fetch("/api/auth/login/", {
                 method: "POST",
                 headers: {
@@ -85,26 +81,24 @@ const Login = () => {
             });
 
             const tokens = await res.json();
-            console.log('response ', tokens)
-            if (!res.ok)
-            {
+            if (!res.ok) {
+                console.log('response ', tokens.access)
                 setErrorMessage(tokens.error);
                 setIsLoading(false);
                 return;
             }
-            if (tokens.refresh){
+            if (tokens.refresh) {
                 login({ tokens });
                 navigate('/dashboard');
-            }
-            else
+            } else {
                 setLoginStep('2fa');
+            }
             setIsLoading(false);
         }
         else
         {
             try
             {
-
                 const res = await fetch("/api/auth/verify-2fa/", {
                     method: "POST",
                     headers: {
@@ -141,17 +135,20 @@ const Login = () => {
                     <h2 className="text-2xl pt-2 font-bold text-black mb-6">
                         {loginStep === 'credentials' ? 'Welcome Back!' : 'Two-Factor Authentication'}
                     </h2>
-
+                    {loginStep === 'credentials' ? 
+                        <div className="space-y-4 py-4">
+                            <div className="mt-4 space-y-2">
+                                <button onClick={handle42} className="w-full py-2 text-white bg-thirdColor rounded-lg hover:bg-white transition duration-300 hover:text-thirdColor hover:border-2 border-thirdColor">
+                                    Continue with Intra
+                                </button>
+                            </div>
+                        </div>
+                    : null
+                    }
                     <form onSubmit={handleSubmit}>
                         {isLoading && <p className="text-center text-thirdColor">Loading...</p>}
-
                         {loginStep === 'credentials' ? (
                             <div className="space-y-4 py-4">
-                                <div className="mt-4 space-y-2">
-                                    <button onClick={handle42} className="w-full py-2 text-white bg-thirdColor rounded-lg hover:bg-white transition duration-300 hover:text-thirdColor hover:border-2 border-thirdColor">
-                                        Continue with Intra
-                                    </button>
-                                </div>
                                 <h6 className="text-center text-gray-400 mt-6">or</h6>
                                 <p className="text-red-500 pb-3 font-bold">{errorMessage}</p>
                                 <div className="space-y-4 py-4">

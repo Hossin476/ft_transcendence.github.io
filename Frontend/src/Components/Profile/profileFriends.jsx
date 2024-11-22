@@ -32,15 +32,12 @@ function Friend({ friend }) {
           <p className="font-thin">{t("LEVEL")} {friend.rank}</p>
         </div>
       </div>
-      <div className="xsm:hidden xl:block">
-        <AiOutlineUserAdd className="text-xl cursor-pointer" />
-      </div>
     </div>
   );
 }
 
-async function getProfileData(tokens, userId){
-    const response = await fetch(`/api/users/profile/friends/${userId}/`,{
+async function getProfileData(tokens, userId, customFetch){
+    const response = await customFetch(`/api/users/profile/friends/${userId}/`,{
         method : "GET",
         headers:{
             "Authorization": "JWT " + tokens.access,
@@ -55,12 +52,12 @@ async function getProfileData(tokens, userId){
 
 function Profile_friends({ user }) {
     const { t } = useTranslation();
-    const { tokens, } = useAuth();
+    const { tokens, customFetch } = useAuth();
     const [friends, setFriends] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
-            let data = await getProfileData(tokens, user);
+            let data = await getProfileData(tokens, user, customFetch);
             setFriends(() => data);
         };
         fetchData();

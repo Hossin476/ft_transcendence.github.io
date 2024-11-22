@@ -8,9 +8,9 @@ import { Link } from "react-router-dom";
 export default function FriendsBar() {
     const { t } = useTranslation();
     const [online_ingame, setChallengeData] = useState(null);
-    const {tokens, socketMessage} = useAuth();
+    const {tokens, socketMessage, customFetch} = useAuth();
     const fetchData = async () => {
-        const response = await fetch(`/api/notification/online/`,
+        const response = await customFetch(`/api/notification/online/`,
             {
                 headers: {Authorization: "JWT " + tokens.access}
             }

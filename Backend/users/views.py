@@ -98,6 +98,15 @@ def get_profile_friends(request, user_id):
             'message': 'user not found !'
         }, status=status.HTTP_404_NOT_FOUND)
 
+
+@api_view(['GET'])
+def get_all_users(request):
+    blocked_me = Block.objects.filter(blocked=request.user)
+    blocked_me_list = [block.blocker.id for block in blocked_me]
+    users = CustomUser.objects.exclude(id=request.user.id).exclude(id__in=blocked_me_list)
+    serialized_users = playerSerializers(users, many=True)
+    return Response(serialized_users.data)
+
 @api_view(['GET'])
 def get_user_info(request):
     user = request.user
@@ -483,8 +492,8 @@ class Setup2FAView(APIView):
         user = request.user
         if user.two_factor_enabled:
             return Response({
-                'error': '2FA already enabled'
-            }, status=status.HTTP_400_BAD_REQUEST)
+                'two_factor_enabled': True
+            }, status=status.HTTP_200_OK)
         
         if not user.key:
             user.key = pyotp.random_base32()
@@ -506,7 +515,7 @@ class Setup2FAView(APIView):
         qr_base64 = base64.b64encode(buffer.getvalue()).decode()
 
         return Response({
-            'is_enabled': False,
+            'two_factor_enabled': False,
             'is_configured': False,
             'qr_code': f"data:image/png;base64,{qr_base64}",
             'secret_key': user.key
