@@ -10,15 +10,20 @@ export default function FriendsBar() {
     const [online_ingame, setChallengeData] = useState(null);
     const {tokens, socketMessage, customFetch} = useAuth();
     const fetchData = async () => {
-        const response = await customFetch(`/api/notification/online/`,
-            {
-                headers: {Authorization: "JWT " + tokens.access}
+            try {
+            const response = await customFetch(`/api/notification/online/`,
+                {
+                    headers: {Authorization: "JWT " + tokens.access}
+                }
+            );
+            if(response.ok){
+                const data = await response.json();
+                setChallengeData(data);
             }
-        );
-        const data = await response.json();
-        console.log(data)
-        setChallengeData(data);
-    };
+            } catch(error){
+                console.log("Error in fetching data", error);
+            }
+        };
     useEffect(() => {
         fetchData();
     }, []);

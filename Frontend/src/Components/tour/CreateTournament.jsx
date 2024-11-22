@@ -39,27 +39,28 @@ export default function CreateTournament({setTournamentName, tournamentName, set
             url = `/api/tournament/create/offline/`
         else
             url = `/api/tournament/create/`
-
-        const response = await customFetch(url,{
-            method :"POST",
-            headers :{
-                "Authorization" : "JWT " + tokens.access,
-                "Content-Type"  : "application/json"
-            },
-            body:JSON.stringify({
-                "name":tournamentName
+        try {
+            const response = await customFetch(url,{
+                method :"POST",
+                headers :{
+                    "Authorization" : "JWT " + tokens.access,
+                    "Content-Type"  : "application/json"
+                },
+                body:JSON.stringify({
+                    "name":tournamentName
+                })
             })
-        })
-        const data = await response.json()
-        if(response.ok) {
-            if(status === "offline"){
-                navigate("./tour", {state:{item:data, status:status}})
-                return
+            const data = await response.json()
+            if(response.ok) {
+                if(status === "offline"){
+                    navigate("./tour", {state:{item:data, status:status}})
+                    return
+                }
+    
+                setTours(prevtours=> [data,...prevtours])
+                setTournamentName("")
             }
-
-            setTours(prevtours=> [data,...prevtours])
-            setTournamentName("")
-        }
+        } catch (error) {}
     }
 
     const  handelFading = ()=> {

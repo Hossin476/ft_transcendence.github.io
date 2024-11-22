@@ -280,7 +280,8 @@ def intra_redirect(request):
                     username=user['login'],
                     email=user['email'],
                     password=generate_random_string(user_name, 15),
-                    profile_image=profile_pic
+                    profile_image=profile_pic,
+                    is_intra_user=True
                 )
                 user_instance.save()
                 refresh = RefreshToken.for_user(user_instance)
@@ -586,7 +587,8 @@ class ProfileMediaView(APIView):
 		user = request.user
 		return Response({
 			'profileImage': user.profile_image.url,
-            'coverImage': user.cover_image.url
+            'coverImage': user.cover_image.url,
+            'isIntraUser': user.is_intra_user
 		}, status=status.HTTP_200_OK)
 
 
@@ -638,3 +640,12 @@ class ProfileMediaUploadView(APIView):
 			return Response({
 				'message': str(e)
 			}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class IsIntraUser(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        username = request.user
+        return Response({
+            'isIntraUser': username.is_intra_user
+        }, status=status.HTTP_200_OK)

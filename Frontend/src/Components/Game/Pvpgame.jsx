@@ -100,13 +100,14 @@ function Wait_card() {
 }
 
 function Vsplayer_card({ player }) {
+  const { t } = useTranslation();
   console.log("this is me the player", player)
   return (
     <div className="player-card h-[90%] xsm:w-[50%] lg:w-[25%]">
       <img src={player.profile_image} alt="Avatar" className="avatar-ping" />
       <div className="player-info">
         <h2>{player.username}</h2>
-        <p>level {player.rank}</p>
+        <p>{t("level")} {player.rank}</p>
       </div>
     </div>
   );
@@ -199,24 +200,29 @@ function LocalButton({ onClick, players }) {
 const fetchData = async (gameType, players, tokens, customFetch) => {
   let url = "";
 
-  if (gameType === "P") url = "/api/pingpong/game/pingpong/offline/create";
-  else url = "/api/game/tictactoe/offline/create_local_game";
-  const response = await customFetch(url, {
-    method: "POST",
-    headers: {
-      Authorization: "JWT " + tokens.access,
-      "content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      player1: players.player1,
-      player2: players.player2,
-    }),
-  });
-  const data = await response.json();
-  console.log("the data after fetch is ", data);
-
-  if (response.ok) return data;
-  return null;
+    if (gameType === "P") url = "/api/pingpong/game/pingpong/offline/create";
+    else url = "/api/game/tictactoe/offline/create_local_game";
+    try {
+      const response = await customFetch(url, {
+        method: "POST",
+        headers: {
+          Authorization: "JWT " + tokens.access,
+          "content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          player1: players.player1,
+          player2: players.player2,
+        }),
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        return data;
+      }
+      return null;
+    } catch (error) {
+      return null;
+    }
 };
 
 function LocalPvp({ player, setPlayers }) {
@@ -274,15 +280,16 @@ function LocalPvp({ player, setPlayers }) {
 
 function OnlinePvp({isstarted,counter,isstart,pvpUser}) {
 
+  const { t } = useTranslation();
   const {user,username} = useAuth();
-  console.log("USER:", pvpUser)
+  console.log("USER:", user)
   console.log("user playerName(photo):", user.profile_image)
   return (
     <>
       <Mycard playerName={username} image={user.profile_image}/>
       { counter && 
           <div>
-            <h3>match will start in </h3>
+            <h3>{t("match will start in")} </h3>
             <p className="text-center text-2xl">{counter}</p>
           </div>
       }
@@ -300,7 +307,7 @@ function OnlinePvp({isstarted,counter,isstart,pvpUser}) {
 function PvpGame({ title }) {
   const [isstart, setStart] = React.useState(false);
   const [isstarted, setStarted] = React.useState(false);
-  const [pvpUser, setPvpUser] = useState()
+  const [pvpUser, setPvpUser] = useState(null)
   const [counter, setCounter] = useState(null)
   const [mode, setMode] = useState(true)
   const [matchData, setMatchData] = useState({})
@@ -341,11 +348,9 @@ function PvpGame({ title }) {
   async function creatLocalGame() {
     const gameType = title === "PING PONG" ? "P" : "T";
 
-    console.log("the players are ", players);
     if (players.player1 === "" || players.player1 === "") return;
     let type = gameType === "P" ? "pingpong" : "tictactoe";
     const data = await fetchData(gameType, players, tokens, customFetch);
-    console.log("the data is ", data);
     if (data)
       navigate(`/game/${type}/pvpgame/match`, {
         state: { gameid: data.game_id, isonline: false },

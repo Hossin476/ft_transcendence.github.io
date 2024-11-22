@@ -9,16 +9,20 @@ export default function TournamentForm({id}) {
    const {tokens, customFetch} = useAuth()
    const { t } = useTranslation()
    useEffect(()=>{
-      const fetchTournament = async ()=>{
-         const response = await customFetch(`/api/offline/${id}`,{
-            headers : {
-               "Authorization": "JWT " + tokens.access,
-               'Content-Type':'application/json',}
-         })
-         const data = await response.json();
-         setTourObject(data)
-         console.log(data)
-      }  
+      try {
+         const fetchTournament = async ()=>{
+            const response = await customFetch(`/api/offline/${id}`,{
+               headers : {
+                  "Authorization": "JWT " + tokens.access,
+                  'Content-Type':'application/json',}
+            })
+            if(response.ok) {
+               const data = await response.json();
+               setTourObject(data)
+            }
+         } 
+      } catch (error) {
+      }
    },[])
     const [form,setForm] = useState({
         player1:'',

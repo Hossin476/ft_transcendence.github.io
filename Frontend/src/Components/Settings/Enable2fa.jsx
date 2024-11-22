@@ -50,6 +50,7 @@ function Mid_Nav_enable(){
       setup_2fa();
     }, []);
     
+  
     return (
       <div className="mid-nav">
         <div className="number1-nav ">
@@ -63,7 +64,11 @@ function Mid_Nav_enable(){
                 </p>
                 <div className="flex gap-3 items-center">
                     <p className="code">{SecretKey}</p>
-                    <CgCopy />
+                    <span className="text-sm cursor-pointer hover:text-gray-400">
+                    <CgCopy
+                      onClick={() => navigator.clipboard.writeText(SecretKey)}
+                    />
+                    </span>
                 </div>
             </div>
               <img src={Qrcode} alt="QR code" className="lg:w-[110px] lg:h-[110px] xsm:w-[10vw] xsm:h-[10vw]"/>

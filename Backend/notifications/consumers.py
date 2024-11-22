@@ -200,7 +200,7 @@ def get_tour_from_db(id, userid):
         except Exception:
             InviteTournament.objects.create(tournament=tournament, user=user)
         return TournamentSerializer(tournament).data
-    except Excpetion as e:
+    except Exception as e:
         print(f'error : {str(e)}')
 
 
@@ -220,7 +220,7 @@ def accept_reject(tour_id, user, state):
         InviteTournament.objects.filter(
             user=user, tournament=tournament).delete()
         return state_return
-    except Excpetion as e:
+    except Exception as e:
         print(f'error : {str(e)}')
 
 
@@ -345,7 +345,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             "response": "accepted" if state["state"] else "rejected"
         })
         # print("tournament id : ", f'tour_{state["tour_id"]}')
-        await channle_layer.group_send(f'tour_{state["tour_id"]}', {
+        await channel_layer.group_send(f'tour_{state["tour_id"]}', {
             'type': "state.change",
         })
     

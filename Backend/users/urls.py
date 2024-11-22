@@ -13,6 +13,7 @@ urlpatterns = [
 
     path('intra/login/', views.intra_login),
     path('oauth2/intra/', views.intra_redirect),
+    path('is-intra-user/', views.IsIntraUser.as_view(), name='is-intra-user'),
 
 
     path('register/', UserRegistrationView.as_view(), name='register'),

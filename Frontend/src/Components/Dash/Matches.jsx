@@ -4,17 +4,24 @@ import {useEffect,useState} from "react"
 import { useTranslation } from "react-i18next";
 
 const getAllMatches = async(tokens, customFetch)=> {
-    const response = await customFetch("/api/users/all_matches/", {
+    
+    try{
+        const response = await customFetch("/api/users/all_matches/", {
         method:"GET",
         headers: {
             "Authorization" : "JWT " + tokens.access,
             'Content-Type':'application/json',
         }
     })
-    let data = await response.json()
-    if(response.ok)
+    if(response.ok) {
+        let data = await response.json()
         return data
+    }
     return null
+    } catch (error) {
+        console.log("error is ", error)
+        return null
+    }
 }
 
 export default function Matches() {
@@ -24,10 +31,12 @@ export default function Matches() {
     useEffect(()=> {
         const fetchData = async ()=> {
             let data = await getAllMatches(tokens, customFetch)
-            data.sort((a,b)=>{
-                return a.created < b.created
-            })
-            setMatches(()=>data)
+            if(data) {
+                data.sort((a,b)=>{
+                    return a.created < b.created
+                })
+                setMatches(()=>data)
+            }
         }
         fetchData()
     },[])

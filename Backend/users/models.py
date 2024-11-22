@@ -26,6 +26,7 @@ class CustomUser(AbstractUser):
     wins_t = models.IntegerField(default=0)
     loses_t = models.IntegerField(default=0)
     last_time = models.DateTimeField(default=timezone.now)
+    is_intra_user = models.BooleanField(default=False)
     # 2FA
     key = models.CharField(max_length=255, null=True, default=None)
     two_factor_enabled = models.BooleanField(default=False)

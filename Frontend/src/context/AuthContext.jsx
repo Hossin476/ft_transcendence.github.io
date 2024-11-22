@@ -20,7 +20,6 @@ export const AuthProvider = ({ children }) => {
     try {
         const encryptedToken = localStorage.getItem('tokens') ? JSON.parse(localStorage.getItem('tokens')) : null;
         fillToken = localStorage.getItem('tokens') ? JSON.parse(CrytoJs.AES.decrypt(encryptedToken, secret).toString(CrytoJs.enc.Utf8)) : null;
-        console.log(encryptedToken)
 
     } catch (error) {
         localStorage.removeItem('tokens');
@@ -38,6 +37,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('tokens', JSON.stringify(encryptedToken))
         setTokens(data.tokens)
         setUser(jwtDecode(data.tokens.access))
+        console.log('login:', data.tokens.access)
         setUserName(data.tokens?.username);
     }
 

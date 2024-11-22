@@ -115,17 +115,21 @@ const Tour = () => {
    }
    const fetch_matches = async () => {
       const url = `/api/tournament/${location.state.status === 'online' ? '' : 'offline/'}${tournament.id}`
-      const response = await customFetch(url, {
-         headers: { Authorization: "JWT " + tokens.access }
-      })
-      if (!response.ok){
-         navigate('../');
-         return;
+      try {
+         const response = await customFetch(url, {
+            headers: { Authorization: "JWT " + tokens.access }
+         })
+         if (!response.ok){
+            navigate('../');
+            return;
+         }
+   
+         const data = await response.json()
+         console.log(data)
+         setTournament(data)
+      } catch(error) {
+         
       }
-
-      const data = await response.json()
-      console.log(data)
-      setTournament(data)
    }
 
    useEffect(() => {
@@ -188,7 +192,7 @@ const Tour = () => {
                      <p className="font-Valorax">{t("PLAYER IN TOURNAMENT")}</p>
                   </div>
                   <div className=" flex justify-end gap-4 mx-10">
-                     {tournament.creator && tournament.creator.username == username && tournament.is_full && !tournament.is_start && <button className="border-[2px] border-forthColor rounded-[5px]" onClick={handleStartTour}>START TOURNAMENT</button>}
+                     {tournament.creator && tournament.creator.username == username && tournament.is_full && !tournament.is_start && <button className="border-[2px] border-forthColor rounded-[5px]" onClick={handleStartTour}>{t("START TOURNAMENT")}</button>}
                      {!tournament.is_start && < GiExitDoor fontSize={30}  onClick={handleExit}/>}
                   </div>
                   <div className="flex  w-[100%] h-[70%]  flex-wrap ">
@@ -197,7 +201,7 @@ const Tour = () => {
                            <img src={item.profile_image} className="rounded-full w-[52px] h-[52px]" />
                            <div className="flex flex-col">
                               <p>{item.username}</p>
-                              <p className="text-[10px] font-inter">RANK {item.rank}</p>
+                              <p className="text-[10px] font-inter">{t("Rank")} {item.rank}</p>
                            </div>
                         </div>
                      )}

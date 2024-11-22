@@ -51,6 +51,7 @@ def get_winner_data(request, game_id):
         if game:
             winner = game.winner
             if winner is None:
+                print('Winner not found')
                 return Response({'error': 'Winner not found'}, status=status.HTTP_404_NOT_FOUND)
             winner_serializer = CustomUserSerializer(winner)
             loser = game.player1 if winner.id == game.player2.id else game.player2
@@ -62,6 +63,7 @@ def get_winner_data(request, game_id):
     except OnlineGameModel.DoesNotExist:
         return Response({'error': 'Game not found'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
+        print(f'error occured : {str(e)}')
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])

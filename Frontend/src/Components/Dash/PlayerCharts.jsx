@@ -73,17 +73,22 @@ const data = [
 
 
 const getChartData = async (tokens, customFetch)=> {
-   const response = await customFetch("/api/users/chart_data/",{
-    method:"GET",
-    headers: {
-      'Authorization' : "JWT " + tokens.access,
-      "Content-Type" : "application/json"
-    }
-   })
-   let data = await response.json()
-   if(response.ok)
+  try {
+    const response = await customFetch("/api/users/chart_data/",{
+     method:"GET",
+     headers: {
+       'Authorization' : "JWT " + tokens.access,
+       "Content-Type" : "application/json"
+     }
+    })
+    if(response.ok) {
+      let data = await response.json()
       return data
+    }
+     return null
+  } catch (error) {
     return null
+  }
 }
 
 export default function PlayerCharts() {

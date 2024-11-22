@@ -8,7 +8,6 @@ import { useAuth } from '../context/AuthContext';
 import ChatContext, { ChatProvider } from '../context/ChatContext';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
-
 function handleDirectMessaging({convo}, currentContact, setMessages) {
     const { message, friendship } = convo
     if(!currentContact)
@@ -81,7 +80,6 @@ const ChatPage = () => {
             (chatsocket.onmessage = (e) => {
                 const data = JSON.parse(e.data)
                 const { type,reciever, sender} = data.event
-                // console.log("data", data)
                 if (type === "chat.message") {
                     setSeen(()=>false)
                     handleDirectMessaging(data.event, currantUser, setMessages)
