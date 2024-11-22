@@ -19,7 +19,7 @@ const Win = ({ final_winner }) => {
     const BASE_URL = '/api';
 
     const fetchGameData = useCallback(async () => {
-        if (!gameId) 
+        if (!gameId)
             return;
         const fetchUrl = `${BASE_URL}/${isOffline ? 'offline_winner_data' : 'winner_data'}/${gameId}`;
         try {
@@ -34,31 +34,28 @@ const Win = ({ final_winner }) => {
             const data = await response.json();
             setGameData(data);
         } catch (error) {
-            console.error('Fetch failed: ', error);
             setGameData({})
         }
     }, [gameId, isOffline, tokens.access])
 
     useEffect(() => {
         if (!gameId) {
-            console.error('Game ID is undefined or null');
             navigate('/game');
             return;
         }
 
         fetchGameData();
-    }, [gameId, tokens.access, navigate, isOffline, fetchGameData]);
+    }, [navigate, isOffline, fetchGameData]);
 
     if (!gameData) return null;
 
-    const playerData = isWin ? gameData.winner : gameData.loser;
-    let profileImage = `${gameData.profile_image || '/user.jpeg'}`;
+    const playerData = isWin ? gameData.winner : gameData?.loser;
+    let profileImage = `${gameData?.profile_image || '/user.jpeg'}`;
 
     const renderOfflineContent = () => (
-        
         <>
             <p className={`font-Plaguard xsm:text-[8vw] lg:text-7xl text-green-500`}>
-                {gameData.winner} HAS WON
+                {gameData?.winner} HAS WON
             </p>
             <img src={profileImage} alt="Player" className="mt-8 rounded-full xsm:w-[15vw] lg:w-[140px] border-[2px] border-forthColor object-cover" />
         </>
@@ -70,13 +67,13 @@ const Win = ({ final_winner }) => {
                 {isWin ? 'YOU WIN' : 'YOU LOSE'}
             </p>
             <div className="flex flex-col items-center gap-2 w-full">
-                <img src={playerData.profile_image} alt="Player" className="rounded-full xsm:w-[10vw] lg:w-[140px] border-[2px] border-forthColor object-cover" />
-                <p className="font-inter">{playerData.username}</p>
+                <img src={playerData?.profile_image} alt="Player" className="rounded-full xsm:w-[10vw] lg:w-[140px] border-[2px] border-forthColor object-cover" />
+                <p className="font-inter">{playerData?.username}</p>
                 <p className="w-full text-right"> {isWin ? '+30XP' : '+0XP'} </p>
                 <div className="w-[90%] font-inter text-xs bg-secondaryColor xsm:p-2 lg:p-3 flex flex-col justify-center items-center rounded-full border-[1px]">
                     <div className="flex justify-between w-full xsm:text-[8px] lg:text-[15px]">
-                        <p>{t("LEVEL")} {playerData.rank}</p>
-                        <p>{t("LEVEL")} {playerData.rank + 1}</p>
+                        <p>{t("LEVEL")} {playerData?.rank}</p>
+                        <p>{t("LEVEL")} {playerData?.rank + 1}</p>
                     </div>
                     <Progress value={playerData.xp % 100} max={100} />
                 </div>

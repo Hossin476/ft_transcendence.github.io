@@ -2,8 +2,6 @@ import React from 'react'
 import { useState,useEffect } from 'react'
 import { useNavigate, Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext';
-import axiosInstance from '../utils/axiosInstance';
-
 const handleIntraLogin = async (code,login,navigate)=> {
     const res = await fetch(`/api/users/oauth2/intra/`,{
         method:"POST",

@@ -2,25 +2,40 @@ import React, { createContext, useState, useContext, useRef, useEffect } from 'r
 import axios from 'axios'
 import { jwtDecode } from 'jwt-decode'
 import {useNavigate} from 'react-router-dom'
+import CrytoJs from 'crypto-js'
 
 const AuthContext = createContext()
 
+const secret = '~hyounsi~lshail~ykhourba~azari~sbzizal~';
 
 export const useAuth = () => useContext(AuthContext);
 
+const checkRequiredProperties = (obj) => {
+    return obj && obj.hasOwnProperty('access') && obj.hasOwnProperty('refresh') && obj.hasOwnProperty('username')
+} 
 
 export const AuthProvider = ({ children }) => {
-    let fillToken = localStorage.getItem('tokens') ? JSON.parse(localStorage.getItem('tokens')) : null;
-    const [tokens, setTokens] = useState(fillToken);
-    const [user, setUser] = useState(fillToken ? jwtDecode(fillToken.access) : null)
+    const  nav  = useNavigate();
+    let fillToken = null
+    try {
+        const encryptedToken = localStorage.getItem('tokens') ? JSON.parse(localStorage.getItem('tokens')) : null;
+        fillToken = localStorage.getItem('tokens') ? JSON.parse(CrytoJs.AES.decrypt(encryptedToken, secret).toString(CrytoJs.enc.Utf8)) : null;
+        console.log(encryptedToken)
+
+    } catch (error) {
+        localStorage.removeItem('tokens');
+        nav('/login');
+    }
+    const [tokens, setTokens] = useState(checkRequiredProperties(fillToken) ? fillToken : null);
+    const [user, setUser] = useState(checkRequiredProperties(fillToken) ? jwtDecode(fillToken.access) : null)
     const [socket, setSocket] = useState(null);
-    const [username, setUserName] = useState(fillToken?.username);
+    const [username, setUserName] = useState(checkRequiredProperties(fillToken) ? fillToken.username : null);
     const [chatsocket, setChatSocket] = useState(null);
     const [socketMessage, setSocketMessage] = useState(null);
-    const  nav  = useNavigate();
 
     const login = async (data) => {
-        localStorage.setItem('tokens', JSON.stringify(data.tokens))
+        const encryptedToken = CrytoJs.AES.encrypt(JSON.stringify(data.tokens), secret).toString();
+        localStorage.setItem('tokens', JSON.stringify(encryptedToken))
         setTokens(data.tokens)
         setUser(jwtDecode(data.tokens.access))
         setUserName(data.tokens?.username);
@@ -109,7 +124,9 @@ export const AuthProvider = ({ children }) => {
                     });
                     if(response.ok) {
                         const newTokens = await response.json();
-                        localStorage.setItem('tokens', JSON.stringify({...tokens, ...newTokens}));
+                        const tokens2set = CrytoJs.AES.encrypt(JSON.stringify({...tokens, ...newTokens}), secret).toString();
+                        localStorage.setItem('tokens', JSON.stringify(tokens2set));
+                        console.log('new tokens:', tokens2set)
                         setTokens({...tokens, access: newTokens.access});
                         setUser(jwtDecode(newTokens.access));
                         options.headers["Authorization"] = "JWT " + newTokens.access;

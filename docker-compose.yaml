@@ -24,6 +24,16 @@ services:
       - INTRA_SECRET=${INTRA_SECRET}
       - INTRA_URI_REDIRECT=${INTRA_URI_REDIRECT}
       - INTRA_URL=${INTRA_URL}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - EMAIL_HOST=${EMAIL_HOST}
+      - EMAIL_PORT=${EMAIL_PORT}
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+      - EMAIL_USE_SSL=${EMAIL_USE_SSL}
     build: ./Backend
     volumes:
       - ./Backend:/usr/src/app
@@ -33,9 +43,9 @@ services:
     container_name: postgres
     image: postgres:16
     environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: mypassword
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
       - 5432:5432
     volumes:

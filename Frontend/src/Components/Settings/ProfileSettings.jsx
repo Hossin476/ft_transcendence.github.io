@@ -5,21 +5,19 @@ import { useTranslation } from "react-i18next";
 
 const ProfileSettings = () => {
 	const { t } = useTranslation();
-	const tokens = JSON.parse(localStorage.getItem("tokens"));
 	const [errorMessage, setErrorMessage] = useState("");
 	const [successMessage, setSuccessMessage] = useState("");
-	const [mediaError, setMediaError] = useState("");
 	const [loading, setLoading] = useState(true);
-	const { customFetch } = useAuth();
+	const {customFetch, tokens} = useAuth();
 	const [passwords, setPasswords] = useState({
-    oldPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
-  const [profileMedia, setProfileMedia] = useState({
-    profileImage: null,
-    coverImage: null,
-  });
+		oldPassword: '',
+		newPassword: '',
+		confirmPassword: ''
+	});
+	const [profileMedia, setProfileMedia] = useState({
+		profileImage: null,
+		coverImage: null
+	})
 
   useEffect(() => {
     fetchProfileMedia();
