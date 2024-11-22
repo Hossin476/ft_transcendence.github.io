@@ -2,7 +2,6 @@ import React, { createContext, useState, useContext, useRef, useEffect } from 'r
 import axios from 'axios'
 import { jwtDecode } from 'jwt-decode'
 import {useNavigate} from 'react-router-dom'
-import axiosInstance from '../utils/axiosInstance';
 
 const AuthContext = createContext()
 

@@ -478,8 +478,8 @@ class Setup2FAView(APIView):
         user = request.user
         if user.two_factor_enabled:
             return Response({
-                'error': '2FA already enabled'
-            }, status=status.HTTP_400_BAD_REQUEST)
+                'two_factor_enabled': True
+            }, status=status.HTTP_200_OK)
         
         if not user.key:
             user.key = pyotp.random_base32()
@@ -501,7 +501,7 @@ class Setup2FAView(APIView):
         qr_base64 = base64.b64encode(buffer.getvalue()).decode()
 
         return Response({
-            'is_enabled': False,
+            'two_factor_enabled': False,
             'is_configured': False,
             'qr_code': f"data:image/png;base64,{qr_base64}",
             'secret_key': user.key

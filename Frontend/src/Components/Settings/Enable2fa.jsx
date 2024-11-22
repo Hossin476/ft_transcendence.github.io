@@ -21,13 +21,13 @@ function CircleIcon( {iconText}){
 
 function Mid_Nav_enable(){
     const { t } = useTranslation();
-    const { tokens } = useAuth();
+    const { tokens, customFetch } = useAuth();
     const [Qrcode, setQrCode] = useState("");
     const [SecretKey, setSecretKey] = useState("");
-
+    
     const setup_2fa = async () => {
       try {
-        const response = await fetch(`/api/users/setup-2fa/`, {
+        const response = await customFetch(`/api/users/setup-2fa/`, {
           method: "GEt",
           headers: {
             Authorization: "JWT " + tokens.access,
@@ -35,8 +35,8 @@ function Mid_Nav_enable(){
         });
         if (response.ok) {
           const data = await response.json();
-            setQrCode(data.qr_code);
-            setSecretKey(data.secret_key);
+          setQrCode(data.qr_code);
+          setSecretKey(data.secret_key);
         } else {
           console.log("error");
         }
@@ -45,13 +45,13 @@ function Mid_Nav_enable(){
         console.log(error);
       }
     }
-  
+    
     useEffect(() => {
       setup_2fa();
     }, []);
-
+    
     return (
-        <div className="mid-nav">
+      <div className="mid-nav">
         <div className="number1-nav ">
             <div className="icon-left">
                 <CircleIcon iconText='1'/>
@@ -76,6 +76,6 @@ function Mid_Nav_enable(){
         </div>
     </div>
     )
-}
-
-export default Mid_Nav_enable;
+  }
+  
+  export default Mid_Nav_enable;
