@@ -100,13 +100,14 @@ function Wait_card() {
 }
 
 function Vsplayer_card({ player }) {
+  const { t } = useTranslation();
   console.log("this is me the player", player)
   return (
     <div className="player-card h-[90%] xsm:w-[50%] lg:w-[25%]">
       <img src={player.profile_image} alt="Avatar" className="avatar-ping" />
       <div className="player-info">
         <h2>{player.username}</h2>
-        <p>level {player.rank}</p>
+        <p>{t("level")} {player.rank}</p>
       </div>
     </div>
   );
@@ -274,6 +275,7 @@ function LocalPvp({ player, setPlayers }) {
 
 function OnlinePvp({isstarted,counter,isstart,pvpUser}) {
 
+  const { t } = useTranslation();
   const {user,username} = useAuth();
   console.log("USER:", pvpUser)
   console.log("user playerName(photo):", user.profile_image)
@@ -282,7 +284,7 @@ function OnlinePvp({isstarted,counter,isstart,pvpUser}) {
       <Mycard playerName={username} image={user.profile_image}/>
       { counter && 
           <div>
-            <h3>match will start in </h3>
+            <h3>{t("match will start in")} </h3>
             <p className="text-center text-2xl">{counter}</p>
           </div>
       }

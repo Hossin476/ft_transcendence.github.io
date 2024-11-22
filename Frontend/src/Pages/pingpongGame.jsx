@@ -15,6 +15,7 @@ import GameContext, { GameProvider } from "../context/gameContext";
 import GameCounter from "../Components/PingPongGame/gameCounter";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext'
+import { useTranslation } from 'react-i18next'
 
 
 
@@ -22,28 +23,29 @@ import { Gamepad2, Clock, Pause, Camera, Trophy } from "lucide-react";
 
 function PingPongGameInstructions() {
   const {beforeStart} = useContext(GameContext)
+  const { t } = useTranslation()
   return (
     <div className="w-[50%] h-[100%]flex flex-col space-y-2 bg-secondaryColor p-10 rounded-lg border-[2px]">
-       <div className="w-full text-center ">PINGPONG INSTRACTION</div>
+       <div className="w-full text-center ">{t("PINGPONG INSTRACTION")}</div>
         <div className="flex  space-x-2">
           <Gamepad2 className="text-yellow-400 w-[10%]"/>
-          <p><span className="font-semibold">Control : </span>AWDS</p>
+          <p><span className="font-semibold">{t("Control :")} </span>AWDS</p>
         </div>
         <div className="flex space-x-2 ">
           <Clock className="text-yellow-400 w-[10%]" />
-          <p><span className="font-semibold">time to reconnect : </span>You have 60 seconds to reconnect if you disconnect</p>
+          <p><span className="font-semibold">{t("time to reconnect :")} </span>{t("You have 60 seconds to reconnect if you disconnect")}</p>
         </div>
         <div className="flex space-x-2 ">
           <Pause className="text-yellow-400 w-[10%]"/>
-          <p><span className="font-semibold">Pause : </span>You have three pauses, each pause 15 seconds</p>
+          <p><span className="font-semibold">{t("Pause :")} </span>{t("You have three pauses, each pause 15 seconds")}</p>
         </div>
         <div className="flex space-x-2 ">
           <Camera className="text-yellow-400 w-[10%]"/>
-          <p><span className="font-semibold">Camera : </span>You can change the camera view using the mouse or the camera button on the top</p>
+          <p><span className="font-semibold">{t("Camera :")} </span>{t("You can change the camera view using the mouse or the camera button on the top")}</p>
         </div>
         <div className="flex space-x-2 ">
           <Trophy className="text-yellow-400 w-[10%]"/>
-          <p><span className="font-semibold">Winner : </span>To win, you should score 7 goals</p>
+          <p><span className="font-semibold">{t("Winner :")} </span>{t("To win, you should score 7 goals")}</p>
         </div>
         <p className="w-full text-center text-red-500" ref={beforeStart}></p>
     </div>

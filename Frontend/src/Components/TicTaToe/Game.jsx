@@ -51,7 +51,10 @@ const Game = () => {
                 throw new Error(`HTTP error! status: ${response.status}`);
             const data = await response.json();
             if (data?.is_end)
-                navigate('/game')
+                {
+                    console.log("test here ")
+                    navigate('/game')
+                }
         } catch (error) {
             console.error('Fetch failed: ', error);
         }
@@ -136,7 +139,7 @@ const Game = () => {
                     countdownValue={startCountdownValue}
                 />
             )}
-            {!finalWinner && !showStartModal && !winnerLine && !showReconnectModal && !draw && (
+            {!finalWinner && !showStartModal && !isOnline && !winnerLine && !showReconnectModal && !draw && (
                 <TurnIndicator />
             )}
             {draw && <Draw />}

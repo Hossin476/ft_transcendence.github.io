@@ -3,8 +3,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTicTacToe } from "../../context/TicTacToeContext";
 import { useAuth } from '../../context/AuthContext';
 import { Progress } from "./progressBar";
+import { useTranslation } from 'react-i18next';
 
 const Win = ({ final_winner }) => {
+    const { t } = useTranslation();
     const [gameData, setGameData] = useState({});
     const { playerRole } = useTicTacToe();
     const location = useLocation();
@@ -73,8 +75,8 @@ const Win = ({ final_winner }) => {
                 <p className="w-full text-right"> {isWin ? '+30XP' : '+0XP'} </p>
                 <div className="w-[90%] font-inter text-xs bg-secondaryColor xsm:p-2 lg:p-3 flex flex-col justify-center items-center rounded-full border-[1px]">
                     <div className="flex justify-between w-full xsm:text-[8px] lg:text-[15px]">
-                        <p>LEVEL {playerData.rank}</p>
-                        <p>LEVEL {playerData.rank + 1}</p>
+                        <p>{t("LEVEL")} {playerData.rank}</p>
+                        <p>{t("LEVEL")} {playerData.rank + 1}</p>
                     </div>
                     <Progress value={playerData.xp % 100} max={100} />
                 </div>
@@ -88,8 +90,8 @@ const Win = ({ final_winner }) => {
                 {isOffline ? renderOfflineContent() : renderOnlineContent()}
             </div>
             <div className="flex justify-evenly w-full">
-                <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 border-[2px] w-[40%] max-w-[200px] rounded-lg border-thirdColor p-2" onClick={() => navigate('/')}>HOME</button>
-                <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 border-[2px] w-[40%] max-w-[200px] rounded-lg border-thirdColor p-2" onClick={() => navigate('/game')}>Play again</button>
+                <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 border-[2px] w-[40%] max-w-[200px] rounded-lg border-thirdColor p-2" onClick={() => navigate('/')}>{t("HOME")}</button>
+                <button className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 border-[2px] w-[40%] max-w-[200px] rounded-lg border-thirdColor p-2" onClick={() => navigate('/game')}>{t("PLAY AGAIN")}</button>
             </div>
         </div>
     );
