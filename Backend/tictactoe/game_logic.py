@@ -2,7 +2,7 @@ class TicTacToe:
     def __init__(self):
         # Initialize the tictactoe class
         self.max_score = 5
-        self.countdown_value = 40
+        self.countdown_value = 120
         self.x_score = 0
         self.o_score = 0
         self.draw = False

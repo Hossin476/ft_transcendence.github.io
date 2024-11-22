@@ -5,9 +5,9 @@ const useWebSocket = (url, onMessage) => {
 
     useEffect(() => {
         socketRef.current = new WebSocket(url);
-        socketRef.current.onopen = () => { };
-        socketRef.current.onerror = () => { };
-        socketRef.current.onclose = () => { };
+        socketRef.current.onopen = () => { console.log("Websocket Connected!") };
+        socketRef.current.onerror = (error) => { console.log("an Error Occured: ", error) };
+        socketRef.current.onclose = () => { console.log("Websocket Disconnected!") };
         socketRef.current.onmessage = (event) => onMessage(JSON.parse(event.data));
 
         return () => {

@@ -32,6 +32,7 @@ const Win = ({ final_winner }) => {
             const data = await response.json();
             setGameData(data);
         } catch (error) {
+            console.log("fetch failed! ", error)
             setGameData({})
         }
     }, [gameId, isOffline, tokens.access])
@@ -45,9 +46,8 @@ const Win = ({ final_winner }) => {
         fetchGameData();
     }, [navigate, isOffline, fetchGameData]);
 
-    if (!gameData) return null;
-
-    const playerData = isWin ? gameData.winner : gameData?.loser;
+    if (!gameData || Object.keys(gameData).length === 0) return null;
+    const playerData = isWin ? gameData?.winner : gameData?.loser;
     let profileImage = `${gameData?.profile_image || '/user.jpeg'}`;
 
     const renderOfflineContent = () => (

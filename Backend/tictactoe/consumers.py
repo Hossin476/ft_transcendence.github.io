@@ -21,7 +21,7 @@ class Room:
         }
         self.countdown_values = {
             "reconnect": 10,
-            "start": 15
+            "start": 20
         }
         self.lock = asyncio.Lock()
 
