@@ -125,5 +125,13 @@
     "wait for your opponent to reconnect": "attendez que votre adversaire se reconnecte",
     "playing" : "Jouer ",
     "The Match Is A Draw!": "Le match est nul!",
-    "Waiting for the Opponent to Reconnect": "En attente de la reconnexion de l'adversaire"
+    "Waiting for the Opponent to Reconnect": "En attente de la reconnexion de l'adversaire",
+    "Game Rules :": "Règles du jeu :",
+    "Each player takes turns to place their mark (X or O) on the grid.": "Chaque joueur prend son tour pour placer sa marque (X ou O) sur la grille.",
+    "The game ends when a player reaches a score of 5 or the 2-minute timer reaches 0.": "Le jeu se termine lorsqu'un joueur atteint un score de 5 ou que le minuteur de 2 minutes atteint 0.",
+    "The player who aligns 3 of their marks vertically, horizontally, or diagonally first wins the round and gets a point.": "Le joueur qui aligne 3 de ses marques verticalement, horizontalement ou en diagonale gagne la manche et obtient un point.",
+    "If no player scores when the timer reaches 0, the game is a draw.": "Si aucun joueur ne marque lorsque le minuteur atteint 0, le jeu est un match nul.",
+    "Current player :": "Joueur actuel :",
+    "the game starts in:": "Le jeu commence dans:",
+    "seconds": "secondes"
 }

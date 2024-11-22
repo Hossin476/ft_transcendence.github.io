@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 
 const OfflineWin = ({matchObj})=>{
     const navigate = useNavigate()
+    const { t } = useTranslation()
     return (
         <div className="w-[99%] h-[99%]  absolute z-20 backdrop-blur-lg  flex flex-col justify-center items-center xsm:text-[10px] lg:text-2xl rounded-lg">
         <div className="w-[70%] h-[100%]flex flex-col space-y-10 bg-secondaryColor p-10 rounded-lg  border-thirdColor border-[2px] ">
@@ -33,7 +34,6 @@ const OfflineWin = ({matchObj})=>{
         </div>
     )
 }
-
 
 
 export default function Win({iswin, game_id})

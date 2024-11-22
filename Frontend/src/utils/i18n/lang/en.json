@@ -125,5 +125,13 @@
     "wait for your opponent to reconnect": "Wait for your opponent to reconnect",
     "playing" : "Playing ",
     "The Match Is A Draw!": "The Match Is A Draw!",
-    "Waiting for the Opponent to Reconnect": "Waiting for the Opponent to Reconnect"
+    "Waiting for the Opponent to Reconnect": "Waiting for the Opponent to Reconnect",
+    "Game Rules :": "Game Rules :",
+    "Each player takes turns to place their mark (X or O) on the grid.": "Each player takes turns to place their mark (X or O) on the grid.",
+    "The game ends when a player reaches a score of 5 or the 2-minute timer reaches 0.": "The game ends when a player reaches a score of 5 or the 2-minute timer reaches 0.",
+    "The player who aligns 3 of their marks vertically, horizontally, or diagonally first wins the round and gets a point.": "The player who aligns 3 of their marks vertically, horizontally, or diagonally first wins the round and gets a point.",
+    "If no player scores when the timer reaches 0, the game is a draw.": "If no player scores when the timer reaches 0, the game is a draw.",
+    "Current player :": "Current player :",
+    "the game starts in:": "The game starts in:",
+    "seconds": "seconds"
 }
