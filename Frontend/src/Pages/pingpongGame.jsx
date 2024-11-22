@@ -96,13 +96,19 @@ function PingPongGame() {
   }
   useEffect(()=>{
     const  getGame = async (url) => {
+      try {
         const response  = await customFetch(url,{
           headers: {Authorization: "JWT " + tokens.access}
         })
-        const data =   await response.json()
-        console.log(data)
-        if(data.is_game_end == true)
-            navigate('../')
+        if(response.ok){
+          const data =   await response.json()
+          console.log(data)
+          if(data.is_game_end == true)
+              navigate('../')
+        }
+      } catch (error) {
+        navigate('../')
+      }
     }
     if(location.state.isonline == true)
       getGame(`/api/pingpong/game/pingpong/${location.state.gameid}/`)

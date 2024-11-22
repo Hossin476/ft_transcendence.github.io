@@ -16,14 +16,18 @@ export default function Challenge({ setopen, gameType }) {
         setOpen(!open)
     }
     const fetchData = async () => {
-        const response = await customFetch(`/api/notification/onlinegame/`,
-            {
-                headers: {Authorization: "JWT " + tokens.access}
-            }
-        );
-        const data = await response.json();
-        console.log(data)
-        setChallengeData(data);
+        try{
+            const response = await customFetch(`/api/notification/onlinegame/`,
+                {
+                    headers: {Authorization: "JWT " + tokens.access}
+                }
+            );
+            const data = await response.json();
+            console.log(data)
+            setChallengeData(data);
+        } catch(error){
+            console.log("Error in fetching data", error);
+        }
     };
 
     useEffect(() => {

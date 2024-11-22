@@ -19,15 +19,18 @@ export default function ManageFriends() {
     }
 
     const get_all_users = async () => {
-        const response = await customFetch("/api/users/all_users", {
-            method: "GET",
-            headers: {
-                "Authorization": "JWT " + tokens.access,
+        try {
+            const response = await customFetch("/api/users/all_users", {
+                method: "GET",
+                headers: {
+                    "Authorization": "JWT " + tokens.access,
+                }
+            });
+            if (response.ok) {
+                let data = await response.json();
+                setUsers(() => data);
             }
-        });
-        let data = await response.json();
-        if (response.ok)
-            setUsers(() => data);
+        } catch (error) {}
     }
 
     useEffect(() => {

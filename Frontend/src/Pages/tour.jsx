@@ -115,17 +115,21 @@ const Tour = () => {
    }
    const fetch_matches = async () => {
       const url = `/api/tournament/${location.state.status === 'online' ? '' : 'offline/'}${tournament.id}`
-      const response = await customFetch(url, {
-         headers: { Authorization: "JWT " + tokens.access }
-      })
-      if (!response.ok){
-         navigate('../');
-         return;
+      try {
+         const response = await customFetch(url, {
+            headers: { Authorization: "JWT " + tokens.access }
+         })
+         if (!response.ok){
+            navigate('../');
+            return;
+         }
+   
+         const data = await response.json()
+         console.log(data)
+         setTournament(data)
+      } catch(error) {
+         
       }
-
-      const data = await response.json()
-      console.log(data)
-      setTournament(data)
    }
 
    useEffect(() => {

@@ -52,16 +52,22 @@ export default function Win({iswin, game_id})
                 url = `/api/pingpong/game/pingpong/${game_id}/`
             else
                 url = `/api/pingpong/game/pingpong/offline/${game_id}/`
-            const response = await customFetch(url,{
-                headers: {Authorization : "JWT " + tokens.access}
-            })
-            const data = await response.json()
-            if (location.state.isonline == false)
-                setGame(data)
-            else if (data.player1.username == username)
-                setUserGame(data.player1)
-            else if (data.player2.username == username)
-                setUserGame(data.player2)
+            try {
+                const response = await customFetch(url,{
+                    headers: {Authorization : "JWT " + tokens.access}
+                })
+                if(!response.ok)
+                    return
+                const data = await response.json()
+                if (location.state.isonline == false)
+                    setGame(data)
+                else if (data.player1.username == username)
+                    setUserGame(data.player1)
+                else if (data.player2.username == username)
+                    setUserGame(data.player2)
+            } catch (error) {
+                console.log("error in fetching game",error)
+            }
         }
         fetch_game()
     },[])

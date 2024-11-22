@@ -123,40 +123,48 @@ function Profile_info({ userid }) {
   }
 
   async function checkFriendStatus() {
-    const response = await customFetch(`/api/notification/check_friendship/${userid?.id}/`, {
-      method: "GET",
-      headers: {
-        Authorization: "JWT " + tokens.access,
-      },
-    });
-    if (response.ok) {
-      const data = await response.json();
-      console.log("this is friend", data);
-      setFriendshipStatus({
-        exists: data.friendship_exists,
-        status: data.status,
-        fromUser: data.from_user,
-        toUser: data.to_user,
+    try {
+
+      const response = await customFetch(`/api/notification/check_friendship/${userid?.id}/`, {
+        method: "GET",
+        headers: {
+          Authorization: "JWT " + tokens.access,
+        },
       });
+      if (response.ok) {
+        const data = await response.json();
+        console.log("this is friend", data);
+        setFriendshipStatus({
+          exists: data.friendship_exists,
+          status: data.status,
+          fromUser: data.from_user,
+          toUser: data.to_user,
+        });
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
 
   async function checkBlockStatus() {
-
-    const response = await customFetch(`/api/notification/check_blocked/${userid?.id}/`, {
-      method: "GET",
-      headers: {
-        Authorization: "JWT " + tokens.access,
-      },
-    });
-    if (response.ok) {
-      const data = await response.json();
-      console.log("this is bock", data);
-      setBlockStatus({
-        block: data.block,
-        blocker: data.blocker,
-        blocked: data.blocked,
+    try {
+      const response = await customFetch(`/api/notification/check_blocked/${userid?.id}/`, {
+        method: "GET",
+        headers: {
+          Authorization: "JWT " + tokens.access,
+        },
       });
+      if (response.ok) {
+        const data = await response.json();
+        console.log("this is bock", data);
+        setBlockStatus({
+          block: data.block,
+          blocker: data.blocker,
+          blocked: data.blocked,
+        });
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
   useEffect(() => {

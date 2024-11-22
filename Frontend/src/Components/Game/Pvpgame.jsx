@@ -199,24 +199,29 @@ function LocalButton({ onClick, players }) {
 const fetchData = async (gameType, players, tokens, customFetch) => {
   let url = "";
 
-  if (gameType === "P") url = "/api/pingpong/game/pingpong/offline/create";
-  else url = "/api/game/tictactoe/offline/create_local_game";
-  const response = await customFetch(url, {
-    method: "POST",
-    headers: {
-      Authorization: "JWT " + tokens.access,
-      "content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      player1: players.player1,
-      player2: players.player2,
-    }),
-  });
-  const data = await response.json();
-  console.log("the data after fetch is ", data);
-
-  if (response.ok) return data;
-  return null;
+    if (gameType === "P") url = "/api/pingpong/game/pingpong/offline/create";
+    else url = "/api/game/tictactoe/offline/create_local_game";
+    try {
+      const response = await customFetch(url, {
+        method: "POST",
+        headers: {
+          Authorization: "JWT " + tokens.access,
+          "content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          player1: players.player1,
+          player2: players.player2,
+        }),
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        return data;
+      }
+      return null;
+    } catch (error) {
+      return null;
+    }
 };
 
 function LocalPvp({ player, setPlayers }) {
@@ -341,11 +346,9 @@ function PvpGame({ title }) {
   async function creatLocalGame() {
     const gameType = title === "PING PONG" ? "P" : "T";
 
-    console.log("the players are ", players);
     if (players.player1 === "" || players.player1 === "") return;
     let type = gameType === "P" ? "pingpong" : "tictactoe";
     const data = await fetchData(gameType, players, tokens, customFetch);
-    console.log("the data is ", data);
     if (data)
       navigate(`/game/${type}/pvpgame/match`, {
         state: { gameid: data.game_id, isonline: false },
