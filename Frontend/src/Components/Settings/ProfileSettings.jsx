@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
 
 const ProfileSettings = () => {
 const tokens = JSON.parse(localStorage.getItem('tokens'))
@@ -6,6 +7,7 @@ const [errorMessage, setErrorMessage] = useState("");
 const [successMessage, setSuccessMessage] = useState("");
 const [mediaError, setMediaError] = useState("");
 const [loading, setLoading] = useState(true);
+const {customFetch} = useAuth();
 const [passwords, setPasswords] = useState({
 	oldPassword: '',
 	newPassword: '',
@@ -22,7 +24,7 @@ useEffect (() => {
 
 const fetchProfileMedia = async () => {
 	try {
-	const response = await fetch('/api/profile/media/', {
+	const response = await customFetch('/api/profile/media/', {
 		method: 'GET',
 		headers: {
 		'Authorization': `JWT ${tokens.access}`
@@ -36,9 +38,7 @@ const fetchProfileMedia = async () => {
 		coverImage: data.coverImage
 		});
 	}
-	} catch (error) {
-	console.error("(media-fetch)~error: ", error)
-	} finally {
+	} catch (error) { } finally {
 	setLoading(false)
 	}
 }
@@ -50,7 +50,7 @@ const handleMediaUpload = async (e, mediaType) => {
 	const formData = new FormData();
 	formData.append('image', file);
 
-	const response = await fetch(`/api/profile/media/${mediaType}/`, {
+	const response = await customFetch(`/api/profile/media/${mediaType}/`, {
 		method: 'POST',
 		headers: {
 			'Authorization': `JWT ${tokens.access}`
@@ -90,7 +90,7 @@ const handleSubmit = async () => {
         return false;
     }
 
-	const response = await fetch('/api/auth/change-password/', {
+	const response = await customFetch('/api/auth/change-password/', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
