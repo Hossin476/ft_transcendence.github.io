@@ -87,11 +87,11 @@ function TwofaSetD({ SetEnable, IsEnable, setAnimation, setActiveTab }) {
   const [result, setResult] = useState();
   const [IsNotCorrect, setNotCorrect] = useState(false);
   const { t } = useTranslation();
-  const { tokens } = useAuth();
+  const { tokens, customFetch } = useAuth();
 
   const Disable_2fa = async () => {
     try {
-      const response = await fetch(`/api/users/setup-2fa/`, {
+      const response = await customFetch(`/api/users/setup-2fa/`, {
         method: "DELETE",
         headers: {
           Authorization: "JWT " + tokens.access,
@@ -163,12 +163,12 @@ function TwofaSetE({ SetEnable, IsEnable, setAnimation, setActiveTab }) {
   const [result, setResult] = useState();
   const [IsNotCorrect, setNotCorrect] = useState(false);
   const { t } = useTranslation();
-  const { tokens } = useAuth();
+  const { tokens, customFetch } = useAuth();
 
 
   const Setup_2fa = async () => {
     try {
-      const response = await fetch(`/api/users/setup-2fa/`, {
+      const response = await customFetch(`/api/users/setup-2fa/`, {
         method: "POST",
         headers: {
           Authorization: "JWT " + tokens.access,
@@ -241,7 +241,7 @@ function Two2fa({ setActiveTab }) {
 
   const get_2fa = async () => {
     try {
-      const response = await fetch(`/api/users/check-2fa/`, {
+      const response = await customFetch(`/api/users/check-2fa/`, {
         method: "GET",
         headers: {
           Authorization: "JWT " + tokens.access,
