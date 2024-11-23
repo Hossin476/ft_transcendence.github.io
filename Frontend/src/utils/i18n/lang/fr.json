@@ -134,5 +134,8 @@
     "Current player :": "Joueur actuel :",
     "the game starts in:": "Le jeu commence dans:",
     "seconds": "secondes",
-    "seen": "vu"
+    "seen": "vu",
+    "Waiting for opponent to reconnect": "En attente de la reconnexion de l'adversaire",
+    "your opponent has paused the game": "Votre adversaire a mis le jeu en pause",
+    " seconds to start the game ": " secondes pour commencer le jeu "
 }

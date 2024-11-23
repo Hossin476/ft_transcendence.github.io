@@ -8,10 +8,12 @@ import {  useKeyboardControls} from "@react-three/drei";
 import  { useAuth } from "../../context/AuthContext";
 import { useLocation } from "react-router";
 import GameContext from "../../context/gameContext";
+import { useTranslation } from "react-i18next";
 
 
 function Game(props)
 {
+  const {t} = useTranslation()
   const  {score1, score2, beforeStart,waiting, waitingStatus}  = useContext(GameContext)
   const {tokens,username} = useAuth()
   const [socket,setsocket] = useState(null)
@@ -62,7 +64,10 @@ function Game(props)
         props.handleWaiting(() => iswaiting);
         if (waiting.current && iswaiting && (status === 'reconnect' || status === 'pause')) {
           waiting.current.innerText = currentSecond;
-          waitingStatus.current.innerText = message;
+          if(status === 'reconnect')
+            waitingStatus.current.innerText = t("Waiting for opponent to reconnect");
+          else if(status === 'pause')
+            waitingStatus.current.innerText = t("your opponent has paused the game");
         }
         break;
       case 'before.start':
@@ -70,7 +75,7 @@ function Game(props)
           props.handleBefore(true)
         }
         if(beforeStart.current)
-          beforeStart.current.innerText = hold.message
+          beforeStart.current.innerText = hold.message + t(" seconds to start the game ")
         if (hold.time == 1)
           props.handleBefore(false)
         break;

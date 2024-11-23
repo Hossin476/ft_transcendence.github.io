@@ -134,5 +134,8 @@
     "Current player :": "اللاعب الحالي :",
     "the game starts in:": "تبدأ اللعبة في:",
     "seconds": "ثواني",
-    "seen": "شوهد"
+    "seen": "شوهد",
+    "Waiting for opponent to reconnect": "في انتظار خصمك لإعادة الاتصال",
+    "your opponent has paused the game": "قام خصمك بإيقاف اللعبة",
+    " seconds to start the game ": " ثواني لبدء اللعبة "
 }
