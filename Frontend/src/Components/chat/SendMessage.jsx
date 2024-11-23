@@ -13,9 +13,7 @@ const SendMessage = () => {
   const {chatsocket,user} = useAuth()
   const {currantUser, setTyping, typing}  = useContext(ChatContext)
   const {t} = useTranslation()
-  // const {conversation} = useContext(ChatContext)
 
-  // console.log(conversation)
   const handleMessage = () => {
     chatsocket && ( message.trim() && chatsocket.send(JSON.stringify({
       "type" : "new_messgaes",
@@ -26,10 +24,10 @@ const SendMessage = () => {
       "sender":user.user_id
     })))
     setMessages((prevMessage)=>prevMessage = "")
-    // updateconversation()
   }
 
   const handleTyping = () => {
+    console.log("typing",user);
     chatsocket && chatsocket.send(JSON.stringify({
       "type": "typing",
       "senderId": user.user_id,
@@ -49,11 +47,6 @@ const SendMessage = () => {
     setMessages(e.target.value)
     handleTyping()
     if (e.key === "Enter") {
-      // const NewTimer = setTimeout(() => {
-      //   setTyping({ typing: false, timer: null, sender: user.user_id })
-      // }, 0)
-      // setTyping(prev => ({ ...prev, timer: NewTimer }))
-      // console.log("typing", typing);
       handleMessage()
       handlecount()
     }

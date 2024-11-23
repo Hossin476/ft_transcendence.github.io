@@ -25,6 +25,8 @@ function Tittle() {
 
 function Header({ activeTab, setActiveTab }) {
   const { t } = useTranslation();
+  // const [IntraUser, setIntraUser] = useState(false);
+  
   return (
     <div className="settings-header">
       <button 
@@ -289,6 +291,7 @@ function Two2fa({ setActiveTab }) {
 
 function Settings() {
   const [activeTab, setActiveTab] = useState("profile");
+  const [IntraUser, setIntraUser] = useState(false);
 
   return (
     <div className="holder-container">
@@ -296,11 +299,13 @@ function Settings() {
         <Tittle />
       </div>
       <div className="settings-container">
-        <Header activeTab={activeTab} setActiveTab={setActiveTab} />
+        {
+          !IntraUser && <Header activeTab={activeTab} setActiveTab={setActiveTab} />
+        }
         {activeTab === 'settings' ? (
           <Two2fa setActiveTab={setActiveTab} />
         ) : (
-          <ProfileSettings />
+          <ProfileSettings setIntraUser={setIntraUser} />
         )}
       </div>
     </div>

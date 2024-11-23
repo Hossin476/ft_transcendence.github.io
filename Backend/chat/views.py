@@ -7,7 +7,6 @@ from rest_framework import generics
 # from rest_framework.permissions import IsAuthenticated
 import json
 
-# Create your views here.
 from users.models import Friendship
 from . import models
 from . import serializers
