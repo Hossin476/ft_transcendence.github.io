@@ -294,36 +294,58 @@ def intra_redirect(request):
             except Exception as e:
                 print(e)
 
+
 class UserRegistrationView(GenericAPIView):
     serializer_class = UserRegisterSerializer
     permission_classes = [AllowAny]
-    
+
     def post(self, request):
         try:
-            user_data = request.data
-            serializer = self.serializer_class(data=user_data)
-            if serializer.is_valid(raise_exception=True):
-                serializer.save()
-                user = serializer.data
-                send_otp_email(user['email'])
+
+            user_data = {
+                'username': request.data.get('username'),
+                'email': request.data.get('email'),
+                'password': request.data.get('password'),
+                'password2': request.data.get('password2')
+            }
+
+
+            validation = validate_credentials(user_data)
+            if not validation['valid']:
                 return Response({
-                        'data': user,
-                        'message': f'hello, thank you for joining us, a verification code was sent to your email'
-                    }, status=status.HTTP_201_CREATED
-                )
+                    'message': validation['errorMessage']
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+
+            serializer = self.serializer_class(data=user_data)
+            if serializer.is_valid():
+                user = serializer.save()
+                send_otp_email(user.email)
+                return Response({
+                    'data': serializer.data,
+                    'message': 'Hello, thank you for joining us. A verification code was sent to your email'
+                }, status=status.HTTP_201_CREATED)
+            
+
+            first_error = next(iter(serializer.errors.values()))[0]
+            return Response({
+                'message': str(first_error)
+            }, status=status.HTTP_400_BAD_REQUEST)
+
         except Exception as e:
-            error_string = str(e)
+            error_string = str(e).lower()
             if 'username' in error_string:
                 return Response({
-                    'message': 'username already exists !'
+                    'message': 'Username already exists!'
                 }, status=status.HTTP_400_BAD_REQUEST)
             elif 'email' in error_string:
                 return Response({
-                    'message': 'email already in use !'
+                    'message': 'Email already in use!'
                 }, status=status.HTTP_400_BAD_REQUEST)
             return Response({
-                'message': 'something went wrong !'
+                'message': str(e)
             }, status=status.HTTP_400_BAD_REQUEST)
+
 
 class EmailVerificationView(GenericAPIView):
     
