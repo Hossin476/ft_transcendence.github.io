@@ -3,7 +3,7 @@ import React from 'react';
 import  { useAuth } from '../context/AuthContext';
 
 function PrivateRoute() {
-    let { user } = useAuth();
+    let { user, tokens } = useAuth();
 
     return user
         ? <Outlet/>

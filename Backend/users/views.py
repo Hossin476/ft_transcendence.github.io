@@ -128,6 +128,20 @@ def get_user_info(request):
 
 
 @api_view(['GET'])
+def get_user_data(request):
+    try:
+
+        serialized_user = playerSerializers(request.user)
+        return Response(serialized_user.data, status=status.HTTP_200_OK)
+    except CustomUser.DoesNotExist:
+        return Response({
+            'message': 'user not found !'
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        print(e)
+
+
+@api_view(['GET'])
 def get_all_matches(request):
     user = request.user
     
@@ -139,7 +153,7 @@ def get_all_matches(request):
     ping_serialzer = MatchGameOnlineSerializer(pong_matches, many=True).data
     tictactoe_serializer = MatchGameOnlineModelSerializer(tictactoe_matches, many=True).data
     
-    socre = None;
+
     for item in tictactoe_serializer:
         if item.get('winner'):
             if item['player1']['id'] == item['winner']['id']:
@@ -352,7 +366,6 @@ class EmailVerificationView(GenericAPIView):
 class UserLoginView(GenericAPIView):
     serializer_class = UserLoginSerializer
     permission_classes = [AllowAny]
-
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data, context={'request':request})
@@ -588,7 +601,7 @@ class ProfileMediaView(APIView):
 		return Response({
 			'profileImage': user.profile_image.url,
             'coverImage': user.cover_image.url,
-            'isIntraUser': user.is_intra_user
+            'isIntraUser': True
 		}, status=status.HTTP_200_OK)
 
 
