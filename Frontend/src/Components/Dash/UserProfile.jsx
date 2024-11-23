@@ -32,10 +32,8 @@ export default function UserProfile() {
     useEffect(()=>{
         const fetchData = async ()=> {
             let data = await getUserData(tokens, customFetch)
-            setUserData(()=>data)
-            setUser(prevUser=>{
-                return {...prevUser,profile_image:data.profile_image}
-            })
+            if(data)
+                setUserData(()=>data)
         }
         fetchData()
     },[])

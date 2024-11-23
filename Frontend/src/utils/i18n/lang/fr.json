@@ -133,5 +133,7 @@
     "If no player scores when the timer reaches 0, the game is a draw.": "Si aucun joueur ne marque lorsque le minuteur atteint 0, le jeu est un match nul.",
     "Current player :": "Joueur actuel :",
     "the game starts in:": "Le jeu commence dans:",
-    "seconds": "secondes"
+    "seconds": "secondes",
+    "press done first or it's invalide inputs": "appuyez d'abord sur terminé ou ce sont des entrées invalides",
+    "you can't insert the same name": "vous ne pouvez pas insérer le même nom"
 }

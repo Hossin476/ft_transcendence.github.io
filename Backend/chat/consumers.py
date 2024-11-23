@@ -59,8 +59,8 @@ def block_event(text_data_json, userId):
                 blocked = CustomUser.objects.get(id=blocked),
             )
             Friendship.objects.filter(id=friendship).delete()
-            return True
-    return False    
+            return int(friendship)
+    return 0 
         
         
 
@@ -145,6 +145,7 @@ class ChatConsumer(WebsocketConsumer):
                 "blocker" : blocker
             }
         )
+
         async_to_sync(self.channel_layer.group_send) (
             self.group_name,
             {

@@ -60,9 +60,10 @@ const ChatPage = () => {
         
         if (blocker) {
             setConversation((prevConv)=> {
-                return prevConv.filter(item=>item.id !== currentUser.id)
+                return prevConv.filter(item=>item.id !== blocker)
             })
-            setCurrentUser(()=>null)
+            if(currantUser && currantUser.id === blocker)
+                setCurrentUser(()=>null)
         }
     }
 

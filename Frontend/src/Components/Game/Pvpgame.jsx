@@ -180,13 +180,15 @@ function Started_button({ onClick }) {
 }
 function LocalButton({ onClick, players }) {
   const { t } = useTranslation();
-  let error = false;
+  let error = '';
   console.log("this is the shit here :", players);
-  if (players.player1 === "" || players.player2 === "") error = true;
+  if (players.player1 === "" || players.player2 === "") error = 'empty';
+  if(players.player1 === players.player2) error = 'duplicate'
   return (
     <div className="start-button_div">
       <div className="empty_start"></div>
-      {error ? <p className="text-red-500"> {t("press done first")}</p> : ""}
+      {error === 'empty' ? <p className="text-red-500"> {t("press done first or it's invalide inputs")}</p> : ""}
+      {error === 'duplicate' ? <p className="text-red-500"> {t("you can't insert the same name")}</p> : ""}
       <button
         onClick={error ? (e) => e.preventDefault() : onClick}
         className="started-button"
@@ -230,7 +232,7 @@ function LocalPvp({ player, setPlayers }) {
   const [name, setName] = useState("");
   const [error, setEror] = useState(false);
   const {user} = useAuth()
-  let regex = new RegExp("^[a-z][a-zA-Z0-9]*$");
+  let regex = new RegExp("^[a-zA-Z][a-zA-Z0-9]*$");
   const { t } = useTranslation();
 
   const handleInpute = (e) => {

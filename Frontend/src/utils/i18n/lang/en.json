@@ -33,7 +33,6 @@
     "STARTED": "STARTED",
     "CANCEL": "CANCEL",
     "No_Name": "No Name",
-    "press done first": "press done first",
     "invalid name": "invalid name please a valid name",
     "Done": "Done",
     "Edit": "Edit",
@@ -133,5 +132,7 @@
     "If no player scores when the timer reaches 0, the game is a draw.": "If no player scores when the timer reaches 0, the game is a draw.",
     "Current player :": "Current player :",
     "the game starts in:": "The game starts in:",
-    "seconds": "seconds"
+    "seconds": "seconds",
+    "press done first or it's invalide inputs": "Press done first or it's invalide inputs",
+    "you can't insert the same name": "you can't insert the same name"
 }

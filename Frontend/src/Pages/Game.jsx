@@ -41,9 +41,6 @@ function TicTacToe() {
     const navigate = useNavigate();
     const { t } = useTranslation();
 
-    function navigateToTournament() {
-        navigate('/game/tictactoe/tournament');
-    }
     function navigateToPvp() {
         navigate('/game/tictactoe/pvpgame');
     }
@@ -57,7 +54,6 @@ function TicTacToe() {
                 <div className="text-section2">
                     <h1>TIC TAC TOE</h1>
                     <div className='tic-buttons'>
-                        <button onClick={navigateToTournament} className="tournament-button2" >{t("TOURNAMENT")}</button>
                         <button onClick={navigateToPvp} className="pvp-button2">{t("PVP")}</button>
                     </div>
                 </div>
