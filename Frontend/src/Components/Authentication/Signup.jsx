@@ -14,6 +14,7 @@ const Signup = () => {
   })
   const [errorMessage, setErrorMessage] = useState("")
   const { username, email, password, password2 } = formData
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     if (errorMessage != "")
@@ -25,14 +26,7 @@ const Signup = () => {
     e.preventDefault()
     setIsLoading(true)
     try {
-
-      const validation = validateCredentials(formData)
-      if (!validation.valid) {
-        setErrorMessage(validation.message)
-        setIsLoading(false)
-      }
-      else {
-        
+ 
         const res = await fetch(`/api/auth/register/`, {
           method: "POST",
           headers: {
@@ -44,11 +38,12 @@ const Signup = () => {
         if (res.ok)
           navigate("/otp/verify")
         else {
+          console.log(response)
           setErrorMessage(response.message)
           setIsLoading(false)
         }
-      }
     } catch (error) {
+      console.log("Error in creating account")
       console.log(error)
       setIsLoading(false)
     }
