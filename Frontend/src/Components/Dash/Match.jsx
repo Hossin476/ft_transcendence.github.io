@@ -32,7 +32,7 @@ export default function Match({match}) {
             <hr  className=" xsm:h-[3rem] sm:h-[4rem] lg:ml-2 w-1 bg-gray-200 rounded-full border-none"/>
             <div className="xsm:text-xs lg:text-lg flex flex-col items-center justify-center">
                 <div className="xsm:h-8 xsm:w-8 sm:h-16 sm:w-16  overflow-hidden  rounded-full">
-                    <img className="w-full" src={match.player1.profile_image} alt="" />
+                    <img className="w-full h-full object-cover" src={match.player1.profile_image} alt="" />
                 </div>
                 <p>{match.player1.username}</p>
             </div>
@@ -45,7 +45,7 @@ export default function Match({match}) {
             </div>
             <div className="xsm:text-xs lg:text-lg flex flex-col items-center justify-center">
                 <div className="xsm:h-8 xsm:w-8 sm:h-16 sm:w-16  overflow-hidden  rounded-full">
-                    <img className="w-full" src={match.player2.profile_image} alt="" />
+                    <img className="w-full h-full object-cover" src={match.player2.profile_image} alt="" />
                 </div>
                 <p>{match.player2.username}</p>
             </div>

@@ -30,8 +30,8 @@ export default function FriendChat({ contacts, handleOnClick, selected }) {
         style={{ cursor: "pointer" }}
       >
         <div className="flex gap-4 items-center">
-          <div className="w-16 h-16 rounded-full relative">
-            <img className="w-full rounded-full" src={contacts.user.profile_image} alt="" />
+          <div className="w-16 h-16 rounded-full overflow-hidden relative">
+            <img className="w-full h-full object-cover" src={contacts.user.profile_image} alt="" />
             <span
               className={`w-4 h-4 right-0 bottom-0 rounded-full ${
                 contacts.user.is_online ? "bg-green-500" : "bg-red-500"

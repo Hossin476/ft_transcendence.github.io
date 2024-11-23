@@ -24,7 +24,7 @@ export default function Friend({name,status,online,user_id,profile_image}) {
                 <div   className=" xsm:h-[2rem] xsm:w-[2rem] sm:w-[4rem] sm:h-[4rem]  relative rounded-full" 
                         onClick={handleFriendClick}>
                     <div className="w-full h-full overflow-hidden  rounded-full">
-                        <img src={profile_image} className="w-full" alt="" />
+                        <img src={profile_image} className="w-full h-full object-cover" alt="" />
                     </div>
                     <span className={`xsm:w-1 xsm:h-1 sm:w-2 sm:h-2 ${online ? "bg-green-500" :"bg-red-500"} right-1 top-2 absolute rounded-full`}></span>
                 </div>

@@ -9,6 +9,7 @@ services:
       - VITE_URI_INTRA=${INTRA_URI_REDIRECT}
     volumes:
       - Frontend:/usr/src/app/dist
+      - ./Frontend/src:/usr/src/app/src
     restart: always
   backend:
     container_name: backend
@@ -34,6 +35,8 @@ services:
       - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
       - EMAIL_USE_SSL=${EMAIL_USE_SSL}
     build: ./Backend
+    volumes:
+      - ./Backend:/usr/src/app
     depends_on:
       - db
   db:

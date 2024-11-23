@@ -63,7 +63,7 @@ export default function NavBar() {
                 </li>
                 <li className="text-2xl font-thin xsm:hidden lg:block">{username}</li>
                 <li onClick={() => nav(`/profile/${user.user_id}`)} className="xsm:w-8 xsm:h-8 sm:w-16 sm:h-16 border-2 rounded-full overflow-hidden">
-                    <img className="w-full rounded-full " src={user.profile_image} alt="Profile" />
+                    <img className="w-full h-full object-cover" src={user.profile_image} alt="Profile" />
                 </li>
             </ul>
             <NotificationHandler />

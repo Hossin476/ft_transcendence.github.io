@@ -57,8 +57,8 @@ const ChatPage = () => {
     const manageBlock = (data,currentUser)=> {
 
         const {blocker} = data.event
-        
-        if (blocker && currentUser) {
+        console.log("blocker thawa: ",blocker)
+        if (blocker) {
             setConversation((prevConv)=> {
                 return prevConv.filter(item=>item.id !== blocker)
             })

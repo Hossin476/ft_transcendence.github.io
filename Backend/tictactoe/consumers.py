@@ -21,7 +21,7 @@ class Room:
         }
         self.countdown_values = {
             "reconnect": 10,
-            "start": 20
+            "start": 10
         }
         self.lock = asyncio.Lock()
 
@@ -156,7 +156,7 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
             await self.send_error(f"Error during disconnect: {e}")
 
     async def handle_player_disconnection(self):
-        if not self.room.are_both_players_present() and not self.game.game_over and self.game.start and self.game.final_winner is None:
+        if not self.room.are_both_players_present() and not self.game.game_over and self.game.final_winner is None:
             await self.room.start_task('reconnect_countdown', self.disconnect_countdown())
 
         await self.room.cancel_task('game_countdown')
@@ -322,6 +322,12 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
                 other_player_role = 'O' if self.player_role == 'X' else 'X'
                 other_player = self.room.players.get(other_player_role)
                 if other_player:
+                    try:
+                        user = await database_sync_to_async(CustomUser.objects.get)(id=self.user.id)
+                    except Exception:
+                        print("User does not exist.")
+                    user.loses_t += 1
+                    await database_sync_to_async(user.save)()
                     self.game.final_winner = other_player_role
                     self.game.game_over = True
                     self.game_record.is_end = True

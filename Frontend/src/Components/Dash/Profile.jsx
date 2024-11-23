@@ -13,7 +13,7 @@ export default function Profile({user}) {
         <div className=" md:w-[60%] xsm:h-[10em] lg:h-auto flex items-center  sm:gap-x-2 lg:gap-x-4 ">
         <div className="xsm:w-20 xsm:h-20 sm:w-32 sm:h-32 lg:w-40 lg:h-40 rounded-full bg-[#3F2D44] flex items-center justify-center relative">
             <div className="h-[80%] w-[80%] overflow-hidden flex items-center justify-center  border-2 border-forthColor rounded-full">
-                <img className="w-full h-full object-fill" src={user.profile_image} alt="" />
+                <img className="w-full h-full object-cover" src={user.profile_image} alt="" />
             </div>
             <p className="text-xs absolute -bottom-2  bg-gray-300 text-black p-1 border border-black sm:text-sm lg:text-lg  rounded-2xl">{t("LEVEL")} {user.rank}</p>
         </div>

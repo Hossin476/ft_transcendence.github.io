@@ -238,75 +238,79 @@ def get_image_path(username,link):
     get_pic = requests.get(link)
     
     if get_pic.status_code == 200:
-        path = f"media/images/profile/{username}.jpg"
+        path = f"media/profile/{username}.jpg"
         with open(path, 'wb') as file:
             file.write(get_pic.content)
-        return f'images/profile/{username}.jpg'
+        return f'/profile/{username}.jpg'
     return None
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
 @authentication_classes([])
 def intra_redirect(request):
+    try:
+        credentiales = None
+        response_user = None
+        user = None
+        client_id = os.environ.get('UID')
+        client_secret = os.environ.get('INTRA_SECRET')
+        print(request.body)
+        body = request.data
+        print(body)
+        intra_redirect = os.environ.get('INTRA_URL')
+        code = body['code']
+        data = {
+            "client_id": client_id,
+            "client_secret": client_secret,
+            "grant_type": "authorization_code",
+            "code": code,
+            "redirect_uri": intra_redirect,
+            "scope": "public"
+        }
+        
+        headers = {
+            "Content-Type": "application/x-www-form-urlencoded",
+        }
 
-    client_id = os.environ.get('UID')
-    client_secret = os.environ.get('INTRA_SECRET')
-    print(request.body)
-    body = request.data
-    print(body)
-    intra_redirect = os.environ.get('INTRA_URL')
-    code = body['code']
+        response = requests.post("https://api.intra.42.fr/oauth/token", data=data, headers=headers)
+        credentiales = response.json()
+        response_user = requests.get("https://api.intra.42.fr/v2/me", headers={"Authorization": "Bearer " + credentiales.get('access_token')})
+        user = response_user.json()
 
-    data = {
-        "client_id": client_id,
-        "client_secret": client_secret,
-        "grant_type": "authorization_code",
-        "code": code,
-        "redirect_uri": intra_redirect,
-        "scope": "public"
-    }
-    
-    headers = {
-        "Content-Type": "application/x-www-form-urlencoded",
-    }
-    response = requests.post("https://api.intra.42.fr/oauth/token", data=data, headers=headers)
-    credentiales = response.json()
-    base_url = " https://api.intra.42.fr/v2/me"
-    response_user = requests.get("https://api.intra.42.fr/v2/me", headers={"Authorization": "Bearer " + credentiales['access_token']})
-    user = response_user.json()
-    
-    if CustomUser.objects.filter(email=user['email']).exists():
-        print("he checked here and want to return the token")
-        user = CustomUser.objects.get(email=user['email'])
-        refresh = RefreshToken.for_user(user)
-        return Response({
-            'username': user.username,
-            'refresh': str(refresh),
-            'access':str(refresh.access_token)
-        })
-    else:
-            try:
-                user_name = user['login']
-                if CustomUser.objects.filter(username=user['login']).exists():
-                    username = generate_random_string(user_name, 5)
-                profile_pic = get_image_path(user_name, user['image']['link'])
-                user_instance = CustomUser.objects.create_user(
-                    username=user['login'],
-                    email=user['email'],
-                    password=generate_random_string(user_name, 15),
-                    profile_image=profile_pic,
-                    is_intra_user=True
-                )
-                user_instance.save()
-                refresh = RefreshToken.for_user(user_instance)
-                time.sleep(1)
-                return Response({
-                    'username': user_instance.username,
-                    'refresh': str(refresh),
-                    'access':str(refresh.access_token)
-                })
-            except Exception as e:
-                print(e)
+        if CustomUser.objects.filter(email=user['email']).exists():
+            print("he checked here and want to return the token")
+            user = CustomUser.objects.get(email=user['email'])
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'username': user.username,
+                'refresh': str(refresh),
+                'access':str(refresh.access_token),
+                'user': playerSerializers(user).data
+            })
+        else:
+            user_name = user['login']
+            if CustomUser.objects.filter(username=user['login']).exists():
+                user_name = generate_random_string(user_name, 5)
+            profile_pic = get_image_path(user_name, user['image']['link'])
+            user_instance = CustomUser.objects.create_user(
+                username=user_name,
+                email=user['email'],
+                password=generate_random_string(user_name, 15),
+                profile_image=profile_pic,
+                is_intra_user=True
+            )
+            user_instance.save()
+            refresh = RefreshToken.for_user(user_instance)
+            time.sleep(1)
+            return Response({
+                'username': user_instance.username,
+                'refresh': str(refresh),
+                'access':str(refresh.access_token),
+                'user': playerSerializers(user_instance).data
+            })
+    except Exception as e:
+        print(e)
+        return Response({})
 
 
 class UserRegistrationView(GenericAPIView):
@@ -674,12 +678,8 @@ class ProfileMediaUploadView(APIView):
 			)
 		try:
 			if mediaType == 'profile':
-				if user.profile_image and not user.profile_image.name.startswith('defaults/'):
-					user.profile_image.delete()
 				user.profile_image = image
 			elif mediaType == 'cover':
-				if user.cover_image and not user.cover_image.name.startswith('defaults/'):
-					user.cover_image.delete()
 				user.cover_image = image
 			else:
 				return Response({

@@ -125,7 +125,7 @@ const Game = () => {
                 </Suspense>
             </Canvas>
             {finalWinner && <Win final_winner={finalWinner} />}
-            {!finalWinner && showReconnectModal && <ReconnectModal />}
+            {!finalWinner && showReconnectModal && !showStartModal && <ReconnectModal />}
             {showStartModal && (
                 <StartModal
                     currentPlayer={playerRole}

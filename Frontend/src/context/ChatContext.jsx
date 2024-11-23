@@ -7,7 +7,7 @@ export default ChatContext
 export const ChatProvider = ({children})=> {
 
     const [currantUser,setCurrentUser] = useState(null)
-    const [conversation,setConversation] = useState(null)
+    const [conversation,setConversation] = useState([])
     const [messages,setMessages] = useState(null)
     const [seen ,setSeen] = useState(null)
     const [blocker ,setBlocker] = useState(null)

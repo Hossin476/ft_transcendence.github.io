@@ -60,11 +60,7 @@ def block_event(text_data_json, userId):
             )
             Friendship.objects.filter(id=friendship).delete()
             return int(friendship)
-    return 0 
-        
-        
-
-    return {"blocker":blocker,"block_user":block_user}
+    return 0
 
 
 # return the friendship id to fix the bug of the seen event 

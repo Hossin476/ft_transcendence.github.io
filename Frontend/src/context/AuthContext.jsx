@@ -159,7 +159,6 @@ export const AuthProvider = ({ children }) => {
                         localStorage.setItem('tokens', JSON.stringify(tokens2set));
                         console.log('new tokens:', tokens2set)
                         setTokens({...tokens, access: newTokens.access});
-                        await updateUser({...tokens, access: newTokens.access})
                         options.headers["Authorization"] = "JWT " + newTokens.access;
                     }else {
                         localStorage.removeItem('tokens');

@@ -2,6 +2,7 @@ import React from 'react'
 import { useState,useEffect } from 'react'
 import { useNavigate, Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext';
+
 const handleIntraLogin = async (code,login,navigate)=> {
     const res = await fetch(`/api/users/oauth2/intra/`,{
         method:"POST",
@@ -47,8 +48,10 @@ const Login = () => {
     }
 
     useEffect(()=> {
-        if(code)
+        if(code) {
+            console.log('code ',code)
             handleIntraLogin(code,login,navigate)
+        }
     },[code])
 
     const handle42 = (e)=> {

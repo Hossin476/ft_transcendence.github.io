@@ -77,7 +77,9 @@ function Mycard({ image, playerName }) {
   const { t } = useTranslation();
   return (
     <div className="player-card h-[90%] xsm:w-[50%] lg:w-[25%]">
-      <img src={image} alt="Avatar" className="avatar-ping" />
+      <div className="w-32 h-32 rounded-full overflow-hidden">
+        <img src={image} alt="Avatar" className="w-full h-full object-cover" />
+      </div>
       <div className="player-info">
         <h2>{playerName}</h2>
         <p>{t("LEVEL")} 2</p>

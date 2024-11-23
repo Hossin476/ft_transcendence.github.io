@@ -79,9 +79,9 @@ export default function ManageFriends() {
                         <div className={` ${focus ? 'flex' : 'hidden'} flex-col gap-y-2 xsm:w-48 xsm:h-32 xsm:p-2 right-0 top-[4rem] rounded-lg bg-gray-300 sm:h-40 sm:p-4 sm:w-72 justify-center absolute overflow-y-auto`}>
                             {
                                 Filterusers && Filterusers.length > 0 ? (
-                                    Filterusers.map((user) => {
+                                    Filterusers.map((user,index) => {
                                         return (
-                                            <div className="w-full h-12 items-center justify-between py-2">
+                                            <div key={index} className="w-full h-12 items-center justify-between py-2">
                                                 <div 
                                                 className="flex border border-gray-500 rounded-lg p-2"
                                                 onClick={handelNavigation(user.id)}>

@@ -202,7 +202,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                         'iswaiting': True,
                         'currentSecond': timeSpand,
                         'status': 'reconnect',
-                        'message':  "wait for your opponent to reconnect"
+                        'message':  ""
                     }
                     # This condition  checks if the time has ended when the time reaches 0 the connected player is set as winner.
                     print(timeSpand)
@@ -236,7 +236,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                         'iswaiting': True,
                         'currentSecond': timeSpand,
                         'status': 'pause',
-                        'message': room_obj.stopMessage
+                        'message': ""
                     }
                     # countdown  and sender
                     while timeSpand >= 0:
