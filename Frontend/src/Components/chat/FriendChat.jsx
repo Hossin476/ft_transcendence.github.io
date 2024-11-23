@@ -5,6 +5,7 @@ import { useEffect } from "react";
 
 export default function FriendChat({ contacts, handleOnClick, selected }) {
   const { count, setCount } = useContext(ChatContext);
+
   function timeConverter(timestamp) {
     const a = new Date(timestamp);
     const hour = a.getHours();

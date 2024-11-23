@@ -133,5 +133,9 @@
     "If no player scores when the timer reaches 0, the game is a draw.": "إذا لم يسجل أي لاعب عندما يصل المؤقت إلى 0، فإن اللعبة تعادل.",
     "Current player :": "اللاعب الحالي :",
     "the game starts in:": "تبدأ اللعبة في:",
-    "seconds": "ثواني"
+    "seconds": "ثواني",
+    "seen": "شوهد",
+    "Waiting for opponent to reconnect": "في انتظار خصمك لإعادة الاتصال",
+    "your opponent has paused the game": "قام خصمك بإيقاف اللعبة",
+    " seconds to start the game ": " ثواني لبدء اللعبة "
 }

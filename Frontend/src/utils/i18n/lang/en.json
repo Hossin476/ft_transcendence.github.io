@@ -133,5 +133,9 @@
     "If no player scores when the timer reaches 0, the game is a draw.": "If no player scores when the timer reaches 0, the game is a draw.",
     "Current player :": "Current player :",
     "the game starts in:": "The game starts in:",
-    "seconds": "seconds"
+    "seconds": "seconds",
+    "seen": "seen",
+    "Waiting for opponent to reconnect": "Waiting for opponent to reconnect",
+    "your opponent has paused the game": "Your opponent has paused the game",
+    " seconds to start the game ": " seconds to start the game "
 }

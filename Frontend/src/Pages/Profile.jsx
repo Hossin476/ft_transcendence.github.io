@@ -39,6 +39,9 @@ function Profile() {
     const fetchData = async () => {
       try {
         let data = await getProfileData(tokens, user_id, customFetch);
+        if (!data) {
+          navigate("/notfound");
+        }
         setProfileData(() => data);
       } catch (error) {
         navigate("/notfound");
