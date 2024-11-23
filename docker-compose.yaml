@@ -8,8 +8,7 @@ services:
       - VITE_BACKEND_URL=${BACKEND_URL}
       - VITE_URI_INTRA=${INTRA_URI_REDIRECT}
     volumes:
-      - ./Frontend/src:/usr/src/app/src
-      - ./Frontend/dist:/usr/src/app/dist
+      - Frontend:/usr/src/app/dist
     restart: always
   backend:
     container_name: backend
@@ -35,8 +34,6 @@ services:
       - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
       - EMAIL_USE_SSL=${EMAIL_USE_SSL}
     build: ./Backend
-    volumes:
-      - ./Backend:/usr/src/app
     depends_on:
       - db
   db:
@@ -49,7 +46,7 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     volumes:
-      - ./database/:/var/lib/postgresql/data
+      - Database:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres", "-h", "db"]
     restart: always
@@ -65,9 +62,9 @@ services:
     container_name: nginx
     build: ./nginx
     ports:
-      - 443:8080
+      - 443:443
     volumes:
-      - ./Frontend/dist:/var/www/react/
+      - Frontend:/var/www/react/
     depends_on:
       - backend
       - frontend
@@ -83,10 +80,10 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /Users/lshail/
-  Backend:
+      device: ${PWD}/data/frontend/
+  Database:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /Users/lshail
+      device: ${PWD}/data/database/
