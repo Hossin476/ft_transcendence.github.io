@@ -235,7 +235,7 @@ function TwofaSetE({ SetEnable, IsEnable, setAnimation, setActiveTab }) {
 }
 
 function Two2fa({ setActiveTab }) {
-  const { tokens } = useAuth();
+  const { tokens, customFetch } = useAuth();
   const [IsEnable, SetEnable] = useState(false);
   const [Isanimation, setAnimation] = useState(false);
 
