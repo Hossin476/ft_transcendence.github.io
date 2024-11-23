@@ -95,19 +95,13 @@ def password_change_validator(passwords: Dict[str, str]) -> ValidatorResponse:
     contains_special_character = re.compile(r'[!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>/?]+')
     contains_whitespace = re.compile(r'\s')
 
-    if not all(key in passwords and passwords[key] 
-              for key in ['oldPassword', 'newPassword', 'confirmPassword']):
-        return {
-            "valid": False,
-            "errorMessage": "All fields are required."
-        }
 
     if passwords['newPassword'] != passwords['confirmPassword']:
         return {
             "valid": False,
             "errorMessage": "Passwords do not match."
         }
-    
+    print(passwords['newPassword'], passwords['confirmPassword'], passwords['oldPassword'])
     new_password = passwords['newPassword']
     if (len(new_password) < 8 or
         not contains_digit.search(new_password) or

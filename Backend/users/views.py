@@ -444,15 +444,28 @@ class PasswordResetConfirmationView(GenericAPIView):
             }, status=status.HTTP_401_UNAUTHORIZED)
 
 class SetNewPasswordView(GenericAPIView):
-    serializer_class = SetNewPasswordSerializer
-    permission_classes = [AllowAny]
+	serializer_class = SetNewPasswordSerializer
+	permission_classes = [AllowAny]
 
-    def patch(self, request):
-        serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        return Response({
-            'message': 'password reset successfully !'
-        }, status=status.HTTP_200_OK)
+	def post(self, request):
+		password = request.data.get('password')
+		confirm_password = request.data.get('confirmPassword')
+
+		data = {
+			'password': password,
+			'confirmPassword': confirm_password
+		}
+		validator = validate_password_reset(data)
+		if not validator['valid']:
+			return Response({
+				'message': validator['errorMessage']
+			}, status=status.HTTP_400_BAD_REQUEST)
+
+		serializer = self.serializer_class(data=request.data)
+		serializer.is_valid(raise_exception=True)
+		return Response({
+			'message': 'password reset successfully !'
+		}, status=status.HTTP_200_OK)
 
 class ChangePasswordView(GenericAPIView):
 	permission_classes = [IsAuthenticated]
@@ -460,7 +473,26 @@ class ChangePasswordView(GenericAPIView):
 	def post(self, request):
 		oldPassword = request.data.get('oldPassword')
 		newPassword = request.data.get('newPassword')
+		confirmPassword = request.data.get('confirmPassword')
 		user = request.user
+
+		
+		data = {
+			'oldPassword': oldPassword,
+			'newPassword': newPassword,
+			'confirmPassword': confirmPassword
+		}
+
+		if not all(data.values()):
+			return Response({
+				'message': 'All fields are required.'
+			}, status=status.HTTP_400_BAD_REQUEST)
+
+		validator = password_change_validator(data)
+		if not validator['valid']:
+			return Response({
+				'message': validator['errorMessage']
+			}, status=status.HTTP_400_BAD_REQUEST)
 
 		if not user.check_password(oldPassword):
 			return Response(
@@ -468,17 +500,6 @@ class ChangePasswordView(GenericAPIView):
 				, status=status.HTTP_400_BAD_REQUEST
 			)
 
-		if len(newPassword) < 8:
-			return Response(
-				{'message': 'Password must be at least 8 characters long'},
-				status=status.HTTP_400_BAD_REQUEST
-			)
-
-		if oldPassword == newPassword:
-			return Response(
-				{'message': 'New password must be different from old password'},
-				status=status.HTTP_400_BAD_REQUEST
-			)
 		user.set_password(newPassword)
 		user.save()
 		return Response(
@@ -623,7 +644,7 @@ class ProfileMediaView(APIView):
 		return Response({
 			'profileImage': user.profile_image.url,
             'coverImage': user.cover_image.url,
-            'isIntraUser': True
+            'isIntraUser': user.is_intra_user
 		}, status=status.HTTP_200_OK)
 
 

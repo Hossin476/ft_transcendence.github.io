@@ -88,32 +88,27 @@ const ProfileSettings = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const passwordValidation = passwordValidator(passwords);
-    if (!passwordValidation.valid) {
-      setErrorMessage(passwordValidation.message);
-      return;
-    } else {
-      try {
-        const response = await customFetch("/api/auth/change-password/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `JWT ${tokens.access}`,
-          },
-          body: JSON.stringify({
-            oldPassword: passwords.oldPassword,
-            newPassword: passwords.newPassword,
-          }),
-        });
-        const res = await response.json();
-        if (!response.ok) {
-          setErrorMessage(res.message);
-        } else {
-          setSuccessMessage(res.message);
-        }
-      } catch (error) {
-        
+    try {
+      const response = await customFetch("/api/auth/change-password/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `JWT ${tokens.access}`,
+        },
+        body: JSON.stringify({
+          oldPassword: passwords.oldPassword,
+          newPassword: passwords.newPassword,
+          confirmPassword: passwords.confirmPassword,
+        }),
+      });
+      const res = await response.json();
+      if (!response.ok) {
+        setErrorMessage(res.message);
+      } else {
+        setSuccessMessage(res.message);
       }
+    } catch (error) {
+      
     }
     setPasswords({
       oldPassword: "",
