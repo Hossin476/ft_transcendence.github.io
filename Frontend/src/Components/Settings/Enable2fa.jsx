@@ -67,6 +67,7 @@ function Mid_Nav_enable(){
                     <span className="text-sm cursor-pointer hover:text-gray-400">
                     <CgCopy
                       onClick={() => navigator.clipboard.writeText(SecretKey)}
+
                     />
                     </span>
                 </div>

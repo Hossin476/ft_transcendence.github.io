@@ -165,8 +165,7 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
             async with asyncio.Lock():
                 self.rooms.pop(self.game_id, None)
                 self.games.pop(self.game_id, None)
-                self.game_record.is_end = True
-                await self.update_record()
+                self.game_record.delete()
 
     async def receive(self, text_data):
         try:

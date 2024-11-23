@@ -135,5 +135,9 @@
     "the game starts in:": "تبدأ اللعبة في:",
     "seconds": "ثواني",
     "press done first or it's invalide inputs": "اضغط أولاً على تم أو إدخالات غير صالحة",
-    "you can't insert the same name": "لا يمكنك إدراج نفس الاسم"
+    "you can't insert the same name": "لا يمكنك إدراج نفس الاسم",
+    "seen": "شوهد",
+    "Waiting for opponent to reconnect": "في انتظار خصمك لإعادة الاتصال",
+    "your opponent has paused the game": "قام خصمك بإيقاف اللعبة",
+    " seconds to start the game ": " ثواني لبدء اللعبة "
 }

@@ -10,30 +10,12 @@ import { useNavigate } from 'react-router-dom';
 import LanguageSwitcher from "../../Components/Settings/LanguageSwitcher";
 
 
-const  getUserData= async (tokens, customFetch)=> {
-    try {
-        const response = await customFetch("/api/users/user_info/",{
-            method : "GET",
-            headers:{
-                "Authorization": "JWT " + tokens.access,
-                'Content-Type':'application/json',
-            }
-        })
-        if(response.ok) {
-            let data = await response.json()
-            return data
-        }
-        return null
-    } catch(error) {
-        return null
-    }
-}
 
 
 export default function NavBar() {
 
 
-    const { socket, global_socket, socketMessage, createSocket,user, username, setUser, customFetch, tokens } = useAuth()
+    const { socket, global_socket, socketMessage, createSocket,user, username, setUser, customFetch, tokens, updateUser } = useAuth()
     const [showNotifications, setShowNotifications] = useState(false);
     const nav = useNavigate();
 
@@ -55,14 +37,7 @@ export default function NavBar() {
     useEffect(() => {
         global_socket();
         createSocket();
-        const fetchData = async ()=> {
-            let data = await getUserData(tokens, customFetch)
-            setUser(()=>{
-                return data
-            })
-        }
-        fetchData()
-
+        updateUser(tokens);
         return () => {
             if (socket)
                 socket.close()
@@ -86,14 +61,9 @@ export default function NavBar() {
                         </div>
                     )}
                 </li>
-                {/* <li className="flex gap-2 items-center xsm:text-xl sm:text-2xl">1337
-                    <span>
-                        <LiaCoinsSolid />
-                    </span>
-                </li> */}
                 <li className="text-2xl font-thin xsm:hidden lg:block">{username}</li>
-                <li onClick={() => nav(`/profile/${user.user_id}`)} className="xsm:w-8 xsm:h-8 sm:w-16 sm:h-16 border-2 rounded-full">
-                    <img className="w-full rounded-full" src={user.profile_image} alt="Profile" />
+                <li onClick={() => nav(`/profile/${user.user_id}`)} className="xsm:w-8 xsm:h-8 sm:w-16 sm:h-16 border-2 rounded-full overflow-hidden">
+                    <img className="w-full rounded-full " src={user.profile_image} alt="Profile" />
                 </li>
             </ul>
             <NotificationHandler />

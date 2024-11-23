@@ -29,16 +29,8 @@ const ResetPassword = () => {
 	const handleSubmit = async (e) => {
 
 		e.preventDefault()
-		if (!newPasswords.password || !newPasswords.confirm_password) {
-			setErrorMessage("both fields are required !")
-			return
-		}
-		if (newPasswords.password !== newPasswords.confirm_password) {
-			setErrorMessage("passwords do not match !")
-			return
-		}
 		const response = await fetch('/api/auth/set-new-password/', {
-			method: 'PATCH',
+			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
@@ -47,7 +39,8 @@ const ResetPassword = () => {
 		const res = await response.json()
 		if (response.status === 200) {
 			navigate('/login')
-			toast.success(response.message)
+		}else {
+			setErrorMessage(res.message)
 		}
 	}
 

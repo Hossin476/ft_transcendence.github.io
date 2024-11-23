@@ -174,7 +174,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             print("wait to start 1")
             await self.channel_layer.group_send(self.game_group_id,{
                 "type": "before.start",
-                "message" : f"{time_stamp - i} seconds to start the game",
+                "message" : f"{time_stamp - i}",
                 "time" : time_stamp - i
 
             })

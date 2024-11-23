@@ -1,5 +1,4 @@
 import React from 'react';
-import '../tictactoe.css';
 import Header from '../Components/TicTaToe/Header';
 import Game from '../Components/TicTaToe/Game';
 import Score from '../Components/TicTaToe/Score';

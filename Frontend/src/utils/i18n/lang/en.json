@@ -134,5 +134,9 @@
     "the game starts in:": "The game starts in:",
     "seconds": "seconds",
     "press done first or it's invalide inputs": "Press done first or it's invalide inputs",
-    "you can't insert the same name": "you can't insert the same name"
+    "you can't insert the same name": "you can't insert the same name",
+    "seen": "seen",
+    "Waiting for opponent to reconnect": "Waiting for opponent to reconnect",
+    "your opponent has paused the game": "Your opponent has paused the game",
+    " seconds to start the game ": " seconds to start the game "
 }

@@ -136,10 +136,7 @@ def block_request(sender, receiver_id):
             friendship.delete()
         return block, receiver.id
     except Exception as e:
-        async_to_sync(channel_layer.group_send)(f'notification_{sender.id}', {
-            'type': 'error.handle',
-            'error': str(e)
-        })
+        print(f"error : {str(e)}")
 
 
 @database_sync_to_async

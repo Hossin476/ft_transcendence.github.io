@@ -58,7 +58,7 @@ const ChatPage = () => {
 
         const {blocker} = data.event
         
-        if (blocker) {
+        if (blocker && currentUser) {
             setConversation((prevConv)=> {
                 return prevConv.filter(item=>item.id !== blocker)
             })
@@ -107,7 +107,6 @@ const ChatPage = () => {
             })
         }
     }, [chatsocket, currantUser, user, setMessages, setSeen, typing, setTyping])
-    console.log(currantUser)
     return (
         <div className="flex-1 h-[90%] relative flex items-center p-4 gap-4 ">
             <ChatList />

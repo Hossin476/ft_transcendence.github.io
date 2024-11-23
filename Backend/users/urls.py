@@ -9,6 +9,7 @@ urlpatterns = [
     path('user_info/', views.get_user_info),
     path('all_matches/', views.get_all_matches),
     path('chart_data/', views.get_monthly_data),
+    path('me/', views.get_user_data),
 
 
     path('intra/login/', views.intra_login),

@@ -128,6 +128,20 @@ def get_user_info(request):
 
 
 @api_view(['GET'])
+def get_user_data(request):
+    try:
+
+        serialized_user = playerSerializers(request.user)
+        return Response(serialized_user.data, status=status.HTTP_200_OK)
+    except CustomUser.DoesNotExist:
+        return Response({
+            'message': 'user not found !'
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        print(e)
+
+
+@api_view(['GET'])
 def get_all_matches(request):
     user = request.user
     
@@ -139,7 +153,7 @@ def get_all_matches(request):
     ping_serialzer = MatchGameOnlineSerializer(pong_matches, many=True).data
     tictactoe_serializer = MatchGameOnlineModelSerializer(tictactoe_matches, many=True).data
     
-    socre = None;
+
     for item in tictactoe_serializer:
         if item.get('winner'):
             if item['player1']['id'] == item['winner']['id']:
@@ -294,36 +308,58 @@ def intra_redirect(request):
             except Exception as e:
                 print(e)
 
+
 class UserRegistrationView(GenericAPIView):
     serializer_class = UserRegisterSerializer
     permission_classes = [AllowAny]
-    
+
     def post(self, request):
         try:
-            user_data = request.data
-            serializer = self.serializer_class(data=user_data)
-            if serializer.is_valid(raise_exception=True):
-                serializer.save()
-                user = serializer.data
-                send_otp_email(user['email'])
+
+            user_data = {
+                'username': request.data.get('username'),
+                'email': request.data.get('email'),
+                'password': request.data.get('password'),
+                'password2': request.data.get('password2')
+            }
+
+
+            validation = validate_credentials(user_data)
+            if not validation['valid']:
                 return Response({
-                        'data': user,
-                        'message': f'hello, thank you for joining us, a verification code was sent to your email'
-                    }, status=status.HTTP_201_CREATED
-                )
+                    'message': validation['errorMessage']
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+
+            serializer = self.serializer_class(data=user_data)
+            if serializer.is_valid():
+                user = serializer.save()
+                send_otp_email(user.email)
+                return Response({
+                    'data': serializer.data,
+                    'message': 'Hello, thank you for joining us. A verification code was sent to your email'
+                }, status=status.HTTP_201_CREATED)
+            
+
+            first_error = next(iter(serializer.errors.values()))[0]
+            return Response({
+                'message': str(first_error)
+            }, status=status.HTTP_400_BAD_REQUEST)
+
         except Exception as e:
-            error_string = str(e)
+            error_string = str(e).lower()
             if 'username' in error_string:
                 return Response({
-                    'message': 'username already exists !'
+                    'message': 'Username already exists!'
                 }, status=status.HTTP_400_BAD_REQUEST)
             elif 'email' in error_string:
                 return Response({
-                    'message': 'email already in use !'
+                    'message': 'Email already in use!'
                 }, status=status.HTTP_400_BAD_REQUEST)
             return Response({
-                'message': 'something went wrong !'
+                'message': str(e)
             }, status=status.HTTP_400_BAD_REQUEST)
+
 
 class EmailVerificationView(GenericAPIView):
     
@@ -352,7 +388,6 @@ class EmailVerificationView(GenericAPIView):
 class UserLoginView(GenericAPIView):
     serializer_class = UserLoginSerializer
     permission_classes = [AllowAny]
-
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data, context={'request':request})
@@ -409,15 +444,28 @@ class PasswordResetConfirmationView(GenericAPIView):
             }, status=status.HTTP_401_UNAUTHORIZED)
 
 class SetNewPasswordView(GenericAPIView):
-    serializer_class = SetNewPasswordSerializer
-    permission_classes = [AllowAny]
+	serializer_class = SetNewPasswordSerializer
+	permission_classes = [AllowAny]
 
-    def patch(self, request):
-        serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        return Response({
-            'message': 'password reset successfully !'
-        }, status=status.HTTP_200_OK)
+	def post(self, request):
+		password = request.data.get('password')
+		confirm_password = request.data.get('confirmPassword')
+
+		data = {
+			'password': password,
+			'confirmPassword': confirm_password
+		}
+		validator = validate_password_reset(data)
+		if not validator['valid']:
+			return Response({
+				'message': validator['errorMessage']
+			}, status=status.HTTP_400_BAD_REQUEST)
+
+		serializer = self.serializer_class(data=request.data)
+		serializer.is_valid(raise_exception=True)
+		return Response({
+			'message': 'password reset successfully !'
+		}, status=status.HTTP_200_OK)
 
 class ChangePasswordView(GenericAPIView):
 	permission_classes = [IsAuthenticated]
@@ -425,7 +473,26 @@ class ChangePasswordView(GenericAPIView):
 	def post(self, request):
 		oldPassword = request.data.get('oldPassword')
 		newPassword = request.data.get('newPassword')
+		confirmPassword = request.data.get('confirmPassword')
 		user = request.user
+
+		
+		data = {
+			'oldPassword': oldPassword,
+			'newPassword': newPassword,
+			'confirmPassword': confirmPassword
+		}
+
+		if not all(data.values()):
+			return Response({
+				'message': 'All fields are required.'
+			}, status=status.HTTP_400_BAD_REQUEST)
+
+		validator = password_change_validator(data)
+		if not validator['valid']:
+			return Response({
+				'message': validator['errorMessage']
+			}, status=status.HTTP_400_BAD_REQUEST)
 
 		if not user.check_password(oldPassword):
 			return Response(
@@ -433,17 +500,6 @@ class ChangePasswordView(GenericAPIView):
 				, status=status.HTTP_400_BAD_REQUEST
 			)
 
-		if len(newPassword) < 8:
-			return Response(
-				{'message': 'Password must be at least 8 characters long'},
-				status=status.HTTP_400_BAD_REQUEST
-			)
-
-		if oldPassword == newPassword:
-			return Response(
-				{'message': 'New password must be different from old password'},
-				status=status.HTTP_400_BAD_REQUEST
-			)
 		user.set_password(newPassword)
 		user.save()
 		return Response(
