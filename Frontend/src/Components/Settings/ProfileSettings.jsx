@@ -3,7 +3,7 @@ import { useAuth } from "../../context/AuthContext";
 import { passwordValidator } from "../../utils/auth/validators";
 import { useTranslation } from "react-i18next";
 
-const ProfileSettings = () => {
+const ProfileSettings = ( {setIntraUser} ) => {
 	const { t } = useTranslation();
 	const [errorMessage, setErrorMessage] = useState("");
 	const [successMessage, setSuccessMessage] = useState("");
@@ -36,6 +36,7 @@ const ProfileSettings = () => {
         const data = await response.json();
         if (data.isIntraUser) {
           setIsIntraUser(true);
+          setIntraUser(true);
         }
         setProfileMedia({
           profileImage: data.profileImage,

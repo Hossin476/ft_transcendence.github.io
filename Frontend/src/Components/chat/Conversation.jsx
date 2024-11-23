@@ -2,15 +2,13 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import {useContext} from 'react'
 import ChatContext from '../../context/ChatContext';
 import { useAuth } from '../../context/AuthContext';
-import Lottie from 'react-lottie';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
-// import typing_animation from '../../../public/typing.json';
+import { useTranslation } from 'react-i18next';
 
 const Typing_render = () => {
     return (
       <div className="self-start bg-gray-400 border-linkColor border-[2px] rounded-xl w-20">
         <DotLottieReact
-            // src="https://lottie.host/b2bb6c89-5bae-4a2e-98e8-3acf68655ca0/zXc9PPXQHf.json"
             src="https://lottie.host/0c9dffbe-e667-45cd-be77-9bd29512c886/CpM7tDcwmk.json"
             loop
             autoplay
@@ -57,6 +55,7 @@ function getFormatedDate(messageTime) {
 
 const Conversation = () => {
 
+  const {t} = useTranslation()
   const {user,tokens,chatsocket, customFetch} = useAuth()
   const {currantUser,messages,setMessages,seen,setSeen, typing,setBlocker,blocker} = useContext(ChatContext)
   const elementRef = useRef(null)
@@ -115,7 +114,7 @@ const Conversation = () => {
             </div>
         ))}
         {
-          seen === true ? <p className="self-end text-black pr-4">seen</p>: ""
+          seen === true ? <p className="self-end text-black pr-4">{t("seen")}</p>: ""
         }
         {
           currantUser && currantUser.user.id === typing.sender &&

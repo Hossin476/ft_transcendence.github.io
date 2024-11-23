@@ -55,13 +55,13 @@ export default function NavBar() {
     useEffect(() => {
         global_socket();
         createSocket();
-        const fetchData = async ()=> {
-            let data = await getUserData(tokens, customFetch)
-            setUser(()=>{
-                return data
-            })
-        }
-        fetchData()
+        // const fetchData = async ()=> {
+        //     let data = await getUserData(tokens, customFetch)
+        //     setUser(()=>{
+        //         return data
+        //     })
+        // }
+        // fetchData()
 
         return () => {
             if (socket)
@@ -86,11 +86,6 @@ export default function NavBar() {
                         </div>
                     )}
                 </li>
-                {/* <li className="flex gap-2 items-center xsm:text-xl sm:text-2xl">1337
-                    <span>
-                        <LiaCoinsSolid />
-                    </span>
-                </li> */}
                 <li className="text-2xl font-thin xsm:hidden lg:block">{username}</li>
                 <li onClick={() => nav(`/profile/${user.user_id}`)} className="xsm:w-8 xsm:h-8 sm:w-16 sm:h-16 border-2 rounded-full">
                     <img className="w-full rounded-full" src={user.profile_image} alt="Profile" />

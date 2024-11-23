@@ -127,7 +127,6 @@ export default function ChatList() {
   }, [search, conversation]);
 
   return useMemo(() => {
-    console.log("conv", conversation)
     return (
       <div
         className={`xsm:${

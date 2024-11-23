@@ -133,5 +133,6 @@
     "If no player scores when the timer reaches 0, the game is a draw.": "If no player scores when the timer reaches 0, the game is a draw.",
     "Current player :": "Current player :",
     "the game starts in:": "The game starts in:",
-    "seconds": "seconds"
+    "seconds": "seconds",
+    "seen": "seen"
 }
