@@ -57,10 +57,12 @@ export default function CreateTournament({setTournamentName, tournamentName, set
                     return
                 }
     
-                setTours(prevtours=> [data,...prevtours])
+                setTours(prevtours=> [...prevtours, data])
                 setTournamentName("")
             }
-        } catch (error) {}
+        } catch (error) {
+            return 
+        }
     }
 
     const  handelFading = ()=> {

@@ -1,10 +1,31 @@
-import React, { createContext, useState, useContext, useRef, useEffect } from 'react';
+import React, { createContext, useState, useContext, useRef, useEffect, useCallback } from 'react';
 import axios from 'axios'
 import { jwtDecode } from 'jwt-decode'
 import {useNavigate} from 'react-router-dom'
 import CrytoJs from 'crypto-js'
 
 const AuthContext = createContext()
+
+
+const  getUserData= async (access, customFetch)=> {
+    try {
+        const response = await customFetch("/api/users/user_info/",{
+            method : "GET",
+            headers:{
+                "Authorization": "JWT " + access,
+                'Content-Type':'application/json',
+            }
+        })
+        if(response.ok) {
+            let data = await response.json()
+            return data
+        }
+        return null
+    } catch(error) {
+        return null
+    }
+}
+
 
 const secret = '~hyounsi~lshail~ykhourba~azari~sbzizal~';
 
@@ -36,8 +57,8 @@ export const AuthProvider = ({ children }) => {
         const encryptedToken = CrytoJs.AES.encrypt(JSON.stringify(data.tokens), secret).toString();
         localStorage.setItem('tokens', JSON.stringify(encryptedToken))
         setTokens(data.tokens)
-        setUser(jwtDecode(data.tokens.access))
-        console.log('login:', data.tokens.access)
+        setUser(data.tokens.user)
+        console.log('login:', data)
         setUserName(data.tokens?.username);
     }
 
@@ -108,6 +129,16 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
+    const updateUser = async (tokens)=> {
+        if(!tokens)
+            return
+        let data = await getUserData(tokens.access, customFetch)
+        if(data ) {
+            setUser(()=>{
+            return {...data, user_id: data.id}
+            })
+        }
+    }
     const customFetch = async (url, options) => {
         if (tokens) {
             const decodedToken = jwtDecode(tokens.access);
@@ -128,7 +159,7 @@ export const AuthProvider = ({ children }) => {
                         localStorage.setItem('tokens', JSON.stringify(tokens2set));
                         console.log('new tokens:', tokens2set)
                         setTokens({...tokens, access: newTokens.access});
-                        setUser(jwtDecode(newTokens.access));
+                        await updateUser({...tokens, access: newTokens.access})
                         options.headers["Authorization"] = "JWT " + newTokens.access;
                     }else {
                         localStorage.removeItem('tokens');
@@ -164,7 +195,8 @@ export const AuthProvider = ({ children }) => {
         createSocket,
         chatsocket: chatsocket,
         setUser,
-        customFetch
+        customFetch,
+        updateUser
     }
 
     return (

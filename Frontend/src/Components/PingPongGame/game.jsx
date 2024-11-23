@@ -62,7 +62,10 @@ function Game(props)
         props.handleWaiting(() => iswaiting);
         if (waiting.current && iswaiting && (status === 'reconnect' || status === 'pause')) {
           waiting.current.innerText = currentSecond;
-          waitingStatus.current.innerText = message;
+          if(status === 'reconnect')
+            waitingStatus.current.innerText = "Waiting for opponent to reconnect";
+          else if(status === 'pause')
+            waitingStatus.current.innerText = "your opponent has paused the game";
         }
         break;
       case 'before.start':
@@ -70,7 +73,7 @@ function Game(props)
           props.handleBefore(true)
         }
         if(beforeStart.current)
-          beforeStart.current.innerText = hold.message
+          beforeStart.current.innerText = hold.message + " seconds to start the game "
         if (hold.time == 1)
           props.handleBefore(false)
         break;
