@@ -12,7 +12,8 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from .utils import *
 from django.conf import settings
-
+from notifications.serializers import playerSerializers
+    
 
 class UserCreateSerializer(BaseUserCreateSerializer):
     class Meta(BaseUserCreateSerializer.Meta):
@@ -53,16 +54,27 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         return user
 
 class UserLoginSerializer(serializers.ModelSerializer):
-    
     username = serializers.CharField(max_length=255)
     password = serializers.CharField(max_length=68, write_only=True)
     access = serializers.CharField(max_length=255, read_only=True)
     refresh = serializers.CharField(max_length=255, read_only=True)
+    user = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = CustomUser
-        fields = ['username', 'password', 'access', 'refresh']
-    
+        fields = ['username', 'password', 'access', 'refresh', 'user']
+
+    def get_user(self, obj):
+        try:
+            if isinstance(obj, dict) and 'username' in obj:
+                user = CustomUser.objects.get(username=obj['username'])
+                data = playerSerializers(user).data
+                data['user_id'] = user.id
+                return data
+            return None
+        except Exception :
+            return None
+
     def validate(self, attrs):
         username = attrs.get('username')
         password = attrs.get('password')
@@ -72,18 +84,19 @@ class UserLoginSerializer(serializers.ModelSerializer):
         if user:
             if not user.is_verified:
                 raise AuthenticationFailed({'error': 'user not verified !'})
+            
             user_tokens = user.tokens()
+            
             if user.two_factor_enabled:
-                print(user.username, user.two_factor_enabled)
                 return {'username': user.username}
             else:
-                print(user.username, user.two_factor_enabled)
                 return {
                     'username': user.username,
                     'access': str(user_tokens.get('access')),
                     'refresh': str(user_tokens.get('refresh')),
                 }
         raise AuthenticationFailed({'error': 'invalid credentials, try again !'})
+
 
 
 
