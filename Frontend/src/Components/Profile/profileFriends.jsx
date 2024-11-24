@@ -8,7 +8,6 @@ import { useTranslation } from "react-i18next";
 
 function Friend({ friend }) {
 
-  console.log(friend);
 
     const { t } = useTranslation();
     const navigate = useNavigate();

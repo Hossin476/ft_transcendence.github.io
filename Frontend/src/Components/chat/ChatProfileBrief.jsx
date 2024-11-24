@@ -28,7 +28,7 @@ const FriendHero = () => {
         <img
           src={friend.profilePicture}
           alt={friend.alt}
-          className="absolute translate-y-14 w-28 h-28 rounded-full"
+          className="absolute translate-y-14 w-28 h-28 object-cover rounded-full"
         />
       </div>
       <div className="flex flex-col justify-center items-center  mt-20">
@@ -93,7 +93,6 @@ const ManageFriendShip = ({user_id}) => {
 
   const handlBlock = () => {
     if (chatsocket) {
-      console.log("the socket frame has been sent");
       chatsocket.send(
         JSON.stringify({
           type: "block",
@@ -135,7 +134,6 @@ const ManageFriendShip = ({user_id}) => {
 const ChatProfileBrief = () => {
   const { currantUser, blocker, conversation } = useContext(ChatContext);
   const { user, chatsocket } = useAuth();
-  console.log("this is in the profileBrief", conversation);
   const handleUnblock = () => {
     if (chatsocket) {
       chatsocket.send(

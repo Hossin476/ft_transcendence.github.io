@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 export default function Friend({name,status,online,user_id,profile_image}) {
     const { t } = useTranslation();
     const navigate = useNavigate()
-    console.log("Friend", user_id)
 
     const handleFriendClick = () => {
         navigate(`/profile/${user_id}`);

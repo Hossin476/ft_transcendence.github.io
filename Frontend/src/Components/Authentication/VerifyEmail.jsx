@@ -1,11 +1,33 @@
-import React, {useState} from 'react';
+import React, {useState , useEffect} from 'react';
 import toast, { Toaster } from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const VerifyEmail = () => {
   const [otpCode, setotpCode] = useState("");
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState("");
+  const {tokens} = useAuth();
+
+  useEffect(()=> {
+    const fetchData = async ()=> {
+
+        if(tokens) {
+            const access  = await fetch('/api/auth/token/verify/', {
+                method: 'get',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'JWT ' + tokens.access
+                },
+            });
+            if(access.ok ) {
+                navigate('/dashboard')
+            }
+          fetchData()
+        }
+    }
+
+},[])
 
   const handleChange = (e) => {
     setotpCode(e.target.value);
@@ -23,7 +45,6 @@ const VerifyEmail = () => {
       body: JSON.stringify({otp: otpCode})
     })
     const data = await res.json();
-    console.log(data);
     if (res.status === 200){
       toast.success("Email verified successfully");
       navigate("/login");

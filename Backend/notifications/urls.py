@@ -10,6 +10,6 @@ urlpatterns = [
     path('pingpong_unfinished_match/', views.matchesNotFinishPingPong),
     path('tictactoe_unfinished_match/', views.matchesNotFinishTictactoe),
     path('friends/', views.get_full_friendships),
-    path('check_friendship/<int:user_id>/', views.check_friendship),
-    path('check_blocked/<int:user_id>/', views.check_blocked),
+    path('check_friendship/<str:user_id>/', views.check_friendship),
+    path('check_blocked/<str:user_id>/', views.check_blocked),
 ]

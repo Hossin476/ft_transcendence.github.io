@@ -31,6 +31,7 @@ import qrcode
 import base64
 from io import BytesIO
 import time
+from django.shortcuts import get_object_or_404
 
 @api_view(['GET'])
 def get_profile(request, user_id):
@@ -705,3 +706,12 @@ class IsIntraUser(APIView):
         return Response({
             'isIntraUser': username.is_intra_user
         }, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def check_access(request):
+    get_object_or_404(CustomUser, id=request.user.id)
+    return Response({
+        'valid': True
+    }, status=status.HTTP_200_OK)

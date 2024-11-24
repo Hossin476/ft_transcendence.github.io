@@ -23,10 +23,8 @@ export default function Challenge({ setopen, gameType }) {
                 }
             );
             const data = await response.json();
-            console.log(data)
             setChallengeData(data);
         } catch(error){
-            console.log("Error in fetching data", error);
         }
     };
 
@@ -47,7 +45,6 @@ export default function Challenge({ setopen, gameType }) {
                         setChallengeData({...online_ingame})
                     }else
                         setChallengeData({users: [...online_ingame.users, data.user]})
-                        console.log("new friend change state : ",data)
                 }
             }
 

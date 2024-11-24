@@ -40,7 +40,6 @@ export default function ModelCreate({ setTournaments, setIsmodel }) {
                     return
                 }
             }
-            console.log(players)
         const dataSend = {mode: value == 1 ? "ONLINE" : "OFFLINE" , users:players}
         fetch('/api/tournament',{method: 'POST', body: JSON.stringify(dataSend)})
         setTournaments({ mode: value == 1 ? "ONLINE" : "OFFLINE", players: valuePlayers, number: 0, users: players  });

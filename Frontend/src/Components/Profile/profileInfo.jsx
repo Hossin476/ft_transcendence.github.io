@@ -133,7 +133,6 @@ function Profile_info({ userid }) {
       });
       if (response.ok) {
         const data = await response.json();
-        console.log("this is friend", data);
         setFriendshipStatus({
           exists: data.friendship_exists,
           status: data.status,
@@ -142,7 +141,6 @@ function Profile_info({ userid }) {
         });
       }
     } catch (error) {
-      console.log(error);
     }
   }
 
@@ -156,7 +154,6 @@ function Profile_info({ userid }) {
       });
       if (response.ok) {
         const data = await response.json();
-        console.log("this is bock", data);
         setBlockStatus({
           block: data.block,
           blocker: data.blocker,
@@ -164,7 +161,6 @@ function Profile_info({ userid }) {
         });
       }
     } catch (error) {
-      console.log(error);
     }
   }
   useEffect(() => {
@@ -175,7 +171,6 @@ function Profile_info({ userid }) {
   }, [userid?.id]);
 
   const renderFriendButton = () => {
-    console.log(username, friendshipStatus.fromUser);
     if (!friendshipStatus.exists) {
       return (
         <button
@@ -248,7 +243,7 @@ function Profile_info({ userid }) {
     }
   };
 
-  console.log("profile info", userid);
+
   return (
     <div className="bg-secondaryColor flex flex-col rounded-3xl md:h-96 xsm:h-96 gap-4 overflow-hidden">
       <div className="relative">
@@ -317,7 +312,7 @@ function Profile_info({ userid }) {
             </span>
           </div>
         </div>
-        {user.user_id === userid?.id ? null : (
+        {user.user_id == userid?.id ? null : (
           <div className="flex flex-col gap-2">
             {blockStatus.block ? (
               <button

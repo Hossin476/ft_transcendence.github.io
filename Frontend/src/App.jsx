@@ -19,7 +19,7 @@ import Login from "./Pages/Login";
 import Tour from "./Pages/tour";
 import Dash from "./Pages/dash";
 import Profile from "./Pages/Profile";
-import { Signup, ForgetPassword, VerifyEmail, ResetPassword, MailSent } from "./Components/Authentication";
+import { Signup, VerifyEmail} from "./Components/Authentication";
 
 import "./utils/i18n";
 import PrivateRoute from "./utils/privateRoute";
@@ -33,10 +33,7 @@ function App() {
         <Routes>
           <Route path="login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/forgot-password" element={<ForgetPassword />} />
-          <Route path="/password-reset-confirm/:uid/:token" element={<ResetPassword />} />
           <Route path="/otp/verify" element={<VerifyEmail />} />
-          <Route path="/mail-sent" element={<MailSent />} />
           <Route element={<PrivateRoute />}>
             <Route element={<LayoutOne />}>
               <Route index element={<Dash />} />

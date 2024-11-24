@@ -27,6 +27,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG")
 
+
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(',')
 
 
@@ -105,6 +106,7 @@ DATABASES = {
 }
 
 
+
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -168,8 +170,8 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
-    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=10),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=10),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": False,
@@ -182,6 +184,9 @@ SIMPLE_JWT = {
     "JWK_URL": None,
     "LEEWAY": 0,
     
+    "JTI_CLAIM": "jti",
+    "USER_ID_FIELD": "id",
+    "USER_ID_CLAIM": "user_id",
    'AUTH_HEADER_TYPES': ('JWT',),
 }
 
@@ -214,3 +219,26 @@ EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = os.environ.get("EMAIL_PORT")
 EMAIL_USE_SSL = os.environ.get("EMAIL_USE_SSL")
 PASSWORD_RESET_TIMEOUT_DAYS = 1
+
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",    # React development server
+    "http://localhost:8000",    # Django development server
+    "http://10.13.5.4",        # Your local IP  # Production domain
+]
+
+# Optional: Allow credentials (cookies, authorization headers)
+CORS_ALLOW_CREDENTIALS = True
+
+# Optional: Allow specific headers
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]

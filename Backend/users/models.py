@@ -5,6 +5,7 @@ from django.utils import timezone
 from rest_framework_simplejwt.tokens import RefreshToken
 import random
 
+
 def get_default_profile_image():
     return f'profile/p{random.choice(range(1, 5))}.jpeg'
 
@@ -12,6 +13,7 @@ def get_default_cover_image():
     return f'cover/c{random.choice(range(1, 5))}.jpeg'
 
 class CustomUser(AbstractUser):
+    id = models.BigIntegerField(primary_key=True, unique=True)
     username = models.CharField(max_length=255, unique=True, default='default_username')
     date_joined = models.DateTimeField(auto_now_add=True)
     email = models.EmailField(max_length=255, unique=True)
@@ -43,6 +45,14 @@ class CustomUser(AbstractUser):
 
     USERNAME_FIELD  = "username"
     REQUIRED_FIELDS = ['email']
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            while(True):
+                self.id = random.randint(2000, 999999999)
+                if not CustomUser.objects.filter(id=self.id).exists():
+                    break
+        return super().save(*args, **kwargs)
 
     def __str__(self):
         return self.username

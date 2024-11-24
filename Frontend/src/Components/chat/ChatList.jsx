@@ -36,10 +36,10 @@ const getConversations = async (tokens, user, customFetch) => {
       );
       return data;
     }
-    return null;
+    return [];
 
   } catch (error) {
-    return null;
+    return [];
   }
 };
 
@@ -88,16 +88,13 @@ export default function ChatList() {
     if (socketMessage)
         {
             const data = socketMessage
-            console.log("ahya hadxi ga3ma khdam: ",data.user)
             if (data.type == "online.state" && conversation){
               const finindex = conversation.findIndex(item => item.id == data.user.id)
               if (finindex != -1){
-                    console.log("check this shit",conversation)
                     conversation[finindex].user.is_online = data.user.is_online
                     setConversation(()=>conversation)   
                 }
             }
-            console.log("new friend change state : ",data)
         }
 
 },[socketMessage])

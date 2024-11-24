@@ -129,7 +129,7 @@
     "Game Rules :": "قواعد اللعبة :",
     "Each player takes turns to place their mark (X or O) on the grid.": "يتناوب كل لاعب لوضع علامته (X أو O) على الشبكة.",
     "The player who aligns 3 of their marks vertically, horizontally, or diagonally first wins the round and gets a point." : "اللاعب الذي يرتب 3 من علاماته عموديًا أو أفقيًا أو قطريًا أولاً يفوز بالجولة ويحصل على نقطة.",
-    "The game ends when a player reaches a score of 5 or the 2-minute timer reaches 0.": "تنتهي اللعبة عندما يصل أحد اللاعبين إلى نقطة 5 أو يصل المؤقت لمدة 2 دقيقة إلى 0.",
+    "The game ends when a player reaches a score of 5 or the 1-minute timer reaches 0.": "تنتهي اللعبة عندما يصل أحد اللاعبين إلى نقطة 5 أو يصل المؤقت لمدة 2 دقيقة إلى 0.",
     "If no player scores when the timer reaches 0, the game is a draw.": "إذا لم يسجل أي لاعب عندما يصل المؤقت إلى 0، فإن اللعبة تعادل.",
     "Current player :": "اللاعب الحالي :",
     "the game starts in:": "تبدأ اللعبة في:",

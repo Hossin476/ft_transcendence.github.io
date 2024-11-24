@@ -11,7 +11,7 @@ export default function FriendChat({ contacts, handleOnClick, selected }) {
     const hour = a.getHours();
     const min = a.getMinutes();
 
-    if (hour < 12) {
+    if (hour <= 12) {
       return hour + ":" + min + " AM";
     }
     const Newhour = hour - 12;
@@ -19,7 +19,6 @@ export default function FriendChat({ contacts, handleOnClick, selected }) {
   }
 
   const contactCount = count.find((item) => item.id === contacts.user.id);
-  console.log( "here is the contact : ",contacts);
   return (
     <>
       <span
@@ -30,8 +29,10 @@ export default function FriendChat({ contacts, handleOnClick, selected }) {
         style={{ cursor: "pointer" }}
       >
         <div className="flex gap-4 items-center">
-          <div className="w-16 h-16 rounded-full overflow-hidden relative">
-            <img className="w-full h-full object-cover" src={contacts.user.profile_image} alt="" />
+          <div className="w-16 h-16 rounded-full relative">
+            <div className="w-full h-full rounded-full overflow-hidden">
+              <img className="w-full h-full object-cover" src={contacts.user.profile_image} alt="" />
+            </div>
             <span
               className={`w-4 h-4 right-0 bottom-0 rounded-full ${
                 contacts.user.is_online ? "bg-green-500" : "bg-red-500"

@@ -270,6 +270,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                     game.game_end = True
                     await self.winner()
                     break
+            
         except Exception as e:
             print('error have here :', e)
 
@@ -370,6 +371,17 @@ class LocalGameConsumer(AsyncWebsocketConsumer):
             'ingame': False
         })
         await self.channel_layer.group_discard(self.game_group_id, self.channel_name)
+        room_obj = LocalGameConsumer.game_room.get(self.game_group_id)
+        if room_obj:
+            match = await database_sync_to_async(GameOffline.objects.get)(id=self.game_id)
+            match.is_game_end = True
+            await database_sync_to_async(match.save)()
+            if room_obj and room_obj.task:
+                room_obj.task.cancel()
+                try:
+                    await room_obj.task
+                except asyncio.CancelledError:
+                    pass
 
     async def send_data(self, matchId):
         room_obj = LocalGameConsumer.game_room[self.game_group_id]
@@ -378,13 +390,11 @@ class LocalGameConsumer(AsyncWebsocketConsumer):
         for i in range(0,time_stamp):
             await self.channel_layer.group_send(self.game_group_id,{
                 "type": "before.start",
-                "message" : f"{time_stamp - i} seconds to start the game",
+                "message" : f"{time_stamp - i} ",
                 "time" : time_stamp - i
             })
             await asyncio.sleep(1)
-        await asyncio.sleep(4)
         while True:
-
             if room_obj.pause == True:
                     # how mush  time in each stop
                     timeSpand = 15
@@ -393,7 +403,7 @@ class LocalGameConsumer(AsyncWebsocketConsumer):
                         'iswaiting': True,
                         'currentSecond': timeSpand,
                         'status': 'pause',
-                        'message': room_obj.stopMessage
+                        'message': ""
                     }
                     # countdown  and sender
                     while timeSpand >= 0:

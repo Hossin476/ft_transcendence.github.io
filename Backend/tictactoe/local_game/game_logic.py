@@ -18,7 +18,7 @@ class TicTacToeLocal:
         # Initializes the Tic Tac Toe game.
         self.score_x = 0
         self.score_o = 0
-        self.countdown_value = 25
+        self.countdown_value = 60
         self.max_score = 5
         self.final_winner = None
         self.draw = False

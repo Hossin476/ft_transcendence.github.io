@@ -17,7 +17,7 @@ class TicTacToeLocalConsumer(AsyncWebsocketConsumer):
         self.current_player = 'X'
         self.start_countdown_task = None
         self.game_countdown_task = None
-        self.start_countdown_value = 5
+        self.start_countdown_value = 10
 
     async def connect(self):
         self.game_id = self.scope['url_route']['kwargs']['game_id']

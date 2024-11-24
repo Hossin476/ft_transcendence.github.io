@@ -24,7 +24,7 @@ function UserInvite({user, tour_id, setUsers }) {
     return (
         <div className="w-[100%] relative h-[5rem] rounded-lg mt-4 shadow-lg flex justify-center items-center bg-gray-200">
             <div className="h-12 w-12 rounded-full overflow-hidden flex-shrink-0 my-auto ml-4">
-                <img src="/public/user.jpeg" alt="Profile" className="h-full w-full object-cover" />
+                <img src={user.profile_image} alt="Profile" className="h-full w-full object-cover" />
             </div>
             <div className="flex-grow ml-4">
                 <h3 className="text-black text-lg my-auto max-w-[15rem] flex-wrap">

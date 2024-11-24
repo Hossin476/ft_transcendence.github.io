@@ -126,11 +126,13 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         tour_knockouts = nbr_matches
         match_list = await database_sync_to_async(lambda: list(tournament.matches.select_related("player1", "player2", "winner").all()))()
         while matches_state <= tour_knockouts:
+            matches_state = start
             for match in match_list:
                 if match.is_game_end == True or match.is_start == False:
                     matches_state += 1
             await asyncio.sleep(10)
-        tournament.knockout = tournament.knockout/2
+            match_list = await database_sync_to_async(lambda: list(tournament.matches.select_related("player1", "player2", "winner").all()))()
+        tournament.knockout = tournament.knockout//2
         knockout = int(tournament.knockout)
         await database_sync_to_async(tournament.save)()
         # make the next matches
@@ -286,7 +288,7 @@ class Tournamentlocal(AsyncWebsocketConsumer):
         while matches[current_match].is_game_end != True:
             matches[current_match] =  await database_sync_to_async(lambda: GameOffline.objects.get(id=matches[current_match].id))()
             await asyncio.sleep(2)
-        if current_match == 2:
+        if current_match == 2 or  matches[current_match].winner is None:
             return 
         if current_match % 2 == 0:
             matches[next_match].player1 = matches[current_match].winner

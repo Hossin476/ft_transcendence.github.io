@@ -7,12 +7,9 @@ import {
 import { IoMdPersonAdd } from "react-icons/io";
 import { useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { useGLTF } from '@react-three/drei';
 import { GiExitDoor } from "react-icons/gi";
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import defaultImage from './notuser.png';
 import { useLocation } from "react-router-dom"
 import InviteModal from "../Components/Tournament/InviteModal";
 import { useTournament } from "../context/TournamentContext";
@@ -26,7 +23,7 @@ import { useTranslation } from "react-i18next";
 // };
 
 const UserBox = ({ username, position, image }) => {
-   const texture = useLoader(TextureLoader, image ? image : "/media/profile/hossin.jpeg");
+   const texture = useLoader(TextureLoader, image ? image : "/media/main/anonym.png");
    return (
       <mesh position={position}>
          <mesh position={[-0.4, 0, 0.2]}>
@@ -87,7 +84,6 @@ const DisplayUser = ({ tournament, gameType }) => {
    ]
    return  gameType=="online" ? ps : ps.slice(8);
 },[gameType])
-console.log(tournament)
 
    return (
       <>
@@ -125,7 +121,6 @@ const Tour = () => {
          }
    
          const data = await response.json()
-         console.log(data)
          setTournament(data)
       } catch(error) {
          

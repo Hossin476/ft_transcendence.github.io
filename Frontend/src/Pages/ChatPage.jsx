@@ -57,7 +57,6 @@ const ChatPage = () => {
     const manageBlock = (data,currentUser)=> {
 
         const {blocker} = data.event
-        console.log("blocker thawa: ",blocker)
         if (blocker) {
             setConversation((prevConv)=> {
                 return prevConv.filter(item=>item.id !== blocker)
@@ -68,8 +67,6 @@ const ChatPage = () => {
     }
 
     useEffect(()=> {
-        console.log("heloooo this is the navigated user:",navigatedUser)
-        console.log("conversations", conversation)
         if(conversation && navigatedUser) {
             const contact = conversation.find(item=> item.user.username === navigatedUser)
             setCurrentUser(()=>contact)

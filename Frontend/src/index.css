@@ -57,21 +57,21 @@
 
 @font-face {
     font-family: 'Valorax'; /* Use a custom name for your font */
-    src: url('/font/valorax.otf');
+    src: url('/fonts/valorax.otf');
   }
 
   @font-face {
     font-family: 'Plaguard'; /* Use a custom name for your font */
-    src: url('/font/Plaguard.otf');
+    src: url('/fonts/Plaguard.otf');
   }
   @font-face {
     font-family: poppins;
-    src: url('/font/Poppins-Medium.ttf');
+    src: url('/fonts/Poppins-Medium.ttf');
   }
   
   @font-face {
     font-family: inter;
-    src: url('/font/Inter-Medium.ttf');
+    src: url('/fonts/Inter-Medium.ttf');
   }
 
   .text-border {
@@ -82,3 +82,4 @@
   .blurHelp {
     backdrop-filter: blur(10px);
   }
+

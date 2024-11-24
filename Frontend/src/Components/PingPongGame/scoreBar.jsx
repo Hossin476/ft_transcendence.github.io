@@ -29,7 +29,6 @@ function ScoreBar({gameid})
               setPlayers(data)
           }
         } catch (error) {
-          console.log("error in fetching game",error)
         }
     }
     useEffect(()=>{
@@ -50,9 +49,9 @@ function ScoreBar({gameid})
         </div>
       ):(
         <div className=" flex  px-5 mt-5 w-[100%] justify-center items-center  max-w-[1024px] xsm:gap-2 lg:gap-9 ">
-          <FirstPlayer name={players.player1} level={0} image={`/player1.png`} ref={score1}/>
+          <FirstPlayer name={players.player1} level={0} image={`/media/main/hamza.jpeg`} ref={score1}/>
           <Timer game_id={gameid}/>
-          <SecondPlayer name={players.player2} level={0} image={`/palyer2.png`} ref={score2}/>
+          <SecondPlayer name={players.player2} level={0} image={`/media/main/p1.jpeg`} ref={score2}/>
         </div>)
       )
       }

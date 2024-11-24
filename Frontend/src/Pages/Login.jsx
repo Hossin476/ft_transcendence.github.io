@@ -3,21 +3,26 @@ import { useState,useEffect } from 'react'
 import { useNavigate, Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext';
 
-const handleIntraLogin = async (code,login,navigate)=> {
-    const res = await fetch(`/api/users/oauth2/intra/`,{
-        method:"POST",
-        headers: {
-            'Content-Type':'application/json'
-        },
-        body: JSON.stringify({code:code})
-    })
-    let data = await res.json()
+const handleIntraLogin = async (code,login,navigate, setIsLoading)=> {
+    try {
+        setIsLoading(true)
+        const res = await fetch(`/api/users/oauth2/intra/`,{
+            method:"POST",
+            headers: {
+                'Content-Type':'application/json'
+            },
+            body: JSON.stringify({code:code})
+        })
+        let data = await res.json()
+    
+        if(res.ok) {
+            login({tokens:data })
+            setIsLoading(false)
+            navigate('/dashboard')
+        }
 
-    if(res.ok) {
-        login({tokens:data })
-        navigate('/dashboard')
-    } else {
-        console.log("error with response")
+    } catch (error) {
+
     }
 }
 
@@ -35,7 +40,7 @@ const Login = () => {
     const [twoFactorCode, setTwoFactorCode] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const { login } = useAuth();
+    const { login, tokens } = useAuth();
 
     const handleOnChange = (e) => {
         if (loginStep === '2fa')
@@ -46,11 +51,29 @@ const Login = () => {
         if (errorMessage) 
             setErrorMessage("");
     }
+    useEffect(()=> {
+        const fetchData = async ()=> {
+
+            if(tokens) {
+                const access  = await fetch('/api/auth/token/verify/', {
+                    method: 'get',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'JWT ' + tokens.access
+                    },
+                });
+                if(access.ok ) {
+                    navigate('/dashboard')
+                }
+            fetchData()
+            }
+        }
+
+    },[])
 
     useEffect(()=> {
         if(code) {
-            console.log('code ',code)
-            handleIntraLogin(code,login,navigate)
+            handleIntraLogin(code,login,navigate, setIsLoading)
         }
     },[code])
 
@@ -59,6 +82,7 @@ const Login = () => {
         const redirectUrl = import.meta.env.VITE_URI_INTRA
         window.location.href = redirectUrl
     }
+    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -83,7 +107,6 @@ const Login = () => {
 
             const tokens = await res.json();
             if (!res.ok) {
-                console.log('response ', tokens.access)
                 setErrorMessage(tokens.error);
                 setIsLoading(false);
                 return;
@@ -139,15 +162,17 @@ const Login = () => {
                     {loginStep === 'credentials' ? 
                         <div className="space-y-4 py-4">
                             <div className="mt-4 space-y-2">
-                                <button onClick={handle42} className="w-full py-2 text-white bg-thirdColor rounded-lg hover:bg-white transition duration-300 hover:text-thirdColor hover:border-2 border-thirdColor">
-                                    Continue with Intra
-                                </button>
+                                {isLoading ? <p className="text-center text-thirdColor">Loading...</p> :
+                                    <button onClick={handle42} className="w-full py-2 text-white bg-thirdColor rounded-lg hover:bg-white transition duration-300 hover:text-thirdColor hover:border-2 border-thirdColor">
+                                        Continue with Intra
+                                    </button>
+                                }
+
                             </div>
                         </div>
                     : null
                     }
                     <form onSubmit={handleSubmit}>
-                        {isLoading && <p className="text-center text-thirdColor">Loading...</p>}
                         {loginStep === 'credentials' ? (
                             <div className="space-y-4 py-4">
                                 <h6 className="text-center text-gray-400 mt-6">or</h6>
@@ -177,12 +202,13 @@ const Login = () => {
                                             autoComplete='current-password'
                                         />
                                     </div>
-                                    <input
-                                        type="submit"
-                                        value="Login"
-                                        className="w-full bg-secondaryColor text-white py-2 rounded-lg hover:bg-thirdColor transition duration-300"
-                                    />
-                                    <p className='text-primaryColor px-2 py-1 hover:text-thirdColor transition duration-300'><Link to={'/forgot-password'}>forgot password ?</Link></p>
+                                    {isLoading ? <p className="text-center text-thirdColor">Loading...</p> : 
+                                        <input
+                                            type="submit"
+                                            value="Login"
+                                            className="w-full bg-secondaryColor text-white py-2 rounded-lg hover:bg-thirdColor transition duration-300"
+                                        />
+                                    }
                                     <br /><br />
                                 </div>
                                 <div className='flex items-center justify-evenly'>
@@ -206,12 +232,13 @@ const Login = () => {
                                         onChange={handleOnChange}
                                     />
                                 </div>
-                                <button
+                                {isLoading ? <p className="text-center text-thirdColor">Loading...</p> :                                 <button
                                     type="submit"
                                     className="w-full bg-secondaryColor text-white py-2 rounded-lg hover:bg-thirdColor transition duration-300"
                                 >
                                     Verify
                                 </button>
+                                }
                             </div>
                         )}
                     </form>

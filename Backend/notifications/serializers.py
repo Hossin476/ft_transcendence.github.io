@@ -23,7 +23,7 @@ class playerSerializers(serializers.ModelSerializer):
             'is_online',
             'is_ingame',
             'game_type',
-            # 'is_intra_user',
+            'is_intra_user',
         ]
 
 

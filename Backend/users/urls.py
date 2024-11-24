@@ -29,11 +29,12 @@ urlpatterns = [
     path('verify-2fa/', views.Verify2FAView.as_view(), name='verify-2fa'),
     path('check-2fa/', views.Check2FAView.as_view(), name='check-2fa'),
     path('change-password/', views.ChangePasswordView.as_view(), name='change-password'),
+    path('token/verify/', views.check_access),
 
 
-    path('profile/<int:user_id>/', views.get_profile),
-    path('profile/match/<int:user_id>/', views.get_profile_match),
-    path('profile/friends/<int:user_id>/', views.get_profile_friends),
+    path('profile/<str:user_id>/', views.get_profile),
+    path('profile/match/<str:user_id>/', views.get_profile_match),
+    path('profile/friends/<str:user_id>/', views.get_profile_friends),
     path('all_users/', views.get_all_users),
 
     path('media/', views.ProfileMediaView.as_view(), name='profile-media'),

@@ -76,7 +76,6 @@ function PingPongGame() {
     currentCamera.current += 1
     if (currentCamera.current >= cameraPositions.length)
       currentCamera.current = 0 
-    console.log(ref.current)
   }
   const map = useMemo(()=>[
     { name: 'leftOther', keys: ['ArrowLeft'] },
@@ -104,7 +103,6 @@ function PingPongGame() {
         })
         if(response.ok){
           const data =   await response.json()
-          console.log(data)
           if(data.is_game_end == true)
               navigate('../')
         }else {

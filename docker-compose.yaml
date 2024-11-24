@@ -1,15 +1,32 @@
 services:
   frontend:
     container_name: frontend
-    build: ./Frontend
+    build:
+        context: ./Frontend
+        args:
+          - VITE_BACKEND_URL=${BACKEND_URL}
+          - VITE_URI_INTRA=${INTRA_URI_REDIRECT}
+          - VITE_CRYPTO_KEY=${CRYPTO_KEY}
     networks:
       - my_network
+    ports:
+      - 443:443
+    restart: on-failure
+    depends_on:
+      - backend
+  db:
+    container_name: postgres
+    networks:
+      - my_network
+    image: postgres:16
     environment:
-      - VITE_BACKEND_URL=${BACKEND_URL}
-      - VITE_URI_INTRA=${INTRA_URI_REDIRECT}
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
     volumes:
-      - Frontend:/usr/src/app/dist
-      - ./Frontend/src:/usr/src/app/src
+      - Database:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-h", "db"]
     restart: always
   backend:
     container_name: backend
@@ -39,54 +56,17 @@ services:
       - ./Backend:/usr/src/app
     depends_on:
       - db
-  db:
-    container_name: postgres
-    networks:
-      - my_network
-    image: postgres:16
-    environment:
-      - POSTGRES_DB=${DB_NAME}
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-    volumes:
-      - Database:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres", "-h", "db"]
-    restart: always
+      - redis
   redis:
     networks:
       - my_network
     container_name: redis
     image: redis:7
     restart: always
-  nginx:
-    networks:
-      - my_network
-    container_name: nginx
-    build: ./nginx
-    ports:
-      - 443:443
-    volumes:
-      - Frontend:/var/www/react/
-    depends_on:
-      - backend
-      - frontend
-
 
 networks:
   my_network:
     driver: bridge
 
 volumes:
-  Frontend:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${PWD}/data/frontend/
   Database:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${PWD}/data/database/

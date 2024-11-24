@@ -20,7 +20,6 @@ export default function Match({match}) {
     const [textColor,setTextColor] = useState(null)
 
     useEffect(()=>{
-        console.log(match)
         match.winner
             ? (match.winner.id === user.user_id ? setBgColor(()=>'#395446')  : setBgColor(()=>'#572a39') )
             : setBgColor(()=>'#645c6b') 

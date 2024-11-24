@@ -185,7 +185,6 @@ function TwofaSetE({ SetEnable, IsEnable, setAnimation, setActiveTab }) {
         console.log(data);
         SetEnable(data.two_factor_enabled);
       } else {
-        console.log("error");
         SetEnable(false);
         setNotCorrect(true);
       }
@@ -254,12 +253,10 @@ function Two2fa({ setActiveTab }) {
         SetEnable(data.two_factor_enabled);
         setAnimation(data.two_factor_enabled);
       } else {
-        console.log("error");
         SetEnable(false);
       }
     }
     catch (error) {
-      console.log(error);
       SetEnable(false);
     }
   };

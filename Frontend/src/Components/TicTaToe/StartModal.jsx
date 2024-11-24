@@ -16,7 +16,7 @@ function StartModal({ currentPlayer, countdownValue }) {
                             {t("Each player takes turns to place their mark (X or O) on the grid.")}
                         </li>
                         <li className='my-3 text-center font-poppins'>
-                            {t("The game ends when a player reaches a score of 5 or the 2-minute timer reaches 0.")}
+                            {t("The game ends when a player reaches a score of 5 or the 1-minute timer reaches 0.")}
                         </li>
                         <li className='my-3 text-center font-poppins'>
                             {t("The player who aligns 3 of their marks vertically, horizontally, or diagonally first wins the round and gets a point.")}

@@ -102,7 +102,6 @@ export default function PlayerCharts() {
       }
       fetchData()
     },[])
-    console.log(chartData)
     return (
         <div className="block w-full mb-4 md:mt-4 h-[30%] bg-secondaryColor rounded">
             <ResponsiveContainer width="100%" height="100%">

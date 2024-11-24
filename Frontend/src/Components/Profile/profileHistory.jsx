@@ -148,7 +148,6 @@ async function getAllMatches(tokens, userId, customFetch) {
       }
       return null;
   } catch (error) {
-      console.log("Error in fetching data", error);
       return null;
   }
 }
@@ -172,14 +171,13 @@ function Profile_history({ user }) {
     fetchData();
   }, [user]);
   
-  console.log(matches);
   return (
     <div className="bg-secondaryColor text-center p-6  rounded-3xl grow">
       <h2 className="text-4xl font-semibold mb-8">{t("MATCH HISTORY")}</h2>
       <div className="h-5/6 overflow-scroll ">
-        {matches &&
+        {matches  &&
           matches.map((match, index) =>
-            match.winner ? (
+            match.player1 && match.player2  && match.winner ? (
               match.winner.id == user ? (
                 <Match_victory key={index}  match={match} />
               ) : (

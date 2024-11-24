@@ -37,12 +37,10 @@ function Mid_Nav_enable(){
           const data = await response.json();
           setQrCode(data.qr_code);
           setSecretKey(data.secret_key);
-        } else {
-          console.log("error");
         }
+
       }
       catch (error) {
-        console.log(error);
       }
     }
     

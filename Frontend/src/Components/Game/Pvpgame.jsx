@@ -77,9 +77,9 @@ function Mycard({ image, playerName }) {
   const { t } = useTranslation();
   return (
     <div className="player-card h-[90%] xsm:w-[50%] lg:w-[25%]">
-      <div className="w-32 h-32 rounded-full overflow-hidden">
-        <img src={image} alt="Avatar" className="w-full h-full object-cover" />
-      </div>
+        <div className="mt-8 rounded-full w-32 h-32 overflow-hidden">
+          <img src={image} alt="Avatar" className="object-cover w-full h-full" />
+        </div>
       <div className="player-info">
         <h2>{playerName}</h2>
         <p>{t("LEVEL")} 2</p>
@@ -91,7 +91,7 @@ function Mycard({ image, playerName }) {
 function Wait_card() {
   const { t } = useTranslation();
   return (
-    <div className="add-player-card h-[90%]xsm:w-[50%] lg:w-[25%]">
+    <div className="add-player-card h-[90%]xsm:w-[50%]  lg:w-[25%]">
       <img src={avatar} alt="Avatar" className="anonymous" />
       <div className="add-player-info">
         <h2>{t("WAITING")}</h2>
@@ -103,10 +103,11 @@ function Wait_card() {
 
 function Vsplayer_card({ player }) {
   const { t } = useTranslation();
-  console.log("this is me the player", player)
   return (
-    <div className="player-card h-[90%] xsm:w-[50%] lg:w-[25%]">
-      <img src={player.profile_image} alt="Avatar" className="avatar-ping" />
+    <div className="add-player-card  h-[90%]xsm:w-[50%] lg:w-[25%]]">
+      <div className="mt-8 rounded-full w-32 h-32 overflow-hidden">
+        <img src={player.profile_image} alt="Avatar" className=" w-full h-full object-cover" />
+      </div>
       <div className="player-info">
         <h2>{player.username}</h2>
         <p>{t("level")} {player.rank}</p>
@@ -130,7 +131,7 @@ function Matchmaking_button({ onClick }) {
 function Add_card() {
   const { t } = useTranslation();
   return (
-    <div className="add-player-card h-[90%] xsm:w-[50%] lg:w-[25%]">
+    <div className="add-player-card  h-[90%]xsm:w-[50%] lg:w-[25%]">
       <img src={avatar} alt="Avatar" className="anonymous" />
       <p className="add-player-info">{t("No_Name")}</p>
     </div>
@@ -183,7 +184,6 @@ function Started_button({ onClick }) {
 function LocalButton({ onClick, players }) {
   const { t } = useTranslation();
   let error = '';
-  console.log("this is the shit here :", players);
   if (players.player1 === "" || players.player2 === "") error = 'empty';
   if(players.player1 === players.player2) error = 'duplicate'
   return (
@@ -251,13 +251,13 @@ function LocalPvp({ player, setPlayers }) {
       setPlayers((prevState) => {
         return { ...prevState, [player]: name };
       });
-      console.log("DATA RAH DKHLAT");
     }
   };
-  console.log("well wtf is this peace of shit:",player)
   return (
     <div className="player-card  h-[90%] xsm:w-[50%]">
-      <img src={user.profile_image} alt="Avatar" className="avatar-ping" />
+      <div className="my-4 w-32 h-32 overflow-hidden rounded-full">
+          <img src={user.profile_image} alt="Avatar" className="object-cover w-full h-full" />
+      </div>
       <div className="player-info items-center flex flex-col">
         {edit ? (
           <input
@@ -286,8 +286,6 @@ function OnlinePvp({isstarted,counter,isstart,pvpUser}) {
 
   const { t } = useTranslation();
   const {user,username} = useAuth();
-  console.log("USER:", user)
-  console.log("user playerName(photo):", user.profile_image)
   return (
     <>
       <Mycard playerName={username} image={user.profile_image}/>
@@ -334,7 +332,6 @@ function PvpGame({ title }) {
       });
       socket.send(message);
     }
-    console.log(locations);
   }
 
   function stopGame() {
@@ -384,7 +381,6 @@ function PvpGame({ title }) {
     if (socketMessage && socketMessage.type === "game.counter")
       setCounter(socketMessage.counter);
     if (socketMessage && socketMessage.type === "game.player_info") {
-      console.log("print event shit", socketMessage.player);
       setStarted(true);
       setPvpUser(socketMessage.player);
     }
@@ -405,7 +401,7 @@ function PvpGame({ title }) {
       }
     };
   }, []);
-  console.log("i guess u r here successfully!", title);
+
   return (
     <div className="bg-primaryColor w-full flex items-center justify-between px-7 relative h-[100%]">
       <div className="h-[100%] flex  justify-center flex-col items-center xsm:w-[90%] lg:w-[80%] ">

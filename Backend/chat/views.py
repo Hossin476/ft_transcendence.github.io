@@ -28,12 +28,11 @@ class allUsers(generics.ListCreateAPIView):
         if not conversations.exists():
             return Response([], status.HTTP_200_OK)
         else:
-            users = []
             serialized_friends = serializers.FriendShipSerializer(conversations, many=True)
             for friends in serialized_friends.data:
-                if friends["user1"]["id"] == user.id:
+                if friends["user1"]["username"] == user.username:
                     friends['user'] = friends["user2"]
-                if friends["user2"]["id"] == user.id:
+                if friends["user2"]["username"] == user.username:
                     friends['user'] = friends["user1"]
                 del friends["user1"]
                 del friends["user2"]
@@ -51,21 +50,23 @@ class conversations(generics.ListCreateAPIView):
 
     def create(self,request):
         user  = request.user
+        print('user',user.id)
         conversations = Friendship.objects.select_related("from_user","to_user").filter(
-            Q(from_user=user.id) | Q(to_user=user.id)
+            Q(from_user=user) | Q(to_user=user)
         ).distinct()
         if not conversations.exists():
-                return Response([], status.HTTP_200_OK)
+                return Response([], status.HTTP_400_BAD_REQUEST)
         else:
             users = []
             serialize_convo = serializers.FriendShipSerializer(conversations,many=True)
             for users in serialize_convo.data:
-                if users["from_user"]["id"] == user.id:
+                if users["from_user"]["username"] == user.username:
                     users["user"] = users["to_user"]
-                if users["to_user"]["id"] == user.id:
+                if users["to_user"]["username"] == user.username:
                     users["user"] = users["from_user"]
                 del users["from_user"]
                 del users["to_user"]
+            print(serialize_convo.data)
             return Response(serialize_convo.data, status.HTTP_200_OK)
        
 

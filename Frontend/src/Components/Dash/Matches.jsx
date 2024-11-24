@@ -19,7 +19,6 @@ const getAllMatches = async(tokens, customFetch)=> {
     }
     return null
     } catch (error) {
-        console.log("error is ", error)
         return null
     }
 }

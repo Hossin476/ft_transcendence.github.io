@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from "react-router-dom";
-import { validateCredentials } from '../../utils/auth/validators';  
+import { useAuth } from '../../context/AuthContext';
 
 
 const Signup = () => {
@@ -12,6 +12,28 @@ const Signup = () => {
     password: "",
     password2: ""
   })
+  const {tokens} = useAuth();
+
+  useEffect(()=> {
+    const fetchData = async ()=> {
+
+        if(tokens) {
+            const access  = await fetch('/api/auth/token/verify/', {
+                method: 'get',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'JWT ' + tokens.access
+                },
+            });
+            if(access.ok ) {
+                navigate('/dashboard')
+            }
+        fetchData()
+        }
+    }
+
+},[])
+
   const [errorMessage, setErrorMessage] = useState("")
   const { username, email, password, password2 } = formData
 
@@ -38,13 +60,10 @@ const Signup = () => {
         if (res.ok)
           navigate("/otp/verify")
         else {
-          console.log(response)
           setErrorMessage(response.message)
           setIsLoading(false)
         }
     } catch (error) {
-      console.log("Error in creating account")
-      console.log(error)
       setIsLoading(false)
     }
 

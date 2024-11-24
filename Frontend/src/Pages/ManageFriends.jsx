@@ -59,7 +59,7 @@ export default function ManageFriends() {
       }, [debounce_searchig]);
 
     return (
-        <div className="text-white w-full flex items-center  justify-center bg-red-500 h-[100%] ">
+        <div className="text-white w-full flex items-center  justify-center h-[100%] ">
             <div className=" relative w-11/12 h-5/6 xsm:p-4 sm:p-12 bg-secondaryColor rounded-lg border border-forthColor">
                 <div className={` ${focus ? 'block' : 'hidden'} absolute w-full left-0 top-0 opacity-50 h-full bg-gray-400`}></div>
                 <div className="flex items-center justify-between mb-8">
@@ -76,7 +76,7 @@ export default function ManageFriends() {
                             onBlur={() => setTimeout(() => setFocus(false), 300)}
                         />
                         <FaSearch className="absolute xsm:right-4 xsm:text-sx sm:right-5 sm:top-4 text-xl text-gray-500" />
-                        <div className={` ${focus ? 'flex' : 'hidden'} flex-col gap-y-2 xsm:w-48 xsm:h-32 xsm:p-2 right-0 top-[4rem] rounded-lg bg-gray-300 sm:h-40 sm:p-4 sm:w-72 justify-center absolute overflow-y-auto`}>
+                        <div className={` ${focus ? 'flex' : 'hidden'} flex-col gap-y-2 xsm:w-48 xsm:h-32 xsm:p-2 right-0 top-[4rem] rounded-lg bg-gray-300 sm:h-40  sm:w-72  absolute overflow-y-auto p-4 space-y-4`}>
                             {
                                 Filterusers && Filterusers.length > 0 ? (
                                     Filterusers.map((user,index) => {

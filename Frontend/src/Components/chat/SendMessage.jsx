@@ -27,7 +27,6 @@ const SendMessage = () => {
   }
 
   const handleTyping = () => {
-    console.log("typing",user);
     chatsocket && chatsocket.send(JSON.stringify({
       "type": "typing",
       "senderId": user.user_id,
@@ -46,11 +45,19 @@ const SendMessage = () => {
   const handeInput = (e) => {
     setMessages(e.target.value)
     handleTyping()
+  }
+  
+  const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       handleMessage()
       handlecount()
     }
-  }
+  } 
+
+  const handleSendMessage = () => {
+    handleMessage();
+    handlecount();
+  };
 
   return (
     <div className=" xsm:h-[5rem] md:h-[7rem]   flex items-center relative">
@@ -63,12 +70,12 @@ const SendMessage = () => {
           <input
             value = {message}
             onChange={handeInput}
-            onKeyPress={handeInput}
+            onKeyPress={handleKeyPress}
             type="text"
             placeholder={t("Type your message")}
             className="w-[90%] text-gray-600 px-4 placeholder-gray-500 bg-transparent  bg-gray-100   py-3 outline-none focus:outline-none"
           />
-          <button onClick={handleMessage} className="  xsm:w-8 xsm:h-8  md:w-12 md:h-12 flex items-center rounded-full justify-center bg-gray-400">
+          <button onClick={handleSendMessage} className="  xsm:w-8 xsm:h-8  md:w-12 md:h-12 flex items-center rounded-full justify-center bg-gray-400">
             <RiSendPlaneFill   className="xsm:text-lg md:text-2xl text-gray-500"/>
           </button>
         </div>

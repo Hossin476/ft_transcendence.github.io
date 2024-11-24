@@ -2,7 +2,7 @@ import React, { createContext, useState, useContext, useRef, useEffect, useCallb
 import axios from 'axios'
 import { jwtDecode } from 'jwt-decode'
 import {useNavigate} from 'react-router-dom'
-import CrytoJs from 'crypto-js'
+import {AES, enc} from 'crypto-js'
 
 const AuthContext = createContext()
 
@@ -27,7 +27,6 @@ const  getUserData= async (access, customFetch)=> {
 }
 
 
-const secret = '~hyounsi~lshail~ykhourba~azari~sbzizal~';
 
 export const useAuth = () => useContext(AuthContext);
 
@@ -40,7 +39,7 @@ export const AuthProvider = ({ children }) => {
     let fillToken = null
     try {
         const encryptedToken = localStorage.getItem('tokens') ? JSON.parse(localStorage.getItem('tokens')) : null;
-        fillToken = localStorage.getItem('tokens') ? JSON.parse(CrytoJs.AES.decrypt(encryptedToken, secret).toString(CrytoJs.enc.Utf8)) : null;
+        fillToken = localStorage.getItem('tokens') ? JSON.parse(AES.decrypt(encryptedToken, import.meta.env.VITE_CRYPTO_KEY).toString(enc.Utf8)) : null;
 
     } catch (error) {
         localStorage.removeItem('tokens');
@@ -54,12 +53,16 @@ export const AuthProvider = ({ children }) => {
     const [socketMessage, setSocketMessage] = useState(null);
 
     const login = async (data) => {
-        const encryptedToken = CrytoJs.AES.encrypt(JSON.stringify(data.tokens), secret).toString();
-        localStorage.setItem('tokens', JSON.stringify(encryptedToken))
-        setTokens(data.tokens)
-        setUser(data.tokens.user)
-        console.log('login:', data)
-        setUserName(data.tokens?.username);
+        try {
+            const encryptedToken = AES.encrypt(JSON.stringify(data.tokens), import.meta.env.VITE_CRYPTO_KEY).toString();
+            localStorage.setItem('tokens', JSON.stringify(encryptedToken))
+            setTokens(data.tokens)
+            setUser(data.tokens.user)
+            setUserName(data.tokens?.username);
+
+        } catch(error) {
+            console.error('Error logging in:', error)
+        }
     }
 
     const logout = async () => {
@@ -104,7 +107,7 @@ export const AuthProvider = ({ children }) => {
             console.error('WebSocket error:', error);
             ws.close();
             setSocket(null)
-            // setTimeout(global_socket, 5000)
+            global_socket()
         };
 
         ws.onclose = () => {
@@ -127,6 +130,10 @@ export const AuthProvider = ({ children }) => {
         ws.onclose = (e) => {
             console.log("socket closed")
         }
+        ws.onerror = (e) => {
+            console.log("socket error")
+            createSocket()
+        }
     }
 
     const updateUser = async (tokens)=> {
@@ -140,35 +147,19 @@ export const AuthProvider = ({ children }) => {
         }
     }
     const customFetch = async (url, options) => {
-        if (tokens) {
-            const decodedToken = jwtDecode(tokens.access);
-            const currentTime = Date.now() / 1000;
+        try {
 
-            if (decodedToken.exp < currentTime) {
-                try {
-                    const response = await fetch('/api/auth/token/refresh/', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body:JSON.stringify({refresh: tokens.refresh})
-                    });
-                    if(response.ok) {
-                        const newTokens = await response.json();
-                        const tokens2set = CrytoJs.AES.encrypt(JSON.stringify({...tokens, ...newTokens}), secret).toString();
-                        localStorage.setItem('tokens', JSON.stringify(tokens2set));
-                        console.log('new tokens:', tokens2set)
-                        setTokens({...tokens, access: newTokens.access});
-                        options.headers["Authorization"] = "JWT " + newTokens.access;
-                    }else {
-                        localStorage.removeItem('tokens');
-                        setUser(null)
-                        setTokens(null)
-                        setUserName(null)
-                        nav('/login');
-                        return;
-                    }
-                } catch (error) {
+            if (tokens) {
+                const decodedToken = jwtDecode(tokens.access);
+                const currentTime = Date.now() / 1000;
+                const access  = await fetch('/api/auth/token/verify/', {
+                    method: 'get',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'JWT ' + tokens.access
+                    },
+                });
+                if(access.status === 404) {
                     localStorage.removeItem('tokens');
                     setUser(null)
                     setTokens(null)
@@ -176,10 +167,48 @@ export const AuthProvider = ({ children }) => {
                     nav('/login');
                     return;
                 }
+                
+                if (decodedToken.exp < currentTime || !access.ok) {
+                    try {
+                        const response = await fetch('/api/auth/token/refresh/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body:JSON.stringify({refresh: tokens.refresh})
+                        });
+                        if(response.ok) {
+                            const newTokens = await response.json();
+                            const tokens2set = AES.encrypt(JSON.stringify({...tokens, ...newTokens}), import.meta.env.VITE_CRYPTO_KEY).toString();
+                            localStorage.setItem('tokens', JSON.stringify(tokens2set));
+                            setTokens({...tokens, access: newTokens.access});
+                            options.headers["Authorization"] = "JWT " + newTokens.access;
+                        }else {
+                            localStorage.removeItem('tokens');
+                            setUser(null)
+                            setTokens(null)
+                            setUserName(null)
+                            nav('/login');
+                            return;
+                        }
+                    } catch (error) {
+                        localStorage.removeItem('tokens');
+                        setUser(null)
+                        setTokens(null)
+                        setUserName(null)
+                        nav('/login');
+                        return;
+                    }
+                }
             }
+            return fetch(url, options);
+        } catch (error) {
+            localStorage.removeItem('tokens');
+            setUser(null)
+            setTokens(null)
+            setUserName(null)
+            nav('/login');
         }
-
-        return fetch(url, options);
     }
 
     let value = {

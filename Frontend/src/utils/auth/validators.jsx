@@ -29,7 +29,7 @@ const passwordValidator = ( passowrds ) => {
     !containsSpecialCharacter.test(passowrds.newPassword) || 
     containsWhitespace.test(passowrds.newPassword)
   ) {
-    console.log("Invalid password. Please enter a valid password with at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character.");
+
     return {
       valid: false,
       message: "Invalid password. Please enter a valid password with at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character."
@@ -50,7 +50,6 @@ const validateCredentials = (formData) => {
   const containsSpecialCharacter = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
   
   if (!formData.username || !formData.password || !formData.email || !formData.password2) {
-    console.log(formData);
     return {
       valid: false,
       message: "All fields are required."
@@ -81,7 +80,6 @@ const validateCredentials = (formData) => {
     !containsSpecialCharacter.test(formData.password) || 
     containsWhitespace.test(formData.password)
   ) {
-      console.log("Invalid password. Please enter a valid password with at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character.");
       return {
         valid: false,
         message: "Invalid password. Please enter a valid password with at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character."

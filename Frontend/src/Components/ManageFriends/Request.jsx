@@ -32,7 +32,7 @@ export default function Request({ friends, setFriends }) {
     return (
         <div className=" w-full border-b-2 border-gray-500  xsm:h-20 sm:h-32 flex items-center xsm:px-2 sm:px-8 justify-between">
             <div className="flex items-center gap-x-4">
-                <div className="xsm:w-12 xsm:h-12  md:h-20 md:w-20 bg-indigo-500 rounded-full">
+                <div className="xsm:w-12 overflow-hidden xsm:h-12  md:h-20 md:w-20 bg-indigo-500 rounded-full">
                     <img className="rounded-full" src={friends.profile_image} alt="profile image" />
                 </div>
                 <div>

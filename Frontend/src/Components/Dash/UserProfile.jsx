@@ -38,7 +38,6 @@ export default function UserProfile() {
         fetchData()
     },[])
 
-    // console.log("this is the user:",userData)
     return (
         <>
         {

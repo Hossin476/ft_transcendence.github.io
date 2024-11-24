@@ -15,13 +15,17 @@ const OfflineWin = ({matchObj})=>{
           <p className=" font-bold text-center leader flex justify-center items-center  ">{t("winner is")} {matchObj.winner} </p>
           <div className="flex items-center justify-between  w-[100%] ">
             <div className="flex flex-col items-center gap-2 p-2">
-              <img src="/lshail.jpeg" className="rounded-full w-[100px] border-[2px] " />
+                <div className="w-[100px] h-[100px] overflow-hidden">    
+                    <img src="/media/main/hamza.jpeg" className="rounded-full  border-[2px] w-full h-full object-cover" />
+                </div>
               <p className="text-xl font-inter">{matchObj.player1}</p>
               <p className="text-xl font-inter"> {matchObj.score1} </p>
             </div>
             <p className="  sm:text-[5vw] xl:text-[80px]   font-bold text-center leader flex justify-center items-center font-Valorax text-border animate-bounce"> VS </p>
             <div className="flex flex-col items-center gap-2 ">
-              <img src="/lshail.jpeg" className="rounded-full w-[100px]" />
+                <div className="w-[100px] h-[100px] overflow-hidden">
+                    <img src="/media/main/p1.jpeg" className="border-[2px] w-full rounded-full h-full object-cover" />
+                </div>
               <p className="text-xl font-inter">{matchObj.player2}</p>
               <p className="text-xl font-inter"> {matchObj.score2}</p>
             </div>
@@ -66,13 +70,11 @@ export default function Win({iswin, game_id})
                 else if (data.player2.username == username)
                     setUserGame(data.player2)
             } catch (error) {
-                console.log("error in fetching game",error)
             }
         }
         fetch_game()
     },[])
-    console.log("----------------------------------")
-    console.log(location.state)
+
     return (
         <>
             {Game && location?.state?.isonline == false ? <OfflineWin matchObj={Game}/> : 
