@@ -61,7 +61,7 @@ export const AuthProvider = ({ children }) => {
             setUserName(data.tokens?.username);
 
         } catch(error) {
-            console.error('Error logging in:', error)
+            
         }
     }
 

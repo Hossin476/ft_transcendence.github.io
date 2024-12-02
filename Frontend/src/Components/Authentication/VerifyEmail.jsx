@@ -23,11 +23,11 @@ const VerifyEmail = () => {
             if(access.ok ) {
                 navigate('/dashboard')
             }
-          fetchData()
+          }
         }
-    }
+        fetchData()
 
-},[])
+},[tokens])
 
   const handleChange = (e) => {
     setotpCode(e.target.value);

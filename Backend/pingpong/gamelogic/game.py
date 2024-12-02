@@ -128,8 +128,10 @@ class GameLogic:
     @database_sync_to_async
     def reconnect(self,player1_status, player2_status, matchid):
             matchObj = GameOnline.objects.get(id=matchid)
-            if player1_status == False and player2_status == False:
-                matchObj.delete()
+            if player1_status is False and player2_status is False:
+                matchObj.is_game_end = True
+                matchObj.save()
+                return 
             elif player1_status:
                 matchObj.winner = matchObj.player1
                 matchObj.score1 = 3

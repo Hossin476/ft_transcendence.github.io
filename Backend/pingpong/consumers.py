@@ -193,7 +193,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                 # time ot wait
                 timeSpand = 30
                 # Check  both  players to  see if one or both are not connected
-                while room_obj.player1_connect == False or room_obj.player2_connect == False:
+                while room_obj.player1_connect is False or room_obj.player2_connect is False:
                     # Substract 1 from the timestamp
                     timeSpand -= 1
                     # This data is sent to the connected user showing the remaining time.
@@ -207,7 +207,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                     # This condition  checks if the time has ended when the time reaches 0 the connected player is set as winner.
                     print(timeSpand)
                     # Create a task to either save the result in the database or remove the object from it if both players are disconnected.
-                    if timeSpand == 0 or (room_obj.player1_connect == True and room_obj.player2_connect == True):
+                    if timeSpand == 0 or (room_obj.player1_connect is True and room_obj.player2_connect is True):
                         await asyncio.create_task(game.reconnect(room_obj.player1_connect, room_obj.player2_connect, int(self.game_id)))
                         room_obj.game_end = True
                         data['iswaiting'] = False
@@ -219,16 +219,16 @@ class GameConsumer(AsyncWebsocketConsumer):
                     await self.channel_layer.group_send(self.game_group_id, data)
                     await asyncio.sleep(1)
                     # Check if both players reconnect. Send a frame to the frontend. Stop the countdown.
-                    if room_obj.player1_connect == True and room_obj.player2_connect == True:
+                    if room_obj.player1_connect is True and room_obj.player2_connect is True:
                         data['iswaiting'] = False
                         await self.channel_layer.group_send(self.game_group_id, data)
 
                 # chech is the game is start
-                if room_obj.start == False:
+                if room_obj.start is False:
                     await asyncio.sleep(1/60)
                     continue
                 # this used to stop game 15 second if one of players pause the game
-                if room_obj.pause == True:
+                if room_obj.pause is True:
                     # how mush  time in each stop
                     timeSpand = 15
                     data = {
