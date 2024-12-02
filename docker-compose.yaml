@@ -12,8 +12,14 @@ services:
     ports:
       - 443:443
     restart: on-failure
+    environment:
+        - VITE_BACKEND_URL=${BACKEND_URL}
+        - VITE_URI_INTRA=${INTRA_URI_REDIRECT}
+        - VITE_CRYPTO_KEY=${CRYPTO_KEY}
     depends_on:
       - backend
+    volumes:
+      - ./Frontend/src:/usr/src/app/src
   db:
     container_name: postgres
     networks:

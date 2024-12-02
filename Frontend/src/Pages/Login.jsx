@@ -55,6 +55,7 @@ const Login = () => {
         const fetchData = async ()=> {
 
             if(tokens) {
+                console.log("this is valid right now")
                 const access  = await fetch('/api/auth/token/verify/', {
                     method: 'get',
                     headers: {
@@ -65,11 +66,11 @@ const Login = () => {
                 if(access.ok ) {
                     navigate('/dashboard')
                 }
-            fetchData()
             }
         }
+        fetchData()
 
-    },[])
+    },[tokens])
 
     useEffect(()=> {
         if(code) {

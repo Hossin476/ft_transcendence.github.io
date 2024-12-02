@@ -28,11 +28,11 @@ const Signup = () => {
             if(access.ok ) {
                 navigate('/dashboard')
             }
-        fetchData()
+          }
         }
-    }
+        fetchData()
 
-},[])
+},[tokens])
 
   const [errorMessage, setErrorMessage] = useState("")
   const { username, email, password, password2 } = formData
