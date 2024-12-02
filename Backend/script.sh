@@ -1,6 +1,3 @@
-
-
-
 python manage.py makemigrations --empty users 
 python manage.py makemigrations --empty notifications tournament pingpong chat tictactoe
 
@@ -12,4 +9,5 @@ while ! nc -z postgres 5432; do sleep 1; done;
 python manage.py makemigrations
 python manage.py migrate users
 python manage.py migrate
-python manage.py runserver 0.0.0.0:8000
+
+daphne -b 0.0.0.0 -p 8000 ftt_backend.asgi:application

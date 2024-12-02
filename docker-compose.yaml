@@ -10,7 +10,7 @@ services:
     networks:
       - my_network
     ports:
-      - 443:443
+      - 5173:5173
     restart: on-failure
     environment:
         - VITE_BACKEND_URL=${BACKEND_URL}
@@ -69,6 +69,16 @@ services:
     container_name: redis
     image: redis:7
     restart: always
+  nginx:
+    build: 
+      context: ./nginx
+    ports:
+      - "443:443"
+    networks:
+      - my_network
+    depends_on:
+      - frontend
+      - backend
 
 networks:
   my_network:
