@@ -52,7 +52,7 @@ const Game = () => {
             const data = await response.json();
             if (data?.is_end)
                 navigate('/game')
-        } catch (error) {}
+        } catch (error) { }
     }, [tokens.access, gameId, navigate])
     const url = `${isOnline === true ? WS_ONLINE_URL : WS_OFFLINE_URL}/${gameId}/?token=${tokens?.access}`;
     useEffect(() => {
@@ -111,7 +111,14 @@ const Game = () => {
         <div className="h-[70%] w-full flex items-center justify-evenly">
             <Canvas dpr={window.devicePixelRatio} camera={{ fov: 75, position: [0, 0, -6] }}>
                 <Sky mieCoefficient={0.001} mieDirectionalG={6} rayleigh={4} sunPosition={[0, 0, 1]} turbidity={8} />
-                <OrbitControls />
+                <OrbitControls
+                    // minDistance={2}  
+                    // maxDistance={6} 
+                    // // minPolarAngle={Math.PI / 2}
+                    // maxPolarAngle={Math.PI / 3} 
+                    // // minAzimuthAngle={-Math.PI}
+                    // maxAzimuthAngle={Math.PI / 3}
+                />
                 <Suspense fallback={null}>
                     <ambientLight intensity={0.4} />
                     <pointLight position={[10, 10, 10]} />

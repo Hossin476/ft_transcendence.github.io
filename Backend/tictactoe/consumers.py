@@ -297,7 +297,7 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
     async def send_reconnect_update(self):
         await self.channel_layer.group_send(self.room_group_name, {
             'type': 'handle.reconnect',
-            'reconnect_countdown': self.room.countdown_values.get('reconnect'),
+            'reconnect_countdown': None if not self.game.start else self.room.countdown_values.get('reconnect'),
         })
 
     async def handle_reconnect(self, event):

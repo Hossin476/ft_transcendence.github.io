@@ -119,7 +119,7 @@ class TicTacToeLocalConsumer(AsyncWebsocketConsumer):
             self.game.start = True
             self.game_countdown_task = asyncio.create_task(self.game_countdown())
         except asyncio.CancelledError:
-            await self.send_error(f"An error occurred: {str(e)}")
+            await self.send_error(f"An error occurred")
 
     @database_sync_to_async
     def save_game_start(self):
@@ -143,4 +143,4 @@ class TicTacToeLocalConsumer(AsyncWebsocketConsumer):
                 await self.send_game_update()
                 await self.save_game_result()
         except asyncio.CancelledError:
-            await self.send_error(f"An error occurred: {str(e)}")
+            await self.send_error(f"An error occurred")
