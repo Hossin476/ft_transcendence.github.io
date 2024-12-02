@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState,useEffect } from 'react'
+import { useState,useEffect, useCallback } from 'react'
 import { useNavigate, Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext';
 
@@ -51,26 +51,26 @@ const Login = () => {
         if (errorMessage) 
             setErrorMessage("");
     }
-    useEffect(()=> {
-        const fetchData = async ()=> {
 
-            if(tokens) {
-                console.log("this is valid right now")
-                const access  = await fetch('/api/auth/token/verify/', {
-                    method: 'get',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'JWT ' + tokens.access
-                    },
-                });
-                if(access.ok ) {
-                    navigate('/dashboard')
-                }
+    const fetchData = useCallback( async ()=> {
+        console.log(tokens)
+            console.log("this is valid right now")
+            const access  = await fetch('/api/auth/token/verify/', {
+                method: 'get',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'JWT ' + tokens.access
+                },
+            });
+            if(access.ok ) {
+                navigate('/dashboard')
             }
-        }
-        fetchData()
+    }, [tokens]);
 
-    },[tokens])
+    useEffect(()=> {
+        if(tokens)
+            fetchData()
+    },[])
 
     useEffect(()=> {
         if(code) {
@@ -85,7 +85,7 @@ const Login = () => {
     }
     
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = useCallback( async (e) => {
         e.preventDefault();
         setIsLoading(true);
         setErrorMessage("");
@@ -136,6 +136,7 @@ const Login = () => {
                 });
     
                 const tokens = await res.json();
+                console.log("2fa : ", tokens)
                 if (res.ok)
                 {
                     login({ tokens });
@@ -151,7 +152,7 @@ const Login = () => {
             }
         }
         setIsLoading(false);
-    }
+    }, [ loginData, twoFactorCode, login, navigate ]);
 
     return (
         <>

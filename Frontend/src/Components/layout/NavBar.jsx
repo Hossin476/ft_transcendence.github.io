@@ -44,7 +44,7 @@ export default function NavBar() {
 
             }
         };
-    }, [tokens]);
+    }, []);
     return (
         <div className="xsm:py-4 flex bg-secondaryColor rounded xsm:h-full items-center justify-between justify-end relative">
             <div className=" xsm:pl-4">

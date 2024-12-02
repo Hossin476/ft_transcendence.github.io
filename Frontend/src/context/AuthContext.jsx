@@ -54,11 +54,14 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (data) => {
         try {
+            console.log("enter login here ")
             const encryptedToken = AES.encrypt(JSON.stringify(data.tokens), import.meta.env.VITE_CRYPTO_KEY).toString();
             localStorage.setItem('tokens', JSON.stringify(encryptedToken))
             setTokens(data.tokens)
+            console.log(data.tokens.user)
             setUser(data.tokens.user)
             setUserName(data.tokens?.username);
+
 
         } catch(error) {
             
@@ -78,17 +81,25 @@ export const AuthProvider = ({ children }) => {
                     body: JSON.stringify({ "refresh_token": tokens.refresh })
                 }
             )
-            if (res.ok) {
-                if (socket)
-                    socket.send(JSON.stringify({"type": "log_out"}))
-                localStorage.removeItem('tokens');
-                setUser(null)
-                setTokens(null)
-                setUserName(null)
-            }
+            if (socket)
+                socket.send(JSON.stringify({"type": "log_out"}))
+            localStorage.removeItem('tokens');
+            setUser(null)
+            setTokens(null)
+            setUserName(null)
+            socket.close()
+            chatsocket.close()
         }
         catch (error) {
+            if (socket)
+                socket.send(JSON.stringify({"type": "log_out"}))
             console.error('Error logging out:', error)
+            localStorage.removeItem('tokens');
+            setUser(null)
+            setTokens(null)
+            setUserName(null)
+            socket.close()
+            chatsocket.close()
         }
     };
 

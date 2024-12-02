@@ -539,13 +539,15 @@ class Verify2FAView(APIView):
             if totp.verify(code):
                 return Response({
                     'username': user.username,
+                    'user': playerSerializers(user).data,
                     'access': str(user_tokens.get('access')),
-                    'refresh': str(user_tokens.get('refresh'))
+                    'refresh': str(user_tokens.get('refresh')),
                 }, status = status.HTTP_200_OK)
             return Response({
                 'error': 'token unvalid or expired'
             }, status = status.HTTP_400_BAD_REQUEST)
         except CustomUser.DoesNotExist:
+            print('user not found')
             return Response({
                 'error': 'User not found'
             }, status=status.HTTP_404_NOT_FOUND)
