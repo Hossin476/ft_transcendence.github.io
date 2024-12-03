@@ -158,8 +158,14 @@ def unblock_request(sender, receiver_id):
 @database_sync_to_async
 def create_game_object(sender, receiver_name, game, invite_id):
     try:
+        
         receiver = CustomUser.objects.get(username=receiver_name)
         game_obj = None
+        if invite_id:
+            if GameNotification.objects.filter(id=invite_id).count() != 0:
+                GameNotification.objects.filter(id=invite_id).delete()
+            else:
+                return None
         if game == 'P':
             game_obj = GameOnline.objects.create(player1=sender, player2=receiver)
             game_obj = GameOnlineSerializer(game_obj).data
@@ -167,8 +173,6 @@ def create_game_object(sender, receiver_name, game, invite_id):
             game_obj = OnlineGameModel.objects.create(
                 player1=sender, player2=receiver)
             game_obj = OnlineGameModelSerializer(game_obj).data
-        if invite_id:
-            GameNotification.objects.filter(id=invite_id).delete()
         return game_obj
     except Exception as e:
         async_to_sync(channel_layer.group_send)(f'notification_{sender.id}', {
@@ -505,6 +509,8 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     async def handle_accept_game(self, data):
         game_type = data['game']
         game_object = await create_game_object(self.user, data['receiver'], game_type, data.get('invite_id'))
+        if game_object is None:
+            return
         await self.channel_layer.group_send(f'notification_{game_object["player1"]["id"]}', {
             'type'          : 'game.accept',
             'from'          : game_object["player1"]["username"],

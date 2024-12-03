@@ -29,7 +29,7 @@ export default function Friend({name,status,online,user_id,profile_image}) {
                 </div>
                 <div className="xsm:hidden xl:block">
                     <h1 className="font-semibold">{name}</h1>
-                    <p className="font-thin">{status ? t("In Game"):t("Lobby")}</p>
+                    <p className="font-thin">{online ?( status ? t("In Game"):t("Lobby")): "Offline"}</p>
                 </div>
             </div>
             <div className='xsm:hidden xl:block'>
