@@ -8,3 +8,4 @@ database
 .env
 .vscode
 **/.DS_Store
+test.tldr
