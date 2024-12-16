@@ -5,7 +5,7 @@ import { Physics, RigidBody } from '@react-three/rapier';
 import { useTicTacToe } from '../../context/TicTacToeContext';
 import { useAuth } from '../../context/AuthContext';
 import { useLocation, useNavigate } from 'react-router';
-import Win from './win';
+import Win from './Win';
 import StartModal from './StartModal'
 import ReconnectModal from './ReconnectModal'
 import Draw from './Draw';
