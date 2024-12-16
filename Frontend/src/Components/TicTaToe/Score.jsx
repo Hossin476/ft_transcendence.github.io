@@ -41,10 +41,9 @@ function Score() {
     }, [gameId, isOffline, tokens.access]);
 
     useEffect(() => {
-        if (!gameId) {
+        if (!gameId)
             navigate('/game');
-            return;
-        }
+
         fetchData();
     }, [fetchData, navigate]);
 

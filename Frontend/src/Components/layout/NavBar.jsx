@@ -58,7 +58,7 @@ export default function NavBar() {
                         onClick={toggleNotifications}
                     />
                     {showNotifications && (
-                        <div className="absolute left-1/2 transform -translate-x-1/2 mt-4 z-[70]">
+                        <div className="absolute top-full left-1/2 transform -translate-x-1/2 z-[70]">
                             <NotificationModal />
                         </div>
                     )}

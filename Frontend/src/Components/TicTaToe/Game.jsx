@@ -10,6 +10,7 @@ import StartModal from './StartModal'
 import ReconnectModal from './ReconnectModal'
 import Draw from './Draw';
 import useWebSocket from './useWebSocket';
+import handleWebSocketMessage from './handleData';
 
 const WS_ONLINE_URL = `wss://${window.location.host}/ws/game/tictactoe`;
 const WS_OFFLINE_URL = `wss://${window.location.host}/ws/game/tictactoe/offline`;
@@ -55,46 +56,35 @@ const Game = () => {
         } catch (error) {
             navigate('/game');
         }
-    }, [tokens.access, gameId, navigate])
+    }, [tokens.access, gameId, navigate]);
+
     const url = `${isOnline === true ? WS_ONLINE_URL : WS_OFFLINE_URL}/${gameId}/?token=${tokens?.access}`;
+
     useEffect(() => {
         if (gameId) fetchGame();
         else
             navigate('/game');
-
     }, [gameId, fetchGame]);
 
-    const handleWebSocketMessage = useCallback((data) => {
-        if (data.state) setBoard(data.state);
-        if (data.final_winner) setFinalWinner(data.final_winner);
-        if (data.draw !== undefined) setDraw(data.draw);
-        if (data.reconnect_countdown === undefined || data.reconnect_countdown === 0)
-            setShowReconnectModal(false);
-        else {
-            setShowReconnectModal(true);
-            setReconnectTimer(data.reconnect_countdown);
-        }
-        if (data.start_countdown_value !== undefined) {
-            setStartCountdownValue(data.start_countdown_value);
-            if (!startModalShownRef.current) {
-                setShowStartModal(true);
-                startModalShownRef.current = true;
-            }
-            if (data.start_countdown_value === 0) setShowStartModal(false);
-        }
-        if (data.current_turn) setCurrentTurn(data.current_turn);
-        if (data.score_x !== undefined && data.score_o !== undefined) {
-            const [usernameX, scoreX] = data.score_x.split(' : ');
-            const [usernameO, scoreO] = data.score_o.split(' : ');
-            setScores({ [usernameX]: parseInt(scoreX, 10), [usernameO]: parseInt(scoreO, 10) });
-        }
-        if (data.countdown !== undefined) setTimer(data.countdown);
-        if (data.player_role) setPlayerRole(data.player_role);
-        if (data.winner_line) setWinnerLine(data.winner_line.map(index => GRID_POSITIONS[index]));
-        else setWinnerLine(false);
-
+    const handleMessage = useCallback((data) => {
+        handleWebSocketMessage(
+            data,
+            setBoard,
+            setFinalWinner,
+            setDraw,
+            setShowReconnectModal,
+            setReconnectTimer,
+            setStartCountdownValue,
+            startModalShownRef,
+            setShowStartModal,
+            setCurrentTurn,
+            setScores,
+            setTimer,
+            setPlayerRole,
+            setWinnerLine
+        );
     }, [setScores, setTimer, setPlayerRole, setReconnectTimer, setCurrentTurn]);
-    const sendMessage = useWebSocket(url, handleWebSocketMessage);
+    const sendMessage = useWebSocket(url, handleMessage);
 
     const handleCellClick = useCallback((index) => {
         if (!board[index]) sendMessage({ action: 'move', index });

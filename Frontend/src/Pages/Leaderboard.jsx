@@ -21,20 +21,16 @@ export default function Leaderboard() {
           "Content-Type": "application/json"
         }
       });
-
       if (!response.ok)
         throw new Error(`HTTP error! status: ${response.status}`);
-
       const data = await response.json();
       setLeaderboardData(data);
-
     } catch (error) {
       setLeaderboardData([])
     }
   }, [activeGame, tokens.access])
 
   useEffect(() => {
-
     fetchData();
   }, [fetchData])
 
