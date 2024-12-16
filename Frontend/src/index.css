@@ -56,12 +56,12 @@
 
 
 @font-face {
-    font-family: 'Valorax'; /* Use a custom name for your font */
+    font-family: 'Valorax';
     src: url('/fonts/valorax.otf');
   }
 
   @font-face {
-    font-family: 'Plaguard'; /* Use a custom name for your font */
+    font-family: 'Plaguard';
     src: url('/fonts/Plaguard.otf');
   }
   @font-face {
@@ -75,8 +75,8 @@
   }
 
   .text-border {
-    -webkit-text-stroke: 0.1px #C77DFF; /* Adjust the pixel value and color as needed */
-    color: white; /* Text color */
+    -webkit-text-stroke: 0.1px #C77DFF;
+    color: white;
   }
 
   .blurHelp {

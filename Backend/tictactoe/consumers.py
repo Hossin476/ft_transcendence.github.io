@@ -7,6 +7,7 @@ from django.core.cache import cache
 from .game_logic import TicTacToe
 from .models import OnlineGameModel
 from users.models import CustomUser
+from asgiref.sync import sync_to_async
 
 channel_layer = get_channel_layer()
 
@@ -20,8 +21,8 @@ class Room:
             "start_countdown": None
         }
         self.countdown_values = {
-            "reconnect": 10,
-            "start": 10
+            "reconnect": 15,
+            "start": 15
         }
         self.lock = asyncio.Lock()
 
@@ -46,7 +47,7 @@ class Room:
     def are_both_players_present(self):
         return all(self.players.values())
 
-    def are_both_players_absent(self):
+    async def are_both_players_absent(self):
         return all(player is None for player in self.players.values())
 
     async def start_task(self, task_name, coroutine):
@@ -161,11 +162,10 @@ class TicTacToeConsumer(AsyncWebsocketConsumer):
 
         await self.room.cancel_task('game_countdown')
 
-        if self.room.are_both_players_absent():
-            async with asyncio.Lock():
-                self.rooms.pop(self.game_id, None)
-                self.games.pop(self.game_id, None)
-                self.game_record.delete()
+        if await self.room.are_both_players_absent():
+            await database_sync_to_async(self.game_record.delete)()
+            self.rooms.pop(self.game_id, None)
+            self.games.pop(self.game_id, None)
 
     async def receive(self, text_data):
         try:

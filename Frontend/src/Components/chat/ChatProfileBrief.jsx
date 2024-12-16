@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from "react";
+import React, { use, useContext, useEffect, useMemo } from "react";
 import ChatContext from "../../context/ChatContext";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -51,8 +51,8 @@ const GameInvite = () => {
         game: gameType
       }))
      }
-     toast.success('Game Request Was successfully sent to ' + currantUser.user.username)
   }
+
   return (
     <div className="flex flex-col justify-center items-center mt-10">
       <p className="text-white self-start ml-12 lg:text-2xl font-bold">

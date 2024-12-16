@@ -36,14 +36,21 @@ def change_online_state(user, state):
 def create_game_db(sender, receiver, game):
     try:
         receiver_obj = CustomUser.objects.get(username=receiver)
+        if(GameNotification.objects.filter(sender=sender, receiver=receiver_obj, game=game).count() != 0):
+            raise ValueError("You have already sent a request to this user.")
         invite = GameNotification.objects.create(
             sender=sender, receiver=receiver_obj, game=game)
+        async_to_sync(channel_layer.group_send)(f'notification_{sender.id}', {
+            'type': 'inform.message',
+            'message': f"Game Request Was successfully sent to {receiver_obj.username}"
+        })
         return {"receiver"  :receiver_obj.pk, 'invite_id'   :invite.id}
     except Exception as e:
         async_to_sync(channel_layer.group_send)(f'notification_{sender.id}', {
             'type': 'error.handle',
             'error': str(e)
         })
+    return None
 
 
 @database_sync_to_async
@@ -295,6 +302,9 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             await self.disconnect(1000)
 
 
+    async def inform_message(self, event):
+        await self.send(text_data=json.dumps(event))
+
     async def game_request(self, event):
         await self.send(text_data=json.dumps(event))
 
@@ -433,6 +443,8 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     async def handle_game_request(self, data):
         game_type = data['game']
         info_invite = await create_game_db(self.user, data['receiver'], game_type)
+        if info_invite is None:
+            return
         await self.channel_layer.group_send(f'notification_{info_invite['receiver']}', {
             'type'          : 'game_request',
             'from'          : self.user.username,

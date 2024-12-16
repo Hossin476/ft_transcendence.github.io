@@ -7,9 +7,6 @@ import { HiX } from "react-icons/hi";
 
 import "./Pvpgame.css";
 import "./Matchmaking.css";
-
-import mypic from "/avatar/sbzizal.jpeg";
-import vs_avatar from "/avatar/lshail.jpeg";
 import avatar from "/avatar/anonym.png";
 import { useLocation } from "react-router-dom";
 

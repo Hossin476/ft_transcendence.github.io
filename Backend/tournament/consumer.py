@@ -125,11 +125,13 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         matches_state = start
         tour_knockouts = nbr_matches
         match_list = await database_sync_to_async(lambda: list(tournament.matches.select_related("player1", "player2", "winner").all()))()
+        check_list = []
         while matches_state <= tour_knockouts:
             matches_state = start
             for match in match_list:
-                if match.is_game_end == True or match.is_start == False:
+                if (match.is_game_end == True or match.is_start == False) and  match.id not in check_list:
                     matches_state += 1
+                    check_list.append(match.id)
             await asyncio.sleep(10)
             match_list = await database_sync_to_async(lambda: list(tournament.matches.select_related("player1", "player2", "winner").all()))()
         tournament.knockout = tournament.knockout//2

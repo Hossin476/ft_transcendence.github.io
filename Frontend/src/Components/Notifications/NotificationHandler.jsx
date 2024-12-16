@@ -36,8 +36,6 @@ function NotificationHandler() {
                     }
                 );
             }
-            if (socketMessage.type === 'error.handle')
-                toast.error(socketMessage.error)
         }
     }, [socketMessage])
 

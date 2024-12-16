@@ -1,13 +1,11 @@
-
-import img from "/public/ykhourba.jpeg"
 import { IoNotifications } from "react-icons/io5";
-import { LiaCoinsSolid } from "react-icons/lia";
 import { useAuth } from "../../context/AuthContext";
 import { useEffect, useState } from 'react';
 import NotificationModal from '../Notifications/NotificationModal';
 import NotificationHandler from "../Notifications/NotificationHandler";
 import { useNavigate } from 'react-router-dom';
 import LanguageSwitcher from "../../Components/Settings/LanguageSwitcher";
+import { toast, Toaster } from 'react-hot-toast';
 
 
 
@@ -31,6 +29,10 @@ export default function NavBar() {
                 const gameType = socketMessage.game_type === "T" ? "tictactoe" : "pingpong"
                 nav(`/game/${gameType}/pvpgame/match`, { state: { gameid: socketMessage.game_id, isonline: false } });
             }
+            if (socketMessage.type === 'inform.message')
+                toast.success(socketMessage.message)
+            if (socketMessage.type === 'error.handle')
+                toast.error(socketMessage.error)
         }
     }, [socketMessage])
 

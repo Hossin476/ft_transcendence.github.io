@@ -223,8 +223,6 @@ def get_monthly_data(request):
     return Response(chart_data)
 
 
-def intra_login(request):
-    pass
 
 
 def generate_random_string(username,length):

@@ -1,14 +1,12 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import imgProfile from "/public/avatar/sbzizal.jpeg";
-import imgYns from "/public/lshail.jpeg";
 import { useTranslation } from "react-i18next";
 
 function Match_victory({ match }) {
   const { t } = useTranslation();
   return (
-    <div className=" xsm:h-24 sm:h-36 flex xsm:px-2 sm:px-3  rounded-xl my-4 items-center xsm:gap-x-2 sm:gap-x-8 justify-between w-full bg-MatchVictory opacity-90 bg-green-800">
+    (match.player1 && match.player2) && <div className=" xsm:h-24 sm:h-36 flex xsm:px-2 sm:px-3  rounded-xl my-4 items-center xsm:gap-x-2 sm:gap-x-8 justify-between w-full bg-MatchVictory opacity-90 bg-green-800">
       <hr className=" xsm:h-12 sm:h-24 w-2 rounded-2xl  bg-green-400" />
       <div className="flex justify-between xsm:gap-x-4 grow xsm:px-0.5 items-center sm:flex-1 ">
         <div className="flex flex-col items-center">
@@ -50,7 +48,7 @@ function Match_victory({ match }) {
 function Match_defeat({ match }) {
   const { t } = useTranslation();
   return (
-    <div className=" xsm:h-24 sm:h-36 flex xsm:px-2 sm:px-3  rounded-xl my-4 items-center xsm:gap-x-2 sm:gap-x-8 justify-between w-full bg-MatchVictory opacity-90 bg-red-800">
+    (match.player1 && match.player2) && <div className=" xsm:h-24 sm:h-36 flex xsm:px-2 sm:px-3  rounded-xl my-4 items-center xsm:gap-x-2 sm:gap-x-8 justify-between w-full bg-MatchVictory opacity-90 bg-red-800">
       <hr className=" xsm:h-12 sm:h-24 w-2 rounded-2xl  bg-red-400" />
       <div className="flex justify-between xsm:gap-x-4 grow xsm:px-0.5 items-center sm:flex-1 ">
         <div className="flex flex-col items-center">
@@ -92,7 +90,7 @@ function Match_defeat({ match }) {
 function Match_draw({ match }) {
   const { t } = useTranslation();
   return (
-    <div className=" xsm:h-24 sm:h-36 flex xsm:px-2 sm:px-3  rounded-xl my-4 items-center xsm:gap-x-2 sm:gap-x-8 justify-between w-full bg-MatchVictory opacity-90 bg-gray-600">
+    (match.player1 && match.player2) && <div className=" xsm:h-24 sm:h-36 flex xsm:px-2 sm:px-3  rounded-xl my-4 items-center xsm:gap-x-2 sm:gap-x-8 justify-between w-full bg-MatchVictory opacity-90 bg-gray-600">
       <hr className=" xsm:h-12 sm:h-24 w-2 rounded-2xl  bg-gray-400" />
       <div className="flex justify-between xsm:gap-x-4 grow xsm:px-0.5 items-center sm:flex-1 ">
         <div className="flex flex-col items-center">

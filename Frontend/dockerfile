@@ -14,5 +14,6 @@ ARG VITE_URI_INTRA
 ENV VITE_CRYPTO_KEY=$VITE_CRYPTO_KEY
 ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
 ENV VITE_URI_INTRA=$VITE_URI_INTRA
+RUN npm run build 
 
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+CMD ["npm", "run", "preview", "--", "--port", "5173", "--host"]
